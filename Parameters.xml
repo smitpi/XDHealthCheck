@@ -46,28 +46,28 @@
     </Variable>
     <Variable>
       <Name>emailFrom</Name>
-      <Value>WorkSpaceHealth@absa.co.za</Value>
+      <Value>pierre.smit@eoh.com</Value>
       <!-- Address of the sender -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
     </Variable>
     <Variable>
       <Name>emailTo</Name>
-      <Value>pierre.smit2@absa.africa</Value>
+      <Value>pierre.smit@eoh.com</Value>
       <!-- Address of the recipient -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
     </Variable>
     <Variable>
       <Name>smtpServer</Name>
-      <Value>mail.absa.co.za</Value>
+      <Value>outlook.office365.com</Value>
       <!-- IP or name of SMTP server  -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
     </Variable>
     <Variable>
       <Name>smtpServerPort</Name>
-      <Value>25</Value>
+      <Value>587</Value>
       <!-- Port of SMTP server -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
