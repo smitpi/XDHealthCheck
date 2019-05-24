@@ -1,17 +1,17 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 7942ecd6-a40d-488c-bb1e-dabeca200618
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME Absa Corp:EUV Team
+.COMPANYNAME HTPCZA
 
 .COPYRIGHT
 
-.TAGS EUV Citrix
+.TAGS Citrix
 
 .LICENSEURI
 
@@ -28,10 +28,13 @@
 .RELEASENOTES
 Date Created - 21/05/2019_19:57
 Date Updated - 22/05/2019_20:14
+Date Updated - 24/05/2019_19:25
 
 .PRIVATEDATA
 
 #> 
+
+
 
 
 

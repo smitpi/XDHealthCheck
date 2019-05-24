@@ -1,3 +1,47 @@
+
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
+.GUID c7ea71fa-ee5a-4a79-9b88-8dc528714142
+
+.AUTHOR Pierre Smit
+
+.COMPANYNAME HTPCZA
+
+.COPYRIGHT
+
+.TAGS Citrix
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+Date Created - 24/05/2019_19:23
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ Citrix XenDesktop HTML Health Check Report 
+
+#> 
+
+Param()
+
+
 #Requires -RunAsAdministrator
 
 cls

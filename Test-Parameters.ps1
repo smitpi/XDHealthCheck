@@ -1,3 +1,47 @@
+
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
+.GUID 9ded7881-700e-4dcf-b83b-3a1354e52c16
+
+.AUTHOR Pierre Smit
+
+.COMPANYNAME HTPCZA
+
+.COPYRIGHT
+
+.TAGS Citrix
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+Date Created - 24/05/2019_19:23
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ Citrix XenDesktop HTML Health Check Report 
+
+#> 
+
+Param()
+
+
 cls
 [string]$ScriptPath = $PSScriptRoot
 Import-Module .\Modules\PSWriteColor\0.85\PSWriteColor.psm1

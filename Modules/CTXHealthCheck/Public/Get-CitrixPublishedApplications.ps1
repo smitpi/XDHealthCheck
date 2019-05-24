@@ -1,4 +1,49 @@
 
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 07f17625-4521-42d4-91a3-d02507d2e7b7
+
+.AUTHOR Pierre Smit
+
+.COMPANYNAME HTPCZA
+
+.COPYRIGHT
+
+.TAGS Citrix
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+Date Created - 22/05/2019_19:17
+Date Updated - 24/05/2019_19:25
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+  Citrix XenDesktop HTML Health Check Report  
+
+#> 
+
+Param()
+
+
+
 Function Get-CitrixPublishedApplications
 {
     PARAM(
