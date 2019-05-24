@@ -46,8 +46,30 @@ Param()
 
 cls
 [string]$ScriptPath = $PSScriptRoot
-Import-Module .\Modules\PSWriteColor\0.85\PSWriteColor.psm1
-Import-Module .\Modules\BetterCredentials\4.5\BetterCredentials.psm1
+
+#Write-Color -Text 'Setting up needed modules' -Color Cyan -ShowTime
+Write-Host 'Installing needed Modules' -ForegroundColor Cyan
+
+Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+Install-Module -Name BetterCredentials -RequiredVersion 4.5 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck
+Install-Module -Name PSWriteColor -RequiredVersion 0.85 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck
+
+
+Write-Color -Text 'Installing BetterCredentials Module' -Color DarkCyan -ShowTime
+Install-Module -Name BetterCredentials -RequiredVersion 4.5 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck
+
+Write-Color -Text 'Installing ImportExcel Module' -Color DarkCyan -ShowTime
+Install-Module -Name ImportExcel -RequiredVersion 6.0.0 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck
+
+Write-Color -Text 'Installing PSWriteHTML Module' -Color DarkCyan -ShowTime
+Install-Module -Name PSWriteHTML -RequiredVersion 0.0.32 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck
+
+Write-Color -Text 'Installing CTXHealthCheck Module' -Color DarkCyan -ShowTime
+Copy-Item (Get-Item .\Modules\CTXHealthCheck) -Destination 'C:\Program Files\WindowsPowerShell\Modules' -Recurse -Force
+Import-Module CTXHealthCheck -Force -Verbose
+
+Import-Module PSWriteColor
+Import-Module BetterCredentials
 
 
 Write-Color -Text "Script Root Folder - $ScriptPath" -Color Cyan -ShowTime
@@ -79,21 +101,6 @@ $_.value = $getnew
 }
 $TempParm.Save($xmlfile.FullName)
 
-Write-Color -Text 'Setting up needed modules' -Color Cyan -ShowTime
-Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-
-Write-Color -Text 'Installing BetterCredentials Module' -Color DarkCyan -ShowTime
-Install-Module -Name BetterCredentials -RequiredVersion 4.5 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck
-
-Write-Color -Text 'Installing ImportExcel Module' -Color DarkCyan -ShowTime
-Install-Module -Name ImportExcel -RequiredVersion 6.0.0 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck
-
-Write-Color -Text 'Installing PSWriteHTML Module' -Color DarkCyan -ShowTime
-Install-Module -Name PSWriteHTML -RequiredVersion 0.0.32 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck
-
-Write-Color -Text 'Installing CTXHealthCheck Module' -Color DarkCyan -ShowTime
-Copy-Item (Get-Item .\Modules\CTXHealthCheck) -Destination 'C:\Program Files\WindowsPowerShell\Modules' -Recurse -Force
-Import-Module CTXHealthCheck -Force -Verbose
 
 Write-Color -Text 'Setup Complete' -Color Yellow -ShowTime
 Write-Color -Text 'Run ValidateParameters.ps1 to check settings' -Color DarkYellow -ShowTime -NoNewLine
