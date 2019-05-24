@@ -101,7 +101,7 @@ $_.value = $getnew
 }
 $TempParm.Save($xmlfile.FullName)
 
-Write-Color -Text '_________________________________________' -Color Green
-Write-Color -Text 'Setup Complete' -Color green -ShowTime
-Write-Color -Text 'Run Test-Parameters.ps1 to check settings' -Color green -ShowTime -LinesBefore 1
+
+Write-Color -Text 'Setup Complete' -Color Yellow -ShowTime
+Write-Color -Text 'Run ValidateParameters.ps1 to check settings' -Color DarkYellow -ShowTime -NoNewLine
 
