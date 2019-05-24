@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -31,16 +31,16 @@ Date Updated - 24/05/2019_19:25
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
-<# 
+<#
 
-.DESCRIPTION 
- Citrix XenDesktop HTML Health Check Report 
+.DESCRIPTION
+ Citrix XenDesktop HTML Health Check Report
 
-#> 
+#>
 #Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 
 Param()
@@ -88,14 +88,14 @@ Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Importing
 
 Write-Output "Using these Variables"
 $XMLParameter.Settings.Variables.Variable | ft
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Variable Details"  
+Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
 $XMLParameter.Settings.Variables.Variable | foreach {
 		# Set Variables contained in XML file
 		$VarValue = $_.Value
 		$CreateVariable = $True # Default value to create XML content as Variable
 		switch ($_.Type) {
-			# Format data types for each variable 
+			# Format data types for each variable
 			'[string]' { $VarValue = [string]$VarValue } # Fixed-length string of Unicode characters
 			'[char]' { $VarValue = [char]$VarValue } # A Unicode 16-bit character
 			'[byte]' { $VarValue = [byte]$VarValue } # An 8-bit unsigned character
@@ -130,7 +130,7 @@ $CitrixLicenseInformation = Get-CitrixLicenseInformation -AdminServer $CTXDDC -R
 $CitrixRemoteFarmDetails = Get-CitrixRemoteFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 $CitrixServerEventLogs = Get-CitrixServerEventLogs -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin -Verbose
 $RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicensServer  -RemoteCredentials $CTXAdmin -Verbose
-$CitrixConfigurationChanges = Get-CitrixConfigurationChanges -AdminServer $CTXDDC -Indays 30 -RemoteCredentials $CTXAdmin -Verbose
+$CitrixConfigurationChanges = Get-CitrixConfigurationChanges -AdminServer $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin -Verbose
 $StoreFrontDetails = Get-StoreFrontDetails -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 $ServerPerformance = Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin -Verbose
 
@@ -319,6 +319,6 @@ Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending]Healthcheck Com
 
 $timer.Stop()
 $timer.Elapsed | select Days,Hours,Minutes,Seconds | fl
-Stop-Transcript 
+Stop-Transcript
 
 }
