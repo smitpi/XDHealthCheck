@@ -1,4 +1,5 @@
 
+
 <#PSScriptInfo
 
 .VERSION 1.0.0
@@ -41,10 +42,10 @@ Date Created - 24/05/2019_19:23
 
 Param()
 
+#Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML,CTXHealthCheck
 
 cls
 [string]$ScriptPath = $PSScriptRoot
-Import-Module .\Modules\PSWriteColor\0.85\PSWriteColor.psm1
 
 Write-Color -Text "Script Path - $ScriptPath" -Color Cyan -ShowTime
 set-location -Path $ScriptPath
@@ -133,3 +134,6 @@ $smtpClient.Timeout = 30000000
 $smtpClient.Send( $emailMessage )
 
 }
+Write-Color -Text '_________________________________________' -Color Green
+Write-Color -Text 'Tests Complete' -Color green -ShowTime
+Write-Color -Text 'Run Start-HealthCheck.ps1 to create the report' -Color green -ShowTime -LinesBefore 1

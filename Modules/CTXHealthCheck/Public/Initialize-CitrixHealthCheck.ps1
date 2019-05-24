@@ -41,6 +41,7 @@ Date Updated - 24/05/2019_19:25
  Citrix XenDesktop HTML Health Check Report 
 
 #> 
+#Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML,CTXHealthCheck
 
 Param()
 
