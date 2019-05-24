@@ -79,6 +79,10 @@ Write-Color -Text 'Checking XML Parameters' -Color DarkCyan -ShowTime
 $Parameters.Settings.Variables.Variable | ft
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
+if ($Parameters.Settings.Variables.Variable[4].Value.ToLower() -ne 'true' -and $Parameters.Settings.Variables.Variable[4].Value.ToLower() -ne 'false') {Write-Color -Text 'Error in XML File, check config.' -Color Red -LinesBefore 1;break}
+if ($Parameters.Settings.Variables.Variable[5].Value.ToLower() -ne 'true' -and $Parameters.Settings.Variables.Variable[5].Value.ToLower() -ne 'false') {Write-Color -Text 'Error in XML File, check config.' -Color Red -LinesBefore 1;break}
+if ($Parameters.Settings.Variables.Variable[-1].Value.ToLower() -ne 'true' -and $Parameters.Settings.Variables.Variable[-1].Value.ToLower() -ne 'false') {Write-Color -Text 'Error in XML File, check config.' -Color Red -LinesBefore 1;break}
+
 $Parameters.Settings.Variables.Variable | foreach {
 		# Set Variables contained in XML file
 		$VarValue = $_.Value
@@ -100,6 +104,7 @@ $Parameters.Settings.Variables.Variable | foreach {
 		}
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
+
 
 Write-Color -Text 'Checking PS Remoting to servers' -Color DarkCyan -ShowTime
 
