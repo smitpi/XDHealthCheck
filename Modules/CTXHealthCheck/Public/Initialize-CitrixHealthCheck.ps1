@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID bc7d3016-a1c9-41b7-a1f9-fa20da99f891
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME Absa Corp:EUV Team
+.COMPANYNAME HTPCZA
 
 .COPYRIGHT
 
@@ -27,15 +27,18 @@
 
 .RELEASENOTES
 Date Created - 22/05/2019_19:17
+Date Updated - 24/05/2019_19:25
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <# 
 
 .DESCRIPTION 
- True 
+ Citrix XenDesktop HTML Health Check Report 
 
 #> 
 
