@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -32,12 +32,12 @@ Date Created - 24/05/2019_19:23
 
 #>
 
-<# 
+<#
 
-.DESCRIPTION 
- Citrix XenDesktop HTML Health Check Report 
+.DESCRIPTION
+ Citrix XenDesktop HTML Health Check Report
 
-#> 
+#>
 
 Param()
 
@@ -47,13 +47,6 @@ Param()
 cls
 [string]$ScriptPath = $PSScriptRoot
 
-[string]$execution = Get-ExecutionPolicy
-if ($execution -notlike 'Unrestricted') { 
-    Write-Host 'PS ExecutionPolicy is not set to Unrestricted.' -ForegroundColor Red
-    [string]$answer = Read-Host 'Permanently set it to Unrestricted? (y/n) '
-        if ($answer[0].ToLower() -eq 'y') {Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force}
-        else{ Write-Host 'Changing only for this session'; Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser}
-}
 Write-Host 'Installing needed Modules' -ForegroundColor Cyan
 
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
