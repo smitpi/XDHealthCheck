@@ -46,7 +46,7 @@ Param()
 
 
 
-Function Get-FullADUserDetail {
+Function Get-FullUserDetail {
                 PARAM(
                 [Parameter(Mandatory=$true, Position=0)]
                 [ValidateNotNull()]

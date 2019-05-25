@@ -133,6 +133,12 @@ $RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicensServ
 $CitrixConfigurationChanges = Get-CitrixConfigurationChanges -AdminServer $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin -Verbose
 $StoreFrontDetails = Get-StoreFrontDetails -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 $ServerPerformance = Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin -Verbose
+########################################
+## Adding more reports / scripts
+########################################
+$AllPublishedApplications = Get-AllPublishedApplications -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
+$CitrixUserAccessDetails = Get-CitrixUserAccessDetails -Username smitp -AdminServer $CTXDDC -Verbose
+$FullUserDetail = Get-FullUserDetail -UserToQuery abps835 -DomainFQDN corp.dsarena.com -DomainCredentials $CTXAdmin -RunAsPSRemote -PSRemoteServerName $CTXDDC -Verbose
 
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing]Building Red Flags"
 Function Redflags {
