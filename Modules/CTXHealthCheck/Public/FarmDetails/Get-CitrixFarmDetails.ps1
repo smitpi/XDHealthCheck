@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -33,7 +33,7 @@ Date Updated - 24/05/2019_19:25
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -43,7 +43,7 @@ Date Updated - 24/05/2019_19:25
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Xendesktop Farm Details
 
 #>
@@ -52,7 +52,7 @@ Param()
 
 
 
-Function Get-CitrixRemoteFarmDetails {
+Function Get-CitrixFarmDetails {
     PARAM(
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [ValidateNotNull()]

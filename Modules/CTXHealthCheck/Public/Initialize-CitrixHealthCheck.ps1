@@ -127,7 +127,7 @@ $CTXCore = $CTXControllers + $CTXStoreFrontFarm + $CTXLicenseServer | sort -Uniq
 #########################################
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
 $CitrixLicenseInformation = Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
-$CitrixRemoteFarmDetails = Get-CitrixRemoteFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
+$CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 $CitrixServerEventLogs = Get-CitrixServerEventLogs -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin -Verbose
 $RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicensServer  -RemoteCredentials $CTXAdmin -Verbose
 $CitrixConfigurationChanges = Get-CitrixConfigurationChanges -AdminServer $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin -Verbose
@@ -136,9 +136,6 @@ $ServerPerformance = Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCre
 ########################################
 ## Adding more reports / scripts
 ########################################
-$AllPublishedApplications = Get-AllPublishedApplications -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
-$CitrixUserAccessDetails = Get-CitrixUserAccessDetails -Username smitp -AdminServer $CTXDDC -Verbose
-$FullUserDetail = Get-FullUserDetail -UserToQuery abps835 -DomainFQDN corp.dsarena.com -DomainCredentials $CTXAdmin -RunAsPSRemote -PSRemoteServerName $CTXDDC -Verbose
 
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing]Building Red Flags"
 Function Redflags {
@@ -259,6 +256,7 @@ $Conditions_deliverygroup = {
     New-HTMLTableCondition -Name InMaintenanceMode -Type string -Operator eq -Value 'True' -Color White -BackgroundColor Red
 }
 #>
+
 #######################
 ## Building the report
 #######################
