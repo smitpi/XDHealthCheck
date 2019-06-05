@@ -38,7 +38,8 @@ Date Created - 05/06/2019_19:16
  a menu of options 
 
 #> 
-
+function CreateTask {
+}
 [string]$ScriptP = $PSScriptRoot
 Set-Location -Path $ScriptP
 

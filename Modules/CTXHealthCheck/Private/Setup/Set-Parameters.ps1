@@ -65,9 +65,9 @@ if ([bool](Get-Module -Name Anybox) -eq $false) { Install-Module -Name Anybox -R
 
 Write-Color -Text 'Installing CTXHealthCheck Module' -Color DarkCyan -ShowTime
 Set-Location -Path $ScriptPath
-Copy-Item (Get-Item ..\..\..\CTXHealthCheck) -Destination 'C:\Program Files\WindowsPowerShell\Modules' -Recurse -Force
+Copy-Item (Get-Item ..\..\..\CTXHealthCheck) -Destination 'C:\Program Files\WindowsPowerShell\Modules' -Recurse -Force -Verbose
 
-Import-Module CTXHealthCheck -Force
+Import-Module 'C:\Program Files\WindowsPowerShell\Modules\CTXHealthCheck' -Force -Verbose
 Import-Module PSWriteColor
 Import-Module BetterCredentials
 

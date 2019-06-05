@@ -79,7 +79,7 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
 
-Import-Module ..\..\CTXHealthCheck.psm1 -Verbose
+Import-Module 'C:\Program Files\WindowsPowerShell\Modules\CTXHealthCheck' -Verbose
 [string]$Reportname = $ReportsFolder + "\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 [string]$ExcelReportname = $ReportsFolder + "\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
 
