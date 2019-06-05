@@ -41,52 +41,19 @@ Date Updated - 24/05/2019_19:25
  Citrix XenDesktop HTML Health Check Report
 
 #>
-#Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
+#Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML,CTXHealthCheck
 
 Param()
-
 function Initialize-CitrixHealthCheck {
     PARAM(
         [Parameter(Mandatory = $true, Position = 0)]
-        [ValidateNotNull()]
-        [ValidateNotNullOrEmpty()]
-        [xml]$XMLParameter,
-        [Parameter(Mandatory=$true, Position=1)]
-        [ValidateNotNull()]
-        [ValidateNotNullOrEmpty()]
-        [string]$ScriptPath)
+		[ValidateScript({(Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml")})]
+        [string]$XMLParameterFilePath)
 
-
-[string]$Transcriptlog ="$ScriptPath\Reports\logs\XD_TransmissionLogs." + (get-date -Format yyyy.MM.dd-HH.mm) + ".log"
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
-Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
-$timer = [Diagnostics.Stopwatch]::StartNew();
-Clear-Host
-
-
-########################################
-## Getting Credentials
-#########################################
-
-$smtpClientCredentials = Find-Credential | where target -Like "*Healthcheck_smtp" | Get-Credential -Store
-if ($smtpClientCredentials -eq $null) {
-    $Account = BetterCredentials\Get-Credential -Message "smtp login for HealthChecks email"
-    Set-Credential -Credential $Account -Target "Healthcheck_smtp" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
-}
-
-$CTXAdmin = Find-Credential | where target -Like "*Healthcheck" | Get-Credential -Store
-if ($CTXAdmin -eq $null) {
-    $AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
-    Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
-}
-
-
-########################################
-## Build other variables
-#########################################
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
 
-Write-Output "Using these Variables"
+Write-Colour "Using these Variables"
+[XML]$XMLParameter = Get-Content $XMLParameterFilePath
 $XMLParameter.Settings.Variables.Variable | ft
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
@@ -112,10 +79,32 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
 
-
-[string]$ReportsFolder = "$ScriptPath\Reports"
+Import-Module ..\..\CTXHealthCheck.psm1 -Verbose
 [string]$Reportname = $ReportsFolder + "\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 [string]$ExcelReportname = $ReportsFolder + "\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
+
+if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$psfolder\Scripts" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+[string]$Transcriptlog ="$ReportsFolder\logs\XD_TransmissionLogs." + (get-date -Format yyyy.MM.dd-HH.mm) + ".log"
+Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
+Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
+$timer = [Diagnostics.Stopwatch]::StartNew();
+
+
+########################################
+## Getting Credentials
+#########################################
+
+
+$CTXAdmin = Find-Credential | where target -Like "*Healthcheck" | Get-Credential -Store
+if ($CTXAdmin -eq $null) {
+    $AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
+    Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
+}
+
+
+########################################
+## Build other variables
+#########################################
 
 $CTXControllers = Invoke-Command -ComputerName $CTXDDC -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-BrokerController | select dnsname } | foreach { $_.dnsname }
 $CTXLicenseServer = Invoke-Command -ComputerName $CTXDDC -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-BrokerSite -AdminAddress $AdminServer | select LicenseServerName } | foreach { $_.LicenseServerName }
@@ -126,7 +115,7 @@ $CTXCore = $CTXControllers + $CTXStoreFrontFarm + $CTXLicenseServer | sort -Uniq
 ## Connect and get info
 #########################################
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
-$CitrixLicenseInformation = Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
+$CitrixLicenseInformation = Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 $CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 $CitrixServerEventLogs = Get-CitrixServerEventLogs -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin -Verbose
 $RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicensServer  -RemoteCredentials $CTXAdmin -Verbose
@@ -301,6 +290,13 @@ $excelfile += $CitrixConfigurationChanges.Filtered | Export-Excel -Path $ExcelRe
 
 }
 if ($SendEmail){
+
+$smtpClientCredentials = Find-Credential | where target -Like "*Healthcheck_smtp" | Get-Credential -Store
+if ($smtpClientCredentials -eq $null) {
+    $Account = BetterCredentials\Get-Credential -Message "smtp login for HealthChecks email"
+    Set-Credential -Credential $Account -Target "Healthcheck_smtp" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
+}
+
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing]Sending Report Email"
 #send email
 $emailMessage = New-Object System.Net.Mail.MailMessage
