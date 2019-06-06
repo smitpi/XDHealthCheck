@@ -36,6 +36,7 @@
       <Type>[string]</Type>
       <Scope>Local</Scope>
     </Variable>
+    <Variable>
       <Name>SaveExcelReport</Name>
       <Value></Value>
       <!-- Save Config Changes and eventlogs to an excel report (true / false) -->

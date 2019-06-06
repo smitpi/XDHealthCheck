@@ -121,6 +121,30 @@ $CusObject
 
 function Get-CTXSessions($AdminServer) { Get-BrokerSession -MaxRecordCount 10000 -AdminAddress $AdminServer }
 
+function Get-CTXBrokerDesktopGroup($AdminServer) {
+	$DG = Get-BrokerDesktopGroup -AdminAddress $AdminServer
+	$ReadAbleDG = @()
+	foreach ($item in $DG) {
+		$CusObject = New-Object PSObject -Property @{
+			Name                   = $item.name
+			DeliveryType           = $item.DeliveryType
+			DesktopKind            = $item.DesktopKind
+			IsRemotePC             = $item.IsRemotePC
+			Enabled                = $item.Enabled
+			TotalDesktops          = $item.TotalDesktops
+			DesktopsAvailable      = $item.DesktopsAvailable
+			DesktopsInUse          = $item.DesktopsInUse
+			DesktopsUnregistered   = $item.DesktopsUnregistered
+			InMaintenanceMode      = $item.InMaintenanceMode
+			Sessions               = $item.Sessions
+			SessionSupport         = $item.SessionSupport
+			TotalApplicationGroups = $item.TotalApplicationGroups
+			TotalApplications      = $item.TotalApplications
+		} | select Name, DeliveryType, DesktopKind, IsRemotePC, Enabled, TotalDesktops, DesktopsAvailable, DesktopsInUse, DesktopsUnregistered, InMaintenanceMode, Sessions, SessionSupport, TotalApplicationGroups, TotalApplications
+	$ReadAbleDG += $CusObject
+	}
+}
+
 function Get-CTXADObjects($AdminServer) {
  $tainted = $adobjects = $CusObject = $null
  $adobjects = Get-AcctADAccount -MaxRecordCount 10000 -AdminAddress $AdminServer
@@ -156,6 +180,8 @@ Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Controller
 $Controllers = Get-CTXControllers -AdminServer $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Machines Details"
 $Machines = Get-CTXBrokerMachine -AdminServer $AdminServer
+Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Processing] DeliveryGroups Details"
+$DeliveryGroups = Get-CTXBrokerDesktopGroup -AdminServer $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Sessions Details"
 $Sessions = Get-CTXSessions -AdminServer $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] ADObjects Details"
@@ -165,22 +191,23 @@ $DBConnection = Get-CTXDBConnection -AdminServer $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"
 $SessionCounts = New-Object PSObject -Property @{
 	'Active Sessions'      = ($Sessions | Where-Object -Property Sessionstate -EQ "Active").count
-'Disconnected Sessions' = ($Sessions | Where-Object -Property Sessionstate -EQ "Disconnected").count
-'Unregistered Servers'  = ($Machines.UnRegisteredServers | Measure-Object).count
-'Unregistered Desktops' = ($Machines.UnRegisteredDesktops | Measure-Object).count
-'Tainted Objects'       = ($ADObjects.TaintedObjects | Measure-Object).Count
+   'Disconnected Sessions' = ($Sessions | Where-Object -Property Sessionstate -EQ "Disconnected").count
+   'Unregistered Servers'  = ($Machines.UnRegisteredServers | Measure-Object).count
+   'Unregistered Desktops' = ($Machines.UnRegisteredDesktops | Measure-Object).count
+   'Tainted Objects'       = ($ADObjects.TaintedObjects | Measure-Object).Count
 } | select 'Active Sessions', 'Disconnected Sessions', 'Unregistered Servers', 'Unregistered Desktops', 'Tainted Objects'
 
 $CustomCTXObject = New-Object PSObject -Property @{
-	DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-	SiteDetails   = $SiteDetails
-	Controllers   = $Controllers
-	Machines      = $Machines
-	Sessions      = $Sessions
-	ADObjects     = $ADObjects
-	DBConnection  = $DBConnection
-	SessionCounts = $SessionCounts
-} | select DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects, DBConnection, SessionCounts
+	DateCollected    = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+	SiteDetails      = $SiteDetails
+	Controllers      = $Controllers
+	Machines         = $Machines
+	Sessions         = $Sessions
+	ADObjects        = $ADObjects
+    DeliveryGroups   = $DeliveryGroups	
+	DBConnection     = $DBConnection
+	SessionCounts    = $SessionCounts
+} | select DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects,DeliveryGroups, DBConnection, SessionCounts
 
 
 $CustomCTXObject
@@ -191,7 +218,7 @@ $FarmDetails = @()
 if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:CitrixFarmDetails} -ArgumentList  @($AdminServer, $RemoteCredentials, $VerbosePreference) -Credential $RemoteCredentials }
 else { $FarmDetails = CitrixFarmDetails -AdminAddress $AdminServer -VerbosePreference $VerbosePreference }
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] All Details"
-$FarmDetails | select DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects, DBConnection, SessionCounts
+$FarmDetails | select DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects,DeliveryGroups, DBConnection, SessionCounts
 
 } #end Function
 

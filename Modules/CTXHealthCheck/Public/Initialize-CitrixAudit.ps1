@@ -115,18 +115,7 @@ $CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCre
 
 $TableSettings = @{
     Style                  = 'cell-border'
-    DisablePaging          = $true
-    DisableOrdering        = $true
-    DisableInfo            = $true
-    DisableProcessing      = $true
-    DisableResponsiveTable = $true
-    DisableNewLine         = $true
-    DisableSelect          = $true
-    DisableSearch          = $true
-    DisableColumnReorder   = $true
     HideFooter             = $true
-    OrderMulti             = $true
-    DisableStateSave       = $true
     TextWhenNoData         = 'No Data to display here'
 }
 
