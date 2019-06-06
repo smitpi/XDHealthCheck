@@ -12,7 +12,7 @@
 RootModule = 'CTXHealthCheck.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.5'
+ModuleVersion = '0.0.6'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -24,13 +24,13 @@ GUID = '39f9295c-353e-4bb7-aee5-0c600dfd5eba'
 Author = 'Pierre Smit'
 
 # Company or vendor of this module
-CompanyName = 'EUV Team'
+CompanyName = ''
 
 # Copyright statement for this module
 Copyright = '(c) 2019 Pierre Smit. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'Functions to connect to a farm and extract details'
+Description = 'Functions to connect to a Citrix farm and extract details for a healthcheck dashboard'
 
 # Minimum version of the Windows PowerShell engine required by this module
 PowerShellVersion = '3.0'
@@ -95,7 +95,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Citrix','Citrix'
+        Tags = 'Citrix'
 
         # A URL to the license for this module.
         # LicenseUri = ''
@@ -107,9 +107,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Updated [22/05/2019_19:35
-DateUpdated]
-Updated [06/06/2019_06:02] Added the audit script'
+        ReleaseNotes = 'Updated [06/06/2019_06:02] Added the audit script'
 
         # Prerelease string of this module
         # Prerelease = ''
