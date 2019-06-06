@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 284fb68d-acc2-4b5f-aa04-3d0fb6fbcdc0
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME HTPCZA
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -26,16 +26,19 @@
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Date Created - 05/05/2019_09:01
-Date Updated - 13/05/2019_04:37
-Date Updated - 13/05/2019_04:38
-Date Updated - 13/05/2019_04:40
-Date Updated - 22/05/2019_20:13
-Date Updated - 24/05/2019_19:25
+Created [05/05/2019_09:01]
+Updated [13/05/2019_04:37]
+Updated [13/05/2019_04:38]
+Updated [13/05/2019_04:40]
+Updated [22/05/2019_20:13]
+Updated [24/05/2019_19:25]
+Updated [06/06/2019_19:26] 
 
 .PRIVATEDATA
 
 #> 
+
+
 
 
 

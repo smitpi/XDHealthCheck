@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID fbf577f6-e517-4887-ae68-816c0372e7f9
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME EUV Team
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -26,16 +26,19 @@
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Date Created - 05/06/2019_22:39
+Created [05/06/2019_22:39]
+Updated [06/06/2019_19:24] 
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <# 
 
 .DESCRIPTION 
- Create Scheduled Task for healthcheck 
+Create Scheduled Task for healthcheck
 
 #> 
 

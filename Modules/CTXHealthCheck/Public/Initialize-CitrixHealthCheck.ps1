@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID bc7d3016-a1c9-41b7-a1f9-fa20da99f891
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME HTPCZA
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -19,29 +19,37 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Date Created - 22/05/2019_19:17
-Date Updated - 24/05/2019_19:25
+Created [22/05/2019_19:17]
+Updated [24/05/2019_19:25]
+Updated [06/06/2019_19:26] 
 
 .PRIVATEDATA
 
-#>
+#> 
+
+#Requires -Module BetterCredentials
+#Requires -Module PSWriteColor
+#Requires -Module ImportExcel
+#Requires -Module PSWriteHTML
 
 
 
 <#
 
-.DESCRIPTION
- Citrix XenDesktop HTML Health Check Report
+.DESCRIPTION 
+Citrix XenDesktop HTML Health Check Report
+
+
+Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 
 #>
-#Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 
 Param()
 function Initialize-CitrixHealthCheck {

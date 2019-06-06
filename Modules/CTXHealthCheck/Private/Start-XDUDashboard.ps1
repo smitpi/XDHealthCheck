@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID 144e3fd9-5999-4364-bdd6-99e1a6451adf
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME EUV Team
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -26,16 +26,19 @@
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Date Created - 06/06/2019_04:01
+Created [06/06/2019_04:01]
+Updated [06/06/2019_19:25] 
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <# 
 
 .DESCRIPTION 
- Universal Dashboard 
+Universal Dashboard
 
 #> 
 

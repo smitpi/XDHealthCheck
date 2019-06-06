@@ -2,13 +2,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID 9ded7881-700e-4dcf-b83b-3a1354e52c16
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME HTPCZA
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -27,31 +27,37 @@
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Date Created - 24/05/2019_19:23
+Created [24/05/2019_19:23]
+Updated [06/06/2019_19:24] 
 
 .PRIVATEDATA
 
-#>
+#> 
+
+#Requires -Module BetterCredentials
+#Requires -Module PSWriteColor
+#Requires -Module ImportExcel
+#Requires -Module PSWriteHTML
+#Requires -Module CTXHealthCheck
 
 <# 
 
 .DESCRIPTION 
- Citrix XenDesktop HTML Health Check Report 
+Citrix XenDesktop HTML Health Check Report
 
 #> 
 
 Param()
 
-#Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML,CTXHealthCheck
 
-cls
 [string]$ScriptPath = $PSScriptRoot
 
 Write-Color -Text "Script Path - $ScriptPath" -Color Cyan -ShowTime
 set-location -Path $ScriptPath
 Write-Color -Text "Script Root Folder - $PSScriptRoot" -Color Cyan -ShowTime
 
-[xml]$Parameters = Get-Content .\Parameters.xml
+$xmlpath = Read-Host "Path to Parameters.xml file "
+[xml]$Parameters = Get-Content $xmlpath\Parameters.xml
 
 Write-Color -Text 'Checking Credentials' -Color DarkCyan -ShowTime
 ########################################

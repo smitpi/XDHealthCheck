@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID 11d2e083-fcea-48c4-bb9f-093840ea5d0e
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME EUV Team
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -27,15 +27,18 @@
 
 .RELEASENOTES
 Created [06/06/2019_06:00] Initital Script Creating
+Updated [06/06/2019_19:26] 
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <# 
 
 .DESCRIPTION 
-  Citrix XenDesktop HTML Health Check Report 
+Citrix XenDesktop HTML Health Check Report
 
 #> 
 

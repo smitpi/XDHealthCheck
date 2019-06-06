@@ -37,6 +37,13 @@
       <Scope>Local</Scope>
     </Variable>
     <Variable>
+      <Name>ParametersFolder</Name>
+      <Value></Value>
+      <!-- Path to where the Parameters.xml will be saved -->
+      <Type>[string]</Type>
+      <Scope>Local</Scope>
+    </Variable>
+    <Variable>    	
       <Name>SaveExcelReport</Name>
       <Value></Value>
       <!-- Save Config Changes and eventlogs to an excel report (true / false) -->

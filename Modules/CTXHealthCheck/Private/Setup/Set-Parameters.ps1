@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID c7ea71fa-ee5a-4a79-9b88-8dc528714142
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME HTPCZA
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -19,23 +19,26 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Date Created - 24/05/2019_19:23
+Created [24/05/2019_19:23]
+Updated [06/06/2019_19:24] 
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <#
 
-.DESCRIPTION
- Citrix XenDesktop HTML Health Check Report
+.DESCRIPTION 
+Citrix XenDesktop HTML Health Check Report
 
 #>
 
@@ -46,6 +49,7 @@ Param()
 
 cls
 [string]$ScriptPath = $PSScriptRoot
+Set-Location $ScriptPath
 
 Write-Host 'Installing needed Modules' -ForegroundColor Cyan
 if ((Get-PSRepository -Name PSGallery).InstallationPolicy -notlike 'Trusted') { Set-PSRepository -Name PSGallery -InstallationPolicy Trusted }
@@ -64,16 +68,14 @@ Write-Color -Text 'Installing Anybox Module' -Color DarkCyan -ShowTime
 if ([bool](Get-Module -Name Anybox) -eq $false) { Install-Module -Name Anybox -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck }
 
 Write-Color -Text 'Installing CTXHealthCheck Module' -Color DarkCyan -ShowTime
-Set-Location -Path $ScriptPath
-Copy-Item (Get-Item ..\..\..\CTXHealthCheck) -Destination 'C:\Program Files\WindowsPowerShell\Modules' -Recurse -Force -Verbose
+Install-Module -Name CTXHealthCheck -Repository PSGallery -Scope AllUsers -AllowClobber
 
-Import-Module 'C:\Program Files\WindowsPowerShell\Modules\CTXHealthCheck' -Force -Verbose
 Import-Module PSWriteColor
 Import-Module BetterCredentials
 
 Write-Color -Text "Script Root Folder - $ScriptPath" -Color Cyan -ShowTime
-if ((Test-Path .\Parameters.xml) -eq $true) { Remove-Item .\Parameters.xml -Verbose }
 [string]$setupemail = Read-Host -Prompt 'Would you like to setup SMTP Emails (y/n)'
+
 if ($setupemail[0] -like 'y') {
 	$smtpClientCredentials = Find-Credential | where target -Like "*Healthcheck_smtp" | Get-Credential -Store
 if ($smtpClientCredentials -eq $null) {
@@ -81,11 +83,9 @@ if ($smtpClientCredentials -eq $null) {
 	Set-Credential -Credential $Account -Target "Healthcheck_smtp" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 }
 
-$xmlfile =	New-Item -Path . -Name Parameters.xml -ItemType File -Verbose
 [xml]$TempParm = Get-Content .\Parameters-Template.xml -Verbose
 }
 else {
-	$xmlfile =	New-Item -Path . -Name Parameters.xml -ItemType File -Verbose
 	[xml]$TempParm = Get-Content .\Parameters-TemplateNoEmail.xml -Verbose
 }
 
@@ -103,9 +103,11 @@ $TempParm.settings.Variables.Variable | foreach {
 	[string]$getnew = Read-Host $_.'#comment'
 	$_.value = $getnew
 }
+$global:ParametersFolder = $TempParm.settings.Variables.Variable[5].Value.ToString()
+$xmlfile = New-Item -Path $ParametersFolder  -Name Parameters.xml -ItemType File -Force -Verbose
 $TempParm.Save($xmlfile.FullName)
+
 
 Write-Color -Text '_________________________________________' -Color Green
 Write-Color -Text 'Setup Complete' -Color green -ShowTime
 Write-Color -Text 'Run Test-Parameters.ps1 to check settings' -Color green -ShowTime -LinesBefore 1
-

@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 42427037-9fe8-465e-a2bf-6d57f9a70509
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME Absa Corp:EUV Team
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -26,12 +26,15 @@
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Date Created - 22/05/2019_19:53
-Date Updated - 22/05/2019_20:18
+Created [22/05/2019_19:53]
+Updated [22/05/2019_20:18]
+Updated [06/06/2019_19:26] 
 
 .PRIVATEDATA
 
 #> 
+
+
 
 
 

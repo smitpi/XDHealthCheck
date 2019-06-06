@@ -3,6 +3,50 @@
 
 .VERSION 1.0.0
 
+.GUID 4f9acc8a-efce-42ba-866f-4bac75727a3e
+
+.AUTHOR Pierre Smit
+
+.COMPANYNAME  
+
+.COPYRIGHT
+
+.TAGS Other
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+Created [06/06/2019_19:24] Initital Script Creating
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ Menu to install ctxhealthcheck 
+
+#> 
+
+Param()
+
+
+
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
 .GUID e1106401-8281-45d1-a9ae-5c6b98bffd45
 
 .AUTHOR Pierre Smit
