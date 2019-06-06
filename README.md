@@ -1,5 +1,4 @@
 # XDHealthCheck
+Functions to connect to a Citrix Farm and extract details for a HTML Healthcheck Dashboard
 
-This Powershell module is used to create data tables of details around a Citrix 7.x Farm.
-
-With all of the data fetched from the farm, a dashboard html file is created.
+To setup everyting, run Show-Menu.ps1 from a Administrator's Prowershell Console
