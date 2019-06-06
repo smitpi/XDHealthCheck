@@ -12,7 +12,7 @@
 RootModule = 'CTXHealthCheck.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.7'
+ModuleVersion = '0.0.8'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -101,14 +101,14 @@ PrivateData = @{
         # LicenseUri = ''
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/smitpi/XDHealthCheck'
 
         # A URL to an icon representing this module.
         # IconUri = ''
 
         # ReleaseNotes of this module
         ReleaseNotes = 'Updated [06/06/2019_06:02] Added the audit script
-Updated [06/06/2019_19:28] Removed unused scripts'
+												Updated [06/06/2019_19:28] Removed unused scripts'
 
         # Prerelease string of this module
         # Prerelease = ''
@@ -117,7 +117,7 @@ Updated [06/06/2019_19:28] Removed unused scripts'
         # RequireLicenseAcceptance = $false
 
         # External dependent modules of this module
-        # ExternalModuleDependencies = @()
+        ExternalModuleDependencies = @('BetterCredentials',' PSWriteColor','ImportExcel','PSWriteHTML')
 
     } # End of PSData hashtable
 
