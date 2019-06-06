@@ -218,7 +218,7 @@ foreach ($DeskG in ($CTXDeliveryGroupApps | where { $_.DeliveryType -like 'Deskt
 		}
 		foreach ($AppAssociatedUser2 in $PublishedApp.AssociatedUserUPNs) {
 			try {
-				$PublishedAppUser += $AppAssociatedUser2
+				if ($AppAssociatedUser2 -ne '') { $PublishedAppUser += $AppAssociatedUser2}
 			}
 			catch { }
 		}

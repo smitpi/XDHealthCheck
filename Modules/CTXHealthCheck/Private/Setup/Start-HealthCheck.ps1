@@ -44,6 +44,7 @@ Param()
 #region 
 [string]$ScriptPath = $PSScriptRoot
 Import-Module CTXHealthCheck -Force -Verbose
+
 Initialize-CitrixHealthCheck -XMLParameterFilePath .\Parameters.xml -Verbose
 #endregion
 
