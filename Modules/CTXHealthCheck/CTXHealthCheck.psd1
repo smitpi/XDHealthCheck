@@ -12,7 +12,7 @@
 RootModule = 'CTXHealthCheck.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.6'
+ModuleVersion = '0.0.7'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -24,7 +24,7 @@ GUID = '39f9295c-353e-4bb7-aee5-0c600dfd5eba'
 Author = 'Pierre Smit'
 
 # Company or vendor of this module
-CompanyName = ''
+CompanyName = ' '
 
 # Copyright statement for this module
 Copyright = '(c) 2019 Pierre Smit. All rights reserved.'
@@ -107,7 +107,8 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Updated [06/06/2019_06:02] Added the audit script'
+        ReleaseNotes = 'Updated [06/06/2019_06:02] Added the audit script
+Updated [06/06/2019_19:28] Removed unused scripts'
 
         # Prerelease string of this module
         # Prerelease = ''
