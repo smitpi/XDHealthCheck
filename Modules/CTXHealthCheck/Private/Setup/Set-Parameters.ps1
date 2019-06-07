@@ -104,9 +104,11 @@ $TempParm.settings.Variables.Variable | foreach {
 	$_.value = $getnew
 }
 $global:ParametersFolder = $TempParm.settings.Variables.Variable[5].Value.ToString()
+
 $xmlfile = New-Item -Path $ParametersFolder  -Name Parameters.xml -ItemType File -Force -Verbose
 $TempParm.Save($xmlfile.FullName)
 
+[System.Environment]::SetEnvironmentVariable('PSParameters',"$ParametersFolder\Parameters.xml",[System.EnvironmentVariableTarget]::User)
 
 Write-Color -Text '_________________________________________' -Color Green
 Write-Color -Text 'Setup Complete' -Color green -ShowTime

@@ -81,7 +81,7 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
 
-Import-Module ..\..\CTXHealthCheck.psm1 -Verbose
+Import-Module CTXHealthCheck -Verbose
 if ((Test-Path -Path $ReportsFolder\Audit) -eq $false) { New-Item -Path "$ReportsFolder\Audit" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 
 [string]$Reportname = $ReportsFolder + "\Audit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
@@ -111,6 +111,11 @@ Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Collectin
 $CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC -GetMachineCatalog -GetDeliveryGroup -GetPublishedApps -CSVExport -Verbose
 $CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 
+$MashineCatalog = $CitrixObjects.MashineCatalog | Select MachineCatalogName,AllocationType,SessionSupport,UnassignedCount,UsedCount,MasterImageVM,MasterImageSnapshotName,MasterImageSnapshotCount,MasterImageVMDate
+$DeliveryGroups = $CitrixObjects.DeliveryGroups | select DesktopGroupName,Enabled,InMaintenanceMode,IncludedUserCSV,IncludeADGroupsCSV
+$PublishedApps = $CitrixObjects.PublishedApps | select DesktopGroupName,ApplicationName,Enabled,CommandLineExecutable,CommandLineArguments,WorkingDirectory,PublishedAppGroupCSV,PublishedAppUserCSV
+
+
 
 ########################################
 ## Setting some table color and settings
@@ -118,10 +123,20 @@ $CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCre
 
 $TableSettings = @{
     Style                  = 'cell-border'
+    DisablePaging          = $true
+    DisableOrdering        = $true
+    DisableInfo            = $true
+    DisableProcessing      = $true
+    DisableResponsiveTable = $true
+    DisableNewLine         = $true
+    DisableSelect          = $true
+    DisableSearch          = $true
+    DisableColumnReorder   = $true
     HideFooter             = $true
+    OrderMulti             = $true
+    DisableStateSave       = $true
     TextWhenNoData         = 'No Data to display here'
 }
-
 $SectionSettings = @{
     HeaderBackGroundColor = 'DarkGray'
     HeaderTextAlignment   = 'center'
@@ -146,14 +161,16 @@ $HeddingText = "XenDesktop Audit for Farm: " + $CitrixRemoteFarmDetails.SiteDeta
 New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname -ShowHTML {
     New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
     New-HTMLSection @SectionSettings  -Content {
-        New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable  @TableSettings  -DataTable $CitrixObjects.MashineCatalog}
+        New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable  @TableSettings  -DataTable $MashineCatalog}
     }
     New-HTMLSection @SectionSettings   -Content {
-        New-HTMLSection -HeaderText 'Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixObjects.DeliveryGroups }
+        New-HTMLSection -HeaderText 'Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $DeliveryGroups }
     }
     New-HTMLSection  @SectionSettings  -Content {
-        New-HTMLSection -HeaderText 'Published Apps' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixObjects.PublishedApps }
+        New-HTMLSection -HeaderText 'Published Apps' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $PublishedApps }
     }
 }
-
+$timer.Stop()
+$timer.Elapsed | select Days,Hours,Minutes,Seconds | fl
+Stop-Transcript
 }
