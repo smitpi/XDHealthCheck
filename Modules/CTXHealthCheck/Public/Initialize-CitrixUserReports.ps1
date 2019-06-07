@@ -162,7 +162,7 @@ $Details
 ########################################
 ## Connect and get info
 #########################################
-$compareusers = Compare-TwoADUsers -Username1 'smitp' -Username2 'ladm' -Verbose
+$compareusers = Compare-TwoADUsers -Username1 $Username1 -Username2 $Username2 -Verbose
 
 
 ########################################

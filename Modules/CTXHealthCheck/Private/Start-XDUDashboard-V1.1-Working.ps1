@@ -150,39 +150,10 @@ $DynamicUserPage = New-UDPage -Url "/dynamic/:Username" -Icon user_o -Endpoint {
         }
 }
 
-$UserPage2 = New-UDPage -Name "Compare Users" -Icon user -Content {
-    New-UDCard -Title (Get-Date -DisplayHint DateTime).ToString()-BackgroundColor $Session:BGColor -FontColor $Session:Color -TextSize Medium -TextAlignment center
-    New-UDLayout -Columns 1 -Content {
-
-    New-UDInput -Title "Compare Users" -Content {
-        New-UDInputField -Name 'User1' -Type textbox -Placeholder 'Username1'
-        New-UDInputField -Name 'User2' -Type textbox -Placeholder 'Username2'
-    } -Endpoint {
-        param([string]$Username1,$Username2)
-
-        New-UDInputAction -RedirectUrl "/dynamic/$Username2"
-    }
-}
-}
-
-$DynamicUserPage1 = New-UDPage -Url "/dynamic/:Username2" -Icon user_o -Endpoint {
-    param($Username1,$Username2)
-    $job = Start-RSJob -ScriptBlock {Initialize-CitrixUserReports -XMLParameterFilePath "$ParametersFolder\Parameters.xml" -Username1 $Username1 -Username2 $Username2}
-	do {
-	Show-UDModal -Content { New-UDHeading -Text "Calculating" } -Persistent
-	Start-Sleep -Seconds 10
-	Hide-UDModal
-	} until ($job.State -notlike 'Running')
-	
-    $UserCompare = Get-Item ((Get-ChildItem $ReportsFolder\audit\User_*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *    
-    New-UDCollapsible -Items {
-    New-UDCollapsibleItem -Icon arrow_circle_right -Content {New-UDHtml ([string](Get-Content $UserCompare.FullName))} -Active -BackgroundColor lightgrey -FontColor black
-}
-}
 
 Get-UDDashboard | Stop-UDDashboard
 
-$Dashboard  = New-UDDashboard -Title "XenDektop Universal Dashboard" -Pages @($CTXHomePage,$Audit,$UserPage1,$DynamicUserPage,$UserPage2,$DynamicUserPage1) -EndpointInitialization $CTXFunctions -Theme $Theme
+$Dashboard  = New-UDDashboard -Title "XenDektop Universal Dashboard" -Pages @($CTXHomePage,$Audit,$UserPage1,$DynamicUserPage) -EndpointInitialization $CTXFunctions -Theme $Theme
 
 Start-UDDashboard -Dashboard $Dashboard -Port 10005
 Start-Process http://localhost:10005
@@ -216,5 +187,10 @@ $CompareUsers = New-UDPage -Name 'ADUser' -Icon user -Title 'Compare users' -Con
 
 $DynamicUserPage = New-UDPage -Url "/dynamic/:User1" -Icon address_book -Endpoint {
 		param @($user1, $user2)
+	Initialize-CitrixUserReports -XMLParameterFilePath "$ParametersFolder\Parameters.xml" -Username1 $user1 -Username2 $user2
+    New-UDInputAction -Content @($lastusercompare = Get-Item ((Get-ChildItem $ReportsFolder\audit\User_*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
+New-UDCollapsible -Items {
+	New-UDCollapsibleItem -Icon arrow_circle_right -Content { New-UDHtml ([string](Get-Content $lastusercompare.FullName)) } -Active -BackgroundColor lightgrey -FontColor black -Title '  Compare User AD Groups' 	
+	})
 }
 #>
