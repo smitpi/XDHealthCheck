@@ -146,6 +146,7 @@ function Get-CTXBrokerDesktopGroup($AdminServer) {
 		} | select Name, DeliveryType, DesktopKind, IsRemotePC, Enabled, TotalDesktops, DesktopsAvailable, DesktopsInUse, DesktopsUnregistered, InMaintenanceMode, Sessions, SessionSupport, TotalApplicationGroups, TotalApplications
 	$ReadAbleDG += $CusObject
 	}
+$ReadAbleDG
 }
 
 function Get-CTXADObjects($AdminServer) {
@@ -184,7 +185,7 @@ $Controllers = Get-CTXControllers -AdminServer $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Machines Details"
 $Machines = Get-CTXBrokerMachine -AdminServer $AdminServer
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Processing] DeliveryGroups Details"
-$DeliveryGroups = Get-CTXBrokerDesktopGroup -AdminServer $AdminServer
+$DeliveryGroups = Get-CTXBrokerDesktopGroup -AdminAddress $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Sessions Details"
 $Sessions = Get-CTXSessions -AdminServer $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] ADObjects Details"

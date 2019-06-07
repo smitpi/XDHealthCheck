@@ -80,15 +80,16 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 		}
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
+Set-Location $PSScriptRoot
+Import-Module ..\CTXHealthCheck.psm1 -Force -Verbose
 
-Import-Module CTXHealthCheck -Verbose
-if ((Test-Path -Path $ReportsFolder\Audit) -eq $false) { New-Item -Path "$ReportsFolder\Audit" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+if ((Test-Path -Path $ReportsFolder\XDAudit) -eq $false) { New-Item -Path "$ReportsFolder\XDAudit" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 
-[string]$Reportname = $ReportsFolder + "\Audit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
-[string]$ExcelReportname = $ReportsFolder + "\Audit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
+[string]$Reportname = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
+[string]$ExcelReportname = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
 
-if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$psfolder\Scripts" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-[string]$Transcriptlog ="$ReportsFolder\logs\XD_Audit_TransmissionLogs." + (get-date -Format yyyy.MM.dd-HH.mm) + ".log"
+if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+[string]$Transcriptlog ="$ReportsFolder\logs\XDAudit_TransmissionLogs." + (get-date -Format yyyy.MM.dd-HH.mm) + ".log"
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 $timer = [Diagnostics.Stopwatch]::StartNew();
@@ -123,18 +124,13 @@ $PublishedApps = $CitrixObjects.PublishedApps | select DesktopGroupName,Applicat
 
 $TableSettings = @{
     Style                  = 'cell-border'
-    DisablePaging          = $true
     DisableOrdering        = $true
-    DisableInfo            = $true
     DisableProcessing      = $true
     DisableResponsiveTable = $true
-    DisableNewLine         = $true
     DisableSelect          = $true
     DisableSearch          = $true
     DisableColumnReorder   = $true
     HideFooter             = $true
-    OrderMulti             = $true
-    DisableStateSave       = $true
     TextWhenNoData         = 'No Data to display here'
 }
 $SectionSettings = @{
@@ -157,7 +153,7 @@ $TableSectionSettings = @{
 #######################
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Building HTML Page"
 
-$HeddingText = "XenDesktop Audit for Farm: " + $CitrixRemoteFarmDetails.SiteDetails.Summary.Name + " on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)
+$HeddingText = "XenDesktop Audit for Farm: " + $CitrixRemoteFarmDetails.SiteDetails.Summary.Name + " on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)  + " " + (Get-Date -Format HH:mm)
 New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname -ShowHTML {
     New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
     New-HTMLSection @SectionSettings  -Content {

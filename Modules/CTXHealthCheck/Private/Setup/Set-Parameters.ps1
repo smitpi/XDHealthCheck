@@ -103,6 +103,7 @@ $TempParm.settings.Variables.Variable | foreach {
 	[string]$getnew = Read-Host $_.'#comment'
 	$_.value = $getnew
 }
+
 $global:ParametersFolder = $TempParm.settings.Variables.Variable[5].Value.ToString()
 
 $xmlfile = New-Item -Path $ParametersFolder  -Name Parameters.xml -ItemType File -Force -Verbose

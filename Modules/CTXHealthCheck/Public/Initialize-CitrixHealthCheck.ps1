@@ -87,12 +87,16 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
 
-Import-Module 'CTXHealthCheck' -Verbose
-[string]$Reportname = $ReportsFolder + "\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
-[string]$ExcelReportname = $ReportsFolder + "\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
+Set-Location $PSScriptRoot
+Import-Module ..\CTXHealthCheck.psm1 -Force -Verbose
 
-if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$psfolder\Scripts" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-[string]$Transcriptlog ="$ReportsFolder\logs\XD_TransmissionLogs." + (get-date -Format yyyy.MM.dd-HH.mm) + ".log"
+if ((Test-Path -Path $ReportsFolder\XDHealth) -eq $false) { New-Item -Path "$ReportsFolder\XDHealth" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+
+[string]$Reportname = $ReportsFolder + "\XDHealth\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
+[string]$ExcelReportname = $ReportsFolder + "\XDHealth\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
+
+if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+[string]$Transcriptlog ="$ReportsFolder\logs\XDHealth_TransmissionLogs." + (get-date -Format yyyy.MM.dd-HH.mm) + ".log"
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 $timer = [Diagnostics.Stopwatch]::StartNew();
@@ -258,7 +262,7 @@ $Conditions_deliverygroup = {
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Building HTML Page"
 $emailbody = New-HTML -TitleText 'Red Flags'  {New-HTMLTable  @TableSettings  -DataTable $flags}
 
-$HeddingText = "XenDesktop Report for Farm: " + $CitrixRemoteFarmDetails.SiteDetails.Summary.Name + " on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)
+$HeddingText = "XenDesktop Report for Farm: " + $CitrixRemoteFarmDetails.SiteDetails.Summary.Name + " on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)  + " " + (Get-Date -Format HH:mm)
 New-HTML -TitleText "XenDesktop Report"  -FilePath $Reportname {
     New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
     New-HTMLSection @SectionSettings  -Content {

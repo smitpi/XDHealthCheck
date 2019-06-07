@@ -85,13 +85,14 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
 
-Import-Module CTXHealthCheck -Verbose
-if ((Test-Path -Path $ReportsFolder\Audit) -eq $false) { New-Item -Path "$ReportsFolder\Audit" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+Set-Location $PSScriptRoot
+Import-Module ..\CTXHealthCheck.psm1 -Force -Verbose
+if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 
-[string]$Reportname = $ReportsFolder + "\Audit\User_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
+[string]$Reportname = $ReportsFolder + "\XDUsers\XD_Users." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 
-if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$psfolder\Scripts" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-[string]$Transcriptlog ="$ReportsFolder\logs\User_Audit_TransmissionLogs." + (get-date -Format yyyy.MM.dd-HH.mm) + ".log"
+if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+[string]$Transcriptlog ="$ReportsFolder\logs\XDUsers_TransmissionLogs." + (get-date -Format yyyy.MM.dd-HH.mm) + ".log"
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 $timer = [Diagnostics.Stopwatch]::StartNew();
@@ -203,19 +204,19 @@ $TableSectionSettings = @{
 ## Building the report
 #######################
 
-$HeddingText = "Report on User Groups " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)
+$HeddingText = "Compared Users on: " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
 New-HTML -TitleText "XenDesktop Report"  -FilePath $Reportname {
     New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
-    New-HTMLSection @SectionSettings  -Content {
+    New-HTMLSection -HeaderText 'User Details' @SectionSettings  -Content {
         New-HTMLSection -HeaderText $compareusers.User1Details.user1Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.userDetailList1 -HideFooter}
         New-HTMLSection -HeaderText $compareusers.User2Details.user2Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.userDetailList2 -HideFooter}
     }
-    New-HTMLSection @SectionSettings   -Content {
+    New-HTMLSection @SectionSettings -HeaderText 'Comparison of the User Groups'   -Content {
         New-HTMLSection -HeaderText $compareusers.User1Details.user1HeaddingMissing @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.User1Missing -HideFooter}
         New-HTMLSection -HeaderText $compareusers.User1Details.user2HeaddingMissing @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.User2Missing -HideFooter}
         New-HTMLSection -HeaderText 'Same Groups' @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.SameGroups -HideFooter}
     }
-    New-HTMLSection @SectionSettings   -Content {
+    New-HTMLSection @SectionSettings -HeaderText 'All User Groups'   -Content {
         New-HTMLSection -HeaderText $compareusers.User1Details.user1Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.allusergroups1  -HideFooter}
         New-HTMLSection -HeaderText  $compareusers.User2Details.user2Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.allusergroups2 -HideFooter}
     }

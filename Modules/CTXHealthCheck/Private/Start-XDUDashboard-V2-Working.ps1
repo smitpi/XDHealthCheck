@@ -128,43 +128,18 @@ $Audit = New-UDPage -Name "Citrix Audit" -Icon database -Content {
 #endregion
 
 #region Page 3
-$UserPage1 = New-UDPage -Name "User Details" -Icon user -Content {
-New-UDCollapsible -Items {
-	New-UDCollapsibleItem -Icon arrow_circle_right -Endpoint {
-        New-UDInput -Title "AD Details" -Endpoint {
-	    param(
-		    [Parameter(Mandatory)]
-		    [UniversalDashboard.ValidationErrorMessage("Invalid user")]
-		    [ValidateScript( { Get-ADUser -Identity $_ })]
-		    [string]$Username)
+$UserPage1 = New-UDPage -Name "User AD Details" -Icon user -Content {
+New-UDInput -Title "AD Details" -Endpoint {
+	param(
+		[Parameter(Mandatory)]
+		[UniversalDashboard.ValidationErrorMessage("Invalid user")]
+		[ValidateScript( { Get-ADUser -Identity $_ })]
+		[string]$Username)
 
-	    New-UDInputAction -RedirectUrl "/dynamic/$Username"
-	    }
-	} -Title "Single user Details"
+	New-UDInputAction -RedirectUrl "/dynamic/$Username"
+	}
+	}
 
-    New-UDCollapsibleItem -Icon arrow_circle_right -Endpoint {
-	New-UDInput -Title "Compare Users" -Content {
-		New-UDInputField -Name 'Username1' -Type textbox -Placeholder 'Username1'
-		New-UDInputField -Name 'Username2' -Type textbox -Placeholder 'Username2'
-	    } -Endpoint {
-		    param([string]$Username1, $Username2)
-            #New-UDInputAction -RedirectUrl "compare/$Username1/$username2"     
-            New-UDInputAction -Content  @(
-        $job = Start-RSJob -ScriptBlock { Initialize-CitrixUserReports -XMLParameterFilePath "$ParametersFolder\Parameters.xml" -Username1 $Username1 -Username2 $Username2 }
-		do {
-			Show-UDModal -Content { New-UDHeading -Text "Calculating" } -Persistent
-			Start-Sleep -Seconds 10
-			Hide-UDModal
-		} until ($job.State -notlike 'Running')
-		    $UserCompare = Get-Item ((Get-ChildItem $ReportsFolder\XDUsers\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *    
-		    New-UDCollapsible -Items {
-		        New-UDCollapsibleItem -Icon arrow_circle_right -Content { New-UDHtml ([string](Get-Content $UserCompare.FullName)) } -Active -BackgroundColor lightgrey -FontColor black
-            }
-        )
-        }
-     } -Title "Compare Two Users"
-}
-}
 #endregion
 
 #region Page 4
@@ -181,7 +156,23 @@ $DynamicUserPage = New-UDPage -Url "/dynamic/:Username" -Icon user_o -Endpoint {
 }
 }
 #endregion
+
 #region Page 5
+$UserPage2 = New-UDPage -Name "Compare Users" -Icon user -Content {
+	New-UDInput -Title "Compare Users" -Content {
+		New-UDInputField -Name 'Username1' -Type textbox -Placeholder 'Username1'
+		New-UDInputField -Name 'Username2' -Type textbox -Placeholder 'Username2'
+	} -Endpoint {
+		param([string]$Username1, $Username2)
+
+        New-UDInputAction -RedirectUrl "compare/$Username1/$username2"
+}
+}
+
+#endregion
+
+
+
 $DynamicUserPage2 = New-UDPage -Url "/compare/:Username1/:$username2" -Icon user_o -Endpoint {
 param($Username1,$Username2)
 
@@ -197,13 +188,10 @@ param($Username1,$Username2)
 		New-UDCollapsibleItem -Icon arrow_circle_right -Content { New-UDHtml ([string](Get-Content $UserCompare.FullName)) } -Active -BackgroundColor lightgrey -FontColor black
         }
 }
-#endregion
-
-
 
 Get-UDDashboard | Stop-UDDashboard
 
-$Dashboard = New-UDDashboard -Title "XenDektop Universal Dashboard" -Pages @($CTXHomePage, $Audit, $UserPage1, $DynamicUserPage,$DynamicUserPage2) -EndpointInitialization $CTXFunctions -Theme $Theme
+$Dashboard = New-UDDashboard -Title "XenDektop Universal Dashboard" -Pages @($CTXHomePage, $Audit, $UserPage1, $DynamicUserPage, $UserPage2,$DynamicUserPage2) -EndpointInitialization $CTXFunctions -Theme $Theme
 
 Start-UDDashboard -Dashboard $Dashboard -Port 10005
 Start-Process http://localhost:10005
