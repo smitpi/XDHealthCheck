@@ -68,7 +68,12 @@ Write-Color -Text 'Installing Anybox Module' -Color DarkCyan -ShowTime
 if ([bool](Get-Module -Name Anybox) -eq $false) { Install-Module -Name Anybox -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck }
 
 Write-Color -Text 'Installing CTXHealthCheck Module' -Color DarkCyan -ShowTime
-Install-Module -Name CTXHealthCheck -Repository PSGallery -Scope AllUsers -AllowClobber
+#Install-Module -Name CTXHealthCheck -Repository PSGallery -Scope AllUsers -AllowClobber
+
+$mod = Get-Item ..\..\..\CTXHealthCheck
+if ((Test-Path 'C:\Program Files\WindowsPowerShell\Modules\CTXHealthCheck') -eq $true) {Remove-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\CTXHealthCheck' -Recurse -Force -Verbose }
+Copy-Item $mod -Destination "C:\Program Files\WindowsPowerShell\Modules\" -Force -Verbose -Recurse
+
 
 Import-Module PSWriteColor
 Import-Module BetterCredentials

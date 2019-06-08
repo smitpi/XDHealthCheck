@@ -44,7 +44,7 @@ Universal Dashboard
 
 Param()
 Set-Location $PSScriptRoot
-Import-Module ..\CTXHealthCheck.psm1 -Force -Verbose
+Import-Module CTXHealthCheck -Force -Verbose
 [XML]$XMLParameter = Get-Content $env:PSParameters
 #[XML]$XMLParameter = Get-Content \\corp.dsarena.com\za\group\120000_Euv\Personal\ABPS835-ADMIN\Powershell\Parameters.xml
 $XMLParameter.Settings.Variables.Variable | ft
@@ -94,11 +94,13 @@ $CTXHomePage = New-UDPage -Name 'Health Check' -Icon home -DefaultHomePage -Cont
 			Start-Sleep -Seconds 10
 			Hide-UDModal
 		} until ($job.State -notlike 'Running')
-	}
-
-	$TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
-    $YesterdayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html| Sort-Object -Property LastWriteTime -Descending)[1]) | select *
-    $2daysReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[2]) | select *
+	    $TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
+        $YesterdayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html| Sort-Object -Property LastWriteTime -Descending)[1]) | select *
+        $2daysReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[2]) | select *
+    }
+    	$TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
+        $YesterdayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html| Sort-Object -Property LastWriteTime -Descending)[1]) | select *
+        $2daysReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[2]) | select *
 
 New-UDCollapsible -Items {
 	New-UDCollapsibleItem -Icon arrow_circle_right -Content { New-UDHtml ([string](Get-Content $TodayReport.FullName)) } -Active -BackgroundColor lightgrey -FontColor black -Title '  Today''s Report'
@@ -109,7 +111,7 @@ New-UDCollapsible -Items {
 #endregion
 
 #region Page2
-$Audit = New-UDPage -Name "Citrix Audit" -Icon database -Content {
+$Audit = New-UDPage -Name "Citrix Audit" -AutoRefresh -RefreshInterval 30 -Icon database -Content {
 	New-UDFabButton -Id 'auditrefresh' -ButtonColor green -Icon arrow_circle_o_up -Size Small -onClick {
 		$job = Start-RSJob -ScriptBlock { Initialize-CitrixAudit -XMLParameterFilePath $env:PSParameters -verbose}
 		do {
@@ -117,6 +119,8 @@ $Audit = New-UDPage -Name "Citrix Audit" -Icon database -Content {
 			Start-Sleep -Seconds 10
 			Hide-UDModal
 		} until ($job.State -notlike 'Running')
+	$TodayAudit = Get-Item ((Get-ChildItem $ReportsFolder\XDAudit\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
+
 	}
 
 	$TodayAudit = Get-Item ((Get-ChildItem $ReportsFolder\XDAudit\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
@@ -138,7 +142,17 @@ New-UDCollapsible -Items {
 		    [ValidateScript( { Get-ADUser -Identity $_ })]
 		    [string]$Username)
 
-	    New-UDInputAction -RedirectUrl "/dynamic/$Username"
+	    New-UDInputAction -Content @(
+	    $validuser = Get-FullUserDetail -UserToQuery $username -DomainFQDN htpcza.com -DomainCredentials $CTXAdmin
+	    $UserDetail = ConvertTo-FormatListView -Data $validuser.UserSummery
+
+	    New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
+	    New-UDLayout -Columns 2 -Content {
+		    New-UDGrid -Id 'UserGrid1'  -Headers @("Name", "Value") -Properties @("Name", "Value") -NoPaging -Endpoint { $UserDetail | Out-UDGridData }
+	        New-UDGrid -Id 'UserGrid2' -Headers @("SamAccountName", "GroupScope") -Properties @("SamAccountName", "GroupScope") -NoPaging -Endpoint { $validuser.AllUserGroups | select SamAccountName, GroupScope | Out-UDGridData }
+}
+
+)
 	    }
 	} -Title "Single user Details"
 
@@ -148,20 +162,20 @@ New-UDCollapsible -Items {
 		New-UDInputField -Name 'Username2' -Type textbox -Placeholder 'Username2'
 	    } -Endpoint {
 		    param([string]$Username1, $Username2)
-            #New-UDInputAction -RedirectUrl "compare/$Username1/$username2"     
-            New-UDInputAction -Content  @(
-        $job = Start-RSJob -ScriptBlock { Initialize-CitrixUserReports -XMLParameterFilePath "$ParametersFolder\Parameters.xml" -Username1 $Username1 -Username2 $Username2 }
-		do {
-			Show-UDModal -Content { New-UDHeading -Text "Calculating" } -Persistent
-			Start-Sleep -Seconds 10
-			Hide-UDModal
-		} until ($job.State -notlike 'Running')
-		    $UserCompare = Get-Item ((Get-ChildItem $ReportsFolder\XDUsers\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *    
-		    New-UDCollapsible -Items {
-		        New-UDCollapsibleItem -Icon arrow_circle_right -Content { New-UDHtml ([string](Get-Content $UserCompare.FullName)) } -Active -BackgroundColor lightgrey -FontColor black
+            
+            $job = Start-RSJob -ScriptBlock { Initialize-CitrixUserReports -XMLParameterFilePath "$ParametersFolder\Parameters.xml" -Username1 $Username1 -Username2 $Username2 }
+            $UserCompare = Get-Item ((Get-ChildItem $ReportsFolder\XDUsers\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *    
+		    do {
+			    Show-UDModal -Content { New-UDHeading -Text "Calculating" } -Persistent
+			    Start-Sleep -Seconds 10
+			    Hide-UDModal
+		    } until ($job.State -notlike 'Running')
+
+
+            New-UDInputAction -Content  @(New-UDHtml ([string](Get-Content $UserCompare.FullName)))
             }
-        )
-        }
+        
+        
      } -Title "Compare Two Users"
 }
 }
@@ -171,14 +185,7 @@ New-UDCollapsible -Items {
 $DynamicUserPage = New-UDPage -Url "/dynamic/:Username" -Icon user_o -Endpoint {
 	param($Username)
 
-	$validuser = Get-FullUserDetail -UserToQuery $username -DomainFQDN htpcza.com -DomainCredentials $CTXAdmin
-	$UserDetail = ConvertTo-FormatListView -Data $validuser.UserSummery
 
-	New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
-	New-UDLayout -Columns 2 -Content {
-		New-UDGrid -Id 'UserGrid1'  -Headers @("Name", "Value") -Properties @("Name", "Value") -NoPaging -Endpoint { $UserDetail | Out-UDGridData }
-	New-UDGrid -Id 'UserGrid2' -Headers @("SamAccountName", "GroupScope") -Properties @("SamAccountName", "GroupScope") -NoPaging -Endpoint { $validuser.AllUserGroups | select SamAccountName, GroupScope | Out-UDGridData }
-}
 }
 #endregion
 #region Page 5
@@ -210,6 +217,9 @@ Start-Process http://localhost:10005
 
 <#
  #
+
+
+
 New-UDInput -Title "Module Info Locator" -Endpoint {
     param($ModuleName) 
 

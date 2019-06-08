@@ -60,7 +60,6 @@ Function Get-FullUserDetail {
                 [Parameter(Mandatory=$true, Position=1)]
                 [ValidateNotNull()]
                 [ValidateNotNullOrEmpty()]
-                [ValidateSet("client.barclayscorp.com", "intranet.barcapint.com","corp.dsarena.com","ds1.ad.absa.co.za")]
                 [string]$DomainFQDN,
                 [Parameter(Mandatory=$true, Position=2)]
                 [ValidateNotNull()]
