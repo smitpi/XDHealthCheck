@@ -109,9 +109,9 @@ if ($CTXAdmin -eq $null) {
 ## Connect and get info
 #########################################
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
-$CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC -GetMachineCatalog -GetDeliveryGroup -GetPublishedApps -CSVExport -Verbose
-$CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
+$CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC -GetMachineCatalog -GetDeliveryGroup -GetPublishedApps -Verbose
 
+$CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 $MashineCatalog = $CitrixObjects.MashineCatalog | Select MachineCatalogName,AllocationType,SessionSupport,UnassignedCount,UsedCount,MasterImageVM,MasterImageSnapshotName,MasterImageSnapshotCount,MasterImageVMDate
 $DeliveryGroups = $CitrixObjects.DeliveryGroups | select DesktopGroupName,Enabled,InMaintenanceMode,IncludedUserCSV,IncludeADGroupsCSV
 $PublishedApps = $CitrixObjects.PublishedApps | select DesktopGroupName,ApplicationName,Enabled,CommandLineExecutable,CommandLineArguments,WorkingDirectory,PublishedAppGroupCSV,PublishedAppUserCSV
@@ -154,18 +154,20 @@ $TableSectionSettings = @{
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Building HTML Page"
 
 $HeddingText = "XenDesktop Audit for Farm: " + $CitrixRemoteFarmDetails.SiteDetails.Summary.Name + " on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)  + " " + (Get-Date -Format HH:mm)
-New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname -ShowHTML {
+New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname  {
     New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
     New-HTMLSection @SectionSettings  -Content {
-        New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable  @TableSettings  -DataTable $MashineCatalog}
+        New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable   -DataTable $MashineCatalog}
     }
     New-HTMLSection @SectionSettings   -Content {
-        New-HTMLSection -HeaderText 'Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $DeliveryGroups }
+        New-HTMLSection -HeaderText 'Delivery Groups' @TableSectionSettings { New-HTMLTable -DataTable $DeliveryGroups }
     }
     New-HTMLSection  @SectionSettings  -Content {
-        New-HTMLSection -HeaderText 'Published Apps' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $PublishedApps }
+        New-HTMLSection -HeaderText 'Published Apps' @TableSectionSettings { New-HTMLTable -DataTable $PublishedApps }
     }
 }
+
+
 $timer.Stop()
 $timer.Elapsed | select Days,Hours,Minutes,Seconds | fl
 Stop-Transcript
