@@ -69,7 +69,7 @@ PowerShellVersion = '3.0'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Get-CitrixConfigurationChanges','Get-CitrixFarmDetails','Get-CitrixLicenseInformation','Get-CitrixServerEventLogs','Get-CitrixSingleServerPerformance','Get-CitrixWebsiteStatus','Get-CitrixXA6RemoteFarmDetails','Get-RDSLicenseInformation','Get-StoreFrontDetails','Get-CitrixObjects','Compare-TwoADUsers','Get-CitrixUserAccessDetails','Get-FullUserDetail','Initialize-CitrixAudit','Initialize-CitrixHealthCheck','Initialize-CitrixUserAccessReport','Initialize-CitrixUserCompare','Initialize-CitrixUserReports','Get-CitrixServerPerformance'
+FunctionsToExport = '*'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
