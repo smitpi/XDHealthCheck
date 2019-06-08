@@ -45,7 +45,7 @@ Universal Dashboard
 Param()
 Set-Location $PSScriptRoot
 Import-Module CTXHealthCheck -Force -Verbose
-[XML]$XMLParameter = Get-Content $env:PSParameters
+[XML]$XMLParameter = Get-Content $PSParameters
 #[XML]$XMLParameter = Get-Content \\corp.dsarena.com\za\group\120000_Euv\Personal\ABPS835-ADMIN\Powershell\Parameters.xml
 $XMLParameter.Settings.Variables.Variable | ft
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
@@ -82,7 +82,7 @@ if ($CTXAdmin -eq $null) {
 
 
 $CTXFunctions = New-UDEndpointInitialization -Module @('CTXHealthCheck', 'PoshRSJob') -Variable @('ReportsFolder', 'ParametersFolder', 'CTXAdmin') -Function @('Get-FullUserDetail')
-$Theme = Get-UDTheme -Name Default
+$Theme = Get-UDTheme -Name blue
 
 #region Page1
 $CTXHomePage = New-UDPage -Name 'Health Check' -Icon home -DefaultHomePage -Content {
@@ -105,7 +105,7 @@ $CTXHomePage = New-UDPage -Name 'Health Check' -Icon home -DefaultHomePage -Cont
 
 
 New-UDCollapsible -Items {
-	New-UDCollapsibleItem -Icon arrow_circle_right -Content {
+	New-UDCollapsibleItem -Content {
         New-UDCard -Id 'Healcheck1' -Endpoint {
         param ($TodayReport)
     	$TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
@@ -113,13 +113,12 @@ New-UDCollapsible -Items {
         }
         
          } -Active  -Title '  Today''s Report'
-	New-UDCollapsibleItem  -Icon arrow_circle_right -Content {
+	New-UDCollapsibleItem -Content {
         New-UDCard -Id 'Healcheck2' -Endpoint {
         param ($YesterdayReport)
         $YesterdayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html| Sort-Object -Property LastWriteTime -Descending)[1]) | select *
         New-UDHtml ([string](Get-Content $YesterdayReport.FullName))} } -Title '  Yesterday''s Report'
-	
-    New-UDCollapsibleItem  -Icon arrow_circle_right -Content {
+    New-UDCollapsibleItem -Content {
         New-UDCard -Id 'Healcheck3' -Endpoint {
         param ($2daysReport)
 
@@ -145,14 +144,14 @@ $Audit = New-UDPage -Name "Citrix Audit" -AutoRefresh -RefreshInterval 5 -Icon d
 
 
 New-UDCollapsible -Items {
-    New-UDCollapsibleItem -Icon arrow_circle_right -Content {
+    New-UDCollapsibleItem -Content {
 
         New-UDCard -Id 'CardDisplayNameCARD' -Endpoint {
         param ($TodayAudit)
           $TodayAudit = Get-Item ((Get-ChildItem $ReportsFolder\XDAudit\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *    
 
 	        New-UDHtml ([string](Get-Content $TodayAudit.FullName))
-        }} -Active -Title '  Today''s Audit'
+        }} -Active -Title '  Latest Citrix Audit'
         
 } 
 }
@@ -162,7 +161,7 @@ New-UDCollapsible -Items {
 $UserPage1 = New-UDPage -Name "User Details" -Icon user -Content {
 New-UDCollapsible -Items {
 	New-UDCollapsibleItem  -Endpoint {
-        New-UDInput -Title "AD Details" -Endpoint {
+        New-UDInput -Title "Username" -Endpoint {
 	    param(
 		    [Parameter(Mandatory)]
 		    [UniversalDashboard.ValidationErrorMessage("Invalid user")]
@@ -188,7 +187,17 @@ New-UDCollapsible -Items {
 		New-UDInputField -Name 'Username1' -Type textbox -Placeholder 'Username1'
 		New-UDInputField -Name 'Username2' -Type textbox -Placeholder 'Username2'
 	    } -Endpoint {
-		    param([string]$Username1, $Username2)
+		param(
+		    [Parameter(Mandatory)]
+		    [UniversalDashboard.ValidationErrorMessage("Invalid user")]
+		    [ValidateScript( { Get-ADUser -Identity $_ })]
+		    [string]$Username1,
+		    [Parameter(Mandatory)]
+		    [UniversalDashboard.ValidationErrorMessage("Invalid user")]
+		    [ValidateScript( { Get-ADUser -Identity $_ })]
+		    [string]$Username2)
+
+
             
              New-UDInputAction -Toast $Username1
              New-UDInputAction -Toast $Username2
@@ -253,11 +262,22 @@ Get-UDDashboard | Stop-UDDashboard
 
 $Dashboard = New-UDDashboard -Title "XenDektop Universal Dashboard" -Pages @($CTXHomePage, $Audit, $UserPage1) -EndpointInitialization $CTXFunctions -Theme $Theme
 
-Start-UDDashboard -Dashboard $Dashboard -Port 10005
-Start-Process http://localhost:10005
+Start-UDDashboard -Dashboard $Dashboard -Port 10006
+Start-Process http://localhost:10006
 
 <#
  #
+New-UDTable -Title "Server Information" -Headers @("Severity", "Name",'Affected Hosts') -Endpoint {
+    1..10 | foreach {
+      [pscustomobject]@{
+        Severity = 'CRITICAL'
+        Name = New-UDLink -Text 'KB123456' -Url "localhost\kb123456"
+        'Affected Hosts' = '123'
+      }
+    }| Out-UDTableData -Property @("Severity", "Name",'Affected Hosts')
+  }
+
+
 
 New-UDCard -Id 'CardDisplayNameCARD' -Title 'DisplayName Card' -Endpoint {
          New-UDParagraph -Text $Session:DisplayName
