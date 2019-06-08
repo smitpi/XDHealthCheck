@@ -78,75 +78,80 @@ if ($CTXAdmin -eq $null) {
 	Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 }
 
-########################################
-## build pages
-#########################################
 
-$CTXFunctions = New-UDEndpointInitialization -Module @("CTXHealthCheck", "PoshRSJob") -Variable @("ReportsFolder", "ParametersFolder", "CTXAdmin", "PSParameters") -Function @("Get-FullUserDetail", "Initialize-CitrixAudit", "Initialize-CitrixHealthCheck")
-$Theme = Get-UDTheme -Name Default 
+
+
+$CTXFunctions = New-UDEndpointInitialization -Module @('CTXHealthCheck', 'PoshRSJob') -Variable @('ReportsFolder', 'ParametersFolder', 'CTXAdmin') -Function @('Get-FullUserDetail')
+$Theme = Get-UDTheme -Name blue
 
 #region Page1
-$CTXHomePage = New-UDPage -Name "Health Check" -Icon home -DefaultHomePage -Content {
+$CTXHomePage = New-UDPage -Name 'Health Check' -Icon home -DefaultHomePage -Content {
 	New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
 
-		$job = Start-RSJob -ScriptBlock { Initialize-CitrixHealthCheck -XMLParameterFilePath $PSParameters -Verbose }
+		$job = Start-RSJob -ScriptBlock { Initialize-CitrixHealthCheck -XMLParameterFilePath $env:PSParameters -Verbose }
 		do {
 			Show-UDModal -Content { New-UDHeading -Text "Refreshing your data" } -Persistent
 			Start-Sleep -Seconds 10
 			Hide-UDModal
 		} until ($job.State -notlike 'Running')
-	} # end button
+	    $TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
+        $YesterdayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html| Sort-Object -Property LastWriteTime -Descending)[1]) | select *
+        $2daysReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[2]) | select *
 
-	$TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
-$YesterdayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[1]) | select *
-$2daysReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[2]) | select *
-
-Sync-UDElement -Id 'Healcheck1'
-Sync-UDElement -Id 'Healcheck2'
-Sync-UDElement -Id 'Healcheck3'
+        Sync-UDElement -Id 'Healcheck1'
+        Sync-UDElement -Id 'Healcheck2'
+        Sync-UDElement -Id 'Healcheck3'
+} # end button
 
 
 New-UDCollapsible -Items {
 	New-UDCollapsibleItem -Content {
-		New-UDCard -Id 'Healcheck1' -Endpoint {
-			param ($TodayReport)
-			New-UDHtml ([string](Get-Content $TodayReport.FullName))
-		} 
-	} -Active  -Title '  Today''s Report'
+        New-UDCard -Id 'Healcheck1' -Endpoint {
+        param ($TodayReport)
+    	$TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
+        New-UDHtml ([string](Get-Content $TodayReport.FullName))
+        }
+        
+         } -Active  -Title '  Today''s Report'
+	New-UDCollapsibleItem -Content {
+        New-UDCard -Id 'Healcheck2' -Endpoint {
+        param ($YesterdayReport)
+        $YesterdayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html| Sort-Object -Property LastWriteTime -Descending)[1]) | select *
+        New-UDHtml ([string](Get-Content $YesterdayReport.FullName))} } -Title '  Yesterday''s Report'
+    New-UDCollapsibleItem -Content {
+        New-UDCard -Id 'Healcheck3' -Endpoint {
+        param ($2daysReport)
 
-	New-UDCollapsibleItem -Content {
-		New-UDCard -Id 'Healcheck2' -Endpoint {
-			param ($YesterdayReport)
-			New-UDHtml ([string](Get-Content $YesterdayReport.FullName)) } } -Title '  Yesterday''s Report'
-    
-	New-UDCollapsibleItem -Content {
-		New-UDCard -Id 'Healcheck3' -Endpoint {
-			param ($2daysReport)
-			New-UDHtml ([string](Get-Content $2daysReport.FullName)) } } -Title '  2 Days Ago''s Report'
- 
-}
+        $2daysReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[2]) | select *
+        New-UDHtml ([string](Get-Content $2daysReport.FullName)) }} -Title '  2 Days Ago''s Report'
+} 
 }
 #endregion
 
 #region Page2
-$Audit = New-UDPage -Name "Citrix Audit"  -Icon database -Content {
+$Audit = New-UDPage -Name "Citrix Audit" -AutoRefresh -RefreshInterval 5 -Icon database -Content {
 	New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
 
-		$job = Start-RSJob -ScriptBlock { Initialize-CitrixAudit -XMLParameterFilePath $PSParameters -Verbose }
+		$job = Start-RSJob -ScriptBlock { Initialize-CitrixAudit -XMLParameterFilePath $env:PSParameters -Verbose }
 		do {
 			Show-UDModal -Content { New-UDHeading -Text "Refreshing your data" } -Persistent
 			Start-Sleep -Seconds 10
 			Hide-UDModal
 		} until ($job.State -notlike 'Running')
-	} # end button
-	$TodayAudit = Get-Item ((Get-ChildItem $ReportsFolder\XDAudit\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *    
-Sync-UDElement -Id 'CardDisplayNameCARD'
+    $TodayAudit = Get-Item ((Get-ChildItem $ReportsFolder\XDAudit\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *    
+    Sync-UDElement -Id 'CardDisplayNameCARD'
+} # end button
+
+
 New-UDCollapsible -Items {
-	New-UDCollapsibleItem -Content {
-		New-UDCard -Id 'CardDisplayNameCARD' -Endpoint {
-			param ($TodayAudit)
-			New-UDHtml ([string](Get-Content $TodayAudit.FullName))
-		} } -Active -Title '  Latest Citrix Audit'
+    New-UDCollapsibleItem -Content {
+
+        New-UDCard -Id 'CardDisplayNameCARD' -Endpoint {
+        param ($TodayAudit)
+          $TodayAudit = Get-Item ((Get-ChildItem $ReportsFolder\XDAudit\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *    
+
+	        New-UDHtml ([string](Get-Content $TodayAudit.FullName))
+        }} -Active -Title '  Latest Citrix Audit'
         
 } 
 }
@@ -154,93 +159,93 @@ New-UDCollapsible -Items {
 
 #region Page 3
 $UserPage1 = New-UDPage -Name "User Details" -Icon user -Content {
-	New-UDCollapsible -Items {
-		New-UDCollapsibleItem  -Endpoint {
-			New-UDInput -Title "Username" -Endpoint {
-				param(
-					[Parameter(Mandatory)]
-					[UniversalDashboard.ValidationErrorMessage("Invalid user")]
-					[ValidateScript( { Get-ADUser -Identity $_ })]
-					[string]$Username)
+New-UDCollapsible -Items {
+	New-UDCollapsibleItem  -Endpoint {
+        New-UDInput -Title "Username" -Endpoint {
+	    param(
+		    [Parameter(Mandatory)]
+		    [UniversalDashboard.ValidationErrorMessage("Invalid user")]
+		    [ValidateScript( { Get-ADUser -Identity $_ })]
+		    [string]$Username)
 
-				New-UDInputAction -Content @(
+	    New-UDInputAction -Content @(
 	    $validuser = Get-FullUserDetail -UserToQuery $username -DomainFQDN htpcza.com -DomainCredentials $CTXAdmin
 	    $UserDetail = ConvertTo-FormatListView -Data $validuser.UserSummery
 
 	    New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
 	    New-UDLayout -Columns 2 -Content {
 		    New-UDGrid -Id 'UserGrid1'  -Headers @("Name", "Value") -Properties @("Name", "Value") -NoPaging -Endpoint { $UserDetail | Out-UDGridData }
-					New-UDGrid -Id 'UserGrid2' -Headers @("SamAccountName", "GroupScope") -Properties @("SamAccountName", "GroupScope") -NoPaging -Endpoint { $validuser.AllUserGroups | select SamAccountName, GroupScope | Out-UDGridData }
-			}
+	        New-UDGrid -Id 'UserGrid2' -Headers @("SamAccountName", "GroupScope") -Properties @("SamAccountName", "GroupScope") -NoPaging -Endpoint { $validuser.AllUserGroups | select SamAccountName, GroupScope | Out-UDGridData }
+}
 
-		)
-	}
-} -Title "Single user Details" -FontColor black
+)
+	    }
+	} -Title "Single user Details" -FontColor black
 
-New-UDCollapsibleItem -Endpoint {
+    New-UDCollapsibleItem -Endpoint {
 	New-UDInput -Title "Compare Users" -Content {
 		New-UDInputField -Name 'Username1' -Type textbox -Placeholder 'Username1'
 		New-UDInputField -Name 'Username2' -Type textbox -Placeholder 'Username2'
-	} -Endpoint {
+	    } -Endpoint {
 		param(
-			[Parameter(Mandatory)]
-			[UniversalDashboard.ValidationErrorMessage("Invalid user")]
-			[ValidateScript( { Get-ADUser -Identity $_ })]
-			[string]$Username1,
-			[Parameter(Mandatory)]
-			[UniversalDashboard.ValidationErrorMessage("Invalid user")]
-			[ValidateScript( { Get-ADUser -Identity $_ })]
-			[string]$Username2)
+		    [Parameter(Mandatory)]
+		    [UniversalDashboard.ValidationErrorMessage("Invalid user")]
+		    [ValidateScript( { Get-ADUser -Identity $_ })]
+		    [string]$Username1,
+		    [Parameter(Mandatory)]
+		    [UniversalDashboard.ValidationErrorMessage("Invalid user")]
+		    [ValidateScript( { Get-ADUser -Identity $_ })]
+		    [string]$Username2)
 
 
             
-		New-UDInputAction -Toast $Username1
-		New-UDInputAction -Toast $Username2
+             New-UDInputAction -Toast $Username1
+             New-UDInputAction -Toast $Username2
 
-		$compareUsers = Compare-TwoADUsers -Username1 $Username1 -Username2 $Username2 -Verbose
+            $compareUsers = Compare-TwoADUsers -Username1 $Username1 -Username2 $Username2 -Verbose
 
-		New-UDInputAction -Content  @(
-			New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
-			New-UDLayout -Columns 2 -Content {
-				New-UDGrid -Title $compareusers.User1Details.user1Headding -Endpoint { $compareusers.User1Details.userDetailList1 | Out-UDGridData }
-			New-UDGrid -Title $compareusers.User2Details.user2Headding -Endpoint { $compareusers.User2Details.userDetailList2 | Out-UDGridData }
-	}
-	New-UDLayout -Columns 3 -Content {
-		New-UDGrid -Title $compareusers.User1Details.user1HeaddingMissing -Endpoint { $compareusers.User1Details.User1Missing | Out-UDGridData }
-	New-UDGrid -Title $compareusers.User2Details.user2HeaddingMissing -Endpoint { $compareusers.User2Details.User2Missing | Out-UDGridData }
-New-UDGrid -Title 'Same Groups' -Endpoint { $compareusers.SameGroups | Out-UDGridData }
-}
-New-UDLayout -Columns 2 -Content {
-	New-UDGrid -Title $compareusers.User1Details.user1Headding -Endpoint { $compareusers.User1Details.allusergroups1 | Out-UDGridData }
-New-UDGrid -Title $compareusers.User2Details.user2Headding -Endpoint { $compareusers.User2Details.allusergroups2 | Out-UDGridData }
-}
-)
+            New-UDInputAction -Content  @(
+            New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
+            New-UDLayout -Columns 2 -Content{
+                     New-UDGrid -Title $compareusers.User1Details.user1Headding -Endpoint {$compareusers.User1Details.userDetailList1 | Out-UDGridData}
+                     New-UDGrid -Title $compareusers.User2Details.user2Headding -Endpoint {$compareusers.User2Details.userDetailList2 | Out-UDGridData}
+            }
+            New-UDLayout -Columns 3 -Content{
+                     New-UDGrid -Title $compareusers.User1Details.user1HeaddingMissing -Endpoint {$compareusers.User1Details.User1Missing | Out-UDGridData}
+                     New-UDGrid -Title $compareusers.User2Details.user2HeaddingMissing -Endpoint {$compareusers.User2Details.User2Missing | Out-UDGridData}
+                     New-UDGrid -Title 'Same Groups' -Endpoint { $compareusers.SameGroups | Out-UDGridData}
+            }
+            New-UDLayout -Columns 2 -Content{
+                     New-UDGrid -Title $compareusers.User1Details.user1Headding -Endpoint {$compareusers.User1Details.allusergroups1 | Out-UDGridData}
+                     New-UDGrid -Title $compareusers.User2Details.user2Headding -Endpoint {$compareusers.User2Details.allusergroups2 | Out-UDGridData}
+            }
+            )
 
 
-}
+        }
         
-} -Title "Compare Two Users" -FontColor black
+     } -Title "Compare Two Users" -FontColor black
 
-New-UDCollapsibleItem  -Endpoint {
-	New-UDInput -Title "Username" -Endpoint {
-		param(
-			[Parameter(Mandatory)]
-			[UniversalDashboard.ValidationErrorMessage("Invalid user")]
-			[ValidateScript( { Get-ADUser -Identity $_ })]
-			[string]$Username)
+	New-UDCollapsibleItem  -Endpoint {
+        New-UDInput -Title "Username" -Endpoint {
+	    param(
+		    [Parameter(Mandatory)]
+		    [UniversalDashboard.ValidationErrorMessage("Invalid user")]
+		    [ValidateScript( { Get-ADUser -Identity $_ })]
+		    [string]$Username)
 
-		New-UDInputAction -Content @(
-			$UserDetail = Get-CitrixUserAccessDetails -Username $Username -AdminServer $CTXDDC -Verbose
-			$userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
-		$DesktopsCombined = $UserDetail.DirectPublishedDesktops + $UserDetail.PublishedDesktops | sort -Property DesktopGroupName -Unique
-	New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
-	New-UDLayout -Columns 4 -Content {
-		New-UDGrid -Title 'User details' -Endpoint { $userDetailList | Out-UDGridData }
-	New-UDGrid -Title 'Current Applications' -Endpoint { ($UserDetail.AccessPublishedApps | select PublishedName, Description, enabled) | Out-UDGridData }
-New-UDGrid -Title 'Current Desktops' -Endpoint { $DesktopsCombined | Out-UDGridData }
-New-UDGrid -Title 'Available Applications' -Endpoint { ($UserDetail.NoAccessPublishedApps | select PublishedName, Description, enabled) | Out-UDGridData }
-}
-)
+	    New-UDInputAction -Content @(
+        $UserDetail = Get-CitrixUserAccessDetails -Username $Username -AdminServer $CTXDDC -Verbose
+        $userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
+        $DesktopsCombined = $UserDetail.DirectPublishedDesktops + $UserDetail.PublishedDesktops | sort -Property DesktopGroupName -Unique
+            New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
+            New-UDLayout -Columns 4 -Content{
+                     New-UDGrid -Title 'User details' -Endpoint {$userDetailList | Out-UDGridData}
+                     New-UDGrid -Title 'Current Applications' -Endpoint {($UserDetail.AccessPublishedApps | Select PublishedName,Description,enabled) | Out-UDGridData}
+                     New-UDGrid -Title 'Current Desktops' -Endpoint {$DesktopsCombined | Out-UDGridData}
+                     New-UDGrid -Title 'Available Applications' -Endpoint {($UserDetail.NoAccessPublishedApps  | Select PublishedName,Description,enabled) | Out-UDGridData}
+           }
+           )
 
 
 
@@ -251,9 +256,7 @@ New-UDGrid -Title 'Available Applications' -Endpoint { ($UserDetail.NoAccessPubl
 }
 #endregion
 
-########################################
-## Build dashboard
-#########################################
+
 
 Get-UDDashboard | Stop-UDDashboard
 
