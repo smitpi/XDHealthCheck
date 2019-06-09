@@ -112,8 +112,8 @@ function Install-CTXHealthCheckParameters {
 		Write-Color -Text "Script Root Folder - $ScriptPath" -Color Cyan -ShowTime
 		[string]$setupemail = Read-Host -Prompt 'Would you like to setup SMTP Emails (y/n)'
 
-		if ($setupemail[0] -like 'y') { [xml]$TempParm = Get-Content .\Parameters-Template.xml -Verbose }
-		else { [xml]$TempParm = Get-Content .\Parameters-TemplateNoEmail.xml -Verbose }
+		if ($setupemail[0] -like 'y') { [xml]$TempParm = Get-Content  $PSScriptRoot\Parameters-Template.xml -Verbose }
+		else { [xml]$TempParm = Get-Content  $PSScriptRoot\Parameters-TemplateNoEmail.xml -Verbose }
 
 		if ($setupemail[0] -like 'y') {
 			$smtpClientCredentials = Find-Credential | where target -Like "*Healthcheck_smtp" | Get-Credential -Store
@@ -137,7 +137,7 @@ $TempParm.settings.Variables.Variable | foreach {
 }
 
 $ParametersFolder = $TempParm.settings.Variables.Variable[5].Value.ToString()
-$PSParameters = $ParametersFolder + "\Parameters.xml"
+$global:PSParameters = $ParametersFolder + "\Parameters.xml"
 $xmlfile = New-Item -Path $ParametersFolder  -Name Parameters.xml -ItemType File -Force -Verbose
 $TempParm.Save($xmlfile.FullName)
 
@@ -251,7 +251,7 @@ do {
 	switch ($selection) {
 		'1' { Set-Parameters }
 		'2' { Test-Parameters }
-		'3' { Initialize-CitrixHealthCheck -XMLParameterFilePath $env:PSParameters -Verbose }
+		'3' { Initialize-CitrixHealthCheck -XMLParameterFilePath $PSParameters -Verbose }
 		
 	}
 }
