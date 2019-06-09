@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID 310be7d5-f671-4eaa-8011-8552cdcfc75c
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME EUV Team
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -26,16 +26,19 @@
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Date Created - 07/06/2019_04:05
+Created [07/06/2019_04:05]
+Updated [09/06/2019_09:18] 
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <# 
 
 .DESCRIPTION 
- Reports on user details 
+Reports on user details
 
 #> 
 
@@ -132,7 +135,6 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 	}
 
 Set-Location $PSScriptRoot
-Import-Module ..\CTXHealthCheck.psm1 -Force -Verbose
 if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 
 [string]$Reportname = $ReportsFolder + "\XDUsers\XD_Users." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"

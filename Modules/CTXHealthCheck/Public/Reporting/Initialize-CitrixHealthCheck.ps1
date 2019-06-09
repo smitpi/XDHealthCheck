@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID bc7d3016-a1c9-41b7-a1f9-fa20da99f891
 
@@ -28,7 +28,8 @@
 .RELEASENOTES
 Created [22/05/2019_19:17]
 Updated [24/05/2019_19:25]
-Updated [06/06/2019_19:26] 
+Updated [06/06/2019_19:26]
+Updated [09/06/2019_09:18] 
 
 .PRIVATEDATA
 
@@ -38,6 +39,7 @@ Updated [06/06/2019_19:26]
 #Requires -Module PSWriteColor
 #Requires -Module ImportExcel
 #Requires -Module PSWriteHTML
+
 
 
 
@@ -88,7 +90,6 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 	}
 
 Set-Location $PSScriptRoot
-Import-Module ..\CTXHealthCheck.psm1 -Force -Verbose
 
 if ((Test-Path -Path $ReportsFolder\XDHealth) -eq $false) { New-Item -Path "$ReportsFolder\XDHealth" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 

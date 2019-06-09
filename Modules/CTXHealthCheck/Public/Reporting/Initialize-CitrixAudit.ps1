@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 11d2e083-fcea-48c4-bb9f-093840ea5d0e
 
@@ -27,11 +27,14 @@
 
 .RELEASENOTES
 Created [06/06/2019_06:00] Initital Script Creating
-Updated [06/06/2019_19:26] 
+Updated [06/06/2019_19:26]
+Updated [09/06/2019_09:18] 
 
 .PRIVATEDATA
 
 #> 
+
+
 
 
 
@@ -81,7 +84,6 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
 Set-Location $PSScriptRoot
-Import-Module ..\CTXHealthCheck.psm1 -Force -Verbose
 
 if ((Test-Path -Path $ReportsFolder\XDAudit) -eq $false) { New-Item -Path "$ReportsFolder\XDAudit" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 

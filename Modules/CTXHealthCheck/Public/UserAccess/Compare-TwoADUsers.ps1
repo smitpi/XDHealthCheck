@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID d972299f-af10-4c8b-a5fa-1ce80d8892af
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME EUV Team
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -26,16 +26,19 @@
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Date Created - 07/06/2019_03:58
+Created [07/06/2019_03:58]
+Updated [09/06/2019_09:18] 
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <# 
 
 .DESCRIPTION 
- Find the diferences in ad groups 
+Find the diferences in ad groups
 
 #> 
 

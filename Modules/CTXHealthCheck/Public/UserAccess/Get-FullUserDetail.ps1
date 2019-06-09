@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 8f756c95-9e99-4932-bdd9-b63c4b98405b
 
@@ -28,13 +28,15 @@
 .RELEASENOTES
 Created [23/05/2019_00:00]
 Updated [24/05/2019_19:25]
-Updated [06/06/2019_19:26] 
+Updated [06/06/2019_19:26]
+Updated [09/06/2019_09:18] 
 
 .PRIVATEDATA
 
 #> 
 
 #Requires -Module ActiveDirectory
+
 
 
 

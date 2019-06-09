@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.1
 
 .GUID 144e3fd9-5999-4364-bdd6-99e1a6451adf
 
@@ -27,14 +27,11 @@
 
 .RELEASENOTES
 Created [06/06/2019_04:01]
-Updated [06/06/2019_19:25]
-Updated [09/06/2019_09:18] 
+Updated [06/06/2019_19:25] 
 
 .PRIVATEDATA
 
 #> 
-
-
 
 
 
@@ -85,7 +82,7 @@ if ($CTXAdmin -eq $null) {
 ## build pages
 #########################################
 
-$CTXFunctions = New-UDEndpointInitialization -Module @("CTXHealthCheck", "PoshRSJob") -Variable @("ReportsFolder", "ParametersFolder", "CTXAdmin", "PSParameters") -Function @("Get-FullUserDetail", "Initialize-CitrixAudit", "Initialize-CitrixHealthCheck")
+$CTXFunctions = New-UDEndpointInitialization -Module @("CTXHealthCheck", "PoshRSJob") -Variable @(" $CTXDDC","ReportsFolder", "ParametersFolder", "CTXAdmin", "PSParameters") -Function @("Get-FullUserDetail", "Initialize-CitrixAudit", "Initialize-CitrixHealthCheck")
 $Theme = Get-UDTheme -Name Default 
 
 #region Page1
@@ -235,6 +232,10 @@ New-UDGrid -Title 'Available Applications' -Endpoint { ($UserDetail.NoAccessPubl
 }
 #endregion
 
+
+
+man New-UDEndpoint -ShowWindow
+
 ########################################
 ## Build dashboard
 #########################################
@@ -248,6 +249,54 @@ Start-Process http://localhost:10007
 
 <#
  #
+
+
+ #region Page 4
+$XDUD = New-UDPage -Name "XD Dashboard" -Icon server -Content {
+########################################
+## Build other variables
+#########################################
+$CTXControllers = Invoke-Command -ComputerName $CTXDDC -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-BrokerController | select dnsname } | foreach { $_.dnsname }
+$CTXLicenseServer = Invoke-Command -ComputerName $CTXDDC -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-BrokerSite -AdminAddress $AdminServer | select LicenseServerName } | foreach { $_.LicenseServerName }
+$CTXStoreFrontFarm = Invoke-Command -ComputerName $CTXStoreFront -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-STFServerGroup | select -ExpandProperty ClusterMembers | select hostname | foreach { ([System.Net.Dns]::GetHostByName(($_.hostname))).Hostname } }
+$CTXCore = $CTXControllers + $CTXStoreFrontFarm + $CTXLicenseServer | sort -Unique
+
+########################################
+## Connect and get info
+########################################
+Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
+$CitrixLicenseInformation = Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
+$CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
+$CitrixServerEventLogs = Get-CitrixServerEventLogs -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin -Verbose
+$RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicensServer  -RemoteCredentials $CTXAdmin -Verbose
+$CitrixConfigurationChanges = Get-CitrixConfigurationChanges -AdminServer $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin -Verbose
+$StoreFrontDetails = Get-StoreFrontDetails -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
+#$ServerPerformance = Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin -Verbose
+
+
+$HeddingText = "XenDesktop Report for Farm: " + $CitrixRemoteFarmDetails.SiteDetails.Summary.Name + " on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)  + " " + (Get-Date -Format HH:mm)
+
+New-UDCard -Text $HeddingText -TextSize Medium -TextAlignment center
+New-UDLayout -Columns 1 -Content{
+       New-UDGrid -Title 'Citrix Sessions' -Endpoint {$CitrixRemoteFarmDetails.SessionCounts| Out-UDGridData}
+       New-UDGrid -Title 'Citrix Controllers' -Endpoint { $CitrixRemoteFarmDetails.Controllers.Summary | Out-UDGridData}
+       New-UDGrid -Title 'Citrix DB Connection' -Endpoint {  $CitrixRemoteFarmDetails.DBConnection | Out-UDGridData}
+       New-UDGrid -Title 'Citrix Licenses' -Endpoint {$CitrixLicenseInformation | Out-UDGridData}
+       New-UDGrid -Title 'RDS Licenses' -Endpoint {  $RDSLicenseInformation.$RDSLicensType| Out-UDGridData}
+       New-UDGrid -Title 'Citrix Error Counts' -Endpoint {   ($CitrixServerEventLogs.SingleServer | select ServerName, Errors, Warning)| Out-UDGridData}
+       New-UDGrid -Title 'Citrix Events Top Events' -Endpoint {  ($CitrixServerEventLogs.TotalProvider | Select-Object -First $CTXCore.count) | Out-UDGridData}
+       New-UDGrid -Title 'StoreFront Site' -Endpoint {   $StoreFrontDetails.SiteDetails| Out-UDGridData}
+       New-UDGrid -Title 'StoreFront Server' -Endpoint {  $StoreFrontDetails.ServerDetails | Out-UDGridData}
+       New-UDGrid -Title 'Citrix Config Changes in the last 7 days' -Endpoint {  ($CitrixConfigurationChanges.Summary | where { $_.name -ne "" } | Sort-Object count -Descending | select -First 5 -Property count, name) | Out-UDGridData}
+       New-UDGrid -Title 'Citrix Server Performace' -Endpoint {  ($ServerPerformance)| Out-UDGridData}
+       New-UDGrid -Title 'Citrix Delivery Groups' -Endpoint {  $CitrixRemoteFarmDetails.DeliveryGroups| Out-UDGridData}
+       New-UDGrid -Title 'Citrix UnRegistered Desktops' -Endpoint {  $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops| Out-UDGridData}
+       New-UDGrid -Title 'Citrix UnRegistered Servers' -Endpoint {  $CitrixRemoteFarmDetails.Machines.UnRegisteredServers| Out-UDGridData}
+       New-UDGrid -Title 'Citrix Tainted Objects' -Endpoint {  $CitrixRemoteFarmDetails.ADObjects.TaintedObjects| Out-UDGridData}
+}
+}
+#endregion
+
  #region Page2
 $Audit = New-UDPage -Name "Citrix Audit"  -Icon database -Content {
 	New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
