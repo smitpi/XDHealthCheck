@@ -31,6 +31,7 @@ Updated [06/06/2019_19:26]
 Updated [09/06/2019_09:18] 
 
 .PRIVATEDATA
+Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 
 #> 
 

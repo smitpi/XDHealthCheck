@@ -39,7 +39,7 @@ Updated [09/06/2019_09:18]
 
 .DESCRIPTION 
 User Access report
-
+Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 #> 
 
 Param()

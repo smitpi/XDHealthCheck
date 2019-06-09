@@ -12,7 +12,7 @@
 RootModule = 'CTXHealthCheck.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.9'
+ModuleVersion = '0.0.10'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -77,7 +77,8 @@ FunctionsToExport = 'Get-CitrixConfigurationChanges', 'Get-CitrixFarmDetails',
                'Get-CitrixUserAccessDetails', 'Get-FullUserDetail', 
                'Initialize-CitrixAudit', 'Initialize-CitrixHealthCheck', 
                'Initialize-CitrixUserAccessReport', 'Initialize-CitrixUserCompare', 
-               'Initialize-CitrixUserReports', 'Get-CitrixServerPerformance','Install-CTXHealthCheckParameters'
+               'Initialize-CitrixUserReports', 'Get-CitrixServerPerformance', 
+               'Install-CTXHealthCheckParameters'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = '*'
@@ -103,7 +104,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Citrix'
+        Tags = 'Citrix','Citrix'
 
         # A URL to the license for this module.
         # LicenseUri = ''
@@ -117,7 +118,8 @@ PrivateData = @{
         # ReleaseNotes of this module
         ReleaseNotes = 'Updated [06/06/2019_06:02] Added the audit script
 												Updated [06/06/2019_19:28] Removed unused scripts
-												Updated [09/06/2019_09:19] '
+												Updated [09/06/2019_09:19] 
+Updated [09/06/2019_13:10] '
 
         # Prerelease string of this module
         # Prerelease = ''

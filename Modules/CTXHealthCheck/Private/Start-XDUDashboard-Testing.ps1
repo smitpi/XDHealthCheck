@@ -1,4 +1,48 @@
-﻿
+
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
+.GUID 7e12eb19-2c68-42cc-94d4-ba8fa2fd7161
+
+.AUTHOR Pierre Smit
+
+.COMPANYNAME  
+
+.COPYRIGHT
+
+.TAGS Citrix
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+Created [09/06/2019_13:08] Initital Script Creating
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ ctxhealthcheck 
+
+#> 
+
+Param()
+
+
+
 $CTXFunctions = New-UDEndpointInitialization -Module @("CTXHealthCheck", "PoshRSJob") -Variable @("ReportsFolder", "ParametersFolder", "CTXAdmin", "PSParameters","$env:PSParameters") -Function @("Get-FullUserDetail", "Initialize-CitrixAudit", "Initialize-CitrixHealthCheck")
 $Theme = Get-UDTheme -Name Default 
 
