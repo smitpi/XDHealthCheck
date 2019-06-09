@@ -48,7 +48,7 @@ Universal Dashboard
 Param()
 Set-Location $PSScriptRoot
 
-[XML]$XMLParameter = Get-Content $env:PSParameters
+[XML]$XMLParameter = Get-Content $CTXParameters
 $XMLParameter.Settings.Variables.Variable | ft
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
@@ -101,13 +101,13 @@ $CTXHomePage = New-UDPage -Name "Health Check" -Icon home -DefaultHomePage -Cont
 } # onclick
 New-UDCollapsible -Items {
     New-UDCollapsibleItem -Title 'Latest Health Check Report'-Content {
-    New-UDCard -Id 'Healcheck1' -Endpoint {
+    New-UDCard -Id 'Healcheck1' -BackgroundColor grey -Endpoint {
 	param ($TodayReport)
     $TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
 	New-UDHtml ([string](Get-Content $TodayReport.FullName))
     }
-} -Active
-}
+} -Active -BackgroundColor grey
+} -BackgroundColor grey
 }
 #endregion
 
