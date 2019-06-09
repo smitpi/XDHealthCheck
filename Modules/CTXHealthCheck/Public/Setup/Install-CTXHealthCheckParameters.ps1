@@ -89,27 +89,22 @@ function Install-CTXHealthCheckParameters {
 
 		Write-Host 'Installing needed Modules' -ForegroundColor Cyan
 		if ((Get-PSRepository -Name PSGallery).InstallationPolicy -notlike 'Trusted') { Set-PSRepository -Name PSGallery -InstallationPolicy Trusted }
-		if ([bool](Get-Module -Name PSWriteColor) -eq $false) { Install-Module -Name PSWriteColor -RequiredVersion 0.85 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck }
+		if ([bool](Get-Module -Name PSWriteColor) -eq $false) { Install-Module -Name PSWriteColor -RequiredVersion 0.85 -Repository PSGallery -AllowClobber -SkipPublisherCheck }
 
 		Write-Color -Text 'Installing BetterCredentials Module' -Color DarkCyan -ShowTime
-		if ([bool](Get-Module -Name BetterCredentials) -eq $false) { Install-Module -Name BetterCredentials -RequiredVersion 4.5 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck }
+		if ([bool](Get-Module -Name BetterCredentials) -eq $false) { Install-Module -Name BetterCredentials -RequiredVersion 4.5 -Repository PSGallery -AllowClobber -SkipPublisherCheck }
 
 		Write-Color -Text 'Installing ImportExcel Module' -Color DarkCyan -ShowTime
-		if ([bool](Get-Module -Name ImportExcel) -eq $false) { Install-Module -Name ImportExcel -RequiredVersion 6.0.0 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck }
+		if ([bool](Get-Module -Name ImportExcel) -eq $false) { Install-Module -Name ImportExcel -RequiredVersion 6.0.0 -Repository PSGallery -AllowClobber -SkipPublisherCheck }
 
 		Write-Color -Text 'Installing PSWriteHTML Module' -Color DarkCyan -ShowTime
-		if ([bool](Get-Module -Name PSWriteHTML) -eq $false) { Install-Module -Name PSWriteHTML -RequiredVersion 0.0.32 -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck }
+		if ([bool](Get-Module -Name PSWriteHTML) -eq $false) { Install-Module -Name PSWriteHTML -RequiredVersion 0.0.32 -Repository PSGallery -AllowClobber -SkipPublisherCheck }
 
 		Write-Color -Text 'Installing Anybox Module' -Color DarkCyan -ShowTime
-		if ([bool](Get-Module -Name Anybox) -eq $false) { Install-Module -Name Anybox -Repository PSGallery -Scope AllUsers -AllowClobber -SkipPublisherCheck }
+		if ([bool](Get-Module -Name Anybox) -eq $false) { Install-Module -Name Anybox -Repository PSGallery -AllowClobber -SkipPublisherCheck }
 
 		Write-Color -Text 'Installing CTXHealthCheck Module' -Color DarkCyan -ShowTime
-		Install-Module -Name CTXHealthCheck -Repository PSGallery -Scope AllUsers -AllowClobber
-
-		#$mod = Get-Item ..\..\..\CTXHealthCheck
-		#if ((Test-Path 'C:\Program Files\WindowsPowerShell\Modules\CTXHealthCheck') -eq $true) { Remove-Item -Path 'C:\Program Files\WindowsPowerShell\Modules\CTXHealthCheck' -Recurse -Force -Verbose }
-		#Copy-Item $mod -Destination "C:\Program Files\WindowsPowerShell\Modules\" -Force -Verbose -Recurse
-
+		Install-Module -Name CTXHealthCheck -Repository PSGallery -AllowClobber -Verbose
 
 		Import-Module PSWriteColor
 		Import-Module BetterCredentials
