@@ -43,6 +43,13 @@
       <Type>[string]</Type>
       <Scope>Local</Scope>
     </Variable>
+    <Variable>
+      <Name>DashboardTitle</Name>
+      <Value></Value>
+      <!-- Title to be used in the reports and Dashboard -->
+      <Type>[string]</Type>
+      <Scope>Local</Scope>
+    </Variable>    
     <Variable>    	
       <Name>SaveExcelReport</Name>
       <Value></Value>
