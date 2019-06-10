@@ -84,7 +84,7 @@ Date Created - 05/06/2019_19:16
 #> 
 
 function Install-CTXHealthCheckParameters {
-	function Set-Parameters {	
+function Set-Parameters {	
 		[string]$ScriptPath = $PSScriptRoot
 
 		Write-Host 'Installing needed Modules' -ForegroundColor Cyan
@@ -103,8 +103,8 @@ function Install-CTXHealthCheckParameters {
 		Write-Color -Text 'Installing Anybox Module' -Color DarkCyan -ShowTime
 		if ([bool](Get-Module -Name Anybox) -eq $false) { Install-Module -Name Anybox -Repository PSGallery -AllowClobber -SkipPublisherCheck }
 
-		Write-Color -Text 'Installing CTXHealthCheck Module' -Color DarkCyan -ShowTime
-		Install-Module -Name CTXHealthCheck -Repository PSGallery -AllowClobber -Verbose
+		#Write-Color -Text 'Installing CTXHealthCheck Module' -Color DarkCyan -ShowTime
+		#Install-Module -Name CTXHealthCheck -Repository PSGallery -AllowClobber -Verbose
 
 		Import-Module PSWriteColor
 		Import-Module BetterCredentials
@@ -146,7 +146,6 @@ $TempParm.Save($xmlfile.FullName)
 Write-Color -Text '_________________________________________' -Color Green
 Write-Color -Text 'Setup Complete' -Color green -ShowTime
 }
-
 
 function Test-Parameters { 
 	[xml]$Parameters = Get-Content $PSParameters
@@ -235,7 +234,6 @@ $smtpClient.Send( $emailMessage )
 Write-Color -Text '_________________________________________' -Color Green
 Write-Color -Text 'Tests Complete' -Color green -ShowTime
 }
-
 
 #region 
 Clear-Host
