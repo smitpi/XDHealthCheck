@@ -90,22 +90,45 @@ $Theme = Get-UDTheme -Name Default
 #region Page1
 $CTXHomePage = New-UDPage -Name "Health Check" -Icon home -DefaultHomePage -Content {
 	New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {         		
-        $job = Start-RSJob -ScriptBlock { Initialize-CitrixHealthCheck -XMLParameterFilePath  $args[0] -Verbose } -ArgumentList @($env:PSParameters)
+        $job = Start-RSJob -ScriptBlock { Initialize-CitrixHealthCheck -XMLParameterFilePath  $args[0] -Verbose } -ArgumentList @($CTXParameters)
 		do {
             Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white'} -Persistent -BackgroundColor green
 			Start-Sleep -Seconds 10
 			Hide-UDModal		   
 }   until( $job.State -notlike 'Running')
     $TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
+    $2DAYSReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[1]) | select *
+    $3DAYSReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[2]) | select *
+
     Sync-UDElement -Id 'Healcheck1'
+    Sync-UDElement -Id 'Healcheck2'
+    Sync-UDElement -Id 'Healcheck3'
+
 } # onclick
 New-UDCollapsible -Items {
     New-UDCollapsibleItem -Title 'Latest Health Check Report'-Content {
     New-UDCard -Id 'Healcheck1' -BackgroundColor grey -Endpoint {
 	param ($TodayReport)
     $TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
-	New-UDHtml ([string](Get-Content $TodayReport.FullName))
-    }
+	New-UDHtml ([string](Get-Content $TodayReport.FullName))}
+} -Active -BackgroundColor grey
+} -BackgroundColor grey
+
+New-UDCollapsible -Items {
+    New-UDCollapsibleItem -Title 'Second Last Health Check Report'-Content {
+    New-UDCard -Id 'Healcheck2' -BackgroundColor grey -Endpoint {
+	param ($2DAYSReport)
+    $2DAYSReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[1]) | select *
+	New-UDHtml ([string](Get-Content $2DAYSReport.FullName))}
+} -Active -BackgroundColor grey
+} -BackgroundColor grey
+
+New-UDCollapsible -Items {
+    New-UDCollapsibleItem -Title 'Latest Health Check Report'-Content {
+    New-UDCard -Id 'Healcheck3' -BackgroundColor grey -Endpoint {
+	param ($3DAYSReport)
+    $3DAYSReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[2]) | select *
+	New-UDHtml ([string](Get-Content $3DAYSReport.FullName))}
 } -Active -BackgroundColor grey
 } -BackgroundColor grey
 }
@@ -114,7 +137,7 @@ New-UDCollapsible -Items {
 #region Page2
 $CTXAuditPage = New-UDPage -Name "Audit Results" -Icon bomb -Content {
 	New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {         		
-        $job = Start-RSJob -ScriptBlock { Initialize-CitrixAudit -XMLParameterFilePath  $args[0] -Verbose } -ArgumentList @($env:PSParameters)
+        $job = Start-RSJob -ScriptBlock { Initialize-CitrixAudit -XMLParameterFilePath  $args[0] -Verbose } -ArgumentList @($CTXParameters)
 		do {
             Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white'} -Persistent -BackgroundColor green
 			Start-Sleep -Seconds 10
@@ -147,7 +170,7 @@ $UserPage1 = New-UDPage -Name "User Details" -Icon user -Content {
 					[string]$Username)
 
 				New-UDInputAction -Content @(
-	    $validuser = Get-FullUserDetail -UserToQuery $username -DomainFQDN htpcza.com -DomainCredentials $CTXAdmin
+	    $validuser = Get-FullUserDetail -UserToQuery $username  -DomainCredentials $CTXAdmin
 	    $UserDetail = ConvertTo-FormatListView -Data $validuser.UserSummery
 
 	    New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
@@ -190,12 +213,12 @@ New-UDCollapsibleItem -Endpoint {
 	}
 	New-UDLayout -Columns 3 -Content {
 		New-UDGrid -Title $compareusers.User1Details.user1HeaddingMissing -Endpoint { $compareusers.User1Details.User1Missing | Out-UDGridData }
-	New-UDGrid -Title $compareusers.User2Details.user2HeaddingMissing -Endpoint { $compareusers.User2Details.User2Missing | Out-UDGridData }
-New-UDGrid -Title 'Same Groups' -Endpoint { $compareusers.SameGroups | Out-UDGridData }
-}
-New-UDLayout -Columns 2 -Content {
-	New-UDGrid -Title $compareusers.User1Details.user1Headding -Endpoint { $compareusers.User1Details.allusergroups1 | Out-UDGridData }
-New-UDGrid -Title $compareusers.User2Details.user2Headding -Endpoint { $compareusers.User2Details.allusergroups2 | Out-UDGridData }
+	    New-UDGrid -Title $compareusers.User2Details.user2HeaddingMissing -Endpoint { $compareusers.User2Details.User2Missing | Out-UDGridData }
+        New-UDGrid -Title 'Same Groups' -Endpoint { $compareusers.SameGroups | Out-UDGridData }
+    }
+    New-UDLayout -Columns 2 -Content {
+	    New-UDGrid -Title $compareusers.User1Details.user1Headding -Endpoint { $compareusers.User1Details.allusergroups1 | Out-UDGridData }
+    New-UDGrid -Title $compareusers.User2Details.user2Headding -Endpoint { $compareusers.User2Details.allusergroups2 | Out-UDGridData }
 }
 )
 
