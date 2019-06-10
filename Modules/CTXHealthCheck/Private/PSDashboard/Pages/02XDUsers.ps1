@@ -1,6 +1,7 @@
 New-UDPage -Name "User Details" -Icon user -Content {
-	New-UDCollapsible -Items {
-		New-UDCollapsibleItem  -Endpoint {
+New-UDCollapsible -Items {
+#region Section1
+New-UDCollapsibleItem  -Endpoint {
 			New-UDInput -Title "Username" -Endpoint {
 				param(
 					[Parameter(Mandatory)]
@@ -21,7 +22,9 @@ New-UDPage -Name "User Details" -Icon user -Content {
 		)
 	}
 } -Title "Single user Details" -FontColor black
+#endregion
 
+#region Section1
 New-UDCollapsibleItem -Endpoint {
 	New-UDInput -Title "Compare Users" -Content {
 		New-UDInputField -Name 'Username1' -Type textbox -Placeholder 'Username1'
@@ -45,10 +48,10 @@ New-UDCollapsibleItem -Endpoint {
 		$compareUsers = Compare-TwoADUsers -Username1 $Username1 -Username2 $Username2 -Verbose
 
 		New-UDInputAction -Content  @(
-    New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
-	New-UDLayout -Columns 2 -Content {
-		New-UDGrid -Title $compareusers.User1Details.user1Headding  -Endpoint { $compareusers.User1Details.userDetailList1 | Out-UDGridData }
-	    New-UDGrid -Title $compareusers.User2Details.user2Headding -Endpoint { $compareusers.User2Details.userDetailList2 | Out-UDGridData }
+			New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
+			New-UDLayout -Columns 2 -Content {
+				New-UDGrid -Title $compareusers.User1Details.user1Headding  -Endpoint { $compareusers.User1Details.userDetailList1 | Out-UDGridData }
+			New-UDGrid -Title $compareusers.User2Details.user2Headding -Endpoint { $compareusers.User2Details.userDetailList2 | Out-UDGridData }
 	}
 	New-UDLayout -Columns 3 -Content {
 		New-UDGrid -Title $compareusers.User1Details.user1HeaddingMissing -Endpoint { $compareusers.User1Details.User1Missing | Out-UDGridData }
@@ -57,15 +60,17 @@ New-UDCollapsibleItem -Endpoint {
     }
     New-UDLayout -Columns 2 -Content {
 	    New-UDGrid -Title $compareusers.User1Details.user1Headding -Endpoint { $compareusers.User1Details.allusergroups1 | Out-UDGridData }
-    New-UDGrid -Title $compareusers.User2Details.user2Headding -Endpoint { $compareusers.User2Details.allusergroups2 | Out-UDGridData }
-}
+        New-UDGrid -Title $compareusers.User2Details.user2Headding -Endpoint { $compareusers.User2Details.allusergroups2 | Out-UDGridData }
+    }
 )
 
 
 }
         
 } -Title "Compare Two Users" -FontColor black
+#endregion
 
+#region Section1
 New-UDCollapsibleItem  -Endpoint {
 	New-UDInput -Title "Username" -Endpoint {
 		param(
@@ -92,6 +97,7 @@ New-UDGrid -Title 'Available Applications' -Endpoint { ($UserDetail.NoAccessPubl
 
 }
 } 	 -Title "Check User Access In Citrix" -FontColor black
-}
-}
+#endregion
+} # Main Collapsble
+} # Page
 #endregion

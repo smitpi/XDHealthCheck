@@ -84,7 +84,7 @@ if ($CTXAdmin -eq $null) {
 ## build pages
 #########################################
 
-$CTXFunctions = New-UDEndpointInitialization -Module @("CTXHealthCheck", "PoshRSJob") -Variable @("ReportsFolder", "ParametersFolder", "CTXAdmin", "PSParameters","CTXDDC") -Function @("Get-FullUserDetail", "Initialize-CitrixAudit", "Initialize-CitrixHealthCheck")
+$CTXFunctions = New-UDEndpointInitialization -Module @("CTXHealthCheck", "PoshRSJob") -Variable @("ReportsFolder", "ParametersFolder", "CTXAdmin", "PSParameters","CTXDDC","DashboardTitle") -Function @("Get-FullUserDetail", "Initialize-CitrixAudit", "Initialize-CitrixHealthCheck")
 
 $Theme = New-UDTheme -Name "absa" -Definition @{
   UDNavBar = @{
@@ -98,19 +98,30 @@ $Theme = New-UDTheme -Name "absa" -Definition @{
 
 } -Parent "default"
 
-
+<#
+ UDDashboard
+UDNavBar
+UDFooter
+UDCard
+UDChart
+UDCounter
+UDMonitor
+UDGrid
+UDTable
+UDInput
+ #>
 
 ########################################
 ## Build dashboard
 #########################################
-$Pages = Get-ChildItem (Join-Path . "Pages") | ForEach-Object {
+$Pages = Get-ChildItem (Join-Path $PSScriptRoot "Pages") | ForEach-Object {
 . $_.FullName
 }
 
 Get-UDDashboard | Stop-UDDashboard
 
-$Dashboard = New-UDDashboard -Title "ABSA | End User Virtualization | Dashboard" -Pages $Pages -EndpointInitialization $CTXFunctions -Theme $Theme
-
+$Title = $DashboardTitle + " | Dashboard"
+$Dashboard = New-UDDashboard -Title $Title -Pages $Pages -EndpointInitialization $CTXFunctions -Theme $Theme
 Start-UDDashboard -Dashboard $Dashboard -Port 10007
 Start-Process http://localhost:10007
 

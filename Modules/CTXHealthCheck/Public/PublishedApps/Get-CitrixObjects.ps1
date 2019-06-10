@@ -57,16 +57,8 @@ Function Get-CitrixObjects {
 		[ValidateNotNullOrEmpty()]
 		[string]$AdminServer,
 		[Parameter(Mandatory = $false, Position = 1)]
-		[switch]$GetMachineCatalog = $false,
-		[Parameter(Mandatory = $false, Position = 2)]
-		[switch]$GetDeliveryGroup = $false,
-		[Parameter(Mandatory = $false, Position = 3)]
-		[switch]$GetPublishedApps = $false,
-		[Parameter(Mandatory = $false, Position = 4)]
-		[switch]$CSVExport = $false,
-		[Parameter(Mandatory = $false, Position = 5)]
 		[switch]$RunAsPSRemote = $false,
-		[Parameter(Mandatory = $false, Position = 6)]
+		[Parameter(Mandatory = $false, Position = 2)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
 		[PSCredential]$RemoteCredentials)
@@ -74,15 +66,13 @@ Function Get-CitrixObjects {
 
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Config"
 Function GetAllConfig {
-	param($AdminServer, $VerbosePreference,$GetMachineCatalog,$GetDeliveryGroup,$GetPublishedApps,$CSVExport)
+	param($AdminServer, $VerbosePreference)
 
 Add-PSSnapin citrix*
-if ($GetMachineCatalog){
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Machine Catalogs"
 $CTXMachineCatalog = @()
 $MachineCatalogs = Get-BrokerCatalog -AdminAddress $AdminServer
-foreach ($MachineCatalog in $MachineCatalogs)
-    {
+foreach ($MachineCatalog in $MachineCatalogs) {
     Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Machine Catalog: $($MachineCatalog.name.ToString())"
     $MasterImage = Get-ProvScheme -AdminAddress $AdminServer | Where-Object -Property IdentityPoolName -Like $MachineCatalog.Name
     if ($MasterImage.MasterImageVM -notlike ''){
@@ -120,10 +110,7 @@ foreach ($MachineCatalog in $MachineCatalogs)
     } | select MachineCatalogName,AllocationType,Description,IsRemotePC,MachinesArePhysical,MinimumFunctionalLevel,PersistUserChanges,ProvisioningType,SessionSupport,Uid,UnassignedCount,UsedCount,CleanOnBoot,MasterImageVM,MasterImageSnapshotName,MasterImageSnapshotCount,MasterImageVMDate,UseFullDiskCloneProvisioning,UseWriteBackCache
     $CTXMachineCatalog += $CatObject 
 }
-} #if
-else {$CTXMachineCatalog = $null}
 
-if ($GetDeliveryGroup) {
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Delivery Groups"
 $BrokerDesktopGroup = Get-BrokerDesktopGroup -AdminAddress $AdminServer
 $CTXDeliveryGroup = @()
@@ -133,10 +120,6 @@ Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Delivery G
 	$BrokerGroups = @()
 	$BrokerAccess = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -notlike "" } } | select UPN
 	$BrokerGroups = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -Like "" } } | select Fullname
-    if ([bool]$BrokerAccess.UPN) {$UsersCSV = [String]::Join(';', $BrokerAccess.UPN)}
-    else{$UsersCSV = ''}
-    if ([bool]$BrokerGroups.FullName) {$GroupsCSV = [String]::Join(';', $BrokerGroups.FullName)}
-    else{$GroupsCSV = ''}    
     $CusObject = New-Object PSObject -Property @{
 		DesktopGroupName       = $DesktopGroup.name
 		Uid                    = $DesktopGroup.uid
@@ -154,60 +137,16 @@ Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Delivery G
 		TotalApplicationGroups = $DesktopGroup.TotalApplicationGroups
 		TotalApplications      = $DesktopGroup.TotalApplications
 		TotalDesktops          = $DesktopGroup.TotalDesktops
-        Tags                   = $DesktopGroup.Tags
-		IncludedUser           = @($BrokerAccess.UPN)
-		IncludeADGroups        = @($BrokerGroups.FullName)
-		IncludedUserCSV        = $UsersCSV
-		IncludeADGroupsCSV     = $GroupsCSV
-		} 
-		$CTXDeliveryGroup += $CusObject
-	}
-} #if
-else {$CTXDeliveryGroup = $null}
-
-if ($GetPublishedApps) {
-Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Delivery Groups"
-$BrokerDesktopGroup = Get-BrokerDesktopGroup -AdminAddress $AdminServer
-$CTXDeliveryGroupApps = @()
-foreach ($DesktopGroup in $BrokerDesktopGroup) {
-Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Delivery Group: $($DesktopGroup.name.ToString())"
-	$BrokerAccess = @()
-	$BrokerGroups = @()
-	$BrokerAccess = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -notlike "" } } | select UPN
-	$BrokerGroups = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -Like "" } } | select Fullname
-    if ([bool]$BrokerAccess.UPN) {$UsersCSV = [String]::Join(';', $BrokerAccess.UPN)}
-    else{$UsersCSV = ''}
-    if ([bool]$BrokerGroups.FullName) {$GroupsCSV = [String]::Join(';', $BrokerGroups.FullName)}
-    else{$GroupsCSV = ''}    
-    $CusObject = New-Object PSObject -Property @{
-		DesktopGroupName       = $DesktopGroup.name
-		Uid                    = $DesktopGroup.uid
-		DeliveryType           = $DesktopGroup.DeliveryType
-		DesktopKind            = $DesktopGroup.DesktopKind
-        Description            = $DesktopGroup.Description
-		DesktopsDisconnected   = $DesktopGroup.DesktopsDisconnected
-		DesktopsFaulted        = $DesktopGroup.DesktopsFaulted
-		DesktopsInUse          = $DesktopGroup.DesktopsInUse
-		DesktopsUnregistered   = $DesktopGroup.DesktopsUnregistered
-		Enabled                = $DesktopGroup.Enabled
-		IconUid                = $DesktopGroup.IconUid
-		InMaintenanceMode      = $DesktopGroup.InMaintenanceMode
-		SessionSupport         = $DesktopGroup.SessionSupport
-		TotalApplicationGroups = $DesktopGroup.TotalApplicationGroups
-		TotalApplications      = $DesktopGroup.TotalApplications
-		TotalDesktops          = $DesktopGroup.TotalDesktops
-        Tags                   = $DesktopGroup.Tags
-		IncludedUser           = @($BrokerAccess.UPN)
-		IncludeADGroups        = @($BrokerGroups.FullName)
-		IncludedUserCSV        = $UsersCSV
-		IncludeADGroupsCSV     = $GroupsCSV
-		} 
-		$CTXDeliveryGroupApps += $CusObject
-	}
+        Tags                   = @(($DesktopGroup.Tags) | Out-String).Trim()
+		UserAccess             = @(($BrokerAccess.UPN) | Out-String).Trim()
+		GroupAccess            = @(($BrokerGroups.FullName) | Out-String).Trim()
+	} | select DesktopGroupName,Uid,DeliveryType,DesktopKind,Description,DesktopsDisconnected,DesktopsFaulted,DesktopsInUse,DesktopsUnregistered,Enabled,IconUid,InMaintenanceMode,SessionSupport,TotalApplicationGroups,TotalApplications,TotalDesktops,Tags,UserAccess,GroupAccess
+$CTXDeliveryGroup += $CusObject
+}
 
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Application config"
 $HostedApps = @()
-foreach ($DeskG in ($CTXDeliveryGroupApps | where { $_.DeliveryType -like 'DesktopsAndApps' })) {
+foreach ($DeskG in ($CTXDeliveryGroup | where { $_.DeliveryType -like 'DesktopsAndApps' })) {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Delivery Group: $($DeskG.DesktopGroupName.ToString())"
 	$PublishedApps = Get-BrokerApplication -AssociatedDesktopGroupUid $DeskG.Uid -AdminAddress $AdminServer
 	foreach ($PublishedApp in $PublishedApps) {
@@ -228,15 +167,11 @@ foreach ($DeskG in ($CTXDeliveryGroupApps | where { $_.DeliveryType -like 'Deskt
 			}
 			catch { }
 		}
-        $PublishedAppUserCSV = [String]::Join(';', $PublishedAppUser)
-        $PublishedAppGroupCSV = [String]::Join(';', $PublishedAppGroup)
 		$CusObject = New-Object PSObject -Property @{
 			DesktopGroupName         = $DeskG.DesktopGroupName
 			DesktopGroupUid          = $DeskG.Uid
-			DesktopGroupUsers        = $DeskG.IncludedUser
-			DesktopGroupADGroups     = $DeskG.IncludeADGroups
-            DesktopGroupUsersCSV     = $DeskG.IncludedUserCSV
-            DesktopGroupADGroupsCSV  = $DeskG.IncludeADGroupsCSV
+			DesktopGroupUsersAccess  = $DeskG.UserAccess
+			DesktopGroupGroupAccess  = $DeskG.GroupAccess
             ApplicationName          = $PublishedApp.ApplicationName
             ApplicationType          = $PublishedApp.ApplicationType
             AdminFolderName          = $PublishedApp.AdminFolderName
@@ -246,29 +181,17 @@ foreach ($DeskG in ($CTXDeliveryGroupApps | where { $_.DeliveryType -like 'Deskt
             CommandLineExecutable    = $PublishedApp.CommandLineExecutable
             CommandLineArguments     = $PublishedApp.CommandLineArguments
             WorkingDirectory         = $PublishedApp.WorkingDirectory
-            Tags                     = $PublishedApp.Tags
+            Tags                     = @(($PublishedApp.Tags) | Out-String).Trim()
 			PublishedName            = $PublishedApp.PublishedName
 			PublishedAppName         = $PublishedApp.Name                    
-			PublishedAppGroup        = $PublishedAppGroup
-			PublishedAppUser         = $PublishedAppUser
-			PublishedAppGroupCSV     = $PublishedAppGroupCSV
-			PublishedAppUserCSV      = $PublishedAppUserCSV
-		} 
+			PublishedAppGroupAccess  = @(($PublishedAppGroup) | Out-String).Trim()
+			PublishedAppUserAccess   = @(($PublishedAppUser) | Out-String).Trim()
+		} | select DesktopGroupName,DesktopGroupUid,DesktopGroupUsersAccess,DesktopGroupGroupAccess,ApplicationName,ApplicationType,AdminFolderName,ClientFolder,Description,Enabled,CommandLineExecutable,CommandLineArgument,WorkingDirectory,Tags,PublishedName,PublishedAppName,PublishedAppGroupAccess,PublishedAppUserAccess
 $HostedApps += $CusObject
 		}
 	}
-} #if
-else {$HostedApps = $null}
 
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Published Applications"
-if ($CSVExport) {
-    $CTXDeliveryGroup = $CTXDeliveryGroup | select DesktopGroupName,Uid,DeliveryType,DesktopKind,Description,DesktopsDisconnected,DesktopsFaulted,DesktopsInUse,DesktopsUnregistered,Enabled,IconUid,InMaintenanceMode,SessionSupport,TotalApplicationGroups,TotalApplications,TotalDesktops,Tags,IncludedUserCSV,IncludeADGroupsCSV
-    $HostedApps = $HostedApps | select  DesktopGroupName,DesktopGroupUid,DesktopGroupUsersCSV,DesktopGroupADGroupsCSV,ApplicationName,ApplicationType,AdminFolderName,ClientFolder,Description,Enabled,CommandLineExecutable,CommandLineArguments,WorkingDirectory,Tags,PublishedName,PublishedAppName,PublishedAppGroupCSV,PublishedAppUserCSV
-    }
-else {
-    $CTXDeliveryGroup = $CTXDeliveryGroup | select DesktopGroupName,Uid,DeliveryType,DesktopKind,Description,DesktopsDisconnected,DesktopsFaulted,DesktopsInUse,DesktopsUnregistered,Enabled,IconUid,InMaintenanceMode,SessionSupport,TotalApplicationGroups,TotalApplications,TotalDesktops,Tags,IncludedUser,IncludeADGroups
-    $HostedApps = $HostedApps | select  DesktopGroupName,DesktopGroupUid,DesktopGroupUsers,DesktopGroupADGroups,ApplicationName,ApplicationType,AdminFolderName,ClientFolder,Description,Enabled,CommandLineExecutable,CommandLineArguments,WorkingDirectory,Tags,PublishedName,PublishedAppName,PublishedAppGroup,PublishedAppUser
-    }
 
 $CusObject = New-Object PSObject -Property @{
 	DateCollected  = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
@@ -280,8 +203,8 @@ $CusObject
 }
 
 $AppDetail = @()
-if ($RunAsPSRemote -eq $true) { $AppDetail = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:GetAllConfig} -ArgumentList  @($AdminServer, $VerbosePreference,$GetMachineCatalog,$GetDeliveryGroup,$GetPublishedApps,$CSVExport) -Credential $RemoteCredentials }
-else { $AppDetail = GetAllConfig -AdminServer $AdminServer -VerbosePreference $VerbosePreference -GetMachineCatalog $GetMachineCatalog -GetDeliveryGroup $GetDeliveryGroup -GetPublishedApps $GetPublishedApps -CSVExport $CSVExport}
+if ($RunAsPSRemote -eq $true) { $AppDetail = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:GetAllConfig} -ArgumentList  @($AdminServer, $VerbosePreference) -Credential $RemoteCredentials }
+else { $AppDetail = GetAllConfig -AdminServer $AdminServer -VerbosePreference $VerbosePreference}
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending] All Details"
 $AppDetail | select DateCollected,MashineCatalog,DeliveryGroups,PublishedApps
 } #end Function

@@ -35,7 +35,6 @@ $Cache:ServerPerformance = Get-CitrixServerPerformance -Serverlist $CTXCore -Rem
 
 $report = New-UDPage -Name 'XDDash Inter' -DefaultHomePage -Icon gear -Content {
 $HeddingText = "XenDesktop Report for Farm: " + $Cache:CitrixRemoteFarmDetails.SiteDetails.Summary.Name + " on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)  + " " + (Get-Date -Format HH:mm)
-
 New-UDCard -Text $HeddingText -TextSize Medium -TextAlignment center
 New-UDLayout -Columns 1 -Content{
        New-UDGrid -Title 'Citrix Sessions' -Endpoint {$Cache:CitrixRemoteFarmDetails.SessionCounts| Out-UDGridData}

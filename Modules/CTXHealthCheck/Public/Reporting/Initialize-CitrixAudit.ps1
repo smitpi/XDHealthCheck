@@ -89,6 +89,7 @@ Set-Location $PSScriptRoot
 if ((Test-Path -Path $ReportsFolder\XDAudit) -eq $false) { New-Item -Path "$ReportsFolder\XDAudit" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 
 [string]$Reportname = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
+[string]$XMLExport = $ReportsFolder + "\XDAudit\XD_Audit.xml"
 [string]$ExcelReportname = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
 
 if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
@@ -112,51 +113,107 @@ if ($CTXAdmin -eq $null) {
 ## Connect and get info
 #########################################
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
-$CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC -GetMachineCatalog -GetDeliveryGroup -GetPublishedApps -Verbose
+$CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC -Verbose
 
 $CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 $MashineCatalog = $CitrixObjects.MashineCatalog | Select MachineCatalogName,AllocationType,SessionSupport,UnassignedCount,UsedCount,MasterImageVM,MasterImageSnapshotName,MasterImageSnapshotCount,MasterImageVMDate
-$DeliveryGroups = $CitrixObjects.DeliveryGroups | select DesktopGroupName,Enabled,InMaintenanceMode,IncludedUserCSV,IncludeADGroupsCSV
-$PublishedApps = $CitrixObjects.PublishedApps | select DesktopGroupName,ApplicationName,Enabled,CommandLineExecutable,CommandLineArguments,WorkingDirectory,PublishedAppGroupCSV,PublishedAppUserCSV
-
+$DeliveryGroups = $CitrixObjects.DeliveryGroups | select DesktopGroupName,Enabled,InMaintenanceMode,TotalApplications,TotalDesktops,DesktopsUnregistered,UserAccess,GroupAccess
+$PublishedApps = $CitrixObjects.PublishedApps | select DesktopGroupName,Enabled,ApplicationName,CommandLineExecutable,CommandLineArguments,WorkingDirectory,PublishedAppGroupAccess,PublishedAppUserAccess
 
 
 ########################################
 ## Setting some table color and settings
 ########################################
-
+#region Table Settings
 $TableSettings = @{
-    Style                  = 'cell-border'
-    DisableOrdering        = $true
-    DisableProcessing      = $true
-    DisableResponsiveTable = $true
-    DisableSelect          = $true
-    DisableSearch          = $true
-    DisableColumnReorder   = $true
-    HideFooter             = $true
-    TextWhenNoData         = 'No Data to display here'
+	Style                  = 'stripe'
+	HideFooter             = $true
+	OrderMulti             = $true
+	TextWhenNoData         = 'No Data to display here'
 }
+
 $SectionSettings = @{
-    HeaderBackGroundColor = 'white'
-    HeaderTextAlignment   = 'center'
-    HeaderTextColor       = 'red'
-    BackgroundColor       = 'red'
-    CanCollapse           = $false
+	HeaderBackGroundColor = 'white'
+	HeaderTextAlignment   = 'center'
+	HeaderTextColor       = 'red'
+	BackgroundColor       = 'white'
+	CanCollapse           = $true
 }
 
 $TableSectionSettings = @{
-    HeaderTextColor       = 'White'
-    HeaderTextAlignment   = 'center'
-    HeaderBackGroundColor = 'red'
-    BackgroundColor       = 'WhiteSmoke'
+	HeaderTextColor       = 'white'
+	HeaderTextAlignment   = 'center'
+	HeaderBackGroundColor = 'red'
+	BackgroundColor       = 'white'
 }
+#endregion
+##########################
+## Setting some conditions
+###########################
+#region Table Conditions
+<#
+$Conditions_Flags = {
+    New-HTMLTableCondition -Name Discription -Type string -Operator eq -Value '*' -Color White -BackgroundColor Red -Row
+}
+
+$Conditions_sessions = {
+    New-HTMLTableCondition -Name 'Unregistered Servers' -Type number -Operator gt -Value 0 -Color White -BackgroundColor Red
+    New-HTMLTableCondition -Name 'Unregistered Desktops' -Type number -Operator gt -Value 0 -Color White -BackgroundColor Red
+    New-HTMLTableCondition -Name 'Tainted Objects' -Type number -Operator gt -Value 0 -Color White -BackgroundColor Red
+}
+
+$Conditions_controllers = {
+    New-HTMLTableCondition -Name State -Type string -Operator eq -Value 'Active' -Color White -BackgroundColor green
+    New-HTMLTableCondition -Name 'Desktops Registered' -Type number -Operator lt 100 -Color White -BackgroundColor Red
+}
+
+$Conditions_db = {
+    New-HTMLTableCondition -Name Value -Type string -Operator eq -Value 'OK' -Color White -BackgroundColor Green
+}
+
+$Conditions_ctxlicenses = {
+    New-HTMLTableCondition -Name LicensesAvailable -Type number -Operator lt 1000 -Color White -BackgroundColor Red
+    New-HTMLTableCondition -Name AvailableLicenses -Type number -Operator lt 1000 -Color White -BackgroundColor Red
+}
+
+$Conditions_events = {
+    New-HTMLTableCondition -Name Errors -Type number -Operator gt -Value 100 -Color White -BackgroundColor red
+}
+
+$Conditions_performance = {
+    New-HTMLTableCondition -Name Uptime -Type number -Operator ge -Value 7 -Color White -BackgroundColor Red
+    New-HTMLTableCondition -Name 'Stopped_Services' -Type string -Operator ge -Value '*Citrix*' -Color White -BackgroundColor Red
+    New-HTMLTableCondition -Name 'CDrive_Free' -Type number -Operator lt -Value 5 -Color White -BackgroundColor Red
+    New-HTMLTableCondition -Name 'DDrive_Free' -Type number -Operator lt -Value 5 -Color White -BackgroundColor Red
+}
+
+$Conditions_deliverygroup = {
+    New-HTMLTableCondition -Name DesktopsUnregistered -Type number -Operator gt -Value 0 -Color White -BackgroundColor Red
+    New-HTMLTableCondition -Name InMaintenanceMode -Type string -Operator eq -Value 'True' -Color White -BackgroundColor Red
+}
+#>
+#endregion
 
 #######################
 ## Building the report
 #######################
+
+$AllXDData = New-Object PSObject -Property @{
+	DateCollected             = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+    CitrixRemoteFarmDetails   = $CitrixRemoteFarmDetails
+    MashineCatalog            = $CitrixObjects.MashineCatalog
+	DeliveryGroups            = $CitrixObjects.DeliveryGroups
+	PublishedApps             = $CitrixObjects.PublishedApps
+    MashineCatalogSum         = $MashineCatalog
+    DeliveryGroupsSum         = $DeliveryGroups
+    PublishedAppsSum          = $PublishedApps
+} 
+if (Test-Path -Path $XMLExport) { Remove-Item $XMLExport -Force -Verbose}
+$AllXDData | Export-Clixml -Path $XMLExport -Depth 25 -NoClobber -Force
+
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Building HTML Page"
 
-$HeddingText = "XenDesktop Audit for Farm: " + $CitrixRemoteFarmDetails.SiteDetails.Summary.Name + " on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)  + " " + (Get-Date -Format HH:mm)
+$HeddingText = $DashboardTitle + " | XenDesktop Audit | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
 New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname  {
     New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
     New-HTMLSection @SectionSettings  -Content {
@@ -168,6 +225,12 @@ New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname  {
     New-HTMLSection  @SectionSettings  -Content {
         New-HTMLSection -HeaderText 'Published Apps' @TableSectionSettings { New-HTMLTable -DataTable $PublishedApps }
     }
+}
+if ($SaveExcelReport) {
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
+  $AllXDData.MashineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MashineCatalog -AutoSize -AutoFilter -Title "CitrixMashine Catalog" -TitleBold -TitleSize 20 -FreezePane 3 
+  $AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize -AutoFilter -Title "Citrix Delivery Groups" -TitleBold -TitleSize 20 -FreezePane 3 
+  $AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize -AutoFilter -Title "Citrix PublishedApps" -TitleBold -TitleSize 20 -FreezePane 3 
 }
 
 
