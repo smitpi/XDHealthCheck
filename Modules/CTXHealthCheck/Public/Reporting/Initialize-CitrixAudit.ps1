@@ -137,17 +137,17 @@ $TableSettings = @{
     TextWhenNoData         = 'No Data to display here'
 }
 $SectionSettings = @{
-    HeaderBackGroundColor = 'DarkGray'
+    HeaderBackGroundColor = 'white'
     HeaderTextAlignment   = 'center'
-    HeaderTextColor       = 'White'
-    BackgroundColor       = 'LightGrey'
+    HeaderTextColor       = 'red'
+    BackgroundColor       = 'red'
     CanCollapse           = $false
 }
 
 $TableSectionSettings = @{
-    HeaderTextColor       = 'Black'
+    HeaderTextColor       = 'White'
     HeaderTextAlignment   = 'center'
-    HeaderBackGroundColor = 'LightSteelBlue'
+    HeaderBackGroundColor = 'red'
     BackgroundColor       = 'WhiteSmoke'
 }
 

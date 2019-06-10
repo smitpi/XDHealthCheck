@@ -85,18 +85,7 @@ if ($CTXAdmin -eq $null) {
 #########################################
 
 $CTXFunctions = New-UDEndpointInitialization -Module @("CTXHealthCheck", "PoshRSJob") -Variable @("ReportsFolder", "ParametersFolder", "CTXAdmin", "PSParameters","CTXDDC") -Function @("Get-FullUserDetail", "Initialize-CitrixAudit", "Initialize-CitrixHealthCheck")
-
-$Theme = New-UDTheme -Name "absa" -Definition @{
-  UDNavBar = @{
-      BackgroundColor = "rgb(202, 0, 28)"
-      FontColor = "rgb(0, 0, 0)"
-  }
-  UDFooter = @{
-      BackgroundColor = "rgb(202, 0, 28)"
-      FontColor = "rgb(0, 0, 0)"
-  }
-
-} -Parent "default"
+$Theme = Get-UDTheme -Name Default 
 
 #region Page1
 $CTXHomePage = New-UDPage -Name "Health Check" -Icon home -DefaultHomePage -Content {
@@ -123,7 +112,7 @@ New-UDCollapsible -Items {
     $TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
 	New-UDHtml ([string](Get-Content $TodayReport.FullName))}
 } -Active -BackgroundColor grey
-}
+} -BackgroundColor grey
 
 New-UDCollapsible -Items {
     New-UDCollapsibleItem -Title 'Second Last Health Check Report'-Content {
@@ -131,7 +120,7 @@ New-UDCollapsible -Items {
 	param ($2DAYSReport)
     $2DAYSReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[1]) | select *
 	New-UDHtml ([string](Get-Content $2DAYSReport.FullName))}
-} -BackgroundColor grey
+} -Active -BackgroundColor grey
 } -BackgroundColor grey
 
 New-UDCollapsible -Items {
@@ -140,7 +129,7 @@ New-UDCollapsible -Items {
 	param ($3DAYSReport)
     $3DAYSReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[2]) | select *
 	New-UDHtml ([string](Get-Content $3DAYSReport.FullName))}
-} -BackgroundColor grey
+} -Active -BackgroundColor grey
 } -BackgroundColor grey
 }
 #endregion
@@ -274,7 +263,7 @@ New-UDGrid -Title 'Available Applications' -Endpoint { ($UserDetail.NoAccessPubl
 
 Get-UDDashboard | Stop-UDDashboard
 
-$Dashboard = New-UDDashboard -Title "ABSA | End User Virtualization | Dashboard" -Pages @($CTXHomePage,$CTXAuditPage, $UserPage1) -EndpointInitialization $CTXFunctions -Theme $Theme
+$Dashboard = New-UDDashboard -Title "XenDektop Universal Dashboard" -Pages @($CTXHomePage,$CTXAuditPage, $UserPage1) -EndpointInitialization $CTXFunctions -Theme $Theme
 
 Start-UDDashboard -Dashboard $Dashboard -Port 10007
 Start-Process http://localhost:10007

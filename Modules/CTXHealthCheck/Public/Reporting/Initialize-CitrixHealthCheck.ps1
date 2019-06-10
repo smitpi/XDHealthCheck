@@ -198,17 +198,17 @@ $TableSettings = @{
 }
 
 $SectionSettings = @{
-    HeaderBackGroundColor = 'DarkGray'
+    HeaderBackGroundColor = 'white'
     HeaderTextAlignment   = 'center'
-    HeaderTextColor       = 'White'
-    BackgroundColor       = 'LightGrey'
+    HeaderTextColor       = 'red'
+    BackgroundColor       = 'red'
     CanCollapse           = $true
 }
 
 $TableSectionSettings = @{
-    HeaderTextColor       = 'Black'
+    HeaderTextColor       = 'white'
     HeaderTextAlignment   = 'center'
-    HeaderBackGroundColor = 'LightSteelBlue'
+    HeaderBackGroundColor = 'red'
     BackgroundColor       = 'WhiteSmoke'
 }
 
