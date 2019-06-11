@@ -86,10 +86,10 @@ New-UDCollapsibleItem  -Endpoint {
 	New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
 	New-UDLayout -Columns 4 -Content {
 		New-UDGrid -Title 'User details' -Endpoint { $userDetailList | Out-UDGridData }
-	New-UDGrid -Title 'Current Applications' -Endpoint { ($UserDetail.AccessPublishedApps | select PublishedName, Description, enabled) | Out-UDGridData }
-New-UDGrid -Title 'Current Desktops' -Endpoint { $DesktopsCombined | Out-UDGridData }
-New-UDGrid -Title 'Available Applications' -Endpoint { ($UserDetail.NoAccessPublishedApps | select PublishedName, Description, enabled) | Out-UDGridData }
-}
+		New-UDGrid -Title 'Current Applications' -Endpoint { ($UserDetail.AccessPublishedApps | select PublishedName, Description, enabled) | Out-UDGridData }
+		New-UDGrid -Title 'Current Desktops' -Endpoint { $DesktopsCombined | Out-UDGridData }
+		New-UDGrid -Title 'Available Applications' -Endpoint { ($UserDetail.NoAccessPublishedApps | select PublishedName, Description, enabled) | Out-UDGridData }
+	}
 )
 
 

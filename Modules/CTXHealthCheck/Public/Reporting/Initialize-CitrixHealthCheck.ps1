@@ -60,6 +60,10 @@ function Initialize-CitrixHealthCheck {
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
 		[string]$XMLParameterFilePath)
 
+
+
+
+#region xml imports
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
 
 	Write-Colour "Using these Variables"
@@ -276,8 +280,9 @@ $HeddingText = $DashboardTitle + " | XenDesktop Report | " + (Get-Date -Format d
 New-HTML -TitleText "XenDesktop Report"  -FilePath $Reportname -ShowHTML {
 	New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
 	New-HTMLSection @SectionSettings  -Content {
-		New-HTMLSection -HeaderText 'Citrix Sessions' @TableSectionSettings { New-HTMLTable  @TableSettings  -DataTable $CitrixRemoteFarmDetails.SessionCounts $Conditions_sessions }
+		New-HTMLSection -HeaderText 'Citrix Sessions' @TableSectionSettings { New-HTMLTable   @TableSettings  -DataTable $CitrixRemoteFarmDetails.SessionCounts $Conditions_sessions }
 	}
+	new-HTMLTab		\\e -
 	New-HTMLSection @SectionSettings   -Content {
 		New-HTMLSection -HeaderText 'Citrix Controllers'  @TableSectionSettings { New-HTMLTable @TableSettings -DataTable  $CitrixRemoteFarmDetails.Controllers.Summary $Conditions_controllers }
 		New-HTMLSection -HeaderText 'Citrix DB Connection' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.DBConnection $Conditions_db }
