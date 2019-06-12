@@ -1,4 +1,4 @@
-## XDHealthCheck / CTXHealthCheck
+## CTXHealthCheck
 
 Functions to connect to a Citrix Farm and extract details for a HTML Health check Dashboard
 

@@ -41,6 +41,7 @@ New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
 } # onclick
 
 New-UDCollapsible -Items {
+<<<<<<< HEAD
 
 #region Section1
 New-UDCollapsibleItem -Title 'Latest Audit Report' -Content {
@@ -64,15 +65,45 @@ New-UDInput -Content {
         } -Endpoint {
    param ($DeliveryGroup,$auditXML)
     New-UDInputAction -Toast $DeliveryGroup       
+=======
+	param ($CitrixCatalog, $auditXML)
+	$auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
+
+	#region Section1
+	New-UDCollapsibleItem -Title 'Latest Audit Report' -Content {
+		param ($AuditReport)
+		$AuditReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
+New-UDHtml ([string](Get-Content $AuditReport.FullName)) }
+
+
+New-UDCollapsibleItem -Title 'MashineCatalog Details' -Content {
+
+	New-UDInput -Title 'MashineCatalog' -Content {
+		$names = ($auditXML.MashineCatalog | select MachineCatalogName).MachineCatalogName | sort
+New-UDInputField -Name 'MashineCatalog' -Values @($names) -Type select 
+} -Endpoint { param ($MashineCatalog, $auditXML) }
+
+New-UDInputAction -RedirectUrl "/catalog/$MashineCatalog/$auditXML"
+New-UDInputAction -Toast $MashineCatalog
+}
+
+New-UDCollapsibleItem -Title 'DeliveryGroups Details' -Content {
+	New-UDInput -Content {
+		New-UDInputField -Name 'DeliveryGroup' -Values @( $auditXML.DeliveryGroups | foreach { $_.DesktopGroupName }) -Type select 
+} -Endpoint {
+	param ($DeliveryGroup, $auditXML)
+	New-UDInputAction -Toast $DeliveryGroup       
+>>>>>>> acf18830ecb742cc3b04aaa8fb8be4c46e585aa0
 }
 }
 
 New-UDCollapsibleItem -Title 'PublishedApps Details' -Content {
-New-UDInput -Content {
-        New-UDInputField -Name 'PublishedApps' -Values @($auditXML.PublishedApps | foreach {$_.PublishedName}) -Type select 
-        } -Endpoint {
-    param ($PublishedApps,$auditXML)
-    New-UDInputAction -Toast $PublishedApps       
+	New-UDInput -Content {
+		New-UDInputField -Name 'PublishedApps' -Values @($auditXML.PublishedApps | foreach { $_.PublishedName }) -Type select 
+} -Endpoint {
+	param ($PublishedApps, $auditXML)
+	New-UDInputAction -Toast $PublishedApps       
+}
 }
 }
 
@@ -80,6 +111,7 @@ New-UDInput -Content {
  New-UDCollapsibleItem -Title 'MashineCatalog Details' -Endpoint {
     $names = ($auditXML.MashineCatalog | select MachineCatalogName).MachineCatalogName | sort
 
+<<<<<<< HEAD
 New-UDInput -Title 'MashineCatalog' -Content {
     New-UDInputField -Name 'MashineCat' -Values $names -Type select 
     } -Endpoint {
@@ -93,6 +125,16 @@ New-UDInput -Title 'MashineCatalog' -Content {
 
 
  New-UDPage -Url "/catalog/:MashineCat/:auditXML"  -Endpoint {
+=======
+
+ 
+ 
+
+
+<# 
+
+ New-UDPage -Url "/catalog/:MashineCatalog/:auditXML"  -Endpoint {
+>>>>>>> acf18830ecb742cc3b04aaa8fb8be4c46e585aa0
     param($MashineCat,$auditXML)
     $result = ($auditXML.MashineCatalog | where MachineCatalogName -like $MashineCat).psobject.Properties | Select-Object -Property Name, Value
     New-UDLayout -Columns 1 -Content {New-UdGrid -Title 'MashineCat' -Endpoint{ $result| Out-UDGridData}
@@ -102,10 +144,13 @@ New-UDInput -Title 'MashineCatalog' -Content {
     }
 
 
+<<<<<<< HEAD
 
  
 
 
+=======
+>>>>>>> acf18830ecb742cc3b04aaa8fb8be4c46e585aa0
 New-UDCollapsible -Items {
 #region Section1
 New-UDCollapsibleItem -Title 'HTML Audit Results'-Content {
