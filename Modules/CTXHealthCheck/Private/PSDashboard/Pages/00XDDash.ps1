@@ -22,27 +22,33 @@ Sync-UDElement -Id 'Checkxml1'
 New-UDCollapsible -Items {
 #region Section1
 New-UDCollapsibleItem -Title 'Latest Health Check Report' -Content {
-    param ($TodayReport)
-	$TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
+		New-UDCard -Id 'Healcheck1' -BackgroundColor grey -Endpoint {
+			param ($TodayReport)
+			$TodayReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
 	New-UDHtml ([string](Get-Content $TodayReport.FullName)) }
+}
 #endregion
 
 #region Section2
 New-UDCollapsibleItem -Title 'Second Last Health Check Report' -Content {
+	New-UDCard -Id 'Healcheck2' -BackgroundColor grey -Endpoint {
 param ($2DAYSReport)
 $2DAYSReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[1]) | select *
 New-UDHtml ([string](Get-Content $2DAYSReport.FullName)) }
+}
 #endregion
-
 #region Section3
-New-UDCollapsibleItem -Title 'Latest Health Check Report'-Content {
+New-UDCollapsibleItem -Title '3rd Last Health Check Report'-Content {
+New-UDCard -Id 'Healcheck3' -BackgroundColor grey -Endpoint {
 param ($3DAYSReport)
 $3DAYSReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[2]) | select *
 New-UDHtml ([string](Get-Content $3DAYSReport.FullName)) }
 #endregion
 
 } # Main Collapsible
+#endregion
 
+}
 } # Page
 <#
 

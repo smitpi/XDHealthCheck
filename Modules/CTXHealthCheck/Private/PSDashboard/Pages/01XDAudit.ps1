@@ -1,4 +1,32 @@
-New-UDPage -Name "XD Audit Results" -Icon bomb -Content {
+#region Page2
+$CTXAuditPage = New-UDPage -Name "Audit Results" -Icon bomb -Content {
+	New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {         		
+        $job = Start-RSJob -ScriptBlock { Initialize-CitrixAudit -XMLParameterFilePath  $args[0] -Verbose } -ArgumentList @($CTXParameters)
+		do {
+            Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white'} -Persistent -BackgroundColor green
+			Start-Sleep -Seconds 10
+			Hide-UDModal		   
+}   until( $job.State -notlike 'Running')
+    $AuditReport = Get-Item ((Get-ChildItem $ReportsFolder\XDAudit\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
+    Sync-UDElement -Id 'Audit1'
+} # onclick
+New-UDCollapsible -Items {
+    New-UDCollapsibleItem -Title 'Latest Health Check Report'-Content {
+    New-UDCard -Id 'Audit1' -Endpoint {
+	param ($AuditReport)
+    $AuditReport = Get-Item ((Get-ChildItem $ReportsFolder\XDAudit\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
+	New-UDHtml ([string](Get-Content $AuditReport.FullName))
+}
+}
+}
+}
+
+$CTXAuditPage 
+
+
+<#
+
+$r = New-UDPage -Name "XD Audit Results" -Icon bomb -Content {
 New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {         		
         $job = Start-RSJob -ScriptBlock { Initialize-CitrixAudit -XMLParameterFilePath  $args[0] -Verbose } -ArgumentList @($CTXParameters)
 		do {
@@ -11,31 +39,26 @@ New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
     Sync-UDElement -Id 'Audit1'
     Sync-UDElement -Id 'Auditxml1'
 } # onclick
+
 New-UDCollapsible -Items {
-    param ($CitrixCatalog,$auditXML)
-     $auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
 
 #region Section1
 New-UDCollapsibleItem -Title 'Latest Audit Report' -Content {
 param ($AuditReport)
 $AuditReport = Get-Item ((Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | select *
  New-UDHtml ([string](Get-Content $AuditReport.FullName)) }
+} #UDCollapsible
 
 
-New-UDCollapsibleItem -Title 'MashineCatalog Details' -Endpoint {
-    $names = ($auditXML.MashineCatalog | select MachineCatalogName).MachineCatalogName | sort
 
-New-UDInput -Title 'MashineCatalog' -Content {
-    New-UDInputField -Name 'MashineCat' -Values $names -Type select 
-    } -Endpoint {
-    param ($MashineCat, $auditXML)
-    New-UDInputAction -RedirectUrl "/catalog/$MashineCat/$auditXML"
-    
-    New-UDInputAction -Toast $MashineCat
 }
-}
-
+$r
+ 
+ 
 New-UDCollapsibleItem -Title 'DeliveryGroups Details' -Content {
+    param ($CitrixCatalog,$auditXML)
+     $auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
+
 New-UDInput -Content {
         New-UDInputField -Name 'DeliveryGroup' -Values @( $auditXML.DeliveryGroups | foreach {$_.DesktopGroupName}) -Type select 
         } -Endpoint {
@@ -52,13 +75,23 @@ New-UDInput -Content {
     New-UDInputAction -Toast $PublishedApps       
 }
 }
-} #UDCollapsible
 
 
+ New-UDCollapsibleItem -Title 'MashineCatalog Details' -Endpoint {
+    $names = ($auditXML.MashineCatalog | select MachineCatalogName).MachineCatalogName | sort
 
+New-UDInput -Title 'MashineCatalog' -Content {
+    New-UDInputField -Name 'MashineCat' -Values $names -Type select 
+    } -Endpoint {
+    param ($MashineCat, $auditXML)
+    New-UDInputAction -RedirectUrl "/catalog/$MashineCat/$auditXML"
+    
+    New-UDInputAction -Toast $MashineCat
 }
- 
- 
+}
+
+
+
  New-UDPage -Url "/catalog/:MashineCat/:auditXML"  -Endpoint {
     param($MashineCat,$auditXML)
     $result = ($auditXML.MashineCatalog | where MachineCatalogName -like $MashineCat).psobject.Properties | Select-Object -Property Name, Value
@@ -70,7 +103,7 @@ New-UDInput -Content {
 
 
 
-<# 
+ 
 
 
 New-UDCollapsible -Items {
