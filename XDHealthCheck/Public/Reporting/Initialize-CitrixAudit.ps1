@@ -1,4 +1,4 @@
-
+﻿
 <#PSScriptInfo
 
 .VERSION 1.0.2
@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -28,23 +28,23 @@
 .RELEASENOTES
 Created [06/06/2019_06:00] Initital Script Creating
 Updated [06/06/2019_19:26]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 
-#> 
+#>
 
 
 
 
 
-<# 
+<#
 
-.DESCRIPTION 
+.DESCRIPTION
 Citrix XenDesktop HTML Health Check Report
 
-#> 
+#>
 
 Param()
 
@@ -60,10 +60,10 @@ Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Importing
 
 Write-Colour "Using these Variables"
 [XML]$XMLParameter = Get-Content $XMLParameterFilePath
-$XMLParameter.Settings.Variables.Variable | ft
+$XMLParameter.Settings.Variables.Variable | Format-Table
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
-$XMLParameter.Settings.Variables.Variable | foreach {
+$XMLParameter.Settings.Variables.Variable | ForEach-Object {
 		# Set Variables contained in XML file
 		$VarValue = $_.Value
 		$CreateVariable = $True # Default value to create XML content as Variable
@@ -104,8 +104,8 @@ $timer = [Diagnostics.Stopwatch]::StartNew();
 #########################################
 
 
-$CTXAdmin = Find-Credential | where target -Like "*Healthcheck" | Get-Credential -Store
-if ($CTXAdmin -eq $null) {
+$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
+if ($null -eq $CTXAdmin) {
     $AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
     Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 }
@@ -116,9 +116,9 @@ Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Collectin
 $CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC -RunAsPSRemote -RemoteCredentials $CTXAdmin -Verbose
 
 $CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
-$MashineCatalog = $CitrixObjects.MashineCatalog | Select MachineCatalogName,AllocationType,SessionSupport,UnassignedCount,UsedCount,MasterImageVM,MasterImageSnapshotName,MasterImageSnapshotCount,MasterImageVMDate
-$DeliveryGroups = $CitrixObjects.DeliveryGroups | select DesktopGroupName,Enabled,InMaintenanceMode,TotalApplications,TotalDesktops,DesktopsUnregistered,UserAccess,GroupAccess
-$PublishedApps = $CitrixObjects.PublishedApps | select DesktopGroupName,Enabled,ApplicationName,CommandLineExecutable,CommandLineArguments,WorkingDirectory,PublishedAppGroupAccess,PublishedAppUserAccess
+$MashineCatalog = $CitrixObjects.MashineCatalog | Select-Object MachineCatalogName,AllocationType,SessionSupport,UnassignedCount,UsedCount,MasterImageVM,MasterImageSnapshotName,MasterImageSnapshotCount,MasterImageVMDate
+$DeliveryGroups = $CitrixObjects.DeliveryGroups | Select-Object DesktopGroupName,Enabled,InMaintenanceMode,TotalApplications,TotalDesktops,DesktopsUnregistered,UserAccess,GroupAccess
+$PublishedApps = $CitrixObjects.PublishedApps | Select-Object DesktopGroupName,Enabled,ApplicationName,CommandLineExecutable,CommandLineArguments,WorkingDirectory,PublishedAppGroupAccess,PublishedAppUserAccess
 
 
 ########################################
@@ -207,7 +207,7 @@ $AllXDData = New-Object PSObject -Property @{
     MashineCatalogSum         = $MashineCatalog
     DeliveryGroupsSum         = $DeliveryGroups
     PublishedAppsSum          = $PublishedApps
-} 
+}
 if (Test-Path -Path $XMLExport) { Remove-Item $XMLExport -Force -Verbose}
 $AllXDData | Export-Clixml -Path $XMLExport -Depth 25 -NoClobber -Force
 
@@ -228,13 +228,13 @@ New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname  {
 }
 if ($SaveExcelReport) {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
-  $AllXDData.MashineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MashineCatalog -AutoSize  -Title "CitrixMashine Catalog" -TitleBold -TitleSize 20 -FreezePane 3 
-  $AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize  -Title "Citrix Delivery Groups" -TitleBold -TitleSize 20 -FreezePane 3 
-  $AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize  -Title "Citrix PublishedApps" -TitleBold -TitleSize 20 -FreezePane 3 
+  $AllXDData.MashineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MashineCatalog -AutoSize  -Title "CitrixMashine Catalog" -TitleBold -TitleSize 20 -FreezePane 3
+  $AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize  -Title "Citrix Delivery Groups" -TitleBold -TitleSize 20 -FreezePane 3
+  $AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize  -Title "Citrix PublishedApps" -TitleBold -TitleSize 20 -FreezePane 3
 }
 
 
 $timer.Stop()
-$timer.Elapsed | select Days,Hours,Minutes,Seconds | fl
+$timer.Elapsed | Select-Object Days,Hours,Minutes,Seconds | Format-List
 Stop-Transcript
 }
