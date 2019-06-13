@@ -48,12 +48,21 @@ Param()
 
 Function Initialize-CitrixUserAccessReport {
     PARAM(
-        [Parameter(Mandatory = $true, Position = 0)]
-		[ValidateScript({(Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml")})]
-        [string]$XMLParameterFilePath,
+		[Parameter(Mandatory = $false, Position = 0)]
+		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
+		[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml",
+		[Parameter(Mandatory = $true, Position = 1)]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [string]$Username)
+
+#region xml imports
+Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
+
+Write-Colour "Using these Variables"
+[XML]$XMLParameter = Get-Content $XMLParameterFilePath
+if ($null -eq $XMLParameter) {Write-Color -Text "Valid Parameters file not found; break" }
+$XMLParameter.Settings.Variables.Variable | Format-Table
 
 
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"

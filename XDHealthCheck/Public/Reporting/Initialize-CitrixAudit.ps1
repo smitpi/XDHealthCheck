@@ -52,14 +52,16 @@ Param()
 
 function Initialize-CitrixAudit {
 	PARAM(
-		[Parameter(Mandatory = $true, Position = 0)]
+		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
-		[string]$XMLParameterFilePath)
+		[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml")
 
+	#region xml imports
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
 
 	Write-Colour "Using these Variables"
 	[XML]$XMLParameter = Get-Content $XMLParameterFilePath
+	if ($null -eq $XMLParameter) {Write-Color -Text "Valid Parameters file not found; break" }
 	$XMLParameter.Settings.Variables.Variable | Format-Table
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
@@ -83,7 +85,6 @@ $XMLParameter.Settings.Variables.Variable | ForEach-Object {
 	}
 	If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 }
-Set-Location $PSScriptRoot
 
 if ((Test-Path -Path $ReportsFolder\XDAudit) -eq $false) { New-Item -Path "$ReportsFolder\XDAudit" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 
@@ -102,7 +103,6 @@ $timer = [Diagnostics.Stopwatch]::StartNew();
 ## Getting Credentials
 #########################################
 
-
 $CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
 if ($null -eq $CTXAdmin) {
 	$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
@@ -114,7 +114,7 @@ if ($null -eq $CTXAdmin) {
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
 $CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC -RunAsPSRemote -RemoteCredentials $CTXAdmin -Verbose
 
-$CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
+$CitrixRemoteFarmDetail = Get-CitrixFarmDetail -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 $MashineCatalog = $CitrixObjects.MashineCatalog | Select-Object MachineCatalogName, AllocationType, SessionSupport, UnassignedCount, UsedCount, MasterImageVM, MasterImageSnapshotName, MasterImageSnapshotCount, MasterImageVMDate
 $DeliveryGroups = $CitrixObjects.DeliveryGroups | Select-Object DesktopGroupName, Enabled, InMaintenanceMode, TotalApplications, TotalDesktops, DesktopsUnregistered, UserAccess, GroupAccess
 $PublishedApps = $CitrixObjects.PublishedApps | Select-Object DesktopGroupName, Enabled, ApplicationName, CommandLineExecutable, CommandLineArguments, WorkingDirectory, PublishedAppGroupAccess, PublishedAppUserAccess

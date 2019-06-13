@@ -92,14 +92,16 @@ $Details
 
 } #end Function
 
-Function Initialize-CitrixUserReport {
+Function Initialize-CitrixUserCompare {
     PARAM(
-        [Parameter(Mandatory = $true, Position = 0)]
-		[ValidateScript({(Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml")})]
-        [string]$XMLParameterFilePath,
+		[Parameter(Mandatory = $false, Position = 0)]
+		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
+		[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml",
+		[Parameter(Mandatory = $true, Position = 1)]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [string]$Username1,
+        [Parameter(Mandatory = $true, Position = 2)]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
         [string]$Username2)
@@ -133,11 +135,6 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
 
-Set-Location $PSScriptRoot
-if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-
-[string]$Reportname = $ReportsFolder + "\XDUsers\XD_Users." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
-
 if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 [string]$Transcriptlog ="$ReportsFolder\logs\XDUsers_TransmissionLogs." + (get-date -Format yyyy.MM.dd-HH.mm) + ".log"
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
@@ -169,55 +166,49 @@ $compareusers = Compare-ADUser -Username1 $Username1 -Username2 $Username2 -Verb
 ## Setting some table color and settings
 ########################################
 
+#region Table Settings
 $TableSettings = @{
-    Style                  = 'cell-border'
-    DisablePaging          = $true
-    DisableOrdering        = $true
-    DisableInfo            = $true
-    DisableProcessing      = $true
-    DisableResponsiveTable = $true
-    DisableNewLine         = $true
-    DisableSelect          = $true
-    DisableSearch          = $true
-    DisableColumnReorder   = $true
-    OrderMulti             = $true
-    DisableStateSave       = $true
-    TextWhenNoData         = 'No Data to display here'
+	Style          = 'stripe'
+	HideFooter     = $true
+	OrderMulti     = $true
+	TextWhenNoData = 'No Data to display here'
 }
+
 $SectionSettings = @{
-    HeaderBackGroundColor = 'DarkGray'
-    HeaderTextAlignment   = 'center'
-    HeaderTextColor       = 'White'
-    BackgroundColor       = 'LightGrey'
-    CanCollapse           = $false
+	HeaderBackGroundColor = 'white'
+	HeaderTextAlignment   = 'center'
+	HeaderTextColor       = 'red'
+	BackgroundColor       = 'white'
+	CanCollapse           = $true
 }
 
 $TableSectionSettings = @{
-    HeaderTextColor       = 'Black'
-    HeaderTextAlignment   = 'center'
-    HeaderBackGroundColor = 'LightSteelBlue'
-    BackgroundColor       = 'WhiteSmoke'
+	HeaderTextColor       = 'white'
+	HeaderTextAlignment   = 'center'
+	HeaderBackGroundColor = 'red'
+	BackgroundColor       = 'white'
 }
+#endregion
 
 #######################
 ## Building the report
 #######################
 
 $HeddingText = "Compared Users on: " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
-New-HTML -TitleText "XenDesktop Report"  -FilePath $Reportname {
+New-HTML -TitleText "Compared Users Report"  -FilePath "$env:TEMP\userscompared.html" -ShowHTML {
     New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
     New-HTMLSection -HeaderText 'User Details' @SectionSettings  -Content {
-        New-HTMLSection -HeaderText $compareusers.User1Details.user1Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.userDetailList1 -HideFooter}
-        New-HTMLSection -HeaderText $compareusers.User2Details.user2Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.userDetailList2 -HideFooter}
+        New-HTMLSection -HeaderText $compareusers.User1Details.user1Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.userDetailList1 }
+        New-HTMLSection -HeaderText $compareusers.User2Details.user2Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.userDetailList2 }
     }
     New-HTMLSection @SectionSettings -HeaderText 'Comparison of the User Groups'   -Content {
-        New-HTMLSection -HeaderText $compareusers.User1Details.user1HeaddingMissing @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.User1Missing -HideFooter}
-        New-HTMLSection -HeaderText $compareusers.User1Details.user2HeaddingMissing @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.User2Missing -HideFooter}
-        New-HTMLSection -HeaderText 'Same Groups' @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.SameGroups -HideFooter}
+        New-HTMLSection -HeaderText $compareusers.User1Details.user1HeaddingMissing @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.User1Missing }
+        New-HTMLSection -HeaderText $compareusers.User1Details.user2HeaddingMissing @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.User2Missing }
+        New-HTMLSection -HeaderText 'Same Groups' @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.SameGroups}
     }
     New-HTMLSection @SectionSettings -HeaderText 'All User Groups'   -Content {
-        New-HTMLSection -HeaderText $compareusers.User1Details.user1Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.allusergroups1  -HideFooter}
-        New-HTMLSection -HeaderText  $compareusers.User2Details.user2Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.allusergroups2 -HideFooter}
+        New-HTMLSection -HeaderText $compareusers.User1Details.user1Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.allusergroups1  }
+        New-HTMLSection -HeaderText  $compareusers.User2Details.user2Headding @TableSectionSettings {New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.allusergroups2 }
     }
 }
 

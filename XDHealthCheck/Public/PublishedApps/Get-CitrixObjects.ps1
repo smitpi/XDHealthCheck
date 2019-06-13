@@ -65,7 +65,7 @@ Function Get-CitrixObjects {
 
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Config"
-	Function GetAllConfig {
+Function GetAllConfig {
 		param($AdminServer, $VerbosePreference)
 
 		Add-PSSnapin citrix*
@@ -119,7 +119,7 @@ foreach ($DesktopGroup in $BrokerDesktopGroup) {
 	$BrokerAccess = @()
 	$BrokerGroups = @()
 	$BrokerAccess = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -notlike "" } } | select UPN
-$BrokerGroups = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -Like "" } } | select Fullname
+    $BrokerGroups = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -Like "" } } | select Fullname
 $CusObject = New-Object PSObject -Property @{
 	DesktopGroupName       = $DesktopGroup.name
 	Uid                    = $DesktopGroup.uid
@@ -138,8 +138,8 @@ $CusObject = New-Object PSObject -Property @{
 	TotalApplications      = $DesktopGroup.TotalApplications
 	TotalDesktops          = $DesktopGroup.TotalDesktops
 	Tags                   = @(($DesktopGroup.Tags) | Out-String).Trim()
-UserAccess              = @(($BrokerAccess.UPN) | Out-String).Trim()
-GroupAccess             = @(($BrokerGroups.FullName) | Out-String).Trim()
+    UserAccess             = @(($BrokerAccess.UPN) | Out-String).Trim()
+    GroupAccess            = @(($BrokerGroups.FullName) | Out-String).Trim()
 } | select DesktopGroupName, Uid, DeliveryType, DesktopKind, Description, DesktopsDisconnected, DesktopsFaulted, DesktopsInUse, DesktopsUnregistered, Enabled, IconUid, InMaintenanceMode, SessionSupport, TotalApplicationGroups, TotalApplications, TotalDesktops, Tags, UserAccess, GroupAccess
 $CTXDeliveryGroup += $CusObject
 }
@@ -154,18 +154,11 @@ foreach ($DeskG in ($CTXDeliveryGroup | where { $_.DeliveryType -like 'DesktopsA
 		$PublishedAppGroup = @()
 		$PublishedAppUser = @()
 		foreach ($AppAssociatedUser in $PublishedApp.AssociatedUserFullNames) {
-			try {
 				$group = $null
-				$group = Get-ADGroup $AppAssociatedUser
-				if ($group -ne $null) { $PublishedAppGroup += $group.SamAccountName }
-			}
-			catch { }
-		}
-		foreach ($AppAssociatedUser2 in $PublishedApp.AssociatedUserUPNs) {
-			try {
-				if ($AppAssociatedUser2 -ne '') { $PublishedAppUser += $AppAssociatedUser2 }
-			}
-			catch { }
+                $ADObject = Get-ADObject -Filter {SamAccountName -eq $AppAssociatedUser}
+                #objectClass=User and objectCategory=Person
+                if ($ADObject.ObjectClass -like 'user') { $PublishedAppUser += $ADObject.Name}
+                else {$PublishedAppGroup +=  $ADObject.Name}	
 		}
 		$CusObject = New-Object PSObject -Property @{
 			DesktopGroupName        = $DeskG.DesktopGroupName
@@ -182,10 +175,10 @@ foreach ($DeskG in ($CTXDeliveryGroup | where { $_.DeliveryType -like 'DesktopsA
 			CommandLineArguments    = $PublishedApp.CommandLineArguments
 			WorkingDirectory        = $PublishedApp.WorkingDirectory
 			Tags                    = @(($PublishedApp.Tags) | Out-String).Trim()
-		PublishedName            = $PublishedApp.PublishedName
-		PublishedAppName         = $PublishedApp.Name
-		PublishedAppGroupAccess  = @(($PublishedAppGroup) | Out-String).Trim()
-	PublishedAppUserAccess    = @(($PublishedAppUser) | Out-String).Trim()
+		    PublishedName            = $PublishedApp.PublishedName
+		    PublishedAppName         = $PublishedApp.Name
+		    PublishedAppGroupAccess  = @(($PublishedAppGroup) | Out-String).Trim()
+    	    PublishedAppUserAccess    = @(($PublishedAppUser) | Out-String).Trim()
 } | select DesktopGroupName, DesktopGroupUid, DesktopGroupUsersAccess, DesktopGroupGroupAccess, ApplicationName, ApplicationType, AdminFolderName, ClientFolder, Description, Enabled, CommandLineExecutable, CommandLineArgument, WorkingDirectory, Tags, PublishedName, PublishedAppName, PublishedAppGroupAccess, PublishedAppUserAccess
 $HostedApps += $CusObject
 }

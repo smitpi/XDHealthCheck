@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -29,11 +29,11 @@
 Created [22/05/2019_19:17]
 Updated [24/05/2019_19:25]
 Updated [06/06/2019_19:26]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 
-#> 
+#>
 
 #Requires -Module BetterCredentials
 #Requires -Module PSWriteColor
@@ -45,7 +45,7 @@ Updated [09/06/2019_09:18]
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Citrix XenDesktop HTML Health Check Report
 
 
@@ -56,18 +56,16 @@ Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 Param()
 function Initialize-CitrixHealthCheck {
 	PARAM(
-		[Parameter(Mandatory = $true, Position = 0)]
+		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
-		[string]$XMLParameterFilePath)
-
-
-
+		[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml")
 
 	#region xml imports
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
 
 	Write-Colour "Using these Variables"
 	[XML]$XMLParameter = Get-Content $XMLParameterFilePath
+	if ($null -eq $XMLParameter) {Write-Color -Text "Valid Parameters file not found; break" }
 	$XMLParameter.Settings.Variables.Variable | ft
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
@@ -192,7 +190,7 @@ $AllXDData = New-Object PSObject -Property @{
 	CitrixConfigurationChanges = $CitrixConfigurationChanges
 	StoreFrontDetails          = $StoreFrontDetails
 	ServerPerformance          = $ServerPerformance
-} 
+}
 if (Test-Path -Path $XMLExport) { Remove-Item $XMLExport -Force -Verbose }
 $AllXDData | Export-Clixml -Path $XMLExport -Depth 25 -NoClobber -Force
 
@@ -221,52 +219,6 @@ $TableSectionSettings = @{
 	HeaderBackGroundColor = 'red'
 	BackgroundColor       = 'white'
 }
-#endregion
-##########################
-## Setting some conditions
-###########################
-#region Table Conditions
-<#
-$Conditions_Flags = {
-    New-HTMLTableCondition -Name Discription -Type string -Operator eq -Value '*' -Color White -BackgroundColor Red -Row
-}
-
-$Conditions_sessions = {
-    New-HTMLTableCondition -Name 'Unregistered Servers' -Type number -Operator gt -Value 0 -Color White -BackgroundColor Red
-    New-HTMLTableCondition -Name 'Unregistered Desktops' -Type number -Operator gt -Value 0 -Color White -BackgroundColor Red
-    New-HTMLTableCondition -Name 'Tainted Objects' -Type number -Operator gt -Value 0 -Color White -BackgroundColor Red
-}
-
-$Conditions_controllers = {
-    New-HTMLTableCondition -Name State -Type string -Operator eq -Value 'Active' -Color White -BackgroundColor green
-    New-HTMLTableCondition -Name 'Desktops Registered' -Type number -Operator lt 100 -Color White -BackgroundColor Red
-}
-
-$Conditions_db = {
-    New-HTMLTableCondition -Name Value -Type string -Operator eq -Value 'OK' -Color White -BackgroundColor Green
-}
-
-$Conditions_ctxlicenses = {
-    New-HTMLTableCondition -Name LicensesAvailable -Type number -Operator lt 1000 -Color White -BackgroundColor Red
-    New-HTMLTableCondition -Name AvailableLicenses -Type number -Operator lt 1000 -Color White -BackgroundColor Red
-}
-
-$Conditions_events = {
-    New-HTMLTableCondition -Name Errors -Type number -Operator gt -Value 100 -Color White -BackgroundColor red
-}
-
-$Conditions_performance = {
-    New-HTMLTableCondition -Name Uptime -Type number -Operator ge -Value 7 -Color White -BackgroundColor Red
-    New-HTMLTableCondition -Name 'Stopped_Services' -Type string -Operator ge -Value '*Citrix*' -Color White -BackgroundColor Red
-    New-HTMLTableCondition -Name 'CDrive_Free' -Type number -Operator lt -Value 5 -Color White -BackgroundColor Red
-    New-HTMLTableCondition -Name 'DDrive_Free' -Type number -Operator lt -Value 5 -Color White -BackgroundColor Red
-}
-
-$Conditions_deliverygroup = {
-    New-HTMLTableCondition -Name DesktopsUnregistered -Type number -Operator gt -Value 0 -Color White -BackgroundColor Red
-    New-HTMLTableCondition -Name InMaintenanceMode -Type string -Operator eq -Value 'True' -Color White -BackgroundColor Red
-}
-#>
 #endregion
 
 #######################
