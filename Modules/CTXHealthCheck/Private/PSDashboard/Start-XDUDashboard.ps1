@@ -122,6 +122,6 @@ Get-UDDashboard | Stop-UDDashboard
 
 $Title = $DashboardTitle + " | Dashboard"
 $Dashboard = New-UDDashboard -Title $Title -Pages $Pages -EndpointInitialization $CTXFunctions -Theme $Theme
-Start-UDDashboard -Dashboard $Dashboard -Port 10007
-Start-Process http://localhost:10007
+Start-UDDashboard -Dashboard $Dashboard -Port 10008
+Start-Process http://localhost:10008
 

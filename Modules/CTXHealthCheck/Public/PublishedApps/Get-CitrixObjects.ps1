@@ -90,13 +90,13 @@ foreach ($MachineCatalog in $MachineCatalogs) {
     $CatObject = New-Object PSObject -Property @{
 		MachineCatalogName                = $MachineCatalog.name
 		AllocationType                    = $MachineCatalog.AllocationType
+        SessionSupport                    = $MachineCatalog.SessionSupport
         Description                       = $MachineCatalog.Description
         IsRemotePC                        = $MachineCatalog.IsRemotePC
         MachinesArePhysical               = $MachineCatalog.MachinesArePhysical
         MinimumFunctionalLevel            = $MachineCatalog.MinimumFunctionalLevel
         PersistUserChanges                = $MachineCatalog.PersistUserChanges
         ProvisioningType                  = $MachineCatalog.ProvisioningType
-        SessionSupport                    = $MachineCatalog.SessionSupport
         Uid                               = $MachineCatalog.Uid
         UnassignedCount                   = $MachineCatalog.UnassignedCount
         UsedCount                         = $MachineCatalog.UsedCount
