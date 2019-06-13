@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -27,23 +27,23 @@
 
 .RELEASENOTES
 Created [07/06/2019_04:05]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
-<# 
+<#
 
-.DESCRIPTION 
+.DESCRIPTION
 Reports on user details
 
-#> 
+#>
 
 Param()
-Function Compare-TwoADUsers {
+Function Compare-ADUser {
     PARAM($Username1,$Username2)
 
 $ValidUser1 = Get-ADUser $Username1  -Properties * | select Name,GivenName,Surname,UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate,samaccountname
@@ -92,7 +92,7 @@ $Details
 
 } #end Function
 
-Function Initialize-CitrixUserReports {
+Function Initialize-CitrixUserReport {
     PARAM(
         [Parameter(Mandatory = $true, Position = 0)]
 		[ValidateScript({(Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml")})]
@@ -129,7 +129,6 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 			'[double]' { $VarValue = [double]$VarValue } # Double-precision 64-bit floating point number
 			'[DateTime]' { $VarValue = [DateTime]$VarValue } # Date and Time
 			'[Array]' { $VarValue = [Array]$VarValue.Split(',') } # Array
-			'[Command]' { $VarValue = Invoke-Expression $VarValue; $CreateVariable = $False } # Command
 		}
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
@@ -152,7 +151,7 @@ $timer = [Diagnostics.Stopwatch]::StartNew();
 
 
 $CTXAdmin = Find-Credential | where target -Like "*Healthcheck" | Get-Credential -Store
-if ($CTXAdmin -eq $null) {
+if ($null -eq $CTXAdmin) {
     $AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
     Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 }
@@ -163,7 +162,7 @@ if ($CTXAdmin -eq $null) {
 ########################################
 ## Connect and get info
 #########################################
-$compareusers = Compare-TwoADUsers -Username1 $Username1 -Username2 $Username2 -Verbose
+$compareusers = Compare-ADUser -Username1 $Username1 -Username2 $Username2 -Verbose
 
 
 ########################################

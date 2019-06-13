@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -27,26 +27,26 @@
 
 .RELEASENOTES
 Created [07/06/2019_03:58]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
-<# 
+<#
 
-.DESCRIPTION 
+.DESCRIPTION
 Find the diferences in ad groups
 
-#> 
+#>
 
 Param()
 
 
 
-Function Compare-TwoADUsers {
+Function Compare-ADUser {
                 PARAM(
                 [Parameter(Mandatory=$true, Position=0, ValueFromPipeline = $true)]
                 [ValidateNotNull()]

@@ -83,8 +83,8 @@ Date Created - 05/06/2019_19:16
 
 #> 
 
-function Install-XDHealthCheckParameters {
-	function Set-Parameters {	
+function Install-XDHealthCheckParameter {
+function Set-Parameter {
 		[string]$ScriptPath = $PSScriptRoot
 
 		Write-Host 'Installing needed Modules' -ForegroundColor Cyan
@@ -116,7 +116,6 @@ function Install-XDHealthCheckParameters {
 		Set-Credential -Credential $smtpClientCredentials -Target "Healthcheck_smtp" -Persistence LocalComputer -Description "Account used for XD health checks" -Verbose
 	}
 	else { [xml]$TempParm = Get-Content  $PSScriptRoot\Parameters-TemplateNoEmail.xml }
-}
 
 Write-Color -Text 'Setting up credentials' -Color DarkCyan -ShowTime
 $XDAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
@@ -143,8 +142,8 @@ Write-Color -Text '_________________________________________' -Color Green
 Write-Color -Text 'Setup Complete' -Color green -ShowTime
 }
 
-function Test-Parameters {
-		
+function Test-Parameter {
+
 	if ($PSParameters -eq $null) {
 		$xmlpath = Read-Host 'Full Path to Parameters.xml file'
 		if ((Get-Item $xmlpath).Extension -eq 'xml') { [xml]$Parameters = Get-Content $xmlpath }
@@ -152,23 +151,22 @@ function Test-Parameters {
 	}
 
 
-		Write-Color -Text 'Checking Credentials' -Color DarkCyan -ShowTime
-		########################################
-		## Getting Credentials
-		#########################################
-
-		$XDAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
-	if ($XDAdmin -eq $null) {
-		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for XD HealthChecks"
-		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for XD health checks" -Verbose
-	}
-
-
+	Write-Color -Text 'Checking Credentials' -Color DarkCyan -ShowTime
 	########################################
-	## Build other variables
+	## Getting Credentials
 	#########################################
 
+	$XDAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
+if ($XDAdmin -eq $null) {
+	$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for XD HealthChecks"
+	Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for XD health checks" -Verbose
 }
+
+
+########################################
+## Build other variables
+#########################################
+
 $Parameters.Settings.Variables.Variable | ft
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
@@ -251,8 +249,8 @@ do {
 
 	$selection = Read-Host "Please make a selection"
 	switch ($selection) {
-		'1' { Set-Parameters }
-		'2' { Test-Parameters }
+		'1' { Set-Parameter }
+		'2' { Test-Parameter }
 		'3' { Initialize-CitrixHealthCheck -XMLParameterFilePath $PSParameters -Verbose }
 		
 	}

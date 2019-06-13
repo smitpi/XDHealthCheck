@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -33,11 +33,11 @@ Updated [13/05/2019_04:40]
 Updated [22/05/2019_20:13]
 Updated [24/05/2019_19:25]
 Updated [06/06/2019_19:26]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -53,12 +53,12 @@ Updated [09/06/2019_09:18]
 
 
 
-<# 
+<#
 
-.DESCRIPTION 
+.DESCRIPTION
 Xendesktop Farm Details
 
-#> 
+#>
 
 Param()
 
@@ -75,13 +75,13 @@ Function Get-RDSLicenseInformation {
                         [ValidateNotNullOrEmpty()]
                         [PSCredential]$RemoteCredentials)
 
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] RDS Details"  
-$RDSLicense = Get-WmiObject Win32_TSLicenseKeyPack -ComputerName $LicenseServer -Credential $RemoteCredentials -ErrorAction SilentlyContinue | where { $_.ProductVersion -eq "Windows Server 2016"} | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
+Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] RDS Details"
+$RDSLicense = Get-CimInstance Win32_TSLicenseKeyPack -ComputerName $LicenseServer -Credential $RemoteCredentials -ErrorAction SilentlyContinue | where { $_.ProductVersion -eq "Windows Server 2016"} | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
 $CTXObject = New-Object PSObject -Property @{
     "Per Device"             = $RDSLicense | where {$_.TypeAndModel -eq "RDS Per Device CAL"}
     "Per User"               = $RDSLicense | where {$_.TypeAndModel -eq "RDS Per User CAL"}
     }
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending] RDS Details"  
+Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending] RDS Details"
 $CTXObject
 
 

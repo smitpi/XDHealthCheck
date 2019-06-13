@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,8 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
-
+.EXTERNALMODULEDEPENDENCIES
 .REQUIREDSCRIPTS
 
 .EXTERNALSCRIPTDEPENDENCIES
@@ -30,11 +29,11 @@ Created [17/05/2019_04:24]
 Updated [22/05/2019_20:14]
 Updated [24/05/2019_19:25]
 Updated [06/06/2019_19:26]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -46,7 +45,7 @@ Updated [09/06/2019_09:18]
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Xendesktop Farm Details
 
 #>
@@ -55,7 +54,7 @@ Param()
 
 
 
-Function Get-StoreFrontDetails {
+Function Get-StoreFrontDetail {
     PARAM(
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [ValidateNotNull()]
@@ -69,14 +68,11 @@ Function Get-StoreFrontDetails {
         [switch]$RunAsPSRemote = $false)
 
     function AllConfig {
-        param($StoreFrontServer, $RemoteCredentials,$VerbosePreference)
+        param($StoreFrontServer, [SecureString] $RemoteCredentials,$VerbosePreference)
 
         Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Storefront Details"
         $SiteArray = @()
         Add-PSSnapin citrix*
-        $STFDeployment = Get-STFDeployment
-        $DeploymentSiteId = $STFDeployment.SiteId
-
 
         # Set Proxy
         $wc = New-Object System.Net.WebClient

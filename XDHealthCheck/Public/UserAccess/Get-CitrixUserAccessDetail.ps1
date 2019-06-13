@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -29,11 +29,11 @@
 Created [22/05/2019_19:53]
 Updated [22/05/2019_20:18]
 Updated [06/06/2019_19:26]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -43,7 +43,7 @@ Updated [09/06/2019_09:18]
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 For the CTX Dashboard
 
 #>
@@ -53,7 +53,7 @@ Param()
 
 
 
-function Get-CitrixUserAccessDetails {
+function Get-CitrixUserAccessDetail {
                 PARAM(
                 [Parameter(Mandatory=$true, Position=0)]
                 [ValidateNotNull()]
@@ -89,7 +89,7 @@ $IncludedUsersUPN  = $AccessPolicy | ForEach-Object { $_.IncludedUsers  | Where-
 foreach ($Group in $IncludedGroups) {
     $CheckMemberof = $null
     $CheckMemberof = $AllUserGroups | where {$_.SamAccountName -like $Group.FullName}
-    if ($CheckMemberof -ne $null) {
+    if ($null -ne $CheckMemberof) {
             $userDeliveryGroup += $AccessPolicy.DesktopGroupName
             $UserDeliveryGroupUid  += $AccessPolicy.DesktopGroupUid
     }
@@ -116,7 +116,7 @@ $PublishedApps += $UserDeliveryGroupUid | ForEach-Object {Get-BrokerApplication 
 foreach ($app in $PublishedApps ) {
     $CheckMemberof = $null
     $CheckMemberof = $AllUserGroups | where {$_.SamAccountName -like $app.AssociatedUserFullNames}
-    if ($CheckMemberof -ne $null) {$AccessPublishedApps += $app}
+    if ($null -ne $CheckMemberof) {$AccessPublishedApps += $app}
     else {$NoAccessPublishedApps += $app}
     }
 

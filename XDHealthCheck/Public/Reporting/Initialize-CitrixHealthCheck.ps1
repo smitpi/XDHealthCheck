@@ -63,7 +63,7 @@ function Initialize-CitrixHealthCheck {
 
 
 
-#region xml imports
+	#region xml imports
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
 
 	Write-Colour "Using these Variables"
@@ -129,11 +129,11 @@ $CTXCore = $CTXControllers + $CTXStoreFrontFarm + $CTXLicenseServer | sort -Uniq
 ########################################
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
 $CitrixLicenseInformation = Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
-$CitrixRemoteFarmDetails = Get-CitrixFarmDetails -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
-$CitrixServerEventLogs = Get-CitrixServerEventLogs -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin -Verbose
+$CitrixRemoteFarmDetails = Get-CitrixFarmDetail -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
+$CitrixServerEventLogs = Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin -Verbose
 $RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicensServer  -RemoteCredentials $CTXAdmin -Verbose
-$CitrixConfigurationChanges = Get-CitrixConfigurationChanges -AdminServer $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin -Verbose
-$StoreFrontDetails = Get-StoreFrontDetails -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
+$CitrixConfigurationChanges = Get-CitrixConfigurationChange -AdminServer $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin -Verbose
+$StoreFrontDetails = Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 $ServerPerformance = Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin -Verbose
 
 
@@ -184,7 +184,7 @@ $flags = Redflags
 
 $AllXDData = New-Object PSObject -Property @{
 	DateCollected              = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-    Redflags                   = $flags
+	Redflags                   = $flags
 	CitrixLicenseInformation   = $CitrixLicenseInformation
 	CitrixRemoteFarmDetails    = $CitrixRemoteFarmDetails
 	CitrixServerEventLogs      = $CitrixServerEventLogs
@@ -193,7 +193,7 @@ $AllXDData = New-Object PSObject -Property @{
 	StoreFrontDetails          = $StoreFrontDetails
 	ServerPerformance          = $ServerPerformance
 } 
-if (Test-Path -Path $XMLExport) { Remove-Item $XMLExport -Force -Verbose}
+if (Test-Path -Path $XMLExport) { Remove-Item $XMLExport -Force -Verbose }
 $AllXDData | Export-Clixml -Path $XMLExport -Depth 25 -NoClobber -Force
 
 ########################################
@@ -201,10 +201,10 @@ $AllXDData | Export-Clixml -Path $XMLExport -Depth 25 -NoClobber -Force
 ########################################
 #region Table Settings
 $TableSettings = @{
-	Style                  = 'stripe'
-	HideFooter             = $true
-	OrderMulti             = $true
-	TextWhenNoData         = 'No Data to display here'
+	Style          = 'stripe'
+	HideFooter     = $true
+	OrderMulti     = $true
+	TextWhenNoData = 'No Data to display here'
 }
 
 $SectionSettings = @{
@@ -282,7 +282,7 @@ New-HTML -TitleText "XenDesktop Report"  -FilePath $Reportname -ShowHTML {
 	New-HTMLSection @SectionSettings  -Content {
 		New-HTMLSection -HeaderText 'Citrix Sessions' @TableSectionSettings { New-HTMLTable   @TableSettings  -DataTable $CitrixRemoteFarmDetails.SessionCounts $Conditions_sessions }
 	}
-	new-HTMLTab		\\e -
+	New-HTMLTab		\\e -
 	New-HTMLSection @SectionSettings   -Content {
 		New-HTMLSection -HeaderText 'Citrix Controllers'  @TableSectionSettings { New-HTMLTable @TableSettings -DataTable  $CitrixRemoteFarmDetails.Controllers.Summary $Conditions_controllers }
 		New-HTMLSection -HeaderText 'Citrix DB Connection' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.DBConnection $Conditions_db }
@@ -311,7 +311,7 @@ New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citri
 if ($SaveExcelReport) {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
 	$excelfile = $CitrixServerEventLogs.TotalAll | Export-Excel -Path $ExcelReportname -WorksheetName EventsRawData -AutoSize -AutoFilter -Title "Citrix Events" -TitleBold -TitleSize 20 -FreezePane 3 -IncludePivotTable -TitleFillPattern DarkGrid -PivotTableName "Events Summery" -PivotRows MachineName, LevelDisplayName, ProviderName -PivotData @{"Message" = "count" } -NoTotalsInPivot
-    $excelfile += $CitrixConfigurationChanges.Filtered | Export-Excel -Path $ExcelReportname -WorksheetName ConfigChangeRawData -AutoSize -AutoFilter -Title "Citrix Config Changes" -TitleBold -TitleSize 20 -FreezePane 3
+$excelfile += $CitrixConfigurationChanges.Filtered | Export-Excel -Path $ExcelReportname -WorksheetName ConfigChangeRawData -AutoSize -AutoFilter -Title "Citrix Config Changes" -TitleBold -TitleSize 20 -FreezePane 3
 
 }
 if ($SendEmail) {

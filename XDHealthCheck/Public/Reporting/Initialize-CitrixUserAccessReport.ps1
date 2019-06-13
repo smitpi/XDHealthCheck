@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -27,20 +27,20 @@
 
 .RELEASENOTES
 Created [08/06/2019_11:18]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
-<# 
+<#
 
-.DESCRIPTION 
+.DESCRIPTION
 User Access report
 Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
-#> 
+#>
 
 Param()
 
@@ -80,15 +80,9 @@ $XMLParameter.Settings.Variables.Variable | foreach {
 			'[double]' { $VarValue = [double]$VarValue } # Double-precision 64-bit floating point number
 			'[DateTime]' { $VarValue = [DateTime]$VarValue } # Date and Time
 			'[Array]' { $VarValue = [Array]$VarValue.Split(',') } # Array
-			'[Command]' { $VarValue = Invoke-Expression $VarValue; $CreateVariable = $False } # Command
 		}
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
-
-Set-Location $PSScriptRoot
-if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-
-[string]$Reportname = $ReportsFolder + "\XDUsers\XD_UsersAccess." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 
 if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 [string]$Transcriptlog ="$ReportsFolder\logs\XDUserAccess_TransmissionLogs." + (get-date -Format yyyy.MM.dd-HH.mm) + ".log"
@@ -103,7 +97,7 @@ $timer = [Diagnostics.Stopwatch]::StartNew();
 
 
 $CTXAdmin = Find-Credential | where target -Like "*Healthcheck" | Get-Credential -Store
-if ($CTXAdmin -eq $null) {
+if ($null -eq $CTXAdmin) {
     $AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
     Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 }
@@ -116,12 +110,12 @@ if ($CTXAdmin -eq $null) {
 #########################################
 
 
-$UserDetail = Get-CitrixUserAccessDetails -Username $Username -AdminServer $CTXDDC -Verbose
+$UserDetail = Get-CitrixUserAccessDetail -Username $Username -AdminServer $CTXDDC -Verbose
 $userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
 $DesktopsCombined = $UserDetail.DirectPublishedDesktops + $UserDetail.PublishedDesktops | sort -Property DesktopGroupName -Unique
 
 $HeddingText = "Access Report for User:" + $UserDetail.UserDetail.Name + " on " + (get-date -Format dd) + " " + (get-date -Format MMMM) + "," + (get-date -Format yyyy) + " " + (Get-Date -Format HH:mm)
-$HTMLReport = New-HTML -TitleText "Access Report" -FilePath  $PSScriptRoot\Dashboard01.html -ShowHTML {
+New-HTML -TitleText "Access Report" -FilePath  $env:TEMP\Dashboard01.html -ShowHTML {
 New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
 New-HTMLSection -HeaderBackGroundColor DarkGray -Content {
     New-HTMLSection -HeaderText 'User details' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable $userDetailList -HideFooter}
@@ -133,6 +127,12 @@ New-HTMLSection -HeaderBackGroundColor DarkGray -Content {
     New-HTMLSection -HeaderText 'All User Groups' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable $UserDetail.AllUserGroups -HideFooter}
     }
 }
+
+Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending]Healthcheck Complete"
+
+$timer.Stop()
+$timer.Elapsed | select Days, Hours, Minutes, Seconds | fl
+Stop-Transcript
 
 } #end Function
 

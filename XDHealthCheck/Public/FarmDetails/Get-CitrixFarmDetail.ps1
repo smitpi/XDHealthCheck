@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -31,11 +31,11 @@ Updated [13/05/2019_04:40]
 Updated [22/05/2019_20:13]
 Updated [24/05/2019_19:25]
 Updated [06/06/2019_19:25]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -49,7 +49,7 @@ Updated [09/06/2019_09:18]
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Xendesktop Farm Details
 
 #>
@@ -58,7 +58,7 @@ Param()
 
 
 
-Function Get-CitrixFarmDetails {
+Function Get-CitrixFarmDetail {
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]
@@ -78,7 +78,7 @@ function CitrixFarmDetails {
 
 		Add-PSSnapin Citrix*
 
-	function Get-CTXSiteDetails($AdminServer) {
+	function Get-CTXSiteDetail($AdminServer) {
 
 	$site = Get-BrokerSite -AdminAddress $AdminServer
 	$CustomCTXObject = New-Object PSObject -Property @{
@@ -90,7 +90,7 @@ function CitrixFarmDetails {
 
  }
 
-	function Get-CTXControllers($AdminServer) {
+	function Get-CTXController($AdminServer) {
 		$RegistedDesktops = @()
 		$controllsers = Get-BrokerController -AdminAddress $AdminServer
 		foreach ($server in $controllsers) {
@@ -125,7 +125,7 @@ $CusObject = New-Object PSObject -Property @{
 $CusObject
 }
 
-function Get-CTXSessions($AdminServer) { Get-BrokerSession -MaxRecordCount 10000 -AdminAddress $AdminServer }
+function Get-CTXSession($AdminServer) { Get-BrokerSession -MaxRecordCount 10000 -AdminAddress $AdminServer }
 
 function Get-CTXBrokerDesktopGroup($AdminServer) {
 	$DG = Get-BrokerDesktopGroup -AdminAddress $AdminServer
@@ -152,7 +152,7 @@ function Get-CTXBrokerDesktopGroup($AdminServer) {
 $ReadAbleDG
 }
 
-function Get-CTXADObjects($AdminServer) {
+function Get-CTXADObject($AdminServer) {
  $tainted = $adobjects = $CusObject = $null
  $adobjects = Get-AcctADAccount -MaxRecordCount 10000 -AdminAddress $AdminServer
  $tainted = $adobjects | Where-Object { $_.state -like "tainted*" }
@@ -182,17 +182,17 @@ $dbArray
 }
 
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Site Details"
-$SiteDetails = Get-CTXSiteDetails -AdminServer $AdminServer
+$SiteDetails = Get-CTXSiteDetail -AdminServer $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Controllers Details"
-$Controllers = Get-CTXControllers -AdminServer $AdminServer
+$Controllers = Get-CTXController -AdminServer $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Machines Details"
 $Machines = Get-CTXBrokerMachine -AdminServer $AdminServer
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Processing] DeliveryGroups Details"
 $DeliveryGroups = Get-CTXBrokerDesktopGroup -AdminAddress $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Sessions Details"
-$Sessions = Get-CTXSessions -AdminServer $AdminServer
+$Sessions = Get-CTXSession -AdminServer $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] ADObjects Details"
-$ADObjects = Get-CTXADObjects -AdminServer $AdminServer
+$ADObjects = Get-CTXADObject -AdminServer $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] DBConnection Details"
 $DBConnection = Get-CTXDBConnection -AdminServer $AdminServer
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"
@@ -211,7 +211,7 @@ $CustomCTXObject = New-Object PSObject -Property @{
 	Machines         = $Machines
 	Sessions         = $Sessions
 	ADObjects        = $ADObjects
-    DeliveryGroups   = $DeliveryGroups	
+    DeliveryGroups   = $DeliveryGroups
 	DBConnection     = $DBConnection
 	SessionCounts    = $SessionCounts
 } | select DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects,DeliveryGroups, DBConnection, SessionCounts

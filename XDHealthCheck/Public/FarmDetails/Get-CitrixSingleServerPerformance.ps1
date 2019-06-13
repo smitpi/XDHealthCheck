@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -31,11 +31,11 @@ Updated [13/05/2019_04:40]
 Updated [22/05/2019_20:13]
 Updated [24/05/2019_19:25]
 Updated [06/06/2019_19:25]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -49,7 +49,7 @@ Updated [09/06/2019_09:18]
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Xendesktop Farm Details
 
 #>
@@ -85,8 +85,8 @@ Function Get-CitrixSingleServerPerformance {
     else {$ServicesJoin = ''}
 
     Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Processing] Uptime Details for $($server.ToString())"
-    $OS = Get-WmiObject Win32_OperatingSystem -ComputerName $server
-    $Uptime = (Get-Date) - $OS.ConvertToDateTime($OS.LastBootUpTime)
+    $OS = Get-CimInstance Win32_OperatingSystem -ComputerName $server | select *
+    $Uptime = (Get-Date) - ($OS.LastBootUpTime)
     $updays = [math]::Round($uptime.Days, 0)
 
 $CTXObject = New-Object PSCustomObject -Property @{

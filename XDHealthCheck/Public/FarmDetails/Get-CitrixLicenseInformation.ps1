@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -31,11 +31,11 @@ Updated [13/05/2019_04:40]
 Updated [22/05/2019_20:13]
 Updated [24/05/2019_19:24]
 Updated [06/06/2019_19:25]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -47,12 +47,12 @@ Updated [09/06/2019_09:18]
 
 
 
-<# 
+<#
 
-.DESCRIPTION 
+.DESCRIPTION
 Xendesktop Farm Details
 
-#> 
+#>
 
 Param()
 
@@ -75,13 +75,13 @@ Function Get-CitrixLicenseInformation {
 function get-license {
     param($AdminServer,$VerbosePreference)
     Add-PSSnapin Citrix*
-    Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] License Details"  
+    Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] License Details"
 
     $LicenseServer = Get-BrokerSite -AdminAddress $AdminServer | select LicenseServerName
     [string]$licurl = "https://" + $LicenseServer.LicenseServerName + ":8083"
     $cert = Get-LicCertificate -AdminAddress $licurl
     Get-LicInventory -AdminAddress $licurl -CertHash $cert.CertHash | where { $_.LicensesInUse -ne 0 } | Select-Object LocalizedLicenseProductName, LicensesInUse, LicensesAvailable
-    Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [End] License Details"  
+    Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [End] License Details"
 
 }
 

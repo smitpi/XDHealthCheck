@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -32,12 +32,12 @@ Date Created - 09/06/2019_12:53
 
 #>
 
-<# 
+<#
 
-.DESCRIPTION 
- CTX HealthCheck 
+.DESCRIPTION
+Xendesktop Farm Details
 
-#> 
+#>
 
 Param()
 

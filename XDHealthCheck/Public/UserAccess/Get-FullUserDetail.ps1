@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -29,11 +29,11 @@
 Created [23/05/2019_00:00]
 Updated [24/05/2019_19:25]
 Updated [06/06/2019_19:26]
-Updated [09/06/2019_09:18] 
+Updated [09/06/2019_09:18]
 
 .PRIVATEDATA
 
-#> 
+#>
 
 #Requires -Module ActiveDirectory
 
@@ -42,7 +42,7 @@ Updated [09/06/2019_09:18]
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Get user AD details
 
 
@@ -74,7 +74,7 @@ Function Get-FullUserDetail {
 
 
 function AllConfig {
-        param($UserToQuery,$DomainFQDN,$DomainCredentials,$VerbosePreference)
+        param($UserToQuery,$DomainFQDN,[SecureString] $DomainCredentials,$VerbosePreference)
 
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] User Details"
 $UserSummery = Get-ADUser $UserToQuery -Server $DomainFQDN -Credential $DomainCredentials -Properties * | select Name,GivenName,Surname,UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate,samaccountname
