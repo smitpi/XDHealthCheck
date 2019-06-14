@@ -112,9 +112,8 @@ if ($null -eq $CTXAdmin) {
 ## Connect and get info
 #########################################
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
-$CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC -RunAsPSRemote -RemoteCredentials $CTXAdmin -Verbose
+$CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC -Verbose
 
-$CitrixRemoteFarmDetail = Get-CitrixFarmDetail -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote -Verbose
 $MashineCatalog = $CitrixObjects.MashineCatalog | Select-Object MachineCatalogName, AllocationType, SessionSupport, UnassignedCount, UsedCount, MasterImageVM, MasterImageSnapshotName, MasterImageSnapshotCount, MasterImageVMDate
 $DeliveryGroups = $CitrixObjects.DeliveryGroups | Select-Object DesktopGroupName, Enabled, InMaintenanceMode, TotalApplications, TotalDesktops, DesktopsUnregistered, UserAccess, GroupAccess
 $PublishedApps = $CitrixObjects.PublishedApps | Select-Object DesktopGroupName, Enabled, ApplicationName, CommandLineExecutable, CommandLineArguments, WorkingDirectory, PublishedAppGroupAccess, PublishedAppUserAccess

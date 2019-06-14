@@ -75,11 +75,11 @@ Function Get-RDSLicenseInformation {
                         [ValidateNotNullOrEmpty()]
                         [PSCredential]$RemoteCredentials)
 
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] RDS Details"
-$RDSLicense = Get-CimInstance Win32_TSLicenseKeyPack -ComputerName $LicenseServer -Credential $RemoteCredentials -ErrorAction SilentlyContinue | where { $_.ProductVersion -eq "Windows Server 2016"} | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] RDS Details"
+	$RDSLicense = Invoke-Command -ComputerName $LicenseServer -Credential $RemoteCredentials -ScriptBlock { Get-CimInstance Win32_TSLicenseKeyPack -ErrorAction SilentlyContinue | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses}
 $CTXObject = New-Object PSObject -Property @{
-    "Per Device"             = $RDSLicense | where {$_.TypeAndModel -eq "RDS Per Device CAL"}
-    "Per User"               = $RDSLicense | where {$_.TypeAndModel -eq "RDS Per User CAL"}
+    "Per Device"             = $RDSLicense | Where-Object {$_.TypeAndModel -eq "RDS Per Device CAL"}
+    "Per User"               = $RDSLicense | Where-Object {$_.TypeAndModel -eq "RDS Per User CAL"}
     }
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending] RDS Details"
 $CTXObject

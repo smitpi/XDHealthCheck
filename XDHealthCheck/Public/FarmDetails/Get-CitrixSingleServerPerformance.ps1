@@ -85,7 +85,7 @@ Function Get-CitrixSingleServerPerformance {
     else {$ServicesJoin = ''}
 
     Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Processing] Uptime Details for $($server.ToString())"
-    $OS = Get-CimInstance Win32_OperatingSystem -ComputerName $server | select *
+    $OS = Get-CimInstance Win32_OperatingSystem -ComputerName $server | Select-Object *
     $Uptime = (Get-Date) - ($OS.LastBootUpTime)
     $updays = [math]::Round($uptime.Days, 0)
 
@@ -98,7 +98,7 @@ $CTXObject = New-Object PSCustomObject -Property @{
     'DDrive_Free'      = [Decimal]::Round(($perf[3].CookedValue) / 1024, 2).tostring()
     Uptime             = $updays.tostring()
     'Stopped_Services' = $ServicesJoin
-} | select ServerName, 'CPU_%', 'Memory_%', 'CDrive_Free', 'DDrive_Free', Uptime, 'Stopped_Services'
+} | Select-Object ServerName, 'CPU_%', 'Memory_%', 'CDrive_Free', 'DDrive_Free', Uptime, 'Stopped_Services'
 $CTXObject
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending] Performance Details for $($server.ToString())"
 

@@ -82,7 +82,7 @@ function CitrixFarmDetails {
 
 	$site = Get-BrokerSite -AdminAddress $AdminServer
 	$CustomCTXObject = New-Object PSObject -Property @{
-    Summary   = $site | select Name, ConfigLastChangeTime, LicenseEdition, LicenseModel, LicenseServerName
+    Summary   = $site | Select-Object Name, ConfigLastChangeTime, LicenseEdition, LicenseModel, LicenseServerName
 			AllDetails = $site
 		}
 
@@ -101,7 +101,7 @@ function CitrixFarmDetails {
 				'Last Start Time'     = $server.LastStartTime
 				State                 = $server.State
 				ControllerVersion     = $server.ControllerVersion
-			} | select Name, 'Desktops Registered', 'Last Activity Time', 'Last Start Time', State, ControllerVersion
+			} | Select-Object Name, 'Desktops Registered', 'Last Activity Time', 'Last Start Time', State, ControllerVersion
 
 		$RegistedDesktops += $CustomCTXObject
 	}
@@ -114,14 +114,14 @@ function CitrixFarmDetails {
 }
 
 function Get-CTXBrokerMachine($AdminServer) {
-	$NonRemotepc = Get-BrokerDesktopGroup -AdminAddress $AdminServer | where { $_.IsRemotePC -eq $false } | foreach { Get-BrokerMachine -MaxRecordCount 10000 -AdminAddress $AdminBox -DesktopGroupName $_.name | select DNSName, CatalogName, DesktopGroupName, CatalogUid, AssociatedUserNames, DesktopGroupUid, DeliveryType, DesktopKind, DesktopUid, FaultState, IPAddress, IconUid, OSType, PublishedApplications, RegistrationState, WindowsConnectionSetting }
-$UnRegServer = $NonRemotepc | Where-Object { $_.RegistrationState -like "unreg*" -and $_.DeliveryType -notlike "DesktopsOnly" } | select DNSName, CatalogName, DesktopGroupName, AssociatedUserNames, FaultState
-$UnRegDesktop = $NonRemotepc | Where-Object { $_.RegistrationState -like "unreg*" -and $_.DeliveryType -like "DesktopsOnly" } | select DNSName, CatalogName, DesktopGroupName, AssociatedUserNames, FaultState
+	$NonRemotepc = Get-BrokerDesktopGroup -AdminAddress $AdminServer | Where-Object { $_.IsRemotePC -eq $false } | ForEach-Object { Get-BrokerMachine -MaxRecordCount 10000 -AdminAddress $AdminBox -DesktopGroupName $_.name | Select-Object DNSName, CatalogName, DesktopGroupName, CatalogUid, AssociatedUserNames, DesktopGroupUid, DeliveryType, DesktopKind, DesktopUid, FaultState, IPAddress, IconUid, OSType, PublishedApplications, RegistrationState, WindowsConnectionSetting }
+$UnRegServer = $NonRemotepc | Where-Object { $_.RegistrationState -like "unreg*" -and $_.DeliveryType -notlike "DesktopsOnly" } | Select-Object DNSName, CatalogName, DesktopGroupName, AssociatedUserNames, FaultState
+$UnRegDesktop = $NonRemotepc | Where-Object { $_.RegistrationState -like "unreg*" -and $_.DeliveryType -like "DesktopsOnly" } | Select-Object DNSName, CatalogName, DesktopGroupName, AssociatedUserNames, FaultState
 $CusObject = New-Object PSObject -Property @{
 	AllMachines          = $NonRemotepc
 	UnRegisteredServers  = $UnRegServer
 	UnRegisteredDesktops = $UnRegDesktop
-} | select AllMachines, UnRegisteredServers, UnRegisteredDesktops
+} | Select-Object AllMachines, UnRegisteredServers, UnRegisteredDesktops
 $CusObject
 }
 
@@ -146,7 +146,7 @@ function Get-CTXBrokerDesktopGroup($AdminServer) {
 			SessionSupport         = $item.SessionSupport
 			TotalApplicationGroups = $item.TotalApplicationGroups
 			TotalApplications      = $item.TotalApplications
-		} | select Name, DeliveryType, DesktopKind, IsRemotePC, Enabled, TotalDesktops, DesktopsAvailable, DesktopsInUse, DesktopsUnregistered, InMaintenanceMode, Sessions, SessionSupport, TotalApplicationGroups, TotalApplications
+		} | Select-Object Name, DeliveryType, DesktopKind, IsRemotePC, Enabled, TotalDesktops, DesktopsAvailable, DesktopsInUse, DesktopsUnregistered, InMaintenanceMode, Sessions, SessionSupport, TotalApplicationGroups, TotalApplications
 	$ReadAbleDG += $CusObject
 	}
 $ReadAbleDG
@@ -159,7 +159,7 @@ function Get-CTXADObject($AdminServer) {
 $CusObject = New-Object PSObject -Property @{
 	AllObjects     = $adobjects
 	TaintedObjects = $tainted
-} | select AllObjects, TaintedObjects
+} | Select-Object AllObjects, TaintedObjects
 $CusObject
 }
 
@@ -176,7 +176,7 @@ function Get-CTXDBConnection($AdminServer) {
 		"DB Connection Status" = $dbstatus
 		"Is Mirroring Enabled" = $dbconnection.ExtraInfo.'Database.IsMirroringEnabled'.ToString()
 		"DB Last Backup Date"  = $dbconnection.ExtraInfo.'Database.LastBackupDate'.ToString()
-	} | select  "Service Status", "DB Connection Status", "Is Mirroring Enabled", "DB Last Backup Date"
+	} | Select-Object  "Service Status", "DB Connection Status", "Is Mirroring Enabled", "DB Last Backup Date"
 $dbArray = $CCTXObject.psobject.Properties | Select-Object -Property Name, Value
 $dbArray
 }
@@ -202,7 +202,7 @@ $SessionCounts = New-Object PSObject -Property @{
    'Unregistered Servers'  = ($Machines.UnRegisteredServers | Measure-Object).count
    'Unregistered Desktops' = ($Machines.UnRegisteredDesktops | Measure-Object).count
    'Tainted Objects'       = ($ADObjects.TaintedObjects | Measure-Object).Count
-} | select 'Active Sessions', 'Disconnected Sessions', 'Unregistered Servers', 'Unregistered Desktops', 'Tainted Objects'
+} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Unregistered Servers', 'Unregistered Desktops', 'Tainted Objects'
 
 $CustomCTXObject = New-Object PSObject -Property @{
 	DateCollected    = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
@@ -214,7 +214,7 @@ $CustomCTXObject = New-Object PSObject -Property @{
     DeliveryGroups   = $DeliveryGroups
 	DBConnection     = $DBConnection
 	SessionCounts    = $SessionCounts
-} | select DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects,DeliveryGroups, DBConnection, SessionCounts
+} | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects,DeliveryGroups, DBConnection, SessionCounts
 
 
 $CustomCTXObject
@@ -225,7 +225,7 @@ $FarmDetails = @()
 if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:CitrixFarmDetails} -ArgumentList  @($AdminServer, $RemoteCredentials, $VerbosePreference) -Credential $RemoteCredentials }
 else { $FarmDetails = CitrixFarmDetails -AdminAddress $AdminServer -VerbosePreference $VerbosePreference }
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] All Details"
-$FarmDetails | select DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects,DeliveryGroups, DBConnection, SessionCounts
+$FarmDetails | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects,DeliveryGroups, DBConnection, SessionCounts
 
 } #end Function
 

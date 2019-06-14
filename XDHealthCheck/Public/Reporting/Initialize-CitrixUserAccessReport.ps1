@@ -69,10 +69,10 @@ Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Importing
 
 Write-Colour "Using these Variables"
 [XML]$XMLParameter = Get-Content $XMLParameterFilePath
-$XMLParameter.Settings.Variables.Variable | ft
+$XMLParameter.Settings.Variables.Variable | Format-Table
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
-$XMLParameter.Settings.Variables.Variable | foreach {
+$XMLParameter.Settings.Variables.Variable | ForEach-Object {
 		# Set Variables contained in XML file
 		$VarValue = $_.Value
 		$CreateVariable = $True # Default value to create XML content as Variable
@@ -105,7 +105,7 @@ $timer = [Diagnostics.Stopwatch]::StartNew();
 #########################################
 
 
-$CTXAdmin = Find-Credential | where target -Like "*Healthcheck" | Get-Credential -Store
+$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
 if ($null -eq $CTXAdmin) {
     $AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
     Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
@@ -121,18 +121,18 @@ if ($null -eq $CTXAdmin) {
 
 $UserDetail = Get-CitrixUserAccessDetail -Username $Username -AdminServer $CTXDDC -Verbose
 $userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
-$DesktopsCombined = $UserDetail.DirectPublishedDesktops + $UserDetail.PublishedDesktops | sort -Property DesktopGroupName -Unique
+$DesktopsCombined = $UserDetail.DirectPublishedDesktops + $UserDetail.PublishedDesktops | Sort-Object -Property DesktopGroupName -Unique
 
 $HeddingText = "Access Report for User:" + $UserDetail.UserDetail.Name + " on " + (get-date -Format dd) + " " + (get-date -Format MMMM) + "," + (get-date -Format yyyy) + " " + (Get-Date -Format HH:mm)
 New-HTML -TitleText "Access Report" -FilePath  $env:TEMP\Dashboard01.html -ShowHTML {
 New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
 New-HTMLSection -HeaderBackGroundColor DarkGray -Content {
     New-HTMLSection -HeaderText 'User details' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable $userDetailList -HideFooter}
-    New-HTMLSection -HeaderText 'Current Applications' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable ($UserDetail.AccessPublishedApps | Select PublishedName,Description,enabled) -HideFooter}
+    New-HTMLSection -HeaderText 'Current Applications' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable ($UserDetail.AccessPublishedApps | Select-Object PublishedName,Description,enabled) -HideFooter}
     New-HTMLSection -HeaderText 'Current Desktops' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable ($DesktopsCombined) -HideFooter}
 }
 New-HTMLSection -HeaderBackGroundColor DarkGray -Content {
-    New-HTMLSection -HeaderText 'No Access Apps' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable ($UserDetail.NoAccessPublishedApps  | Select PublishedName,Description,enabled)  -HideFooter}
+    New-HTMLSection -HeaderText 'No Access Apps' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable ($UserDetail.NoAccessPublishedApps  | Select-Object PublishedName,Description,enabled)  -HideFooter}
     New-HTMLSection -HeaderText 'All User Groups' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable $UserDetail.AllUserGroups -HideFooter}
     }
 }
@@ -140,7 +140,7 @@ New-HTMLSection -HeaderBackGroundColor DarkGray -Content {
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending]Healthcheck Complete"
 
 $timer.Stop()
-$timer.Elapsed | select Days, Hours, Minutes, Seconds | fl
+$timer.Elapsed | Select-Object Days, Hours, Minutes, Seconds | Format-List
 Stop-Transcript
 
 } #end Function

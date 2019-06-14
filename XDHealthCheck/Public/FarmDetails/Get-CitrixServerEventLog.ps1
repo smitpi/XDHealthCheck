@@ -81,7 +81,7 @@ function events {
     $ctxevent = Get-WinEvent -ComputerName $server -FilterHashTable @{LogName = 'Application', 'System'; Level = 2, 3; StartTime = $eventtime } -ErrorAction SilentlyContinue | Select-Object MachineName, TimeCreated, LogName, ProviderName, Id, LevelDisplayName, Message
     $servererrors = $ctxevent | Where-Object -Property LevelDisplayName -EQ "Error"
     $serverWarning = $ctxevent | Where-Object -Property LevelDisplayName -EQ "Warning"
-    $TopProfider = $ctxevent | Where { $_.LevelDisplayName -EQ "Warning" -or $_.LevelDisplayName -eq "Error" } | Group-Object -Property ProviderName | Sort-Object -Property count -Descending | Select-Object Name, Count
+    $TopProfider = $ctxevent | Where-Object { $_.LevelDisplayName -EQ "Warning" -or $_.LevelDisplayName -eq "Error" } | Group-Object -Property ProviderName | Sort-Object -Property count -Descending | Select-Object Name, Count
 
     $CTXObject = New-Object PSObject -Property @{
         ServerName    = ([System.Net.Dns]::GetHostByName(($env:computerName))).hostname
@@ -100,16 +100,16 @@ $logs = Invoke-Command -ComputerName $Server -ScriptBlock ${Function:events} -Ar
 $Eventlogs += $logs
 }
 
-$Eventlogs | foreach {
+$Eventlogs | ForEach-Object {
  $TotalErrors = $TotalErrors + $_.Errors
  $TotalWarnings = $TotalWarnings + $_.Warning
  }
-[array]$TotalProvider += $Eventlogs | foreach {$_.TopProfider}
-[array]$TotalAll  += $Eventlogs | foreach {$_.all}
+[array]$TotalProvider += $Eventlogs | ForEach-Object {$_.TopProfider}
+[array]$TotalAll  += $Eventlogs | ForEach-Object {$_.all}
 
 $CTXObject = New-Object PSObject -Property @{
         DateCollected   = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-        SingleServer    = $Eventlogs | select ServerName,Errors,Warning,TopProfider,All
+        SingleServer    = $Eventlogs | Select-Object ServerName,Errors,Warning,TopProfider,All
         TotalErrors     = $TotalErrors
         TotalWarnings   = $TotalWarnings
         TotalProvider   = $TotalProvider | Sort-Object -Property count -Descending

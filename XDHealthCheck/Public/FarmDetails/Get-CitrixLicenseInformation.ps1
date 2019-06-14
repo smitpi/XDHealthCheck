@@ -77,16 +77,16 @@ function get-license {
     Add-PSSnapin Citrix*
     Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] License Details"
 
-    $LicenseServer = Get-BrokerSite -AdminAddress $AdminServer | select LicenseServerName
+    $LicenseServer = Get-BrokerSite -AdminAddress $AdminServer | Select-Object LicenseServerName
     [string]$licurl = "https://" + $LicenseServer.LicenseServerName + ":8083"
     $cert = Get-LicCertificate -AdminAddress $licurl
-    Get-LicInventory -AdminAddress $licurl -CertHash $cert.CertHash | where { $_.LicensesInUse -ne 0 } | Select-Object LocalizedLicenseProductName, LicensesInUse, LicensesAvailable
+    Get-LicInventory -AdminAddress $licurl -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 } | Select-Object LocalizedLicenseProductName, LicensesInUse, LicensesAvailable
     Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [End] License Details"
 
 }
 
 $LicDetails = @()
-if ($RunAsPSRemote -eq $true) {$LicDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:get-license} -ArgumentList @($AdminServer,$VerbosePreference) -Credential $RemoteCredentials | select LocalizedLicenseProductName,LicensesInUse,LicensesAvailable }
+if ($RunAsPSRemote -eq $true) {$LicDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:get-license} -ArgumentList @($AdminServer,$VerbosePreference) -Credential $RemoteCredentials | Select-Object LocalizedLicenseProductName,LicensesInUse,LicensesAvailable }
 else { $LicDetails = get-license -AdminAddress $AdminServer }
 $LicDetails
 

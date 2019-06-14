@@ -81,7 +81,7 @@ foreach ($web in $Websitelist) {
 }
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending] Website Details"
 
-$websites |select  "WebSite Name" ,StatusCode,StatusDescription
+$websites |Select-Object  "WebSite Name" ,StatusCode,StatusDescription
 
 
 

@@ -76,12 +76,12 @@ Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] XA6 Farm Det
     $farmDetails = Get-XAFarm
     $FarmArray = @()
     $Servers = Get-XAServer
-    $sessions = Get-XASession | where { $_.State -eq "Active" -and $_.Protocol -eq "Ica"}
+    $sessions = Get-XASession | Where-Object { $_.State -eq "Active" -and $_.Protocol -eq "Ica"}
 
     foreach ($xaitem in $Servers) {
         $xaload = Get-XAServerLoad -ServerName $xaitem.ServerName | Select-Object -Property load
-        $workergroup = (Get-XAWorkerGroup -ServerName $xaitem.ServerName | % { $_.WorkerGroupName })
-        $activeServerSessions = [array]($sessions | where {$_.ServerName -like $xaitem.ServerName })
+        $workergroup = (Get-XAWorkerGroup -ServerName $xaitem.ServerName | ForEach-Object { $_.WorkerGroupName })
+        $activeServerSessions = [array]($sessions | Where-Object {$_.ServerName -like $xaitem.ServerName })
         [bool]$ping = Test-Connection $xaitem.ServerName -Count 1 -Quiet
 
         try {
@@ -108,7 +108,7 @@ Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] XA6 Farm Det
         "ServerLoad"             = $xaload.load
         "LogOnsEnabled"          = $xaitem.LogOnsEnabled
         "LogOnMode"              = $xaitem.LogOnMode
-    } | select 'Server Name', Ping, 'Port 1494', 'Port 2598', Folder, 'Worker Group', 'Zone Name', ElectionPreference, 'Active Sessions', ServerLoad, LogOnsEnabled, LogOnMode
+    } | Select-Object 'Server Name', Ping, 'Port 1494', 'Port 2598', Folder, 'Worker Group', 'Zone Name', ElectionPreference, 'Active Sessions', ServerLoad, LogOnsEnabled, LogOnMode
      $FarmArray += $CTXServers
 }
     $CTXfarm = New-Object PSObject -Property @{

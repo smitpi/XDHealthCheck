@@ -46,8 +46,8 @@ Param()
 Function Compare-ADUser {
     PARAM($Username1,$Username2)
 
-$ValidUser1 = Get-ADUser $Username1  -Properties * | select Name,GivenName,Surname,UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate,samaccountname
-$ValidUser2 = Get-ADUser $Username2  -Properties * | select Name,GivenName,Surname,UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate,samaccountname
+$ValidUser1 = Get-ADUser $Username1  -Properties * | Select-Object Name,GivenName,Surname,UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate,samaccountname
+$ValidUser2 = Get-ADUser $Username2  -Properties * | Select-Object Name,GivenName,Surname,UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate,samaccountname
 $userDetailList1 = $ValidUser1.psobject.Properties | Select-Object -Property Name, Value
 $userDetailList2 = $ValidUser2.psobject.Properties | Select-Object -Property Name, Value
 
@@ -56,14 +56,14 @@ $user2Headding = $ValidUser2.Name
 $user1HeaddingMissing = $ValidUser1.Name + " Missing"
 $user2HeaddingMissing = $ValidUser2.Name + " Missing"
 
-$allusergroups1 = Get-ADUser $Username1 -Properties * | Select-Object -ExpandProperty memberof | ForEach-Object {Get-ADGroup $_} | select samaccountname
-$allusergroups2 = Get-ADUser $Username2 -Properties * | Select-Object -ExpandProperty memberof | ForEach-Object {Get-ADGroup $_} | select samaccountname
+$allusergroups1 = Get-ADUser $Username1 -Properties * | Select-Object -ExpandProperty memberof | ForEach-Object {Get-ADGroup $_} | Select-Object samaccountname
+$allusergroups2 = Get-ADUser $Username2 -Properties * | Select-Object -ExpandProperty memberof | ForEach-Object {Get-ADGroup $_} | Select-Object samaccountname
 
 $Compare = Compare-Object -ReferenceObject $allusergroups1 -DifferenceObject $allusergroups2 -Property samaccountname -IncludeEqual
 
-$SameGroups = $Compare | where {$_.SideIndicator -eq '=='} | select samaccountname
-$User1Missing = $Compare | where {$_.SideIndicator -eq '=>'} | select samaccountname
-$User2Missing = $Compare | where {$_.SideIndicator -eq '<='} | select samaccountname
+$SameGroups = $Compare | Where-Object {$_.SideIndicator -eq '=='} | Select-Object samaccountname
+$User1Missing = $Compare | Where-Object {$_.SideIndicator -eq '=>'} | Select-Object samaccountname
+$User2Missing = $Compare | Where-Object {$_.SideIndicator -eq '<='} | Select-Object samaccountname
 
 
 $User1Details = New-Object PSObject  -Property @{
@@ -111,10 +111,10 @@ Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Importing
 
 Write-Colour "Using these Variables"
 [XML]$XMLParameter = Get-Content $XMLParameterFilePath
-$XMLParameter.Settings.Variables.Variable | ft
+$XMLParameter.Settings.Variables.Variable | Format-Table
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
-$XMLParameter.Settings.Variables.Variable | foreach {
+$XMLParameter.Settings.Variables.Variable | ForEach-Object {
 		# Set Variables contained in XML file
 		$VarValue = $_.Value
 		$CreateVariable = $True # Default value to create XML content as Variable
@@ -147,7 +147,7 @@ $timer = [Diagnostics.Stopwatch]::StartNew();
 #########################################
 
 
-$CTXAdmin = Find-Credential | where target -Like "*Healthcheck" | Get-Credential -Store
+$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
 if ($null -eq $CTXAdmin) {
     $AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
     Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
@@ -213,7 +213,7 @@ New-HTML -TitleText "Compared Users Report"  -FilePath "$env:TEMP\userscompared.
 }
 
 $timer.Stop()
-$timer.Elapsed | select Days,Hours,Minutes,Seconds | fl
+$timer.Elapsed | Select-Object Days,Hours,Minutes,Seconds | Format-List
 Stop-Transcript
 
 } #end Function

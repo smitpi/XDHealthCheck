@@ -77,10 +77,10 @@ Function GetAllConfig {
 			$MasterImage = Get-ProvScheme -AdminAddress $AdminServer | Where-Object -Property IdentityPoolName -Like $MachineCatalog.Name
 		if ($MasterImage.MasterImageVM -notlike '') {
 			$MasterImagesplit = ($MasterImage.MasterImageVM).Split("\")
-			$masterSnapshotcount = ($MasterImagesplit | where { $_ -like '*.snapshot' }).count
-		$mastervm = ($MasterImagesplit | where { $_ -like '*.vm' }).Replace(".vm", '')
-	if ($masterSnapshotcount -gt 1) { $masterSnapshot = ($MasterImagesplit | where { $_ -like '*.snapshot' })[-1].Replace(".snapshot", '') }
-else { $masterSnapshot = ($MasterImagesplit | where { $_ -like '*.snapshot' }).Replace(".snapshot", '') }
+			$masterSnapshotcount = ($MasterImagesplit | Where-Object { $_ -like '*.snapshot' }).count
+		$mastervm = ($MasterImagesplit | Where-Object { $_ -like '*.vm' }).Replace(".vm", '')
+	if ($masterSnapshotcount -gt 1) { $masterSnapshot = ($MasterImagesplit | Where-Object { $_ -like '*.snapshot' })[-1].Replace(".snapshot", '') }
+else { $masterSnapshot = ($MasterImagesplit | Where-Object { $_ -like '*.snapshot' }).Replace(".snapshot", '') }
 }
 else {
 	$mastervm = ''
@@ -107,7 +107,7 @@ $CatObject = New-Object PSObject -Property @{
 	MasterImageVMDate            = $MasterImage.MasterImageVMDate
 	UseFullDiskCloneProvisioning = $MasterImage.UseFullDiskCloneProvisioning
 	UseWriteBackCache            = $MasterImage.UseWriteBackCache
-} | select MachineCatalogName, AllocationType, Description, IsRemotePC, MachinesArePhysical, MinimumFunctionalLevel, PersistUserChanges, ProvisioningType, SessionSupport, Uid, UnassignedCount, UsedCount, CleanOnBoot, MasterImageVM, MasterImageSnapshotName, MasterImageSnapshotCount, MasterImageVMDate, UseFullDiskCloneProvisioning, UseWriteBackCache
+} | Select-Object MachineCatalogName, AllocationType, Description, IsRemotePC, MachinesArePhysical, MinimumFunctionalLevel, PersistUserChanges, ProvisioningType, SessionSupport, Uid, UnassignedCount, UsedCount, CleanOnBoot, MasterImageVM, MasterImageSnapshotName, MasterImageSnapshotCount, MasterImageVMDate, UseFullDiskCloneProvisioning, UseWriteBackCache
 $CTXMachineCatalog += $CatObject
 }
 
@@ -118,8 +118,8 @@ foreach ($DesktopGroup in $BrokerDesktopGroup) {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Delivery Group: $($DesktopGroup.name.ToString())"
 	$BrokerAccess = @()
 	$BrokerGroups = @()
-	$BrokerAccess = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -notlike "" } } | select UPN
-    $BrokerGroups = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -Like "" } } | select Fullname
+	$BrokerAccess = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -notlike "" } } | Select-Object UPN
+    $BrokerGroups = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -Like "" } } | Select-Object Fullname
 $CusObject = New-Object PSObject -Property @{
 	DesktopGroupName       = $DesktopGroup.name
 	Uid                    = $DesktopGroup.uid
@@ -140,26 +140,25 @@ $CusObject = New-Object PSObject -Property @{
 	Tags                   = @(($DesktopGroup.Tags) | Out-String).Trim()
     UserAccess             = @(($BrokerAccess.UPN) | Out-String).Trim()
     GroupAccess            = @(($BrokerGroups.FullName) | Out-String).Trim()
-} | select DesktopGroupName, Uid, DeliveryType, DesktopKind, Description, DesktopsDisconnected, DesktopsFaulted, DesktopsInUse, DesktopsUnregistered, Enabled, IconUid, InMaintenanceMode, SessionSupport, TotalApplicationGroups, TotalApplications, TotalDesktops, Tags, UserAccess, GroupAccess
+} | Select-Object DesktopGroupName, Uid, DeliveryType, DesktopKind, Description, DesktopsDisconnected, DesktopsFaulted, DesktopsInUse, DesktopsUnregistered, Enabled, IconUid, InMaintenanceMode, SessionSupport, TotalApplicationGroups, TotalApplications, TotalDesktops, Tags, UserAccess, GroupAccess
 $CTXDeliveryGroup += $CusObject
 }
 
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Application config"
 $HostedApps = @()
-foreach ($DeskG in ($CTXDeliveryGroup | where { $_.DeliveryType -like 'DesktopsAndApps' })) {
+foreach ($DeskG in ($CTXDeliveryGroup | Where-Object { $_.DeliveryType -like 'DesktopsAndApps' })) {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Delivery Group: $($DeskG.DesktopGroupName.ToString())"
 	$PublishedApps = Get-BrokerApplication -AssociatedDesktopGroupUid $DeskG.Uid -AdminAddress $AdminServer
 	foreach ($PublishedApp in $PublishedApps) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Published Application: $($DeskG.DesktopGroupName.ToString()) - $($PublishedApp.PublishedName.ToString())"
 		$PublishedAppGroup = @()
 		$PublishedAppUser = @()
-		foreach ($AppAssociatedUser in $PublishedApp.AssociatedUserFullNames) {
-				$group = $null
-                $ADObject = Get-ADObject -Filter {SamAccountName -eq $AppAssociatedUser}
-                #objectClass=User and objectCategory=Person
-                if ($ADObject.ObjectClass -like 'user') { $PublishedAppUser += $ADObject.Name}
-                else {$PublishedAppGroup +=  $ADObject.Name}	
-		}
+			foreach ($AppAssociatedUser in $PublishedApp.AssociatedUserFullNames) {
+				#$ADObject = Get-ADObject -Filter {$AppAssociatedUser}
+					$ADObject =	Get-ADObject -Filter 'name -eq $AppAssociatedUser'
+				if ($ADObject.ObjectClass -like 'user') { $PublishedAppUser += $ADObject.Name }
+				else { $PublishedAppGroup += $ADObject.Name }
+			}
 		$CusObject = New-Object PSObject -Property @{
 			DesktopGroupName        = $DeskG.DesktopGroupName
 			DesktopGroupUid         = $DeskG.Uid
@@ -179,7 +178,7 @@ foreach ($DeskG in ($CTXDeliveryGroup | where { $_.DeliveryType -like 'DesktopsA
 		    PublishedAppName         = $PublishedApp.Name
 		    PublishedAppGroupAccess  = @(($PublishedAppGroup) | Out-String).Trim()
     	    PublishedAppUserAccess    = @(($PublishedAppUser) | Out-String).Trim()
-} | select DesktopGroupName, DesktopGroupUid, DesktopGroupUsersAccess, DesktopGroupGroupAccess, ApplicationName, ApplicationType, AdminFolderName, ClientFolder, Description, Enabled, CommandLineExecutable, CommandLineArgument, WorkingDirectory, Tags, PublishedName, PublishedAppName, PublishedAppGroupAccess, PublishedAppUserAccess
+} | Select-Object DesktopGroupName, DesktopGroupUid, DesktopGroupUsersAccess, DesktopGroupGroupAccess, ApplicationName, ApplicationType, AdminFolderName, ClientFolder, Description, Enabled, CommandLineExecutable, CommandLineArgument, WorkingDirectory, Tags, PublishedName, PublishedAppName, PublishedAppGroupAccess, PublishedAppUserAccess
 $HostedApps += $CusObject
 }
 }
@@ -199,5 +198,5 @@ $AppDetail = @()
 if ($RunAsPSRemote -eq $true) { $AppDetail = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:GetAllConfig} -ArgumentList  @($AdminServer, $VerbosePreference) -Credential $RemoteCredentials }
 else { $AppDetail = GetAllConfig -AdminServer $AdminServer -VerbosePreference $VerbosePreference }
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] All Details"
-$AppDetail | select DateCollected, MashineCatalog, DeliveryGroups, PublishedApps
+$AppDetail | Select-Object DateCollected, MashineCatalog, DeliveryGroups, PublishedApps
 } #end Function

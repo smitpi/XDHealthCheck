@@ -68,7 +68,7 @@ Function Get-StoreFrontDetail {
         [switch]$RunAsPSRemote = $false)
 
     function AllConfig {
-        param($StoreFrontServer, [SecureString] $RemoteCredentials,$VerbosePreference)
+        param($StoreFrontServer, $VerbosePreference)
 
         Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Storefront Details"
         $SiteArray = @()
@@ -80,24 +80,24 @@ Function Get-StoreFrontDetail {
         Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Processing] Store Details"
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         $WebObject = New-Object PSObject -Property @{
-            InternalStore                  = (Get-STFServerGroup | select -ExpandProperty HostBaseUrl).AbsoluteUri
-            InternalStoreStatus            = (Invoke-WebRequest -Uri ((Get-STFServerGroup | select -ExpandProperty HostBaseUrl).AbsoluteUri) -UseBasicParsing) | foreach { $_.StatusDescription }
+            InternalStore                  = (Get-STFServerGroup | Select-Object -ExpandProperty HostBaseUrl).AbsoluteUri
+            InternalStoreStatus            = (Invoke-WebRequest -Uri ((Get-STFServerGroup | Select-Object -ExpandProperty HostBaseUrl).AbsoluteUri) -UseBasicParsing) | ForEach-Object { $_.StatusDescription }
             ReplicationSource              = (Get-ItemProperty  HKLM:\SOFTWARE\Citrix\DeliveryServices\ConfigurationReplication -Name LastSourceServer).LastSourceServer
             SyncState                      = (Get-ItemProperty  HKLM:\SOFTWARE\Citrix\DeliveryServices\ConfigurationReplication -Name LastUpdateStatus).LastUpdateStatus
             EndSyncDate                    = (((Get-ItemProperty  HKLM:\SOFTWARE\Citrix\DeliveryServices\ConfigurationReplication -Name LastEndTime).LastEndTime).split(".")[0]).replace("T"," ")
 
-        } | select InternalStore, InternalStoreStatus,ReplicationSource,SyncState,EndSyncDate
+        } | Select-Object InternalStore, InternalStoreStatus,ReplicationSource,SyncState,EndSyncDate
         $SiteArray =  $WebObject.psobject.Properties | Select-Object -Property Name, Value
 
 
         Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Processing] Server Details"
-        $SFGroup = Get-STFServerGroup | select -ExpandProperty ClusterMembers
+        $SFGroup = Get-STFServerGroup | Select-Object -ExpandProperty ClusterMembers
         $SFServers = @()
         foreach ($SFG in $SFGroup) {
             $CusObject = New-Object PSObject -Property @{
                 ComputerName = ([System.Net.Dns]::GetHostByName(($SFG.Hostname))).Hostname
                 IsLive       = $SFG.IsLive
-            } | select ComputerName, IsLive
+            } | Select-Object ComputerName, IsLive
             $SFServers += $CusObject
         }
         #####
@@ -106,16 +106,16 @@ Function Get-StoreFrontDetail {
             SiteDetails           = $SiteArray
             ServerDetails         = $SFServers
 
-        } | select DateCollected,SiteDetails, ServerDetails
+        } | Select-Object DateCollected,SiteDetails, ServerDetails
         $Details
         Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending] StoreFront Details"
 
     }
         $FarmDetails = @()
-        if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $StoreFrontServer -ScriptBlock ${Function:AllConfig} -ArgumentList  @($StoreFrontServer, $RemoteCredentials,$VerbosePreference) -Credential $RemoteCredentials }
-        else { $FarmDetails = AllConfig -StoreFrontServer $StoreFrontServer -RemoteCredentials $RemoteCredentials }
+        if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $StoreFrontServer -ScriptBlock ${Function:AllConfig} -ArgumentList  @($StoreFrontServer, ,$VerbosePreference) -Credential $RemoteCredentials }
+        else { $FarmDetails = AllConfig -StoreFrontServer $StoreFrontServer }
         Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] All Details"
-        $FarmDetails | select DateCollected,SiteDetails,ServerDetails
+        $FarmDetails | select-object DateCollected,SiteDetails,ServerDetails
 
     } #end Function
 

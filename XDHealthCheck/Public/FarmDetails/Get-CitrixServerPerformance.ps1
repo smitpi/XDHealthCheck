@@ -66,7 +66,7 @@ foreach ($Server in $Serverlist) {
             'DDrive_Free'      = $SingleServer.'DDrive_Free'
             Uptime             = $SingleServer.Uptime
             'Stopped_Services' = $SingleServer.StoppedServices
-        } | select ServerName, 'CPU_%', 'Memory_%', 'CDrive_Free', 'DDrive_Free', Uptime, 'Stopped_Services'
+        } | Select-Object ServerName, 'CPU_%', 'Memory_%', 'CDrive_Free', 'DDrive_Free', Uptime, 'Stopped_Services'
     $CitrixServerPerformance += $CusObject
 }
 

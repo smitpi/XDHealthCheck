@@ -77,7 +77,7 @@ function AllConfig {
         param($UserToQuery,$DomainFQDN,[SecureString] $DomainCredentials,$VerbosePreference)
 
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] User Details"
-$UserSummery = Get-ADUser $UserToQuery -Server $DomainFQDN -Credential $DomainCredentials -Properties * | select Name,GivenName,Surname,UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate,samaccountname
+$UserSummery = Get-ADUser $UserToQuery -Server $DomainFQDN -Credential $DomainCredentials -Properties * | Select-Object Name,GivenName,Surname,UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate,samaccountname
 $AllUserDetails = Get-ADUser $UserToQuery -Properties * -Server $DomainFQDN -Credential $DomainCredentials
 Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Processing] User Groups"
 $AllUserGroups = Get-ADUser $UserToQuery -Properties * -Server $DomainFQDN -Credential $DomainCredentials | Select-Object -ExpandProperty memberof | ForEach-Object {Get-ADGroup $_ -Server $DomainFQDN -Credential $DomainCredentials}
