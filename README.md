@@ -6,11 +6,11 @@ Functions to connect to a Citrix Farm and extract details for a HTML Health chec
 
 - ```Install-Module -Name XDHealthCheck```
 - ```Import-Module XDHealthCheck```
-- ```Install-XDHealthCheckParameters```
+- ```Install-XDHealthCheckParameter```
 
 
 And answer the setup questions.
 
-Once everything is setup you can run  ```Initialize-CitrixHealthCheck -XMLParameterFilePath <ParametersFile>``` for the main health check report.
+Once everything is setup you can run  ```Initialize-CitrixHealthCheck -XMLParameterFilePath <ParametersFile>``` for the main health check report, or run ```Initialize-CitrixAudit -XMLParameterFilePath <ParametersFile>``` for an audit on machine catalogues, delivery groups and published applications.
   
-I’ve also created a couple of smaller reports for you to explorer.
+I’ve also created some reports under Reporting folder.
