@@ -50,8 +50,8 @@ Param()
 
 
 
-Function Get-CitrixObjects
-{
+Function Get-CitrixObjects {
+	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0)]
 		[ValidateNotNull()]
@@ -66,28 +66,23 @@ Function Get-CitrixObjects
 
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Config"
-	Function GetAllConfig
- {
+	Function GetAllConfig {
 		param($AdminServer, $VerbosePreference)
 
 		Add-PSSnapin citrix*
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Machine Catalogs"
 		$CTXMachineCatalog = @()
 		$MachineCatalogs = Get-BrokerCatalog -AdminAddress $AdminServer
-		foreach ($MachineCatalog in $MachineCatalogs)
-		{
+		foreach ($MachineCatalog in $MachineCatalogs) {
 			Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Machine Catalog: $($MachineCatalog.name.ToString())"
 			$MasterImage = Get-ProvScheme -AdminAddress $AdminServer | Where-Object -Property IdentityPoolName -Like $MachineCatalog.Name
-			if ($MasterImage.MasterImageVM -notlike '')
-			{
+			if ($MasterImage.MasterImageVM -notlike '') {
 				$MasterImagesplit = ($MasterImage.MasterImageVM).Split("\")
 				$masterSnapshotcount = ($MasterImagesplit | Where-Object { $_ -like '*.snapshot' }).count
 				$mastervm = ($MasterImagesplit | Where-Object { $_ -like '*.vm' }).Replace(".vm", '')
 				if ($masterSnapshotcount -gt 1) { $masterSnapshot = ($MasterImagesplit | Where-Object { $_ -like '*.snapshot' })[-1].Replace(".snapshot", '') }
 				else { $masterSnapshot = ($MasterImagesplit | Where-Object { $_ -like '*.snapshot' }).Replace(".snapshot", '') }
-			}
-			else
-			{
+			} else {
 				$mastervm = ''
 				$masterSnapshot = ''
 				$masterSnapshotcount = 0
@@ -119,8 +114,7 @@ Function Get-CitrixObjects
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Delivery Groups"
 		$BrokerDesktopGroup = Get-BrokerDesktopGroup -AdminAddress $AdminServer
 		$CTXDeliveryGroup = @()
-		foreach ($DesktopGroup in $BrokerDesktopGroup)
-		{
+		foreach ($DesktopGroup in $BrokerDesktopGroup) {
 			Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Delivery Group: $($DesktopGroup.name.ToString())"
 			$BrokerAccess = @()
 			$BrokerGroups = @()
@@ -152,66 +146,60 @@ Function Get-CitrixObjects
 
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Application config"
 		$HostedApps = @()
-		foreach ($DeskG in ($CTXDeliveryGroup | Where-Object { $_.DeliveryType -like 'DesktopsAndApps' }))
-		{
+		foreach ($DeskG in ($CTXDeliveryGroup | Where-Object { $_.DeliveryType -like 'DesktopsAndApps' })) {
 			Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Delivery Group: $($DeskG.DesktopGroupName.ToString())"
 			$PublishedApps = Get-BrokerApplication -AssociatedDesktopGroupUid $DeskG.Uid -AdminAddress $AdminServer
-			foreach ($PublishedApp in $PublishedApps)
-			{
+			foreach ($PublishedApp in $PublishedApps) {
 				Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Published Application: $($DeskG.DesktopGroupName.ToString()) - $($PublishedApp.PublishedName.ToString())"
 				[System.Collections.ArrayList]$PublishedAppGroup = @($PublishedApp.AssociatedUserFullNames)
 				[System.Collections.ArrayList]$PublishedAppUser = @($PublishedApp.AssociatedUserUPNs)
-				foreach ($AppAssociatedUser in $PublishedApp.AssociatedUserUPNs)
-				{
-					try
-					{
-						if ($AppAssociatedUser -notlike '')
-						{
+				foreach ($AppAssociatedUser in $PublishedApp.AssociatedUserUPNs) {
+					try {
+						if ($AppAssociatedUser -notlike '') {
 							$user = Get-ADUser -Filter { UserPrincipalName -like $AppAssociatedUser } | Select-Object Name
 							$PublishedAppGroup.Remove($user.Name)
 						}
-					}
-					catch { Write-Warning "$((Get-Date -Format HH:mm:ss).ToString()) [WARNING] Published Application: $($DeskG.DesktopGroupName.ToString()) - $($PublishedApp.PublishedName.ToString()) - Error finding user details"}
+					} catch { Write-Warning "$((Get-Date -Format HH:mm:ss).ToString()) [WARNING] Published Application: $($DeskG.DesktopGroupName.ToString()) - $($PublishedApp.PublishedName.ToString()) - Error finding user details" }
 
 				}
-			$CusObject = New-Object PSObject -Property @{
-				DesktopGroupName        = $DeskG.DesktopGroupName
-				DesktopGroupUid         = $DeskG.Uid
-				DesktopGroupUsersAccess = $DeskG.UserAccess
-				DesktopGroupGroupAccess = $DeskG.GroupAccess
-				ApplicationName         = $PublishedApp.ApplicationName
-				ApplicationType         = $PublishedApp.ApplicationType
-				AdminFolderName         = $PublishedApp.AdminFolderName
-				ClientFolder            = $PublishedApp.ClientFolder
-				Description             = $PublishedApp.Description
-				Enabled                 = $PublishedApp.Enabled
-				CommandLineExecutable   = $PublishedApp.CommandLineExecutable
-				CommandLineArguments    = $PublishedApp.CommandLineArguments
-				WorkingDirectory        = $PublishedApp.WorkingDirectory
-				Tags                    = @(($PublishedApp.Tags) | Out-String).Trim()
-				PublishedName           = $PublishedApp.PublishedName
-				PublishedAppName        = $PublishedApp.Name
-				PublishedAppGroupAccess = @(($PublishedAppGroup) | Out-String).Trim()
-				PublishedAppUserAccess  = @(($PublishedAppUser) | Out-String).Trim()
-			} | Select-Object DesktopGroupName, DesktopGroupUid, DesktopGroupUsersAccess, DesktopGroupGroupAccess, ApplicationName, ApplicationType, AdminFolderName, ClientFolder, Description, Enabled, CommandLineExecutable, CommandLineArgument, WorkingDirectory, Tags, PublishedName, PublishedAppName, PublishedAppGroupAccess, PublishedAppUserAccess
-			$HostedApps += $CusObject
+				$CusObject = New-Object PSObject -Property @{
+					DesktopGroupName        = $DeskG.DesktopGroupName
+					DesktopGroupUid         = $DeskG.Uid
+					DesktopGroupUsersAccess = $DeskG.UserAccess
+					DesktopGroupGroupAccess = $DeskG.GroupAccess
+					ApplicationName         = $PublishedApp.ApplicationName
+					ApplicationType         = $PublishedApp.ApplicationType
+					AdminFolderName         = $PublishedApp.AdminFolderName
+					ClientFolder            = $PublishedApp.ClientFolder
+					Description             = $PublishedApp.Description
+					Enabled                 = $PublishedApp.Enabled
+					CommandLineExecutable   = $PublishedApp.CommandLineExecutable
+					CommandLineArguments    = $PublishedApp.CommandLineArguments
+					WorkingDirectory        = $PublishedApp.WorkingDirectory
+					Tags                    = @(($PublishedApp.Tags) | Out-String).Trim()
+					PublishedName           = $PublishedApp.PublishedName
+					PublishedAppName        = $PublishedApp.Name
+					PublishedAppGroupAccess = @(($PublishedAppGroup) | Out-String).Trim()
+					PublishedAppUserAccess  = @(($PublishedAppUser) | Out-String).Trim()
+				} | Select-Object DesktopGroupName, DesktopGroupUid, DesktopGroupUsersAccess, DesktopGroupGroupAccess, ApplicationName, ApplicationType, AdminFolderName, ClientFolder, Description, Enabled, CommandLineExecutable, CommandLineArgument, WorkingDirectory, Tags, PublishedName, PublishedAppName, PublishedAppGroupAccess, PublishedAppUserAccess
+				$HostedApps += $CusObject
+			}
 		}
+
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Published Applications"
+
+		$CusObject = New-Object PSObject -Property @{
+			DateCollected  = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+			MashineCatalog = $CTXMachineCatalog
+			DeliveryGroups = $CTXDeliveryGroup
+			PublishedApps  = $HostedApps
+		}
+		$CusObject
 	}
 
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Published Applications"
-
-	$CusObject = New-Object PSObject -Property @{
-		DateCollected  = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-		MashineCatalog = $CTXMachineCatalog
-		DeliveryGroups = $CTXDeliveryGroup
-		PublishedApps  = $HostedApps
-	}
-	$CusObject
-}
-
-$AppDetail = @()
-if ($RunAsPSRemote -eq $true) { $AppDetail = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:GetAllConfig} -ArgumentList  @($AdminServer, $VerbosePreference) -Credential $RemoteCredentials }
-else { $AppDetail = GetAllConfig -AdminServer $AdminServer -VerbosePreference $VerbosePreference }
-Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] All Details"
-$AppDetail | Select-Object DateCollected, MashineCatalog, DeliveryGroups, PublishedApps
+	$AppDetail = @()
+	if ($RunAsPSRemote -eq $true) { $AppDetail = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:GetAllConfig} -ArgumentList  @($AdminServer, $VerbosePreference) -Credential $RemoteCredentials }
+	else { $AppDetail = GetAllConfig -AdminServer $AdminServer -VerbosePreference $VerbosePreference }
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] All Details"
+	$AppDetail | Select-Object DateCollected, MashineCatalog, DeliveryGroups, PublishedApps
 } #end Function

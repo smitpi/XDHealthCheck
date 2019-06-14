@@ -46,6 +46,8 @@ a menu of options
 #>
 
 function Install-XDHealthCheckParameter {
+
+
 	$CusObject = New-Object PSObject -Property @{
 		CTXDDC          = Read-Host 'FQDN of Citrix Data Collector'
 		CTXStoreFront   = Read-Host 'FQDN of Citrix Storefront'
@@ -101,7 +103,7 @@ function Install-XDHealthCheckParameter {
 		}
 
 		$ParametersFolder = $TempParm.settings.Variables.Variable[5].Value.ToString()
-		$global:PSParameters = $ParametersFolder + "\Parameters.xml"
+		$PSParameters = $ParametersFolder + "\Parameters.xml"
 		$xmlfile = New-Item -Path $ParametersFolder  -Name Parameters.xml -ItemType File -Force -Verbose
 		$TempParm.Save($xmlfile.FullName)
 

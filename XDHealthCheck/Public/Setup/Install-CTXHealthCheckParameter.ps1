@@ -83,10 +83,8 @@ Date Created - 05/06/2019_19:16
 
 #>
 
-function Install-XDHealthCheckParameter
-{
-	function Set-Parameter
- {
+function Install-XDHealthCheckParameter{
+	function Set-Parameter{
 		[string]$ScriptPath = $PSScriptRoot
 
 		Write-Host 'Installing needed Modules' -ForegroundColor Cyan

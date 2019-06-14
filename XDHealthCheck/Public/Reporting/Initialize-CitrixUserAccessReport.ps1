@@ -47,32 +47,25 @@ Param()
 
 
 Function Initialize-CitrixUserAccessReport {
-    PARAM(
+	[CmdletBinding()]
+	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
 		[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml",
 		[Parameter(Mandatory = $true, Position = 1)]
-        [ValidateNotNull()]
-        [ValidateNotNullOrEmpty()]
-        [string]$Username)
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[string]$Username)
 
-#region xml imports
-Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
+	#region xml imports
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
 
-Write-Colour "Using these Variables"
-[XML]$XMLParameter = Get-Content $XMLParameterFilePath
-if ($null -eq $XMLParameter) {Write-Color -Text "Valid Parameters file not found; break" }
-$XMLParameter.Settings.Variables.Variable | Format-Table
+	Write-Colour "Using these Variables"
+	[XML]$XMLParameter = Get-Content $XMLParameterFilePath
+	if ($null -eq $XMLParameter) { Write-Color -Text "Valid Parameters file not found; break" }
+	$XMLParameter.Settings.Variables.Variable | Format-Table
 
-
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
-
-Write-Colour "Using these Variables"
-[XML]$XMLParameter = Get-Content $XMLParameterFilePath
-$XMLParameter.Settings.Variables.Variable | Format-Table
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
-
-$XMLParameter.Settings.Variables.Variable | ForEach-Object {
+	$XMLParameter.Settings.Variables.Variable | ForEach-Object {
 		# Set Variables contained in XML file
 		$VarValue = $_.Value
 		$CreateVariable = $True # Default value to create XML content as Variable
@@ -81,7 +74,7 @@ $XMLParameter.Settings.Variables.Variable | ForEach-Object {
 			'[string]' { $VarValue = [string]$VarValue } # Fixed-length string of Unicode characters
 			'[char]' { $VarValue = [char]$VarValue } # A Unicode 16-bit character
 			'[byte]' { $VarValue = [byte]$VarValue } # An 8-bit unsigned character
-            '[bool]' { If ($VarValue.ToLower() -eq 'false'){$VarValue = [bool]$False} ElseIf ($VarValue.ToLower() -eq 'true'){$VarValue = [bool]$True} } # An boolean True/False value
+			'[bool]' { If ($VarValue.ToLower() -eq 'false') { $VarValue = [bool]$False } ElseIf ($VarValue.ToLower() -eq 'true') { $VarValue = [bool]$True } } # An boolean True/False value
 			'[int]' { $VarValue = [int]$VarValue } # 32-bit signed integer
 			'[long]' { $VarValue = [long]$VarValue } # 64-bit signed integer
 			'[decimal]' { $VarValue = [decimal]$VarValue } # A 128-bit decimal value
@@ -93,55 +86,82 @@ $XMLParameter.Settings.Variables.Variable | ForEach-Object {
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
 
-if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-[string]$Transcriptlog ="$ReportsFolder\logs\XDUserAccess_TransmissionLogs." + (get-date -Format yyyy.MM.dd-HH.mm) + ".log"
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
-Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
-$timer = [Diagnostics.Stopwatch]::StartNew();
+
+	if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+	[string]$Reportname = $ReportsFolder + "\XDUsers\XDUserAccess." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
+
+	if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+	[string]$Transcriptlog = "$ReportsFolder\logs\XDUserAccess_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
+	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
+	$timer = [Diagnostics.Stopwatch]::StartNew();
 
 
-########################################
-## Getting Credentials
-#########################################
+	########################################
+	## Getting Credentials
+	#########################################
 
 
-$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
-if ($null -eq $CTXAdmin) {
-    $AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
-    Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
-}
-########################################
-## Functions
-#########################################
+	$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
+	if ($null -eq $CTXAdmin) {
+		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
+		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
+	}
+	########################################
+	## Functions
+	#########################################
 
-########################################
-## Connect and get info
-#########################################
+	########################################
+	## Connect and get info
+	#########################################
+	#region Table Settings
+	$TableSettings = @{
+		Style          = 'stripe'
+		HideFooter     = $true
+		OrderMulti     = $true
+		TextWhenNoData = 'No Data to display here'
+	}
+
+	$SectionSettings = @{
+		HeaderBackGroundColor = 'white'
+		HeaderTextAlignment   = 'center'
+		HeaderTextColor       = 'red'
+		BackgroundColor       = 'white'
+		CanCollapse           = $true
+	}
+
+	$TableSectionSettings = @{
+		HeaderTextColor       = 'white'
+		HeaderTextAlignment   = 'center'
+		HeaderBackGroundColor = 'red'
+		BackgroundColor       = 'white'
+	}
+	#endregion
 
 
-$UserDetail = Get-CitrixUserAccessDetail -Username $Username -AdminServer $CTXDDC -Verbose
-$userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
-$DesktopsCombined = $UserDetail.DirectPublishedDesktops + $UserDetail.PublishedDesktops | Sort-Object -Property DesktopGroupName -Unique
+	$UserDetail = Get-CitrixUserAccessDetail -Username $Username -AdminServer $CTXDDC
+	$userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
+	$DesktopsCombined = $UserDetail.DirectPublishedDesktops + $UserDetail.PublishedDesktops | Sort-Object -Property DesktopGroupName -Unique
 
-$HeddingText = "Access Report for User:" + $UserDetail.UserDetail.Name + " on " + (get-date -Format dd) + " " + (get-date -Format MMMM) + "," + (get-date -Format yyyy) + " " + (Get-Date -Format HH:mm)
-New-HTML -TitleText "Access Report" -FilePath  $env:TEMP\Dashboard01.html -ShowHTML {
-New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
-New-HTMLSection -HeaderBackGroundColor DarkGray -Content {
-    New-HTMLSection -HeaderText 'User details' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable $userDetailList -HideFooter}
-    New-HTMLSection -HeaderText 'Current Applications' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable ($UserDetail.AccessPublishedApps | Select-Object PublishedName,Description,enabled) -HideFooter}
-    New-HTMLSection -HeaderText 'Current Desktops' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable ($DesktopsCombined) -HideFooter}
-}
-New-HTMLSection -HeaderBackGroundColor DarkGray -Content {
-    New-HTMLSection -HeaderText 'No Access Apps' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable ($UserDetail.NoAccessPublishedApps  | Select-Object PublishedName,Description,enabled)  -HideFooter}
-    New-HTMLSection -HeaderText 'All User Groups' -HeaderTextAlignment center -HeaderBackGroundColor RoyalBlue {New-HTMLTable -DataTable $UserDetail.AllUserGroups -HideFooter}
-    }
-}
+	$HeddingText = $DashboardTitle + " | Access Report for User: " + $UserDetail.UserDetail.Name + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
+	New-HTML -TitleText "Access Report" -FilePath $Reportname -ShowHTML {
+		New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
+		New-HTMLSection  @SectionSettings  -Content {
+			New-HTMLSection -HeaderText 'User details' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $userDetailList }
+			New-HTMLSection -HeaderText 'Current Applications' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $UserDetail.AccessPublishedApps }
+			New-HTMLSection -HeaderText  'Current Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $DesktopsCombined }
+		}
+		New-HTMLSection  @SectionSettings  -Content {
+			New-HTMLSection -HeaderText 'Requires Access to these Apps' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $UserDetail.NoAccessPublishedApps }
+			New-HTMLSection -HeaderText 'AD Group Membership' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $UserDetail.AllUserGroups }
+		}
+	}
 
-Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending]Healthcheck Complete"
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending]Healthcheck Complete"
 
-$timer.Stop()
-$timer.Elapsed | Select-Object Days, Hours, Minutes, Seconds | Format-List
-Stop-Transcript
+	$timer.Stop()
+	$timer.Elapsed | Select-Object Days, Hours, Minutes, Seconds | Format-List
+	Stop-Transcript
 
 } #end Function
 

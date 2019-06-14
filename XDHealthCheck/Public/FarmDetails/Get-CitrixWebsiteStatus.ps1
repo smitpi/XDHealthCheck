@@ -59,29 +59,30 @@ Param()
 
 
 Function Get-CitrixWebsiteStatus {
-    PARAM(
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
-        [ValidateNotNull()]
-        [ValidateNotNullOrEmpty()]
-        [array]$Websitelist)
+	[CmdletBinding()]
+	PARAM(
+		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[array]$Websitelist)
 
-$websites = @()
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Website Details"
+	$websites = @()
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Website Details"
 
-foreach ($web in $Websitelist) {
-    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $WebResponse = Invoke-WebRequest -Uri $web -UseBasicParsing  | Select-Object -Property StatusCode, StatusDescription
+	foreach ($web in $Websitelist) {
+		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+		$WebResponse = Invoke-WebRequest -Uri $web -UseBasicParsing | Select-Object -Property StatusCode, StatusDescription
 
-    $CTXObject = New-Object PSObject -Property @{
-    "WebSite Name"           = $web
-    StatusCode               = $WebResponse.StatusCode
-    StatusDescription        = $WebResponse.StatusDescription
-    }
-    $websites += $CTXObject
-}
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending] Website Details"
+		$CTXObject = New-Object PSObject -Property @{
+			"WebSite Name"    = $web
+			StatusCode        = $WebResponse.StatusCode
+			StatusDescription = $WebResponse.StatusDescription
+		}
+		$websites += $CTXObject
+	}
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Website Details"
 
-$websites |Select-Object  "WebSite Name" ,StatusCode,StatusDescription
+	$websites | Select-Object  "WebSite Name" , StatusCode, StatusDescription
 
 
 

@@ -59,6 +59,7 @@ Param()
 
 
 Function Get-CitrixFarmDetail {
+		[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]

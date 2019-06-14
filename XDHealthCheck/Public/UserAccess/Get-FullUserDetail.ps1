@@ -43,7 +43,7 @@ Updated [09/06/2019_09:18]
 <#
 
 .DESCRIPTION
-Get user AD details
+Citrix XenDesktop HTML Health Check Report
 
 
 Requires -Modules ActiveDirectory
@@ -54,47 +54,48 @@ Param()
 
 
 Function Get-FullUserDetail {
-                PARAM(
-                [Parameter(Mandatory=$true, Position=0)]
-                [ValidateNotNull()]
-                [ValidateNotNullOrEmpty()]
-                [string]$UserToQuery,
-                [Parameter(Mandatory=$true, Position=1)]
-                [ValidateNotNull()]
-                [ValidateNotNullOrEmpty()]
-                [string]$DomainFQDN,
-                [Parameter(Mandatory=$true, Position=2)]
-                [ValidateNotNull()]
-                [ValidateNotNullOrEmpty()]
-                [PSCredential]$DomainCredentials,
-                [Parameter(Mandatory = $false, Position = 3)]
-                [switch]$RunAsPSRemote = $false,
-                [Parameter(Mandatory = $false, Position = 3)]
-                [String]$PSRemoteServerName)
+	[CmdletBinding()]
+	PARAM(
+		[Parameter(Mandatory = $true, Position = 0)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[string]$UserToQuery,
+		[Parameter(Mandatory = $true, Position = 1)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[string]$DomainFQDN,
+		[Parameter(Mandatory = $true, Position = 2)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[PSCredential]$DomainCredentials,
+		[Parameter(Mandatory = $false, Position = 3)]
+		[switch]$RunAsPSRemote = $false,
+		[Parameter(Mandatory = $false, Position = 3)]
+		[String]$PSRemoteServerName)
 
 
-function AllConfig {
-        param($UserToQuery,$DomainFQDN,[SecureString] $DomainCredentials,$VerbosePreference)
+	function AllConfig {
+		param($UserToQuery, $DomainFQDN, [SecureString] $DomainCredentials, $VerbosePreference)
 
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] User Details"
-$UserSummery = Get-ADUser $UserToQuery -Server $DomainFQDN -Credential $DomainCredentials -Properties * | Select-Object Name,GivenName,Surname,UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate,samaccountname
-$AllUserDetails = Get-ADUser $UserToQuery -Properties * -Server $DomainFQDN -Credential $DomainCredentials
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Processing] User Groups"
-$AllUserGroups = Get-ADUser $UserToQuery -Properties * -Server $DomainFQDN -Credential $DomainCredentials | Select-Object -ExpandProperty memberof | ForEach-Object {Get-ADGroup $_ -Server $DomainFQDN -Credential $DomainCredentials}
-$CusObject = New-Object PSObject -Property @{
-    DateCollected  = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-    UserSummery = $UserSummery
-    AllUserDetails  = $AllUserDetails
-    AllUserGroups = $AllUserGroups
-}
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending] User Details"
-$CusObject
-}
-$FarmDetails = @()
-if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $PSRemoteServerName -ScriptBlock ${Function:AllConfig} -ArgumentList  @($UserToQuery,$DomainFQDN,$DomainCredentials,$VerbosePreference) -Credential $DomainCredentials }
-else { $FarmDetails = AllConfig -UserToQuery $UserToQuery -DomainFQDN $DomainFQDN -DomainCredentials $DomainCredentials }
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [End] All Details"
-$FarmDetails
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] User Details"
+		$UserSummery = Get-ADUser $UserToQuery -Server $DomainFQDN -Credential $DomainCredentials -Properties * | Select-Object Name, GivenName, Surname, UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate, samaccountname
+		$AllUserDetails = Get-ADUser $UserToQuery -Properties * -Server $DomainFQDN -Credential $DomainCredentials
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] User Groups"
+		$AllUserGroups = Get-ADUser $UserToQuery -Properties * -Server $DomainFQDN -Credential $DomainCredentials | Select-Object -ExpandProperty memberof | ForEach-Object { Get-ADGroup $_ -Server $DomainFQDN -Credential $DomainCredentials }
+		$CusObject = New-Object PSObject -Property @{
+			DateCollected  = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+			UserSummery    = $UserSummery
+			AllUserDetails = $AllUserDetails
+			AllUserGroups  = $AllUserGroups
+		}
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] User Details"
+		$CusObject
+	}
+	$FarmDetails = @()
+	if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $PSRemoteServerName -ScriptBlock ${Function:AllConfig} -ArgumentList  @($UserToQuery, $DomainFQDN, $DomainCredentials, $VerbosePreference) -Credential $DomainCredentials }
+	else { $FarmDetails = AllConfig -UserToQuery $UserToQuery -DomainFQDN $DomainFQDN -DomainCredentials $DomainCredentials }
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] All Details"
+	$FarmDetails
 
 
 } #end Function

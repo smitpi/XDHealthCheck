@@ -56,50 +56,51 @@ Xendesktop Farm Details
 
 Param()
 Function Get-CitrixConfigurationChange {
-    PARAM(
-        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
-        [ValidateNotNull()]
-        [ValidateNotNullOrEmpty()]
-        [string]$AdminServer,
-        [Parameter(Mandatory = $true, Position = 1)]
-        [ValidateNotNull()]
-        [ValidateNotNullOrEmpty()]
-        [int32]$Indays,
-        [Parameter(Mandatory = $true, Position = 2)]
-        [ValidateNotNull()]
-        [ValidateNotNullOrEmpty()]
-        [PSCredential]$RemoteCredentials)
+	[CmdletBinding()]
+	PARAM(
+		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[string]$AdminServer,
+		[Parameter(Mandatory = $true, Position = 1)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[int32]$Indays,
+		[Parameter(Mandatory = $true, Position = 2)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[PSCredential]$RemoteCredentials)
 
-Invoke-Command -ComputerName $AdminServer -ScriptBlock {
-    param($AdminServer, $Indays,$VerbosePreference)
-    Add-PSSnapin citrix* -ErrorAction SilentlyContinue
-    Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
+	Invoke-Command -ComputerName $AdminServer -ScriptBlock {
+		param($AdminServer, $Indays, $VerbosePreference)
+		Add-PSSnapin citrix* -ErrorAction SilentlyContinue
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
 
-    $startdate = (Get-Date).AddDays(-$Indays)
-    $exportpath = (Get-Item (Get-Item Env:\TEMP).value).FullName + "\ctxreportlog.csv"
+		$startdate = (Get-Date).AddDays(-$Indays)
+		$exportpath = (Get-Item (Get-Item Env:\TEMP).value).FullName + "\ctxreportlog.csv"
 
-    if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
-    Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Procesess] Exporting Changes"
+		if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Procesess] Exporting Changes"
 
-    Export-LogReportCsv -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
-    Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Procesess] Importing Changes"
+		Export-LogReportCsv -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Procesess] Importing Changes"
 
-    $LogExportAll = Import-Csv -Path $exportpath -Delimiter ","
-    $LogExport = $LogExportAll |Where-Object {$_.'High Level Operation Text' -notlike ""} | Select-Object -Property High*
-    $LogSum =  $LogExportAll | Group-Object -Property 'High Level Operation Text' -NoElement
+		$LogExportAll = Import-Csv -Path $exportpath -Delimiter ","
+		$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike "" } | Select-Object -Property High*
+		$LogSum = $LogExportAll | Group-Object -Property 'High Level Operation Text' -NoElement
 
-Remove-Item $exportpath -Force -ErrorAction SilentlyContinue
-$CTXObject = New-Object PSObject -Property @{
-    DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-    AllDetails    = $LogExportAll
-    Filtered      = $LogExport
-    Summary       = $LogSum
-}
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
+		Remove-Item $exportpath -Force -ErrorAction SilentlyContinue
+		$CTXObject = New-Object PSObject -Property @{
+			DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+			AllDetails    = $LogExportAll
+			Filtered      = $LogExport
+			Summary       = $LogSum
+		}
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
 
-$CTXObject
+		$CTXObject
 
-} -ArgumentList @($AdminServer, $Indays,$VerbosePreference) -Credential $RemoteCredentials
+	} -ArgumentList @($AdminServer, $Indays, $VerbosePreference) -Credential $RemoteCredentials
 
 } #end Function
 

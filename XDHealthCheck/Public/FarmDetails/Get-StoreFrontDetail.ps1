@@ -55,6 +55,7 @@ Param()
 
 
 Function Get-StoreFrontDetail {
+	[CmdletBinding()]
     PARAM(
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [ValidateNotNull()]

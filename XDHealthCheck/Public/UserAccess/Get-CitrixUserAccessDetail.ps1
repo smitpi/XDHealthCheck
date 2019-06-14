@@ -44,7 +44,7 @@ Updated [09/06/2019_09:18]
 <#
 
 .DESCRIPTION
-For the CTX Dashboard
+Citrix XenDesktop HTML Health Check Report
 
 #>
 
@@ -54,98 +54,99 @@ Param()
 
 
 function Get-CitrixUserAccessDetail {
-                PARAM(
-                [Parameter(Mandatory=$true, Position=0)]
-                [ValidateNotNull()]
-                [ValidateNotNullOrEmpty()]
-                [string]$Username,
-                [Parameter(Mandatory=$true, Position=1)]
-                [ValidateNotNull()]
-                [ValidateNotNullOrEmpty()]
-                [string]$AdminServer)
+	[CmdletBinding()]
+	PARAM(
+		[Parameter(Mandatory = $true, Position = 0)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[string]$Username,
+		[Parameter(Mandatory = $true, Position = 1)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[string]$AdminServer)
 
-Add-PSSnapin citrix*
-$HSADesktop = $ValidUser =$userDeliveryGroup =$DesktopGroupAccess = $null
-$DesktopGroupAccess = @()
-$UserDeliveryGroup = @()
-$UserDeliveryGroupUid = @()
-$PublishedApps =@()
-$PublishedDesktops =@()
-$DirectPublishedDesktops = @()
-$DirectPublishedApps = @()
-$NoAccessPublishedApps = @()
-$AccessPublishedApps = @()
+	Add-PSSnapin citrix*
+	$HSADesktop = $ValidUser = $userDeliveryGroup = $DesktopGroupAccess = $null
+	$DesktopGroupAccess = @()
+	$UserDeliveryGroup = @()
+	$UserDeliveryGroupUid = @()
+	$PublishedApps = @()
+	$PublishedDesktops = @()
+	$DirectPublishedDesktops = @()
+	$DirectPublishedApps = @()
+	$NoAccessPublishedApps = @()
+	$AccessPublishedApps = @()
 
-$User = Get-ADUser $Username  -Properties *| Select-Object Name,GivenName,Surname,UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate,samaccountname
-$AllUserGroups = Get-ADUser $Username -Properties * | Select-Object -ExpandProperty memberof | ForEach-Object {Get-ADGroup $_ | Select-Object SamAccountName }
-$HSADesktop = $AllUserGroups|Where-Object {$_.SamAccountName -like "Citrix-HSA-Desktop"}
+	$User = Get-ADUser $Username  -Properties * | Select-Object Name, GivenName, Surname, UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate, samaccountname
+	$AllUserGroups = Get-ADUser $Username -Properties * | Select-Object -ExpandProperty memberof | ForEach-Object { Get-ADGroup $_ | Select-Object SamAccountName }
+	$HSADesktop = $AllUserGroups | Where-Object { $_.SamAccountName -like "Citrix-HSA-Desktop" }
 
-$BrokerAccessPolicy = Get-BrokerAccessPolicyRule -AdminAddress $AdminServer -AllowedConnections ViaAG | Select-Object IncludedUsers,DesktopGroupName,DesktopGroupUid
+	$BrokerAccessPolicy = Get-BrokerAccessPolicyRule -AdminAddress $AdminServer -AllowedConnections ViaAG | Select-Object IncludedUsers, DesktopGroupName, DesktopGroupUid
 
-foreach ($AccessPolicy in $BrokerAccessPolicy) {
-$IncludedGroups = $AccessPolicy | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -Like "" } } | Select-Object Fullname
-$IncludedUsersUPN  = $AccessPolicy | ForEach-Object { $_.IncludedUsers  | Where-Object { $_.upn -notlike "" }} | Select-Object UPN
+	foreach ($AccessPolicy in $BrokerAccessPolicy) {
+		$IncludedGroups = $AccessPolicy | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -Like "" } } | Select-Object Fullname
+		$IncludedUsersUPN = $AccessPolicy | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -notlike "" } } | Select-Object UPN
 
-foreach ($Group in $IncludedGroups) {
-    $CheckMemberof = $null
-    $CheckMemberof = $AllUserGroups | Where-Object {$_.SamAccountName -like $Group.FullName}
-    if ($null -ne $CheckMemberof) {
-            $userDeliveryGroup += $AccessPolicy.DesktopGroupName
-            $UserDeliveryGroupUid  += $AccessPolicy.DesktopGroupUid
-    }
-}
+		foreach ($Group in $IncludedGroups) {
+			$CheckMemberof = $null
+			$CheckMemberof = $AllUserGroups | Where-Object { $_.SamAccountName -like $Group.FullName }
+			if ($null -ne $CheckMemberof) {
+				$userDeliveryGroup += $AccessPolicy.DesktopGroupName
+				$UserDeliveryGroupUid += $AccessPolicy.DesktopGroupUid
+			}
+		}
 
-foreach ($UserUpn in $IncludedUsersUPN) {
-    if ($UserUpn.upn -like $User.UserPrincipalName) {
-        $userDeliveryGroup += $AccessPolicy.DesktopGroupName
-        $UserDeliveryGroupUid  += $AccessPolicy.DesktopGroupUid
-     }
-}
+		foreach ($UserUpn in $IncludedUsersUPN) {
+			if ($UserUpn.upn -like $User.UserPrincipalName) {
+				$userDeliveryGroup += $AccessPolicy.DesktopGroupName
+				$UserDeliveryGroupUid += $AccessPolicy.DesktopGroupUid
+			}
+		}
 
-$DesktopGroupAccess += New-Object PSObject -Property @{
-        DesktopGroupName       = $AccessPolicy.DesktopGroupName
-        DesktopGroupUid        = $AccessPolicy.DesktopGroupUid
-        IncludedGroups         = ($AccessPolicy | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -Like "" } } | Select-Object Fullname).fullname
-        IncludedUsersName      = ($AccessPolicy | ForEach-Object { $_.IncludedUsers  | Where-Object { $_.upn -notlike "" }} | Select-Object Name).name
-        IncludedUsersUPN       = ($AccessPolicy | ForEach-Object { $_.IncludedUsers  | Where-Object { $_.upn -notlike "" }} | Select-Object UPN).UPN
-       }
-}
+		$DesktopGroupAccess += New-Object PSObject -Property @{
+			DesktopGroupName  = $AccessPolicy.DesktopGroupName
+			DesktopGroupUid   = $AccessPolicy.DesktopGroupUid
+			IncludedGroups    = ($AccessPolicy | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -Like "" } } | Select-Object Fullname).fullname
+			IncludedUsersName = ($AccessPolicy | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -notlike "" } } | Select-Object Name).name
+			IncludedUsersUPN  = ($AccessPolicy | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -notlike "" } } | Select-Object UPN).UPN
+		}
+	}
 
-$DirectPublishedApps += Get-BrokerApplication -AssociatedUserUPN $User.UserPrincipalName -AdminAddress $AdminServer
-$PublishedApps += $UserDeliveryGroupUid | ForEach-Object {Get-BrokerApplication -AssociatedDesktopGroupUid $_ -AdminAddress $AdminServer}
-foreach ($app in $PublishedApps ) {
-    $CheckMemberof = $null
-    $CheckMemberof = $AllUserGroups | Where-Object {$_.SamAccountName -like $app.AssociatedUserFullNames}
-    if ($null -ne $CheckMemberof) {$AccessPublishedApps += $app}
-    else {$NoAccessPublishedApps += $app}
-    }
+	$DirectPublishedApps += Get-BrokerApplication -AssociatedUserUPN $User.UserPrincipalName -AdminAddress $AdminServer
+	$PublishedApps += $UserDeliveryGroupUid | ForEach-Object { Get-BrokerApplication -AssociatedDesktopGroupUid $_ -AdminAddress $AdminServer }
+	foreach ($app in $PublishedApps ) {
+		$CheckMemberof = $null
+		$CheckMemberof = $AllUserGroups | Where-Object { $_.SamAccountName -like $app.AssociatedUserFullNames }
+		if ($null -ne $CheckMemberof) { $AccessPublishedApps += $app }
+		else { $NoAccessPublishedApps += $app }
+	}
 
-$DirectPublishedDesktops = Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 5000 | Where-Object {$_.AssociatedUserUPNs -like $User.UserPrincipalName} | Select-Object DNSName,DesktopGroupName,OSType
-if ([bool]$HSADesktop -eq $true) {
-$userDeliveryGroup = $userDeliveryGroup | Sort-Object -Unique
-foreach ($DelGroup in $userDeliveryGroup) {
-$desktopkind = Get-BrokerMachine -DesktopGroupName $DelGroup
-  if ( $desktopkind.DesktopKind  -like 'Shared') {
-  $PublishedDesktops += New-Object PSObject -Property @{
-    DNSNAme =  'Hosted Desktop'
-    DesktopGroupName = $DelGroup
-    OsType         = $desktopkind.OSType
-   } | Select-Object DNSName,DesktopGroupName,OSType
-  }
-}
-}
-$ValidUser = @()
-$ValidUser = New-Object PSObject -Property @{
-        UserDetail            = $User
-        AllUserGroups         = $AllUserGroups
-        HSADesktop            = [bool]$HSADesktop
-        UserDeliveryGroup     = $userDeliveryGroup
-        UserDeliveryGroupUid  = $UserDeliveryGroupUid
-        DirectPublishedApps   = $DirectPublishedApps | Select-Object PublishedName,AssociatedUserUPNs,AssociatedUserNames,AssociatedUserFullNames,Description,enabled
-        AccessPublishedApps   = $AccessPublishedApps | Select-Object PublishedName,AssociatedUserUPNs,AssociatedUserNames,AssociatedUserFullNames,Description,enabled
-        NoAccessPublishedApps = $NoAccessPublishedApps | Select-Object PublishedName,AssociatedUserUPNs,AssociatedUserNames,AssociatedUserFullNames,Description,enabled
-        PublishedDesktops     = $PublishedDesktops
-        DirectPublishedDesktops     = $DirectPublishedDesktops
-} | Select-Object UserDetail,AllUserGroups,HSADesktop,userDeliveryGroup,UserDeliveryGroupUid,DirectPublishedApps,AccessPublishedApps,NoAccessPublishedApps,PublishedDesktops,DirectPublishedDesktops
-$ValidUser
+	$DirectPublishedDesktops = Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 5000 | Where-Object { $_.AssociatedUserUPNs -like $User.UserPrincipalName } | Select-Object DNSName, DesktopGroupName, OSType
+	if ([bool]$HSADesktop -eq $true) {
+		$userDeliveryGroup = $userDeliveryGroup | Sort-Object -Unique
+		foreach ($DelGroup in $userDeliveryGroup) {
+			$desktopkind = Get-BrokerMachine -DesktopGroupName $DelGroup
+			if ( $desktopkind.DesktopKind -like 'Shared') {
+				$PublishedDesktops += New-Object PSObject -Property @{
+					DNSNAme          = 'Hosted Desktop'
+					DesktopGroupName = $DelGroup
+					OsType           = $desktopkind.OSType
+				} | Select-Object DNSName, DesktopGroupName, OSType
+			}
+		}
+	}
+	$ValidUser = @()
+	$ValidUser = New-Object PSObject -Property @{
+		UserDetail              = $User
+		AllUserGroups           = $AllUserGroups
+		HSADesktop              = [bool]$HSADesktop
+		UserDeliveryGroup       = $userDeliveryGroup
+		UserDeliveryGroupUid    = $UserDeliveryGroupUid
+		DirectPublishedApps     = $DirectPublishedApps | Select-Object PublishedName, AssociatedUserUPNs, AssociatedUserNames, AssociatedUserFullNames, Description, enabled
+		AccessPublishedApps     = $AccessPublishedApps | Select-Object PublishedName, AssociatedUserUPNs, AssociatedUserNames, AssociatedUserFullNames, Description, enabled
+		NoAccessPublishedApps   = $NoAccessPublishedApps | Select-Object PublishedName, AssociatedUserUPNs, AssociatedUserNames, AssociatedUserFullNames, Description, enabled
+		PublishedDesktops       = $PublishedDesktops
+		DirectPublishedDesktops = $DirectPublishedDesktops
+	} | Select-Object UserDetail, AllUserGroups, HSADesktop, userDeliveryGroup, UserDeliveryGroupUid, DirectPublishedApps, AccessPublishedApps, NoAccessPublishedApps, PublishedDesktops, DirectPublishedDesktops
+	$ValidUser
 }

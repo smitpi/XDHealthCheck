@@ -65,24 +65,25 @@ Param()
 
 
 Function Get-RDSLicenseInformation {
-                    PARAM(
-                        [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
-                        [ValidateNotNull()]
-                        [ValidateNotNullOrEmpty()]
-                        [string]$LicenseServer,
-                        [Parameter(Mandatory = $true, Position = 1)]
-                        [ValidateNotNull()]
-                        [ValidateNotNullOrEmpty()]
-                        [PSCredential]$RemoteCredentials)
+	[CmdletBinding()]
+	PARAM(
+		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[string]$LicenseServer,
+		[Parameter(Mandatory = $true, Position = 1)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[PSCredential]$RemoteCredentials)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] RDS Details"
-	$RDSLicense = Invoke-Command -ComputerName $LicenseServer -Credential $RemoteCredentials -ScriptBlock { Get-CimInstance Win32_TSLicenseKeyPack -ErrorAction SilentlyContinue | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses}
-$CTXObject = New-Object PSObject -Property @{
-    "Per Device"             = $RDSLicense | Where-Object {$_.TypeAndModel -eq "RDS Per Device CAL"}
-    "Per User"               = $RDSLicense | Where-Object {$_.TypeAndModel -eq "RDS Per User CAL"}
-    }
-Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Ending] RDS Details"
-$CTXObject
+	$RDSLicense = Invoke-Command -ComputerName $LicenseServer -Credential $RemoteCredentials -ScriptBlock { Get-CimInstance Win32_TSLicenseKeyPack -ErrorAction SilentlyContinue | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses }
+	$CTXObject = New-Object PSObject -Property @{
+		"Per Device" = $RDSLicense | Where-Object { $_.TypeAndModel -eq "RDS Per Device CAL" }
+		"Per User"   = $RDSLicense | Where-Object { $_.TypeAndModel -eq "RDS Per User CAL" }
+	}
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] RDS Details"
+	$CTXObject
 
 
 
