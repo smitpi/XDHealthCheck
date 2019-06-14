@@ -26,7 +26,7 @@
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Created [09/06/2019_09:18] Initital Script Creating
+Created [09/06/2019_09:18] Initial Script Creating
 
 .PRIVATEDATA
 
@@ -46,10 +46,14 @@ a menu of options
 #>
 
 function Install-XDHealthCheckParameter {
+	$CusObject = New-Object PSObject -Property @{
+		CTXDDC          = Read-Host 'FQDN of Citrix Data Collector'
+		CTXStoreFront   = Read-Host 'FQDN of Citrix Storefront'
+		RDSLicensServer = Read-Host 'FQDN of RDS License Server'
 
-	$CTXDDC = Read-Host 'FQDN of Citrix Data Collector'
-	$CTXStoreFront = Read-Host 'FQDN of Citrix Storefront'
-	$RDSLicensServer = Read-Host 'FQDN of RDS License Server'
+	} | ForEach-Object { New-Variable }
+
+
 
 	function Set-Parameter {
 		[string]$ScriptPath = $PSScriptRoot

@@ -168,7 +168,7 @@ $HeddingText = $DashboardTitle + " | XenDesktop Audit | " + (Get-Date -Format dd
 New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname {
 	New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
 	New-HTMLSection @SectionSettings  -Content {
-		New-HTMLSection -HeaderText 'Machine Catalogs' - @TableSectionSettings { New-HTMLTable @TableSettings  -DataTable $MashineCatalog }
+		New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable @TableSettings  -DataTable $MashineCatalog }
 	}
 	New-HTMLSection @SectionSettings   -Content {
 		New-HTMLSection -HeaderText 'Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings  -DataTable $DeliveryGroups }
@@ -180,10 +180,9 @@ New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname {
 if ($SaveExcelReport) {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
 	$AllXDData.MashineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MashineCatalog -AutoSize  -Title "CitrixMashine Catalog" -TitleBold -TitleSize 20 -FreezePane 3
-$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize  -Title "Citrix Delivery Groups" -TitleBold -TitleSize 20 -FreezePane 3
-$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize  -Title "Citrix PublishedApps" -TitleBold -TitleSize 20 -FreezePane 3
+	$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize  -Title "Citrix Delivery Groups" -TitleBold -TitleSize 20 -FreezePane 3
+	$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize  -Title "Citrix PublishedApps" -TitleBold -TitleSize 20 -FreezePane 3
 }
-
 
 $timer.Stop()
 $timer.Elapsed | Select-Object Days, Hours, Minutes, Seconds | Format-List
