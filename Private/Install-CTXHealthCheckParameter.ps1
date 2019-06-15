@@ -49,12 +49,59 @@ function Install-XDHealthCheckParameter {
 
 
 	$CusObject = New-Object PSObject -Property @{
-		CTXDDC          = Read-Host 'FQDN of Citrix Data Collector'
-		CTXStoreFront   = Read-Host 'FQDN of Citrix Storefront'
-		RDSLicensServer = Read-Host 'FQDN of RDS License Server'
+		[string]CTXDDC = read-host 'A Single Citrix Data Collector FQDN'
+		[string]CTXStoreFront = read-host 'A Single Citrix StoreFront FQDN'
+		[string]RDSLicensServer = read-host 'RDS LicenseServer FQDN'
+		Write-Color -Text 'Add RDS License Type' -Color DarkGray -LinesAfter 1
+		Write-Color "1: ", "Per Device"  -Color Yellow, Green
+		Write-Color "2: ", "Per User"  -Color Yellow, Green
+		$selection = Read-Host "Please make a selection"
+		switch ($selection) {
+			'1' { [string]RDSLicensType = 'Per Device' }
+			'2' { [string]RDSLicensType = 'Per User' }
+		}
+		ReportsFolder = read-host 'Path to the Reports Folder'
+		ParametersFolder = read-host 'Path to where the Parameters.xml will be saved'
+		DashboardTitle = read-host 'Title to be used in the reports and Dashboard'
+		SaveExcelReport = read-host 'Save Config Changes and eventlogs to an excel report (true / false)'
+		SendEmail = read-host 'Send Report with email (true / false)'
 
-	} | ForEach-Object { New-Variable }
+		emailFrom = read-host 'Address of the sender'
+		emailTo = read-host 'Address of the recipient'
+		
+		Write-Color -Text 'Make a selection from below' -Color DarkGray
+		Write-Color -Text '___________________________' -Color DarkGray -LinesAfter 1
+		do {
+			Write-Color "1: ", "Set Healthcheck Script Parameters"  -Color Yellow, Green
+			Write-Color "2: ", "Test HealthCheck Script Parameters"  -Color Yellow, Green
+			Write-Color "3: ", "Run the first HealthCheck"  -Color Yellow, Green
+			Write-Color "Q: ", "Press 'Q' to quit."  -Color Yellow, DarkGray -LinesAfter 1
 
+			$selection = Read-Host "Please make a selection"
+			switch ($selection) {
+				'1' { Set-Parameter }
+				'2' { Test-Parameter }
+				'3' { Initialize-CitrixHealthCheck -XMLParameterFilePath $PSParameters -Verbose }
+
+			}
+		}
+		until ($selection.ToLower() -eq 'q')
+
+
+
+		smtpServer = read-host 'IP or name of SMTP server'
+		smtpServerPort = read-host 'Port of SMTP server'
+		smtpEnableSSL = read-host 'Use ssl for SMTP or not(False or True)'
+	}
+
+
+
+
+	[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml"
+	Write-Colour "Using these Variables"
+	[XML]$XMLParameter = Get-Content $XMLParameterFilePath
+	$XMLParameter.Settings.Variables.Variable | Format-Table
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
 
 	function Set-Parameter {
@@ -156,7 +203,7 @@ function Install-XDHealthCheckParameter {
 				'[single]' { $VarValue = [single]$VarValue } # Single-precision 32-bit floating point number
 				'[double]' { $VarValue = [double]$VarValue } # Double-precision 64-bit floating point number
 				'[DateTime]' { $VarValue = [DateTime]$VarValue } # Date and Time
-				'[Array]' { $VarValue = [Array]$VarValue.Split(',') } # Array
+				'[Array]' { $VarValue = [Array]$VarValue.Split(', ') } # Array
 				'[Command]' { $VarValue = Invoke-Expression $VarValue; $CreateVariable = $False } # Command
 			}
 			If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }

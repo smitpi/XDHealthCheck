@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 8f756c95-9e99-4932-bdd9-b63c4b98405b
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -30,19 +30,21 @@ Created [23/05/2019_00:00]
 Updated [24/05/2019_19:25]
 Updated [06/06/2019_19:26]
 Updated [09/06/2019_09:18]
+Updated [15/06/2019_01:11] 
 
 .PRIVATEDATA
 
-#>
+#> 
 
 #Requires -Module ActiveDirectory
 
 
 
 
+
 <#
 
-.DESCRIPTION
+.DESCRIPTION 
 Citrix XenDesktop HTML Health Check Report
 
 

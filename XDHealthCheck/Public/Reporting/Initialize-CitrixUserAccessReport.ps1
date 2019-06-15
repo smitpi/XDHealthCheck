@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 4ea395a2-cac4-4d05-b184-4d9bf20c80bf
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -28,18 +28,22 @@
 .RELEASENOTES
 Created [08/06/2019_11:18]
 Updated [09/06/2019_09:18]
+Updated [15/06/2019_01:11] 
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 
 
 <#
 
-.DESCRIPTION
+.DESCRIPTION 
 User Access report
 Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
+
 #>
 
 Param()

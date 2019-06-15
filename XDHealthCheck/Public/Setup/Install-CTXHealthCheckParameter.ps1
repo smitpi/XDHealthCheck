@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID b7bb6ac0-1a28-43ae-95e3-dc8847f87d14
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -27,15 +27,18 @@
 
 .RELEASENOTES
 Created [09/06/2019_09:18] Initital Script Creating
+Updated [15/06/2019_01:11] 
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <#
 
-.DESCRIPTION
- Setup the script
+.DESCRIPTION 
+Setup the script
 
 #>
 
@@ -100,9 +103,6 @@ function Install-XDHealthCheckParameter{
 		Write-Color -Text 'Installing PSWriteHTML Module' -Color DarkCyan -ShowTime
 		if ([bool](Get-Module -Name PSWriteHTML) -eq $false) { Install-Module -Name PSWriteHTML -RequiredVersion 0.0.32 -Repository PSGallery -AllowClobber -SkipPublisherCheck }
 
-		Write-Color -Text 'Installing Anybox Module' -Color DarkCyan -ShowTime
-		if ([bool](Get-Module -Name Anybox) -eq $false) { Install-Module -Name Anybox -Repository PSGallery -AllowClobber -SkipPublisherCheck }
-
 		Import-Module PSWriteColor
 		Import-Module BetterCredentials
 
@@ -134,7 +134,7 @@ function Install-XDHealthCheckParameter{
 		}
 
 		$ParametersFolder = $TempParm.settings.Variables.Variable[5].Value.ToString()
-		$global:PSParameters = $ParametersFolder + "\Parameters.xml"
+		$PSParameters = $ParametersFolder + "\Parameters.xml"
 		$xmlfile = New-Item -Path $ParametersFolder  -Name Parameters.xml -ItemType File -Force -Verbose
 		$TempParm.Save($xmlfile.FullName)
 

@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID d972299f-af10-4c8b-a5fa-1ce80d8892af
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME
+.COMPANYNAME  
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -28,16 +28,19 @@
 .RELEASENOTES
 Created [07/06/2019_03:58]
 Updated [09/06/2019_09:18]
+Updated [15/06/2019_01:11] 
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 
 
 <#
 
-.DESCRIPTION
+.DESCRIPTION 
 Find the diferences in ad groups
 
 #>
