@@ -4,101 +4,101 @@
     <Variable>
       <Name>CTXDDC</Name>
       <Value></Value>
-      <!-- A Single Citrix Data Collector FQDN  -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>A Single Citrix Data Collector FQDN</SetupQuestion>
     </Variable>
     <Variable>
       <Name>CTXStoreFront</Name>
       <Value></Value>
-      <!-- A Single Citrix StoreFront FQDN -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>A Single Citrix StoreFront FQDN</SetupQuestion>
     </Variable>
     <Variable>
       <Name>RDSLicensServer</Name>
       <Value></Value>
-      <!-- RDS LicenseServer FQDN -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>RDS LicenseServer FQDN</SetupQuestion>
     </Variable>
     <Variable>
       <Name>RDSLicensType</Name>
       <Value></Value>
-      <!-- Add RDS License Type (Per Device / Per User) -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>Add RDS License Type (Per Device / Per User)</SetupQuestion>
     </Variable>
     <Variable>
       <Name>ReportsFolder</Name>
       <Value></Value>
-      <!-- Path to the Reports Folder -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>Path to the Reports Folder</SetupQuestion>
     </Variable>
     <Variable>
       <Name>ParametersFolder</Name>
       <Value></Value>
-      <!-- Path to where the Parameters.xml will be saved -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>Path to where the Parameters.xml will be saved</SetupQuestion>
     </Variable>
     <Variable>
       <Name>DashboardTitle</Name>
       <Value></Value>
-      <!-- Title to be used in the reports and Dashboard -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
-    </Variable>
-    <Variable>
+      <SetupQuestion>Title to be used in the reports and Dashboard</SetupQuestion>
+    </Variable>    
+    <Variable>    	
       <Name>SaveExcelReport</Name>
       <Value></Value>
-      <!-- Save Config Changes and eventlogs to an excel report (true / false) -->
       <Type>[bool]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>Save Config Changes and eventlogs to an excel report (true / false)</SetupQuestion>
     </Variable>
     <!-- E-Mail Configuration -->
     <Variable>
       <Name>SendEmail</Name>
       <Value></Value>
-      <!-- Send Report with email (true / false)  -->
       <Type>[bool]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>Send Report with email (true / false)</SetupQuestion>
     </Variable>
     <Variable>
       <Name>emailFrom</Name>
       <Value></Value>
-      <!-- Address of the sender -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>Address of the sender</SetupQuestion>
     </Variable>
     <Variable>
       <Name>emailTo</Name>
       <Value></Value>
-      <!-- Address of the recipient -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>Address of the recipient</SetupQuestion>
     </Variable>
     <Variable>
       <Name>smtpServer</Name>
       <Value></Value>
-      <!-- IP or name of SMTP server  -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>IP or name of SMTP server</SetupQuestion>
     </Variable>
     <Variable>
       <Name>smtpServerPort</Name>
       <Value></Value>
-      <!-- Port of SMTP server -->
       <Type>[string]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>Port of SMTP server</SetupQuestion>
     </Variable>
     <Variable>
       <Name>smtpEnableSSL</Name>
       <Value></Value>
-      <!-- Use ssl for SMTP or not(False or True) -->
       <Type>[bool]</Type>
       <Scope>Local</Scope>
+      <SetupQuestion>Use ssl for SMTP or not(False or True)</SetupQuestion>
     </Variable>
   </Variables>
 </settings>

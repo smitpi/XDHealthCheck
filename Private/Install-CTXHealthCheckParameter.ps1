@@ -47,56 +47,91 @@ a menu of options
 
 function Install-XDHealthCheckParameter {
 
+	Function newselection {
 
-	$CusObject = New-Object PSObject -Property @{
-		[string]CTXDDC = read-host 'A Single Citrix Data Collector FQDN'
-		[string]CTXStoreFront = read-host 'A Single Citrix StoreFront FQDN'
-		[string]RDSLicensServer = read-host 'RDS LicenseServer FQDN'
+		[string]$XDDDC = Read-Host 'A Single Citrix Data Collector FQDN'
+		[string]$XDStoreFront = Read-Host 'A Single Citrix StoreFront FQDN'
+		[string]$XDRDSLicensServer = Read-Host 'RDS LicenseServer FQDN'
+
 		Write-Color -Text 'Add RDS License Type' -Color DarkGray -LinesAfter 1
 		Write-Color "1: ", "Per Device"  -Color Yellow, Green
 		Write-Color "2: ", "Per User"  -Color Yellow, Green
 		$selection = Read-Host "Please make a selection"
 		switch ($selection) {
-			'1' { [string]RDSLicensType = 'Per Device' }
-			'2' { [string]RDSLicensType = 'Per User' }
+			'1' { [string]$XDRDSLicensType = 'Per Device' }
+			'2' { [string]$XDRDSLicensType = 'Per User' }
 		}
-		ReportsFolder = read-host 'Path to the Reports Folder'
-		ParametersFolder = read-host 'Path to where the Parameters.xml will be saved'
-		DashboardTitle = read-host 'Title to be used in the reports and Dashboard'
-		SaveExcelReport = read-host 'Save Config Changes and eventlogs to an excel report (true / false)'
-		SendEmail = read-host 'Send Report with email (true / false)'
 
-		emailFrom = read-host 'Address of the sender'
-		emailTo = read-host 'Address of the recipient'
-		
-		Write-Color -Text 'Make a selection from below' -Color DarkGray
-		Write-Color -Text '___________________________' -Color DarkGray -LinesAfter 1
-		do {
-			Write-Color "1: ", "Set Healthcheck Script Parameters"  -Color Yellow, Green
-			Write-Color "2: ", "Test HealthCheck Script Parameters"  -Color Yellow, Green
-			Write-Color "3: ", "Run the first HealthCheck"  -Color Yellow, Green
-			Write-Color "Q: ", "Press 'Q' to quit."  -Color Yellow, DarkGray -LinesAfter 1
+		$XDReportsFolder = Read-Host 'Path to the Reports Folder'
+		$XDParametersFolder = Read-Host 'Path to where the Parameters.xml will be saved'
+		$XDDashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'
 
+		Write-Color -Text 'Save reports to an excel report' -Color DarkGray -LinesAfter 1
+		Write-Color "1: ", "Yes"  -Color Yellow, Green
+		Write-Color "2: ", "No"  -Color Yellow, Green
+		$selection = Read-Host "Please make a selection"
+		switch ($selection) {
+			'1' { [string]$XDSaveExcelReport = 'true' }
+			'2' { [string]$XDSaveExcelReport = 'false' }
+		}
+
+		Write-Color -Text 'Send Report via email' -Color DarkGray -LinesAfter 1
+		Write-Color "1: ", "Yes"  -Color Yellow, Green
+		Write-Color "2: ", "No"  -Color Yellow, Green
+		$selection = Read-Host "Please make a selection"
+		switch ($selection) {
+			'1' { [string]$XDSendEmail = 'true' }
+			'2' { [string]$XDSendEmail = 'false' }
+		}
+
+		if ($XDSendEmail -eq 'true') {
+			$emailFromA = Read-Host 'Email Address of the Sender'
+			$emailFromN = Read-Host 'Full Name of the Sender'
+			$XDFromAddress = $emailFromN + " <" + $emailFromA + ">"
+
+			$XDToAddress = @()
+			$input = ''
+			While ($input -ne "n") {
+				If ($input -ne $null) {
+					$emailtoA = Read-Host 'Email Address of the Resipient'
+					$emailtoN = Read-Host 'Full Name of the Recipient'
+					$XDToAddress += $emailtoN + " <" + $emailtoA + ">"
+				}
+				$input = Read-Host "Add more recipients? (y/n)"
+			}
+
+			$XDsmtpServer = Read-Host 'IP or name of SMTP server'
+			$XDsmtpServerPort = Read-Host 'Port of SMTP server'
+			Write-Color -Text 'Use ssl for SMTP' -Color DarkGray -LinesAfter 1
+			Write-Color "1: ", "Yes"  -Color Yellow, Green
+			Write-Color "2: ", "No"  -Color Yellow, Green
 			$selection = Read-Host "Please make a selection"
 			switch ($selection) {
-				'1' { Set-Parameter }
-				'2' { Test-Parameter }
-				'3' { Initialize-CitrixHealthCheck -XMLParameterFilePath $PSParameters -Verbose }
-
+				'1' { [string]$XDsmtpEnableSSL = 'true' }
+				'2' { [string]$XDsmtpEnableSSL = 'false' }
 			}
 		}
-		until ($selection.ToLower() -eq 'q')
-
-
-
-		smtpServer = read-host 'IP or name of SMTP server'
-		smtpServerPort = read-host 'Port of SMTP server'
-		smtpEnableSSL = read-host 'Use ssl for SMTP or not(False or True)'
 	}
+}
+
+	<#
+ #
+		$RDSType = Read-Host "RDS License type: (Per Device|Per User) (d/u)"
+		while ("d", "u" -notcontains $RDSType ) {
+			$YesOrNo = Read-Host "Please enter your response (y/n)"
+		}
 
 
 
-
+While ($Selection -ne "U") -or ($selection -ne "D") {
+  			$Selection = read-host "RDS License type: (Per <D>evice "
+			Switch ($Selection) {
+				Y { Write-host "Continuing with validation" }
+				N { Write-Host "Breaking out of script"; Return }
+				default { Write-Host "Only Y/N are Valid responses" }
+			}
+		}
+ #>
 	[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml"
 	Write-Colour "Using these Variables"
 	[XML]$XMLParameter = Get-Content $XMLParameterFilePath

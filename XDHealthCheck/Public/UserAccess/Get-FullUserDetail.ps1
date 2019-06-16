@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 8f756c95-9e99-4932-bdd9-b63c4b98405b
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -30,30 +30,12 @@ Created [23/05/2019_00:00]
 Updated [24/05/2019_19:25]
 Updated [06/06/2019_19:26]
 Updated [09/06/2019_09:18]
-Updated [15/06/2019_01:11] 
+Updated [15/06/2019_01:11]
+Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA
 
-#> 
-
-#Requires -Module ActiveDirectory
-
-
-
-
-
-<#
-
-.DESCRIPTION 
-Citrix XenDesktop HTML Health Check Report
-
-
-Requires -Modules ActiveDirectory
-
 #>
-Param()
-
-
 
 Function Get-FullUserDetail {
 	[CmdletBinding()]
@@ -74,7 +56,6 @@ Function Get-FullUserDetail {
 		[switch]$RunAsPSRemote = $false,
 		[Parameter(Mandatory = $false, Position = 3)]
 		[String]$PSRemoteServerName)
-
 
 	function AllConfig {
 		param($UserToQuery, $DomainFQDN, [SecureString] $DomainCredentials, $VerbosePreference)

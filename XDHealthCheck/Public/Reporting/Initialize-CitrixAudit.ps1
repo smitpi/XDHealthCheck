@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 11d2e083-fcea-48c4-bb9f-093840ea5d0e
 
@@ -29,11 +29,14 @@
 Created [06/06/2019_06:00] Initital Script Creating
 Updated [06/06/2019_19:26]
 Updated [09/06/2019_09:18]
-Updated [15/06/2019_01:11] 
+Updated [15/06/2019_01:11]
+Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 
 #> 
+
+
 
 
 

@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 42427037-9fe8-465e-a2bf-6d57f9a70509
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -30,11 +30,14 @@ Created [22/05/2019_19:53]
 Updated [22/05/2019_20:18]
 Updated [06/06/2019_19:26]
 Updated [09/06/2019_09:18]
-Updated [15/06/2019_01:11] 
+Updated [15/06/2019_01:11]
+Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA
 
-#> 
+#>
+
+
 
 
 
@@ -46,7 +49,7 @@ Updated [15/06/2019_01:11]
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Citrix XenDesktop HTML Health Check Report
 
 #>
@@ -69,6 +72,11 @@ function Get-CitrixUserAccessDetail {
 		[string]$AdminServer)
 
 	Add-PSSnapin citrix*
+	if ([bool](Get-Module -Name activedirectory) -eq $false -or [bool](Get-PSSnapin -name Citrix.Broker.Admin.V2) -eq $false) {
+		Write-Error 'Required Modules not present.'
+		break
+	 }
+
 	$HSADesktop = $ValidUser = $userDeliveryGroup = $DesktopGroupAccess = $null
 	$DesktopGroupAccess = @()
 	$UserDeliveryGroup = @()

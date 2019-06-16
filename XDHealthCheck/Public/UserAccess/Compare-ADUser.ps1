@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID d972299f-af10-4c8b-a5fa-1ce80d8892af
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -28,11 +28,14 @@
 .RELEASENOTES
 Created [07/06/2019_03:58]
 Updated [09/06/2019_09:18]
-Updated [15/06/2019_01:11] 
+Updated [15/06/2019_01:11]
+Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA
 
-#> 
+#>
+
+
 
 
 
@@ -40,7 +43,7 @@ Updated [15/06/2019_01:11]
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Find the diferences in ad groups
 
 #>
@@ -60,6 +63,12 @@ Function Compare-ADUser {
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
 		[string]$Username2)
+
+
+	if ([bool](Get-Module -Name activedirectory) -eq $false) {
+		Write-Error 'Required Active Directory Modules not present.'
+		break
+	}
 
 
 	$ValidUser1 = Get-ADUser $Username1  -Properties * | Select-Object Name, GivenName, Surname, UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate, samaccountname

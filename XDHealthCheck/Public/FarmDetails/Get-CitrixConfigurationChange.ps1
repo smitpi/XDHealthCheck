@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 71b2bc51-85ce-407b-ace5-96df009782d3
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -32,27 +32,17 @@ Updated [22/05/2019_20:13]
 Updated [24/05/2019_19:24]
 Updated [06/06/2019_19:25]
 Updated [09/06/2019_09:18]
-Updated [15/06/2019_01:11] 
+Updated [15/06/2019_01:11]
+Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA
 
-#> 
-
-
-
-
-
-
-
-
-
-
-
+#>
 
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Xendesktop Farm Details
 
 #>
