@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -33,7 +33,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -43,7 +43,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Reports on user details
 
 #>
@@ -66,7 +66,7 @@ Function Initialize-CitrixUserCompare {
 
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
-
+	<#
 	Write-Colour "Using these Variables"
 	[XML]$XMLParameter = Get-Content $XMLParameterFilePath
 	$XMLParameter.Settings.Variables.Variable | Format-Table
@@ -92,7 +92,22 @@ Function Initialize-CitrixUserCompare {
 		}
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
+#>
 
+	#######################
+	#region xml imports
+	#######################
+	Write-Colour "Using these Variables"
+	$XMLParameter = Import-Clixml $XMLParameterFilePath
+	if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
+	$XMLParameter
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
+	$XMLParameter.PSObject.Properties | ForEach-Object { New-Variable -Name $_.name -Value $_.value -Force -Scope local }
+	#endregion
+
+	##########################################
+	#region checking folders and report names
+	##########################################
 	if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 	[string]$Reportname = $ReportsFolder + "\XDUsers\XDCompareUsers." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 
@@ -101,26 +116,28 @@ Function Initialize-CitrixUserCompare {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 	$timer = [Diagnostics.Stopwatch]::StartNew();
-
+	#endregion
 
 	########################################
-	## Getting Credentials
+	#region Getting Credentials
 	#########################################
-
-
 	$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
 	if ($null -eq $CTXAdmin) {
 		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
 		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 	}
+
+	#endregion
+
 	########################################
-	## Connect and get info
-	#########################################
+	#region Connect and get info
+	########################################
 	$compareusers = Compare-ADUser -Username1 $Username1 -Username2 $Username2
+	#endregion
+
 	########################################
-	## Setting some table color and settings
+	#region Setting some table color and settings
 	########################################
-	#region Table Settings
 	$TableSettings = @{
 		Style          = 'stripe'
 		HideFooter     = $true
@@ -145,7 +162,7 @@ Function Initialize-CitrixUserCompare {
 	#endregion
 
 	#######################
-	## Building the report
+	#region Building HTML the report
 	#######################
 	$HeddingText = $DashboardTitle + " | XenDesktop Report | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
 	New-HTML -TitleText "Compared Users Report"  -FilePath $Reportname -ShowHTML {
@@ -164,7 +181,7 @@ Function Initialize-CitrixUserCompare {
 			New-HTMLSection -HeaderText  $compareusers.User2Details.user2Headding @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.allusergroups2 }
 		}
 	}
-
+	#endregion
 	$timer.Stop()
 	$timer.Elapsed | Select-Object Days, Hours, Minutes, Seconds | Format-List
 	Stop-Transcript

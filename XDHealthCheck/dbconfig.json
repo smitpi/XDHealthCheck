@@ -1,0 +1,6 @@
+{
+    "dashboard":  {
+                      "port":  "10000",
+                      "rootmodule":  "XDHealthCheck.psm1"
+                  }
+}

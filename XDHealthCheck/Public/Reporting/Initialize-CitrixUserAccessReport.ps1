@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -33,7 +33,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -43,7 +43,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 User Access report
 Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 
@@ -64,8 +64,8 @@ Function Initialize-CitrixUserAccessReport {
 		[ValidateNotNullOrEmpty()]
 		[string]$Username)
 
-	#region xml imports
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
+	<#
 
 	Write-Colour "Using these Variables"
 	[XML]$XMLParameter = Get-Content $XMLParameterFilePath
@@ -92,8 +92,22 @@ Function Initialize-CitrixUserAccessReport {
 		}
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
+ #>
 
+	##########################################
+	#region xml imports
+	##########################################
+	Write-Colour "Using these Variables"
+	$XMLParameter = Import-Clixml $XMLParameterFilePath
+	if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
+	$XMLParameter
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
+	$XMLParameter.PSObject.Properties | ForEach-Object { New-Variable -Name $_.name -Value $_.value -Force -Scope local }
+	#endregion
 
+	##########################################
+	#region checking folders and report names
+	##########################################
 	if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 	[string]$Reportname = $ReportsFolder + "\XDUsers\XDUserAccess." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 
@@ -102,26 +116,29 @@ Function Initialize-CitrixUserAccessReport {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 	$timer = [Diagnostics.Stopwatch]::StartNew();
-
+	#endregion
 
 	########################################
-	## Getting Credentials
+	#region Getting Credentials
 	#########################################
-
-
 	$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
 	if ($null -eq $CTXAdmin) {
 		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
 		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 	}
-	########################################
-	## Functions
-	#########################################
+	#endregion
 
 	########################################
-	## Connect and get info
-	#########################################
-	#region Table Settings
+	#region Connect and get info
+	########################################
+	$UserDetail = Get-CitrixUserAccessDetail -Username $Username -AdminServer $CTXDDC
+	$userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
+	$DesktopsCombined = $UserDetail.DirectPublishedDesktops + $UserDetail.PublishedDesktops | Sort-Object -Property DesktopGroupName -Unique
+	#endregion
+
+	########################################
+	#region Setting some table color and settings
+	########################################
 	$TableSettings = @{
 		Style          = 'stripe'
 		HideFooter     = $true
@@ -145,11 +162,9 @@ Function Initialize-CitrixUserAccessReport {
 	}
 	#endregion
 
-
-	$UserDetail = Get-CitrixUserAccessDetail -Username $Username -AdminServer $CTXDDC
-	$userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
-	$DesktopsCombined = $UserDetail.DirectPublishedDesktops + $UserDetail.PublishedDesktops | Sort-Object -Property DesktopGroupName -Unique
-
+	#######################
+	#region Building HTML the report
+	#######################
 	$HeddingText = $DashboardTitle + " | Access Report for User: " + $UserDetail.UserDetail.Name + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
 	New-HTML -TitleText "Access Report" -FilePath $Reportname -ShowHTML {
 		New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
@@ -163,7 +178,7 @@ Function Initialize-CitrixUserAccessReport {
 			New-HTMLSection -HeaderText 'AD Group Membership' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $UserDetail.AllUserGroups }
 		}
 	}
-
+	#endregion
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending]Healthcheck Complete"
 
 	$timer.Stop()

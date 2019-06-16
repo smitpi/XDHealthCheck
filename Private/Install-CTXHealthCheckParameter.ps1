@@ -47,32 +47,33 @@ a menu of options
 
 function Install-XDHealthCheckParameter {
 
-	Function newselection {
+	Function Set-Parameter {
 
-		[string]$XDDDC = Read-Host 'A Single Citrix Data Collector FQDN'
-		[string]$XDStoreFront = Read-Host 'A Single Citrix StoreFront FQDN'
-		[string]$XDRDSLicensServer = Read-Host 'RDS LicenseServer FQDN'
+
+		[string]$CTXDDC = Read-Host 'A Citrix Data Collector FQDN'
+		[string]$CTXStoreFront = Read-Host 'A Citrix StoreFront FQDN'
+		[string]$RDSLicensServer = Read-Host 'RDS LicenseServer FQDN'
 
 		Write-Color -Text 'Add RDS License Type' -Color DarkGray -LinesAfter 1
 		Write-Color "1: ", "Per Device"  -Color Yellow, Green
 		Write-Color "2: ", "Per User"  -Color Yellow, Green
 		$selection = Read-Host "Please make a selection"
 		switch ($selection) {
-			'1' { [string]$XDRDSLicensType = 'Per Device' }
-			'2' { [string]$XDRDSLicensType = 'Per User' }
+			'1' { [string]$RDSLicensType = 'Per Device' }
+			'2' { [string]$RDSLicensType = 'Per User' }
 		}
 
-		$XDReportsFolder = Read-Host 'Path to the Reports Folder'
-		$XDParametersFolder = Read-Host 'Path to where the Parameters.xml will be saved'
-		$XDDashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'
+		$ReportsFolder = Read-Host 'Path to the Reports Folder'
+		$ParametersFolder = Read-Host 'Path to where the Parameters.xml will be saved'
+		$DashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'
 
 		Write-Color -Text 'Save reports to an excel report' -Color DarkGray -LinesAfter 1
 		Write-Color "1: ", "Yes"  -Color Yellow, Green
 		Write-Color "2: ", "No"  -Color Yellow, Green
 		$selection = Read-Host "Please make a selection"
 		switch ($selection) {
-			'1' { [string]$XDSaveExcelReport = 'true' }
-			'2' { [string]$XDSaveExcelReport = 'false' }
+			'1' { $SaveExcelReport = $true }
+			'2' { $SaveExcelReport = $false }
 		}
 
 		Write-Color -Text 'Send Report via email' -Color DarkGray -LinesAfter 1
@@ -80,128 +81,73 @@ function Install-XDHealthCheckParameter {
 		Write-Color "2: ", "No"  -Color Yellow, Green
 		$selection = Read-Host "Please make a selection"
 		switch ($selection) {
-			'1' { [string]$XDSendEmail = 'true' }
-			'2' { [string]$XDSendEmail = 'false' }
+			'1' { $SendEmail = $true }
+			'2' { $SendEmail = $false }
 		}
 
-		if ($XDSendEmail -eq 'true') {
+		if ($SendEmail -eq 'true') {
 			$emailFromA = Read-Host 'Email Address of the Sender'
 			$emailFromN = Read-Host 'Full Name of the Sender'
-			$XDFromAddress = $emailFromN + " <" + $emailFromA + ">"
+			$FromAddress = $emailFromN + " <" + $emailFromA + ">"
 
-			$XDToAddress = @()
+			$ToAddress = @()
 			$input = ''
 			While ($input -ne "n") {
 				If ($input -ne $null) {
 					$emailtoA = Read-Host 'Email Address of the Resipient'
 					$emailtoN = Read-Host 'Full Name of the Recipient'
-					$XDToAddress += $emailtoN + " <" + $emailtoA + ">"
+					$ToAddress += $emailtoN + " <" + $emailtoA + ">"
 				}
 				$input = Read-Host "Add more recipients? (y/n)"
 			}
 
-			$XDsmtpServer = Read-Host 'IP or name of SMTP server'
-			$XDsmtpServerPort = Read-Host 'Port of SMTP server'
+			$smtpServer = Read-Host 'IP or name of SMTP server'
+			$smtpServerPort = Read-Host 'Port of SMTP server'
 			Write-Color -Text 'Use ssl for SMTP' -Color DarkGray -LinesAfter 1
 			Write-Color "1: ", "Yes"  -Color Yellow, Green
 			Write-Color "2: ", "No"  -Color Yellow, Green
 			$selection = Read-Host "Please make a selection"
 			switch ($selection) {
-				'1' { [string]$XDsmtpEnableSSL = 'true' }
-				'2' { [string]$XDsmtpEnableSSL = 'false' }
+				'1' { $smtpEnableSSL = $true }
+				'2' { $smtpEnableSSL = $false }
 			}
 		}
-	}
-}
-
-	<#
- #
-		$RDSType = Read-Host "RDS License type: (Per Device|Per User) (d/u)"
-		while ("d", "u" -notcontains $RDSType ) {
-			$YesOrNo = Read-Host "Please enter your response (y/n)"
-		}
-
-
-
-While ($Selection -ne "U") -or ($selection -ne "D") {
-  			$Selection = read-host "RDS License type: (Per <D>evice "
-			Switch ($Selection) {
-				Y { Write-host "Continuing with validation" }
-				N { Write-Host "Breaking out of script"; Return }
-				default { Write-Host "Only Y/N are Valid responses" }
-			}
-		}
- #>
-	[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml"
-	Write-Colour "Using these Variables"
-	[XML]$XMLParameter = Get-Content $XMLParameterFilePath
-	$XMLParameter.Settings.Variables.Variable | Format-Table
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
+		$AllXDData = New-Object PSObject -Property @{
+			DateCollected    = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+			CTXDDC           =	$CTXDDC
+			CTXStoreFront    =	$CTXStoreFront
+			RDSLicensServer  =	$RDSLicensServer
+			RDSLicensType    =	$RDSLicensType
+			ReportsFolder    =	$ReportsFolder
+			ParametersFolder =	$ParametersFolder
+			DashboardTitle   =	$DashboardTitle
+			SaveExcelReport  =	$SaveExcelReport
+			SendEmail        =	$SendEmail
+			emailFrom        =  $FromAddress
+			emailTo          =  $ToAddress
+			smtpServer       =	$smtpServer
+            smtpServerPort   =  $smtpServerPort
+            smtpEnableSSL    =  $smtpEnableSSL
+		} | select DateCollected,CTXDDC ,CTXStoreFront ,RDSLicensServer ,RDSLicensType ,ReportsFolder ,ParametersFolder ,DashboardTitle,SaveExcelReport ,SendEmail ,emailFrom ,emailTo ,smtpServer ,smtpServerPort ,smtpEnableSSL
 
 
-	function Set-Parameter {
-		[string]$ScriptPath = $PSScriptRoot
+		if (Test-Path -Path "$ParametersFolder\Parameters.xml") { Remove-Item "$ParametersFolder\Parameters.xml" -Force -Verbose }
+		$AllXDData | Export-Clixml -Path "$ParametersFolder\Parameters.xml" -Depth 3 -NoClobber -Force
 
-		Write-Host 'Installing needed Modules' -ForegroundColor Cyan
-		if ((Get-PSRepository -Name PSGallery).InstallationPolicy -notlike 'Trusted') { Set-PSRepository -Name PSGallery -InstallationPolicy Trusted }
-		if ([bool](Get-Module -Name PSWriteColor) -eq $false) { Install-Module -Name PSWriteColor -RequiredVersion 0.85 -Repository PSGallery -AllowClobber -SkipPublisherCheck }
-
-		Write-Color -Text 'Installing BetterCredentials Module' -Color DarkCyan -ShowTime
-		if ([bool](Get-Module -Name BetterCredentials) -eq $false) { Install-Module -Name BetterCredentials -RequiredVersion 4.5 -Repository PSGallery -AllowClobber -SkipPublisherCheck }
-
-		Write-Color -Text 'Installing ImportExcel Module' -Color DarkCyan -ShowTime
-		if ([bool](Get-Module -Name ImportExcel) -eq $false) { Install-Module -Name ImportExcel -RequiredVersion 6.0.0 -Repository PSGallery -AllowClobber -SkipPublisherCheck }
-
-		Write-Color -Text 'Installing PSWriteHTML Module' -Color DarkCyan -ShowTime
-		if ([bool](Get-Module -Name PSWriteHTML) -eq $false) { Install-Module -Name PSWriteHTML -RequiredVersion 0.0.32 -Repository PSGallery -AllowClobber -SkipPublisherCheck }
-
-		Write-Color -Text 'Installing Anybox Module' -Color DarkCyan -ShowTime
-		if ([bool](Get-Module -Name Anybox) -eq $false) { Install-Module -Name Anybox -Repository PSGallery -AllowClobber -SkipPublisherCheck }
-
-		Import-Module PSWriteColor
-		Import-Module BetterCredentials
-
-		[string]$setupemail = Read-Host -Prompt 'Would you like to setup SMTP Emails (y/n)'
-
-		if ($setupemail[0] -like 'y') {
-			[xml]$TempParm = Get-Content  $PSScriptRoot\Parameters-Template.xml
-			$null = Find-Credential | Where-Object target -Like "*Healthcheck_smtp" | Remove-Credential
-			$smtpClientCredentials = BetterCredentials\Get-Credential -Message "smtp login for HealthChecks email"
-			Set-Credential -Credential $smtpClientCredentials -Target "Healthcheck_smtp" -Persistence LocalComputer -Description "Account used for XD health checks" -Verbose
-		} else { [xml]$TempParm = Get-Content  $PSScriptRoot\Parameters-TemplateNoEmail.xml }
-
-		Write-Color -Text 'Setting up credentials' -Color DarkCyan -ShowTime
-		$XDAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
-		if ($XDAdmin -eq $null) {
-			$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for XD HealthChecks"
-			Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for XD health checks" -Verbose
-		}
-
-		Write-Color -Text 'Setting up Parameters.xml' -Color DarkCyan -ShowTime
-
-		$TempParm.settings.Variables.Variable | ForEach-Object {
-			[string]$getnew = Read-Host $_.#comment'
-			$_.value = $getnew
-		}
-
-		$ParametersFolder = $TempParm.settings.Variables.Variable[5].Value.ToString()
-		$PSParameters = $ParametersFolder + "\Parameters.xml"
-		$xmlfile = New-Item -Path $ParametersFolder  -Name Parameters.xml -ItemType File -Force -Verbose
-		$TempParm.Save($xmlfile.FullName)
-
+		$Global:PSParameters = $ParametersFolder + "\Parameters.xml"
 		[System.Environment]::SetEnvironmentVariable('PSParameters', $PSParameters, [System.EnvironmentVariableTarget]::User)
 
-		Write-Color -Text '_________________________________________' -Color Green
-		Write-Color -Text 'Setup Complete' -Color green -ShowTime
-	}
+
+
+    }
 	function Test-Parameter {
 
 		if ($PSParameters -eq $null) {
-			$xmlpath = Read-Host 'Full Path to Parameters.xml file'
-			if ((Get-Item $xmlpath).Extension -eq 'xml') { [xml]$Parameters = Get-Content $xmlpath }
-			else { Write-Host 'Invalid xml file'; break }
-		}
-
+			$PSParameters = Read-Host 'Full Path to Parameters.xml file'
+			if ((Get-Item $PSParameters).Extension -ne 'xml') { Write-Error 'Invalid xml file'; break }
+        }
+        $Parameters = Import-Clixml $PSParameters
+		$Parameters.PSObject.Properties | ForEach-Object { New-Variable -Name $_.name -Value $_.value -Force -Scope local }
 
 		Write-Color -Text 'Checking Credentials' -Color DarkCyan -ShowTime
 		########################################
@@ -219,36 +165,10 @@ While ($Selection -ne "U") -or ($selection -ne "D") {
 		## Build other variables
 		#########################################
 
-		$Parameters.Settings.Variables.Variable | Format-Table
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
-
-		$Parameters.Settings.Variables.Variable | ForEach-Object {
-			# Set Variables contained in XML file
-			$VarValue = $_.Value
-			$CreateVariable = $True # Default value to create XML content as Variable
-			switch ($_.Type) {
-				# Format data types for each variable
-				'[string]' { $VarValue = [string]$VarValue } # Fixed-length string of Unicode characters
-				'[char]' { $VarValue = [char]$VarValue } # A Unicode 16-bit character
-				'[byte]' { $VarValue = [byte]$VarValue } # An 8-bit unsigned character
-				'[bool]' { If ($VarValue.ToLower() -eq 'false') { $VarValue = [bool]$False } ElseIf ($VarValue.ToLower() -eq 'true') { $VarValue = [bool]$True } } # An boolean True/False value
-				'[int]' { $VarValue = [int]$VarValue } # 32-bit signed integer
-				'[long]' { $VarValue = [long]$VarValue } # 64-bit signed integer
-				'[decimal]' { $VarValue = [decimal]$VarValue } # A 128-bit decimal value
-				'[single]' { $VarValue = [single]$VarValue } # Single-precision 32-bit floating point number
-				'[double]' { $VarValue = [double]$VarValue } # Double-precision 64-bit floating point number
-				'[DateTime]' { $VarValue = [DateTime]$VarValue } # Date and Time
-				'[Array]' { $VarValue = [Array]$VarValue.Split(', ') } # Array
-				'[Command]' { $VarValue = Invoke-Expression $VarValue; $CreateVariable = $False } # Command
-			}
-			If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
-		}
-
-
 		Write-Color -Text 'Checking PS Remoting to servers' -Color DarkCyan -ShowTime
 
-		$DDC = Invoke-Command -ComputerName $XDDDC.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
-		$StoreFront = Invoke-Command -ComputerName $XDStoreFront -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
+		$DDC = Invoke-Command -ComputerName $CTXDDC -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
+		$StoreFront = Invoke-Command -ComputerName $CTXStoreFront -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
 		$LicensServer = Invoke-Command -ComputerName $RDSLicensServer -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
 
 		if ($DDC -like '') { Write-Error '$XDDDC is not valid' }

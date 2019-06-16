@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -34,7 +34,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 
-#> 
+#>
 
 
 
@@ -46,7 +46,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Citrix XenDesktop HTML Health Check Report
 
 #>
@@ -62,8 +62,8 @@ function Initialize-CitrixAudit {
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
 		[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml")
 
-	#region xml imports
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
+	<#
 
 	Write-Colour "Using these Variables"
 	[XML]$XMLParameter = Get-Content $XMLParameterFilePath
@@ -91,7 +91,23 @@ function Initialize-CitrixAudit {
 		}
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
+ #
+ #>
+	##########################################
+	#region xml imports
+	##########################################
 
+	Write-Colour "Using these Variables"
+	$XMLParameter = Import-Clixml $XMLParameterFilePath
+	if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
+	$XMLParameter
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
+	$XMLParameter.PSObject.Properties | ForEach-Object { New-Variable -Name $_.name -Value $_.value -Force -Scope local }
+	#endregion
+
+	##########################################
+	#region checking folders and report names
+	##########################################
 	if ((Test-Path -Path $ReportsFolder\XDAudit) -eq $false) { New-Item -Path "$ReportsFolder\XDAudit" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 
 	[string]$Reportname = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
@@ -103,10 +119,10 @@ function Initialize-CitrixAudit {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 	$timer = [Diagnostics.Stopwatch]::StartNew();
-
+	#endregion
 
 	########################################
-	## Getting Credentials
+	#region Getting Credentials
 	#########################################
 
 	$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
@@ -114,21 +130,38 @@ function Initialize-CitrixAudit {
 		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
 		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 	}
+	#endregion
+
 	########################################
-	## Connect and get info
-	#########################################
+	#region Connect and get info
+	########################################
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
 	$CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC -RunAsPSRemote -RemoteCredentials $CTXAdmin
-
 	$MashineCatalog = $CitrixObjects.MashineCatalog | Select-Object MachineCatalogName, AllocationType, SessionSupport, UnassignedCount, UsedCount, MasterImageVM, MasterImageSnapshotName, MasterImageSnapshotCount, MasterImageVMDate
 	$DeliveryGroups = $CitrixObjects.DeliveryGroups | Select-Object DesktopGroupName, Enabled, InMaintenanceMode, TotalApplications, TotalDesktops, DesktopsUnregistered, UserAccess, GroupAccess
 	$PublishedApps = $CitrixObjects.PublishedApps | Select-Object DesktopGroupName, Enabled, ApplicationName, CommandLineExecutable, CommandLineArguments, WorkingDirectory, PublishedAppGroupAccess, PublishedAppUserAccess
-
+	#endregion
 
 	########################################
-	## Setting some table color and settings
+	#region saving data to xml
 	########################################
-	#region Table Settings
+	$AllXDData = New-Object PSObject -Property @{
+		DateCollected           = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+		CitrixRemoteFarmDetails = $CitrixRemoteFarmDetails
+		MashineCatalog          = $CitrixObjects.MashineCatalog
+		DeliveryGroups          = $CitrixObjects.DeliveryGroups
+		PublishedApps           = $CitrixObjects.PublishedApps
+		MashineCatalogSum       = $MashineCatalog
+		DeliveryGroupsSum       = $DeliveryGroups
+		PublishedAppsSum        = $PublishedApps
+	}
+	if (Test-Path -Path $XMLExport) { Remove-Item $XMLExport -Force -Verbose }
+	$AllXDData | Export-Clixml -Path $XMLExport -Depth 25 -NoClobber -Force
+	#endregion
+
+	########################################
+	#region Setting some table color and settings
+	########################################
 	$TableSettings = @{
 		Style          = 'stripe'
 		HideFooter     = $true
@@ -152,22 +185,8 @@ function Initialize-CitrixAudit {
 	#endregion
 
 	#######################
-	## Building the report
+	#region Building HTML the report
 	#######################
-
-	$AllXDData = New-Object PSObject -Property @{
-		DateCollected           = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-		CitrixRemoteFarmDetails = $CitrixRemoteFarmDetails
-		MashineCatalog          = $CitrixObjects.MashineCatalog
-		DeliveryGroups          = $CitrixObjects.DeliveryGroups
-		PublishedApps           = $CitrixObjects.PublishedApps
-		MashineCatalogSum       = $MashineCatalog
-		DeliveryGroupsSum       = $DeliveryGroups
-		PublishedAppsSum        = $PublishedApps
-	}
-	if (Test-Path -Path $XMLExport) { Remove-Item $XMLExport -Force -Verbose }
-	$AllXDData | Export-Clixml -Path $XMLExport -Depth 25 -NoClobber -Force
-
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Building HTML Page"
 
 	$HeddingText = $DashboardTitle + " | XenDesktop Audit | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
@@ -183,12 +202,18 @@ function Initialize-CitrixAudit {
 			New-HTMLSection -HeaderText 'Published Apps' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $PublishedApps }
 		}
 	}
+	#endregion
+
+	#######################
+	#region Saving Excel report
+	#######################
 	if ($SaveExcelReport) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
 		$AllXDData.MashineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MashineCatalog -AutoSize  -Title "CitrixMashine Catalog" -TitleBold -TitleSize 20 -FreezePane 3
 		$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize  -Title "Citrix Delivery Groups" -TitleBold -TitleSize 20 -FreezePane 3
 		$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize  -Title "Citrix PublishedApps" -TitleBold -TitleSize 20 -FreezePane 3
 	}
+	#endregion
 
 	$timer.Stop()
 	$timer.Elapsed | Select-Object Days, Hours, Minutes, Seconds | Format-List

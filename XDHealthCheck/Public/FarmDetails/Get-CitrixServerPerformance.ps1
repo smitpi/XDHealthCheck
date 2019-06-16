@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -32,7 +32,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -40,7 +40,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Xendesktop Farm Details
 
 #>
@@ -67,13 +67,13 @@ Function Get-CitrixServerPerformance {
 		$CusObject = New-Object PSObject -Property @{
 			DateCollected      = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
 			Servername         = $SingleServer.ServerName
-			'CPU_%'            = $SingleServer.'CPU_%'
-			'Memory_%'         = $SingleServer.'Memory_%'
-			'CDrive_Free'      = $SingleServer.'CDrive_Free'
-			'DDrive_Free'      = $SingleServer.'DDrive_Free'
+			'CPU %'            = $SingleServer.'CPU %'
+			'Memory %'         = $SingleServer.'Memory %'
+			'CDrive % Free'    = $SingleServer.'CDrive % Free'
+			'DDrive % Free'    = $SingleServer.'DDrive % Free'
 			Uptime             = $SingleServer.Uptime
-			'Stopped_Services' = $SingleServer.StoppedServices
-		} | Select-Object ServerName, 'CPU_%', 'Memory_%', 'CDrive_Free', 'DDrive_Free', Uptime, 'Stopped_Services'
+			'Stopped Services' = $SingleServer.StoppedServices
+		} | Select-Object ServerName, 'CPU %', 'Memory %', 'CDrive % Free', 'DDrive % Free', Uptime, 'Stopped Services'
 		$CitrixServerPerformance += $CusObject
 	}
 

@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -37,7 +37,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -55,7 +55,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Xendesktop Farm Details
 
 #>
@@ -80,8 +80,8 @@ Function Get-CitrixSingleServerPerformance {
 	$CtrList = @(
 		"\Processor(_Total)\% Processor Time",
 		"\memory\% committed bytes in use",
-		"\LogicalDisk(C:)\Free Megabytes",
-		"\LogicalDisk(D:)\Free Megabytes"
+		"\LogicalDisk(C:)\% Free Space",
+		"\LogicalDisk(D:)\% Free Space"
 	)
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Perfmon Details for $($server.ToString())"
 	$perf = Get-Counter $CtrList -ComputerName $server  -ErrorAction SilentlyContinue | Select-Object -ExpandProperty CounterSamples
@@ -99,13 +99,13 @@ Function Get-CitrixSingleServerPerformance {
 	$CTXObject = New-Object PSCustomObject -Property @{
 		DateCollected      = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
 		ServerName         = $Server
-		'CPU_%'            = [Decimal]::Round(($perf[0].CookedValue), 2).tostring()
-		'Memory_%'         = [Decimal]::Round(($perf[1].CookedValue), 2).tostring()
-		'CDrive_Free'      = [Decimal]::Round(($perf[2].CookedValue) / 1024, 2).tostring()
-		'DDrive_Free'      = [Decimal]::Round(($perf[3].CookedValue) / 1024, 2).tostring()
+		'CPU %'            = [Decimal]::Round(($perf[0].CookedValue), 2).tostring()
+		'Memory %'         = [Decimal]::Round(($perf[1].CookedValue), 2).tostring()
+		'CDrive % Free'    = [Decimal]::Round(($perf[2].CookedValue), 2).tostring()
+		'DDrive % Free'      = [Decimal]::Round(($perf[3].CookedValue), 2).tostring()
 		Uptime             = $updays.tostring()
-		'Stopped_Services' = $ServicesJoin
-	} | Select-Object ServerName, 'CPU_%', 'Memory_%', 'CDrive_Free', 'DDrive_Free', Uptime, 'Stopped_Services'
+		'Stopped Services' = $ServicesJoin
+	} | Select-Object ServerName, 'CPU %', 'Memory %', 'CDrive % Free', 'DDrive % Free', Uptime, 'Stopped Services'
 	$CTXObject
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Performance Details for $($server.ToString())"
 

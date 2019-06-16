@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -36,7 +36,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -52,7 +52,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Xendesktop Farm Details
 
 #>
@@ -120,7 +120,7 @@ Function Get-StoreFrontDetail {
 
     }
         $FarmDetails = @()
-        if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $StoreFrontServer -ScriptBlock ${Function:AllConfig} -ArgumentList  @($StoreFrontServer, ,$VerbosePreference) -Credential $RemoteCredentials }
+        if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $StoreFrontServer -ScriptBlock ${Function:AllConfig} -ArgumentList  @($StoreFrontServer, $VerbosePreference) -Credential $RemoteCredentials }
         else { $FarmDetails = AllConfig -StoreFrontServer $StoreFrontServer }
         Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] All Details"
         $FarmDetails | select-object DateCollected,SiteDetails,ServerDetails

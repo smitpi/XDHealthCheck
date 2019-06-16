@@ -52,16 +52,15 @@ function Initialize-CitrixHealthCheck {
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
 		[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml")
 
-	#region xml imports
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
-
+	<#
 	Write-Colour "Using these Variables"
 	[XML]$XMLParameter = Get-Content $XMLParameterFilePath
 	if ($null -eq $XMLParameter) { Write-Color -Text "Valid Parameters file not found; break" }
 	$XMLParameter.Settings.Variables.Variable | Format-Table
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
-	$XMLParameter.Settings.Variables.Variable | ForEach-Object {
+ 	$XMLParameter.Settings.Variables.Variable | ForEach-Object {
 		# Set Variables contained in XML file
 		$VarValue = $_.Value
 		$CreateVariable = $True # Default value to create XML content as Variable
@@ -82,9 +81,23 @@ function Initialize-CitrixHealthCheck {
 		}
 		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
 	}
+ #>
+	##########################################
+	#region xml imports
+	##########################################
 
+	Write-Colour "Using these Variables"
+	$XMLParameter = Import-Clixml $XMLParameterFilePath
+	if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
+	$XMLParameter
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
+	$XMLParameter.PSObject.Properties | ForEach-Object { New-Variable -Name $_.name -Value $_.value -Force -Scope local }
+	#endregion
+
+	##########################################
+	#region checking folders and report names
+	##########################################
 	if ((Test-Path -Path $ReportsFolder\XDHealth) -eq $false) { New-Item -Path "$ReportsFolder\XDHealth" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-
 	[string]$Reportname = $ReportsFolder + "\XDHealth\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 	[string]$XMLExport = $ReportsFolder + "\XDHealth\XD_Healthcheck.xml"
 	[string]$ExcelReportname = $ReportsFolder + "\XDHealth\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
@@ -94,28 +107,29 @@ function Initialize-CitrixHealthCheck {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 	$timer = [Diagnostics.Stopwatch]::StartNew();
-
+	#endregion
 
 	########################################
-	## Getting Credentials
+	#region Getting Credentials
 	#########################################
-
 	$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
 	if ($CTXAdmin -eq $null) {
 		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
 		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 	}
+	#endregion
 
 	########################################
-	## Build other variables
+	#region Build other variables
 	#########################################
 	$CTXControllers = Invoke-Command -ComputerName $CTXDDC -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-BrokerController | Select-Object dnsname } | ForEach-Object { $_.dnsname }
 	$CTXLicenseServer = Invoke-Command -ComputerName $CTXDDC -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-BrokerSite -AdminAddress $AdminServer | Select-Object LicenseServerName } | ForEach-Object { $_.LicenseServerName }
 	$CTXStoreFrontFarm = Invoke-Command -ComputerName $CTXStoreFront -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-STFServerGroup | Select-Object -ExpandProperty ClusterMembers | Select-Object hostname | ForEach-Object { ([System.Net.Dns]::GetHostByName(($_.hostname))).Hostname } }
 	$CTXCore = $CTXControllers + $CTXStoreFrontFarm + $CTXLicenseServer | Sort-Object -Unique
+	#endregion
 
 	########################################
-	## Connect and get info
+	#region Connect and get info
 	########################################
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
 	$CitrixLicenseInformation = Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
@@ -125,9 +139,10 @@ function Initialize-CitrixHealthCheck {
 	$CitrixConfigurationChanges = Get-CitrixConfigurationChange -AdminServer $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin
 	$StoreFrontDetails = Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote
 	$ServerPerformance = Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin
+	#endregion
 
 	########################################
-	## Adding more reports / scripts
+	#region Adding more reports / scripts
 	########################################
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing]Building Red Flags"
 	Function Redflags {
@@ -167,8 +182,11 @@ function Initialize-CitrixHealthCheck {
 	}
 
 	$flags = Redflags
+	#endregion
 
-
+	########################################
+	#region saving data to xml
+	########################################
 	$AllXDData = New-Object PSObject -Property @{
 		DateCollected              = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
 		Redflags                   = $flags
@@ -182,11 +200,11 @@ function Initialize-CitrixHealthCheck {
 	}
 	if (Test-Path -Path $XMLExport) { Remove-Item $XMLExport -Force -Verbose }
 	$AllXDData | Export-Clixml -Path $XMLExport -Depth 25 -NoClobber -Force
+	#endregion
 
 	########################################
-	## Setting some table color and settings
+	#region Setting some table color and settings
 	########################################
-	#region Table Settings
 	$TableSettings = @{
 		Style          = 'stripe'
 		HideFooter     = $true
@@ -211,9 +229,8 @@ function Initialize-CitrixHealthCheck {
 	#endregion
 
 	#######################
-	## Building the report
+	#region Building HTML the report
 	#######################
-
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Building HTML Page"
 	$emailbody = New-HTML -TitleText 'Red Flags' { New-HTMLTable  @TableSettings  -DataTable $flags }
 
@@ -246,14 +263,22 @@ function Initialize-CitrixHealthCheck {
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix UnRegistered Servers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredServers } }
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix Tainted Objects' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.ADObjects.TaintedObjects } }
 	}
+	#endregion
 
-
+	#######################
+	#region Saving Excel report
+	#######################
 	if ($SaveExcelReport) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
 		$excelfile = $CitrixServerEventLogs.TotalAll | Export-Excel -Path $ExcelReportname -WorksheetName EventsRawData -AutoSize -AutoFilter -Title "Citrix Events" -TitleBold -TitleSize 20 -FreezePane 3 -IncludePivotTable -TitleFillPattern DarkGrid -PivotTableName "Events Summery" -PivotRows MachineName, LevelDisplayName, ProviderName -PivotData @{"Message" = "count" } -NoTotalsInPivot
 		$excelfile += $CitrixConfigurationChanges.Filtered | Export-Excel -Path $ExcelReportname -WorksheetName ConfigChangeRawData -AutoSize -AutoFilter -Title "Citrix Config Changes" -TitleBold -TitleSize 20 -FreezePane 3
 
 	}
+	#endregion
+
+	#######################
+	#region Sending email reports
+	#######################
 	if ($SendEmail) {
 
 		$smtpClientCredentials = Find-Credential | Where-Object target -Like "*Healthcheck_smtp" | Get-Credential -Store
@@ -263,7 +288,6 @@ function Initialize-CitrixHealthCheck {
 		}
 
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing]Sending Report Email"
-		#send email
 		$emailMessage = New-Object System.Net.Mail.MailMessage
 		$emailMessage.From = $emailFrom
 		$emailMessage.To.Add($emailTo)
@@ -280,6 +304,8 @@ function Initialize-CitrixHealthCheck {
 		$smtpClient.Timeout = 30000000
 		$smtpClient.Send( $emailMessage )
 	}
+	#endregion
+
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending]Healthcheck Complete"
 
 	$timer.Stop()
