@@ -54,7 +54,7 @@ function Install-XDHealthCheckParameter {
 		}
 
 	Write-Color -Text 'Installing BetterCredentials Module' -Color DarkCyan -ShowTime
-	if ([bool](Get-Module -Name BetterCredentials) -eq $false) { 
+	if ([bool](Get-Module -Name BetterCredentials) -eq $false) {
         Install-Module -Name BetterCredentials -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force
         Import-Module BetterCredentials
         }
@@ -65,6 +65,8 @@ function Install-XDHealthCheckParameter {
 	Write-Color -Text 'Installing PSWriteHTML Module' -Color DarkCyan -ShowTime
 	if ([bool](Get-Module -Name PSWriteHTML) -eq $false) { Install-Module -Name PSWriteHTML -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force }
 
+	Write-Color -Text 'Installing UniversalDashboard Module' -Color DarkCyan -ShowTime
+	if ([bool](Get-Module -Name UniversalDashboard.Community) -eq $false) { Install-Module -Name UniversalDashboard.Community -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force }
 
 
 	Function Set-Parameter {
@@ -149,7 +151,7 @@ function Install-XDHealthCheckParameter {
             smtpServerPort   =  $smtpServerPort
             smtpEnableSSL    =  $smtpEnableSSL
 		} | select DateCollected,CTXDDC ,CTXStoreFront ,RDSLicensServer ,RDSLicensType ,ReportsFolder ,ParametersFolder ,DashboardTitle,SaveExcelReport ,SendEmail ,emailFrom ,emailTo ,smtpServer ,smtpServerPort ,smtpEnableSSL
-		
+
         if (Test-Path -Path "$ParametersFolder\Parameters.xml") { Remove-Item "$ParametersFolder\Parameters.xml" -Force -Verbose }
 		$AllXDData | Export-Clixml -Path "$ParametersFolder\Parameters.xml" -Depth 3 -NoClobber -Force
 
@@ -230,8 +232,7 @@ function Install-XDHealthCheckParameter {
 	}
 
 	#region
-	Clear-Host
-	Write-Color -Text 'Make a selection from below' -Color DarkGray
+	Write-Color -Text 'Make a selection from below' -Color DarkGray -LinesBefore 5
 	Write-Color -Text '___________________________' -Color DarkGray -LinesAfter 1
 	do {
 		Write-Color "1: ", "Set Healthcheck Script Parameters"  -Color Yellow, Green
