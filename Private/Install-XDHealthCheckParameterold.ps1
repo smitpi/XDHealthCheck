@@ -45,38 +45,32 @@ Param()
 
 function Install-XDHealthCheckParameter {
 
-	$Global:ErrorActionPreference = 'Stop'
-	$Global:VerbosePreference = 'SilentlyContinue'
+	Write-Host 'Installing needed Modules' -ForegroundColor Cyan
+	if ((Get-PSRepository -Name PSGallery).InstallationPolicy -notlike 'Trusted') { Set-PSRepository -Name PSGallery -InstallationPolicy Trusted }
 
-	### Prepare NuGet / PSGallery
-	if (!(Get-PackageProvider | Where-Object { $_.Name -eq 'NuGet' })) {"Installing NuGet"; Install-PackageProvider -Name NuGet -force | Out-Null}
+	if ([bool](Get-Module -Name PSWriteColor) -eq $false) {
+		Install-Module -Name PSWriteColor -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force
+		Import-Module -Name PSWriteColor -Force
+		}
 
-	"Preparing PSGallery repository"
-	Import-PackageProvider -Name NuGet -force | Out-Null
-	if ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne 'Trusted') {Set-PSRepository -Name PSGallery -InstallationPolicy Trusted}
+	Write-Color -Text 'Installing BetterCredentials Module' -Color DarkCyan -ShowTime
+	if ([bool](Get-Module -Name BetterCredentials) -eq $false) {
+        Install-Module -Name BetterCredentials -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force
+        Import-Module BetterCredentials
+        }
 
-	"Install PSWriteColor"
-	$PSWriteColor = Get-Module -Name PSWriteColor -ListAvailable
-	if (!$PSWriteColor) { "Installing PSWriteColor";Install-Module PSWriteColor}
-	else {"Using PSWriteColor $($PSWriteColor.Version)"}
+	Write-Color -Text 'Installing ImportExcel Module' -Color DarkCyan -ShowTime
+	if ([bool](Get-Module -Name ImportExcel) -eq $false) { Install-Module -Name ImportExcel -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force }
 
-	"Install BetterCredentials"
-	$BetterCredentials = Get-Module -Name BetterCredentials -ListAvailable
-	if (!$BetterCredentials) { "Installing BetterCredentials"; Install-Module BetterCredentials }
-	else { "Using BetterCredentials $($BetterCredentials.Version)" }
+	Write-Color -Text 'Installing PSWriteHTML Module' -Color DarkCyan -ShowTime
+	if ([bool](Get-Module -Name PSWriteHTML) -eq $false) { Install-Module -Name PSWriteHTML -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force }
 
-	"Install ImportExcel"
-	$ImportExcel = Get-Module -Name ImportExcel -ListAvailable
-	if (!$ImportExcel) { "Installing ImportExcel"; Install-Module ImportExcel }
-	else { "Using ImportExcel $($ImportExcel.Version)" }
-
-	"Install UniversalDashboard"
-	$UniversalDashboard = Get-Module -Name UniversalDashboard.Community -ListAvailable
-	if (!$UniversalDashboard) { "Installing UniversalDashboard"; Install-Module UniversalDashboard.Community }
-	else { "Using UniversalDashboard $($UniversalDashboard.Version)" }
+	Write-Color -Text 'Installing UniversalDashboard Module' -Color DarkCyan -ShowTime
+	if ([bool](Get-Module -Name UniversalDashboard.Community) -eq $false) { Install-Module -Name UniversalDashboard.Community -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force }
 
 
 	Function Set-Parameter {
+
 
 		[string]$CTXDDC = Read-Host 'A Citrix Data Collector FQDN'
 		[string]$CTXStoreFront = Read-Host 'A Citrix StoreFront FQDN'

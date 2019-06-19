@@ -77,8 +77,6 @@ if ($null -eq $CTXAdmin) {
 ########################################
 ## build pages
 #########################################
-#$XMLParameter.Settings.Variables.Variable | foreach {$_.Name}
-#get-command -Module XDHealthCheck | foreach {'","' + $_.name}
 
 $ConfigurationFile = Get-Content (Join-Path $PSScriptRoot dbconfig.json) | ConvertFrom-Json
 Try { Import-Module (Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -ErrorAction Stop }
