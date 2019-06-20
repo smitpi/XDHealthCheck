@@ -54,13 +54,14 @@ Function Get-FullUserDetail {
 		[PSCredential]$DomainCredentials,
 		[Parameter(Mandatory = $false, Position = 3)]
 		[switch]$RunAsPSRemote = $false,
-		[Parameter(Mandatory = $false, Position = 3)]
+		[Parameter(Mandatory = $false, Position = 4)]
 		[String]$PSRemoteServerName)
 
 	function AllConfig {
-		param($UserToQuery, $DomainFQDN, [SecureString] $DomainCredentials, $VerbosePreference)
+		param($UserToQuery, $DomainFQDN,[PSCredential]$DomainCredentials, $VerbosePreference)
 
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] User Details"
+
 		$UserSummery = Get-ADUser $UserToQuery -Server $DomainFQDN -Credential $DomainCredentials -Properties * | Select-Object Name, GivenName, Surname, UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate, samaccountname
 		$AllUserDetails = Get-ADUser $UserToQuery -Properties * -Server $DomainFQDN -Credential $DomainCredentials
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] User Groups"
@@ -76,7 +77,7 @@ Function Get-FullUserDetail {
 	}
 	$FarmDetails = @()
 	if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $PSRemoteServerName -ScriptBlock ${Function:AllConfig} -ArgumentList  @($UserToQuery, $DomainFQDN, $DomainCredentials, $VerbosePreference) -Credential $DomainCredentials }
-	else { $FarmDetails = AllConfig -UserToQuery $UserToQuery -DomainFQDN $DomainFQDN -DomainCredentials $DomainCredentials }
+	else { $FarmDetails = AllConfig -UserToQuery $UserToQuery -DomainFQDN $DomainFQDN -DomainCredentials $DomainCredentials -VerbosePreference $VerbosePreference }
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] All Details"
 	$FarmDetails
 

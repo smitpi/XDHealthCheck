@@ -7,7 +7,7 @@
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -37,7 +37,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -55,7 +55,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Xendesktop Farm Details
 
 #>
@@ -87,15 +87,25 @@ Function Get-CitrixLicenseInformation {
 		$LicenseServer = Get-BrokerSite -AdminAddress $AdminServer | Select-Object LicenseServerName
 		[string]$licurl = "https://" + $LicenseServer.LicenseServerName + ":8083"
 		$cert = Get-LicCertificate -AdminAddress $licurl
-		Get-LicInventory -AdminAddress $licurl -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 } | Select-Object LocalizedLicenseProductName, LicensesInUse, LicensesAvailable
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] License Details"
-
-	}
+		$ctxlic = Get-LicInventory -AdminAddress $licurl -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 }
+		$AllDetails = @()
+		foreach ($lic in $ctxlic) {
+			$Licenses = New-Object PSObject -Property @{
+				LicenseProductName = $lic.LocalizedLicenseProductName
+				LicensesInstalled  = $lic.LicensesAvailable
+				LicensesInUse      = $lic.LicensesInUse
+				LicensesAvailable  = ([int]$lic.LicensesAvailable - [int]$lic.LicensesInUse)
+			} | Select-Object LicenseProductName, LicensesInstalled, LicensesInUse, LicensesAvailable
+			$AllDetails += $Licenses
+		}
+			Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] License Details"
+			$AllDetails
+		}
 
 	$LicDetails = @()
-	if ($RunAsPSRemote -eq $true) { $LicDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:get-license} -ArgumentList @($AdminServer, $VerbosePreference) -Credential $RemoteCredentials | Select-Object LocalizedLicenseProductName, LicensesInUse, LicensesAvailable }
+	if ($RunAsPSRemote -eq $true) { $LicDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:get-license} -ArgumentList @($AdminServer, $VerbosePreference) -Credential $RemoteCredentials }
 	else { $LicDetails = get-license -AdminAddress $AdminServer }
-	$LicDetails
+	$LicDetails | Select-Object LicenseProductName, LicensesInstalled, LicensesInUse, LicensesAvailable
 
 
 } #end Function

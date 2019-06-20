@@ -11,7 +11,7 @@
 
 .COPYRIGHT
 
-.TAGS Powershell
+.TAGS PowerShell
 
 .LICENSEURI
 
@@ -26,7 +26,7 @@
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Created [15/06/2019_14:19] Initital Script Creating
+Created [15/06/2019_14:19] Initial Script Creating
 
 .PRIVATEDATA
 
@@ -44,9 +44,7 @@ Param()
 
 
 function Install-XDHealthCheckParameter {
-
-	$Global:ErrorActionPreference = 'Stop'
-	$Global:VerbosePreference = 'SilentlyContinue'
+	$Global:VerbosePreference = 'silentlyContinue'
 
 	### Prepare NuGet / PSGallery
 	if (!(Get-PackageProvider | Where-Object { $_.Name -eq 'NuGet' })) {"Installing NuGet"; Install-PackageProvider -Name NuGet -force | Out-Null}
@@ -90,7 +88,21 @@ function Install-XDHealthCheckParameter {
 			'1' { [string]$RDSLicensType = 'Per Device' }
 			'2' { [string]$RDSLicensType = 'Per User' }
 		}
-
+		$trusteddomains = @()
+			$input = ''
+			While ($input -ne "n") {
+				If ($input -ne $null) {
+                    $FQDN  = Read-Host 'FQDN for the domain'
+                    $NetBiosName = Read-Host 'Net Bios Name for Domain '
+                $CusObject = New-Object PSObject -Property @{
+			        FQDN  = $FQDN
+                    NetBiosName = $NetBiosName
+                    Discription = $NetBiosName + "_ServiceAccount"
+                    } | select FQDN,NetBiosName,Discription
+                $trusteddomains += $CusObject
+				$input = Read-Host "Add more trusted domains? (y/n)"
+			    }
+             }
 		$ReportsFolder = Read-Host 'Path to the Reports Folder'
 		$ParametersFolder = Read-Host 'Path to where the Parameters.xml will be saved'
 		$DashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'
@@ -146,17 +158,18 @@ function Install-XDHealthCheckParameter {
 			CTXStoreFront    =	$CTXStoreFront
 			RDSLicensServer  =	$RDSLicensServer
 			RDSLicensType    =	$RDSLicensType
+			TrustedDomains   =  $trusteddomains
 			ReportsFolder    =	$ReportsFolder
 			ParametersFolder =	$ParametersFolder
 			DashboardTitle   =	$DashboardTitle
 			SaveExcelReport  =	$SaveExcelReport
 			SendEmail        =	$SendEmail
-			emailFrom        =  $FromAddress
-			emailTo          =  $ToAddress
-			smtpServer       =	$smtpServer
-            smtpServerPort   =  $smtpServerPort
-            smtpEnableSSL    =  $smtpEnableSSL
-		} | select DateCollected,CTXDDC ,CTXStoreFront ,RDSLicensServer ,RDSLicensType ,ReportsFolder ,ParametersFolder ,DashboardTitle,SaveExcelReport ,SendEmail ,emailFrom ,emailTo ,smtpServer ,smtpServerPort ,smtpEnableSSL
+			EmailFrom        =  $FromAddress
+			EmailTo          =  $ToAddress
+			SMTPServer       =	$smtpServer
+            SMTPServerPort   =  $smtpServerPort
+            SMTPEnableSSL    =  $smtpEnableSSL
+		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicensServer , RDSLicensType, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, SaveExcelReport , SendEmail , emailFrom , emailTo , smtpServer , smtpServerPort , smtpEnableSSL
 
         if (Test-Path -Path "$ParametersFolder\Parameters.xml") { Remove-Item "$ParametersFolder\Parameters.xml" -Force -Verbose }
 		$AllXDData | Export-Clixml -Path "$ParametersFolder\Parameters.xml" -Depth 3 -NoClobber -Force
@@ -174,9 +187,23 @@ function Install-XDHealthCheckParameter {
 			$PSParameters = Read-Host 'Full Path to Parameters.xml file'
 			if ((Get-Item $PSParameters).Extension -ne 'xml') { Write-Error 'Invalid xml file'; break }
         }
-        $Parameters = Import-Clixml $PSParameters
-        $Parameters
-		$Parameters.PSObject.Properties | ForEach-Object { New-Variable -Name $_.name -Value $_.value -Force -Scope local }
+
+	    Write-Colour "Using Variables from: ", $PSParameters.ToString() -ShowTime -Color Yellow,green -LinesAfter 1
+	    $XMLParameter = Import-Clixml  $PSParameters
+	    if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
+	    Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
+	    $XMLParameter.PSObject.Properties | Where-Object {$_.name -notlike 'TrustedDomains'} | ForEach-Object {Write-Color $_.name,":",$_.value  -Color Yellow,DarkCyan,Green -ShowTime;  New-Variable -Name $_.name -Value $_.value -Force -Scope local }
+
+        Write-Colour "Creating credentials for:" -ShowTime -Color DarkYellow -LinesBefore 2
+        $Trusteddomains = @()
+        $XMLParameter.TrustedDomains  | ForEach-Object {
+        write-Color -Text $_.FQDN,":",$_.Username  -Color Yellow,DarkCyan,Green -ShowTime
+        $CusObject = New-Object PSObject -Property @{
+			    FQDN        = $_.FQDN
+                Credentials = new-object -typename System.Management.Automation.PSCredential -argumentlist ($_.NetBiosName + "\" + $_.Username),$_.password
+		    }
+	    $Trusteddomains += $CusObject
+        }
 		Write-Color -Text 'Checking Credentials' -Color DarkCyan -ShowTime
 		########################################
 		## Getting Credentials

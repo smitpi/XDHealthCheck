@@ -50,73 +50,62 @@ function Initialize-CitrixHealthCheck {
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
-		[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml")
+		[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml"
+        )
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
-	<#
-	Write-Colour "Using these Variables"
-	[XML]$XMLParameter = Get-Content $XMLParameterFilePath
-	if ($null -eq $XMLParameter) { Write-Color -Text "Valid Parameters file not found; break" }
-	$XMLParameter.Settings.Variables.Variable | Format-Table
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 
- 	$XMLParameter.Settings.Variables.Variable | ForEach-Object {
-		# Set Variables contained in XML file
-		$VarValue = $_.Value
-		$CreateVariable = $True # Default value to create XML content as Variable
-		switch ($_.Type) {
-			# Format data types for each variable
-			'[string]' { $VarValue = [string]$VarValue } # Fixed-length string of Unicode characters
-			'[char]' { $VarValue = [char]$VarValue } # A Unicode 16-bit character
-			'[byte]' { $VarValue = [byte]$VarValue } # An 8-bit unsigned character
-			'[bool]' { If ($VarValue.ToLower() -eq 'false') { $VarValue = [bool]$False } ElseIf ($VarValue.ToLower() -eq 'true') { $VarValue = [bool]$True } } # An boolean True/False value
-			'[int]' { $VarValue = [int]$VarValue } # 32-bit signed integer
-			'[long]' { $VarValue = [long]$VarValue } # 64-bit signed integer
-			'[decimal]' { $VarValue = [decimal]$VarValue } # A 128-bit decimal value
-			'[single]' { $VarValue = [single]$VarValue } # Single-precision 32-bit floating point number
-			'[double]' { $VarValue = [double]$VarValue } # Double-precision 64-bit floating point number
-			'[DateTime]' { $VarValue = [DateTime]$VarValue } # Date and Time
-			'[Array]' { $VarValue = [Array]$VarValue.Split(',') } # Array
-			'[Command]' { $VarValue = Invoke-Expression $VarValue; $CreateVariable = $False } # Command
-		}
-		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
-	}
- #>
-	##########################################
+    ##########################################
 	#region xml imports
 	##########################################
 
-	Write-Colour "Using these Variables"
 	$XMLParameter = Import-Clixml $XMLParameterFilePath
 	if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
-	$XMLParameter
+
+    $ReportsFoldertmp = $XMLParameter.ReportsFolder.ToString()
+	if ((Test-Path -Path $ReportsFoldertmp\logs) -eq $false) { New-Item -Path "$ReportsFoldertmp\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+	[string]$Transcriptlog = "$ReportsFoldertmp\logs\XDHealth_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
+	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
+	$timer = [Diagnostics.Stopwatch]::StartNew();
+
+	Write-Colour "Using Variables from Parameters.xml: ",$XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan,DarkYellow -LinesAfter 1
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
-	$XMLParameter.PSObject.Properties | ForEach-Object { New-Variable -Name $_.name -Value $_.value -Force -Scope local }
-	#endregion
+	$XMLParameter.PSObject.Properties | Where-Object {$_.name -notlike 'TrustedDomains'} | ForEach-Object {Write-Color $_.name,":",$_.value  -Color Yellow,DarkCyan,Green -ShowTime;  New-Variable -Name $_.name -Value $_.value -Force -Scope local }
+
+    Write-Colour "Creating credentials for Trusted domains:" -ShowTime -Color DarkCyan -LinesBefore 2
+    $Trusteddomains = @()
+    foreach ($domain in $XMLParameter.TrustedDomains) {
+                 $serviceaccount = Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring())  | Get-Credential -Store
+	            if ($null -eq $serviceaccount) {
+		            $serviceaccount = BetterCredentials\Get-Credential -Message ("Service Account for domain: " + $_.NetBiosName.ToString())
+		            Set-Credential -Credential $serviceaccount -Target $_.Discription.ToString() -Persistence LocalComputer -Description ("Service Account for domain: " + $_.NetBiosName.ToString())}
+
+                write-Color -Text $domain.FQDN,":",$serviceaccount.username  -Color Yellow,DarkCyan,Green -ShowTime
+                $CusObject = New-Object PSObject -Property @{
+			                            FQDN        = $domain.FQDN
+                                        Credentials = $serviceaccount
+		        }
+	            $Trusteddomains += $CusObject
+                }
+    $CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
+	if ($null -eq $CTXAdmin) {
+		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
+		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
+	}
+    Write-Colour "Citrix Admin Credentials: ",$CTXAdmin.UserName -ShowTime -Color yellow,Green -LinesBefore 2
+
+    #endregion
 
 	##########################################
 	#region checking folders and report names
 	##########################################
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
+
 	if ((Test-Path -Path $ReportsFolder\XDHealth) -eq $false) { New-Item -Path "$ReportsFolder\XDHealth" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 	[string]$Reportname = $ReportsFolder + "\XDHealth\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 	[string]$XMLExport = $ReportsFolder + "\XDHealth\XD_Healthcheck.xml"
 	[string]$ExcelReportname = $ReportsFolder + "\XDHealth\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
 
-	if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-	[string]$Transcriptlog = "$ReportsFolder\logs\XDHealth_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
-	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
-	$timer = [Diagnostics.Stopwatch]::StartNew();
-	#endregion
-
-	########################################
-	#region Getting Credentials
-	#########################################
-	$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
-	if ($CTXAdmin -eq $null) {
-		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
-		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
-	}
 	#endregion
 
 	########################################
@@ -135,7 +124,7 @@ function Initialize-CitrixHealthCheck {
 	$CitrixLicenseInformation = Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
 	$CitrixRemoteFarmDetails = Get-CitrixFarmDetail -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
 	$CitrixServerEventLogs = Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin
-	$RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicensServer  -RemoteCredentials $CTXAdmin
+	$RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicensServer  -RemoteCredentials $CTXAdmin | ForEach-Object { $_.$RDSLicensType } | Where-Object { $_.IssuedLicenses -gt 500}
 	$CitrixConfigurationChanges = Get-CitrixConfigurationChange -AdminServer $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin
 	$StoreFrontDetails = Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote
 	$ServerPerformance = Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin
@@ -149,25 +138,25 @@ function Initialize-CitrixHealthCheck {
 		$RedFlags = @()
 		$FlagReport = @()
 
-		$CitrixLicenseInformation | Where-Object LicensesAvailable -LT 1000 | ForEach-Object { $RedFlags += $_.LocalizedLicenseProductName + " has " + $_.LicensesAvailable + " Avalable" }
-		$RDSLicenseInformation | Where-Object AvailableLicenses -LT 5000 | ForEach-Object { $RedFlags += $_.TypeAndModel + " has " + $_.AvailableLicenses + " RDS Licenses Available" }
+		$CitrixLicenseInformation | Where-Object LicensesAvailable -LT 500 | ForEach-Object { $RedFlags += "Citrix License Product: " + $_.LicenseProductName + ", has " + $_.LicensesAvailable + " available licenses" }
+		$RDSLicenseInformation | Where-Object AvailableLicenses -LT 500 | ForEach-Object { $RedFlags += $_.TypeAndModel + ", has " + $_.AvailableLicenses + " Licenses Available" }
 
 		if ($CitrixRemoteFarmDetails.SiteDetails.Summary.Name -eq $null) { $RedFlags += "Could not connect to the Farm with server $CTXDDC" }
 		else {
 			if ($CitrixRemoteFarmDetails.DBConnection[0].Value -NE "OK") { $RedFlags += "Farm " + $CitrixRemoteFarmDetails.SiteDetails.Summary.Name + " can't connect to Database" }
 			$CitrixRemoteFarmDetails.Controllers.Summary | Where-Object 'Desktops Registered' -LT 100 | ForEach-Object { $RedFlags += $_.Name + " ony have " + $_.'Desktops Registered' + " Desktops Registered" }
 			$CitrixRemoteFarmDetails.Controllers.Summary | Where-Object State -notLike 'Active' | ForEach-Object { $RedFlags += $_.name + " is not active" }
-			if ($CitrixRemoteFarmDetails.SessionCounts.'Unregistered Servers' -gt 0) { $RedFlags += "There are Hosted Desktop " + $CitrixRemoteFarmDetails.SessionCounts.'Unregistered Servers' + " Server(s) Unregistered" }
-			if ($CitrixRemoteFarmDetails.SessionCounts.'Unregistered Desktops' -gt 0) { $RedFlags += "There are VDI " + $CitrixRemoteFarmDetails.SessionCounts.'Unregistered Desktops' + " Desktop(s) Unregistered" }
+			if ($CitrixRemoteFarmDetails.SessionCounts.'Unregistered Servers' -gt 0) { $RedFlags += "There are " + $CitrixRemoteFarmDetails.SessionCounts.'Unregistered Servers' + " Hosted Shared Server(s) Unregistered" }
+			if ($CitrixRemoteFarmDetails.SessionCounts.'Unregistered Desktops' -gt 0) { $RedFlags += "There are " + $CitrixRemoteFarmDetails.SessionCounts.'Unregistered Desktops' + " VDI Desktop(s) Unregistered" }
 			if ($CitrixRemoteFarmDetails.SessionCounts.'Tainted Objects' -gt 0) { $RedFlags += "There are " + $CitrixRemoteFarmDetails.SessionCounts.'Tainted Objects' + " Tainted Objects in the Database" }
 		}
 
 		$CitrixServerEventLogs.SingleServer | Where-Object Errors -gt 100 | ForEach-Object { $RedFlags += $_.'ServerName' + " have " + $_.Errors + " errors in the last 24 hours" }
 		$ServerPerformance | Where-Object Stopped_Services -ne $null | ForEach-Object { $RedFlags += $_.Servername + " has stopped Citrix Services" }
 		foreach ($server in $ServerPerformance) {
-			if ([int]$server.CDrive_Free -lt 10) { $RedFlags += $server.Servername + " has only " + $server.CDrive_Free + " free disk space on C Drive" }
-			if ([int]$server.DDrive_Free -lt 10) { $RedFlags += $server.Servername + " has only " + $server.DDrive_Free + " free disk space on D Drive" }
-			if ([int]$server.Uptime -gt 3) { $RedFlags += $server.Servername + " was last rebooted " + $server.uptime + " Days ago" }
+			if ([int]$server.'CDrive % Free' -lt 10) { $RedFlags += $server.Servername + " has only " + $server.'CDrive % Free' + " % free disk space on C Drive" }
+			if ([int]$server.'DDrive % Free' -lt 10) { $RedFlags += $server.Servername + " has only " + $server.'DDrive % Free' + " % free disk space on D Drive" }
+			if ([int]$server.Uptime -gt 20) { $RedFlags += $server.Servername + " was last rebooted " + $server.uptime + " Days ago" }
 		}
 
 		$index = 0
@@ -206,7 +195,8 @@ function Initialize-CitrixHealthCheck {
 	#region Setting some table color and settings
 	########################################
 	$TableSettings = @{
-		Style          = 'stripe'
+		#Style          = 'stripe'
+		Style          = 'cell-border'
 		HideFooter     = $true
 		OrderMulti     = $true
 		TextWhenNoData = 'No Data to display here'
@@ -235,7 +225,7 @@ function Initialize-CitrixHealthCheck {
 	$emailbody = New-HTML -TitleText 'Red Flags' { New-HTMLTable  @TableSettings  -DataTable $flags }
 
 	$HeddingText = $DashboardTitle + " | XenDesktop Report | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
-	New-HTML -TitleText "XenDesktop Report"  -FilePath $Reportname -ShowHTML {
+	New-HTML -TitleText "XenDesktop Report"  -FilePath $Reportname {
 		New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
 		New-HTMLSection @SectionSettings  -Content {
 			New-HTMLSection -HeaderText 'Citrix Sessions' @TableSectionSettings { New-HTMLTable   @TableSettings  -DataTable $CitrixRemoteFarmDetails.SessionCounts $Conditions_sessions }
@@ -246,7 +236,7 @@ function Initialize-CitrixHealthCheck {
 		}
 		New-HTMLSection  @SectionSettings  -Content {
 			New-HTMLSection -HeaderText 'Citrix Licenses'  @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixLicenseInformation $Conditions_ctxlicenses }
-			New-HTMLSection -HeaderText 'RDS Licenses' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $RDSLicenseInformation.$RDSLicensType $Conditions_ctxlicenses }
+			New-HTMLSection -HeaderText 'RDS Licenses' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($RDSLicenseInformation | Select-Object TypeAndModel,ProductVersion,TotalLicenses,IssuedLicenses,AvailableLicenses)  }
 		}
 		New-HTMLSection  @SectionSettings -Content {
 			New-HTMLSection -HeaderText 'Citrix Error Counts' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable  ($CitrixServerEventLogs.SingleServer | Select-Object ServerName, Errors, Warning) $Conditions_events }

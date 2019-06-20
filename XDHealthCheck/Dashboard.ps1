@@ -61,6 +61,9 @@ if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; br
 
 $ReportsFoldertmp = $XMLParameter.ReportsFolder.ToString()
 if ((Test-Path -Path $ReportsFoldertmp\logs) -eq $false) { New-Item -Path "$ReportsFoldertmp\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+#[string]$Transcriptlog = "$ReportsFoldertmp\logs\XDAudit_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
+#Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
+#$timer = [Diagnostics.Stopwatch]::StartNew();
 
 Write-Colour "Using Variables from Parameters.xml: ", $XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan, DarkYellow -LinesAfter 1
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
@@ -117,6 +120,4 @@ $DashboardParams = @{
 
 $MyDashboard = New-UDDashboard @DashboardParams
 
-Get-UDDashboard | Stop-UDDashboard
 Start-UDDashboard -Port $ConfigurationFile.dashboard.port -Dashboard $MyDashboard -Name $UDTitle
-Start-Process http://localhost:10000

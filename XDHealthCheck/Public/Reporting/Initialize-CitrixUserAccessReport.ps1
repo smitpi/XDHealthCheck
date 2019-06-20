@@ -65,72 +65,62 @@ Function Initialize-CitrixUserAccessReport {
 		[string]$Username)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
-	<#
-
-	Write-Colour "Using these Variables"
-	[XML]$XMLParameter = Get-Content $XMLParameterFilePath
-	if ($null -eq $XMLParameter) { Write-Color -Text "Valid Parameters file not found; break" }
-	$XMLParameter.Settings.Variables.Variable | Format-Table
-
-	$XMLParameter.Settings.Variables.Variable | ForEach-Object {
-		# Set Variables contained in XML file
-		$VarValue = $_.Value
-		$CreateVariable = $True # Default value to create XML content as Variable
-		switch ($_.Type) {
-			# Format data types for each variable
-			'[string]' { $VarValue = [string]$VarValue } # Fixed-length string of Unicode characters
-			'[char]' { $VarValue = [char]$VarValue } # A Unicode 16-bit character
-			'[byte]' { $VarValue = [byte]$VarValue } # An 8-bit unsigned character
-			'[bool]' { If ($VarValue.ToLower() -eq 'false') { $VarValue = [bool]$False } ElseIf ($VarValue.ToLower() -eq 'true') { $VarValue = [bool]$True } } # An boolean True/False value
-			'[int]' { $VarValue = [int]$VarValue } # 32-bit signed integer
-			'[long]' { $VarValue = [long]$VarValue } # 64-bit signed integer
-			'[decimal]' { $VarValue = [decimal]$VarValue } # A 128-bit decimal value
-			'[single]' { $VarValue = [single]$VarValue } # Single-precision 32-bit floating point number
-			'[double]' { $VarValue = [double]$VarValue } # Double-precision 64-bit floating point number
-			'[DateTime]' { $VarValue = [DateTime]$VarValue } # Date and Time
-			'[Array]' { $VarValue = [Array]$VarValue.Split(',') } # Array
-		}
-		If ($CreateVariable) { New-Variable -Name $_.Name -Value $VarValue -Scope $_.Scope -Force }
-	}
- #>
-
-	##########################################
+    ##########################################
 	#region xml imports
 	##########################################
-	Write-Colour "Using these Variables"
+
 	$XMLParameter = Import-Clixml $XMLParameterFilePath
 	if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
-	$XMLParameter
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
-	$XMLParameter.PSObject.Properties | ForEach-Object { New-Variable -Name $_.name -Value $_.value -Force -Scope local }
-	#endregion
 
-	##########################################
-	#region checking folders and report names
-	##########################################
-	if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-	[string]$Reportname = $ReportsFolder + "\XDUsers\XDUserAccess." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
-
-	if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-	[string]$Transcriptlog = "$ReportsFolder\logs\XDUserAccess_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
+ $ReportsFoldertmp = $XMLParameter.ReportsFolder.ToString()
+	if ((Test-Path -Path $ReportsFoldertmp\logs) -eq $false) { New-Item -Path "$ReportsFoldertmp\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+	[string]$Transcriptlog = "$ReportsFoldertmp\logs\XDUserAccess_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
 	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 	$timer = [Diagnostics.Stopwatch]::StartNew();
-	#endregion
 
-	########################################
-	#region Getting Credentials
-	#########################################
-	$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
+	Write-Colour "Using Variables from Parameters.xml: ",$XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan,DarkYellow -LinesAfter 1
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
+	$XMLParameter.PSObject.Properties | Where-Object {$_.name -notlike 'TrustedDomains'} | ForEach-Object {Write-Color $_.name,":",$_.value  -Color Yellow,DarkCyan,Green -ShowTime;  New-Variable -Name $_.name -Value $_.value -Force -Scope local }
+
+    Write-Colour "Creating credentials for Trusted domains:" -ShowTime -Color DarkCyan -LinesBefore 2
+    $Trusteddomains = @()
+    foreach ($domain in $XMLParameter.TrustedDomains) {
+                 $serviceaccount = Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring())  | Get-Credential -Store
+	            if ($null -eq $serviceaccount) {
+		            $serviceaccount = BetterCredentials\Get-Credential -Message ("Service Account for domain: " + $_.NetBiosName.ToString())
+		            Set-Credential -Credential $serviceaccount -Target $_.Discription.ToString() -Persistence LocalComputer -Description ("Service Account for domain: " + $_.NetBiosName.ToString())}
+
+                write-Color -Text $domain.FQDN,":",$serviceaccount.username  -Color Yellow,DarkCyan,Green -ShowTime
+                $CusObject = New-Object PSObject -Property @{
+			                            FQDN        = $domain.FQDN
+                                        Credentials = $serviceaccount
+		        }
+	            $Trusteddomains += $CusObject
+                }
+    $CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
 	if ($null -eq $CTXAdmin) {
 		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
 		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 	}
+    Write-Colour "Citrix Admin Credentials: ",$CTXAdmin.UserName -ShowTime -Color yellow,Green -LinesBefore 2
+
+    #endregion
+
+    ##########################################
+	#region checking folders and report names
+	##########################################
+	if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+	[string]$Reportname = $ReportsFolder + "\XDUsers\XDUserAccessReport_" + $Username + "_" + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
+
 	#endregion
+
+
 
 	########################################
 	#region Connect and get info
 	########################################
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
+
 	$UserDetail = Get-CitrixUserAccessDetail -Username $Username -AdminServer $CTXDDC
 	$userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
 	$DesktopsCombined = $UserDetail.DirectPublishedDesktops + $UserDetail.PublishedDesktops | Sort-Object -Property DesktopGroupName -Unique
@@ -140,7 +130,8 @@ Function Initialize-CitrixUserAccessReport {
 	#region Setting some table color and settings
 	########################################
 	$TableSettings = @{
-		Style          = 'stripe'
+		#Style          = 'stripe'
+		Style          = 'cell-border'
 		HideFooter     = $true
 		OrderMulti     = $true
 		TextWhenNoData = 'No Data to display here'

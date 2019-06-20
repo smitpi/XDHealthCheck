@@ -136,8 +136,10 @@ function CitrixFarmDetails {
 	function Get-CTXSession($AdminServer) { Get-BrokerSession -MaxRecordCount 10000 -AdminAddress $AdminServer }
 
 	function Get-CTXBrokerDesktopGroup($AdminServer) {
-		Get-BrokerDesktopGroup -AdminAddress $AdminServer | Select-Object Name, DeliveryType, DesktopKind, IsRemotePC, Enabled, TotalDesktops, DesktopsAvailable, DesktopsInUse, DesktopsUnregistered, InMaintenanceMode, Sessions, SessionSupport, TotalApplicationGroups, TotalApplications
+	Get-BrokerDesktopGroup -AdminAddress $AdminServer | Select-Object Name, DeliveryType, DesktopKind, IsRemotePC, Enabled, TotalDesktops, DesktopsAvailable, DesktopsInUse, DesktopsUnregistered, InMaintenanceMode, Sessions, SessionSupport, TotalApplicationGroups, TotalApplications
 <#
+ 
+
 
 			$ReadAbleDG = @()
 			foreach ($item in $DG) {
@@ -160,9 +162,8 @@ function CitrixFarmDetails {
 				$ReadAbleDG += $CusObject
 			}
 			$ReadAbleDG
- #
- #>
-		}
+#>		
+}
 
 	function Get-CTXADObject($AdminServer) {
 	$tainted = $adobjects = $CusObject = $null
@@ -234,8 +235,8 @@ $CustomCTXObject
 }
 
 $FarmDetails = @()
-if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:CitrixFarmDetails} -ArgumentList  @($AdminServer, $RemoteCredentials, $VerbosePreference) -Credential $RemoteCredentials }
-else { $FarmDetails = CitrixFarmDetails -AdminAddress $AdminServer -VerbosePreference $VerbosePreference }
+if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:CitrixFarmDetails} -ArgumentList  @($AdminServer) -Credential $RemoteCredentials }
+else { $FarmDetails = CitrixFarmDetails -AdminAddress $AdminServer}
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] All Details"
 $FarmDetails | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects,DeliveryGroups, DBConnection, SessionCounts
 
