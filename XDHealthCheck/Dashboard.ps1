@@ -95,6 +95,10 @@ Write-Colour "Citrix Admin Credentials: ", $CTXAdmin.UserName -ShowTime -Color y
 ########################################
 ## build pages
 #########################################
+#$XMLParameter.PSObject.Properties | ForEach-Object {($_.Name)} | Join-String -Separator '","'
+
+
+
 
 $ConfigurationFile = Get-Content (Join-Path $PSScriptRoot dbconfig.json) | ConvertFrom-Json
 Try { Import-Module (Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -ErrorAction Stop }
@@ -109,7 +113,7 @@ $Pages = Foreach ($Page in $PageFolder) {
 }
 $UDTitle = $DashboardTitle + " | Dashboard"
 
-$Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @($XMLParameter.PSObject.Properties | ForEach-Object { $_.Name })
+$Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @("DateCollected","CTXDDC","CTXStoreFront","RDSLicensServer","RDSLicensType","TrustedDomains","ReportsFolder","ParametersFolder","DashboardTitle","SaveExcelReport","SendEmail","EmailFrom","EmailTo","SMTPServer","SMTPServerPort","SMTPEnableSSL","CTXAdmin","XMLParameterFilePath")
 
 $DashboardParams = @{
 	Title                  = $UDTitle
@@ -119,5 +123,6 @@ $DashboardParams = @{
 }
 
 $MyDashboard = New-UDDashboard @DashboardParams
-
+Get-UDDashboard | Stop-UDDashboard
 Start-UDDashboard -Port $ConfigurationFile.dashboard.port -Dashboard $MyDashboard -Name $UDTitle
+Start-Process http://localhost:8090

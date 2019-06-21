@@ -2,15 +2,16 @@ $XDUserPage = New-UDPage -Name "User Details" -Icon user -Content {
 New-UDCollapsible -Items {
 #region Section1
 New-UDCollapsibleItem  -Endpoint {
-			New-UDInput -Title "Username" -Endpoint {
-				param(
-					[Parameter(Mandatory)]
-					[UniversalDashboard.ValidationErrorMessage("Invalid user")]
-					[ValidateScript( { Get-ADUser -Identity $_ })]
-					[string]$Username)
+			New-UDInput -Content {
+                New-UDInputField -Name 'Username' -Type textbox -Placeholder 'Username'
+                New-UDInputField -Name 'Domain' -Values @('corp.dsarena.com','ds1.ad.absa.co.za','client.barclayscorp.com','intranet.barcapint.com') -Type select -Placeholder 'Domain'
+            } -Endpoint {
+		param([string]$Username,$DomainFQDN)
 
-				New-UDInputAction -Content @(
-	    $validuser = Get-FullUserDetail -UserToQuery $username  -DomainFQDN 'corp.dsarena.com' -DomainCredentials $TrustedDomains[0].Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC
+        
+		New-UDInputAction -Content @(
+        $domaincreds = $TrustedDomains| where {$_.fqdn -like $Domain}
+	    $validuser = Get-FullUserDetail -UserToQuery $username  -DomainFQDN $Domain -DomainCredentials $domaincreds -RunAsPSRemote -PSRemoteServerName $CTXDDC -PSRemoteCredentials $CTXAdmin
 	    $UserDetail = $validuser.UserSummery.psobject.Properties | Select-Object -Property Name, Value
 
 	    New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center

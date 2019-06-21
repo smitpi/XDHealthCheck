@@ -186,36 +186,46 @@ function Install-XDHealthCheckParameter {
 		if ($PSParameters -eq $null) {
 			$PSParameters = Read-Host 'Full Path to Parameters.xml file'
 			if ((Get-Item $PSParameters).Extension -ne 'xml') { Write-Error 'Invalid xml file'; break }
-        }
-
-	    Write-Colour "Using Variables from: ", $PSParameters.ToString() -ShowTime -Color Yellow,green -LinesAfter 1
-	    $XMLParameter = Import-Clixml  $PSParameters
-	    if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
-	    Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
-	    $XMLParameter.PSObject.Properties | Where-Object {$_.name -notlike 'TrustedDomains'} | ForEach-Object {Write-Color $_.name,":",$_.value  -Color Yellow,DarkCyan,Green -ShowTime;  New-Variable -Name $_.name -Value $_.value -Force -Scope local }
-
-        Write-Colour "Creating credentials for:" -ShowTime -Color DarkYellow -LinesBefore 2
-        $Trusteddomains = @()
-        $XMLParameter.TrustedDomains  | ForEach-Object {
-        write-Color -Text $_.FQDN,":",$_.Username  -Color Yellow,DarkCyan,Green -ShowTime
-        $CusObject = New-Object PSObject -Property @{
-			    FQDN        = $_.FQDN
-                Credentials = new-object -typename System.Management.Automation.PSCredential -argumentlist ($_.NetBiosName + "\" + $_.Username),$_.password
-		    }
-	    $Trusteddomains += $CusObject
-        }
-		Write-Color -Text 'Checking Credentials' -Color DarkCyan -ShowTime
-		########################################
-		## Getting Credentials
-		#########################################
-
-		$XDAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
-		if ($XDAdmin -eq $null) {
-			$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for XD HealthChecks"
-			Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for XD health checks" -Verbose
 		}
 
+		Write-Colour "Using Variables from: ", $PSParameters.ToString() -ShowTime -Color Yellow, green -LinesAfter 1
 
+		$XMLParameter = Import-Clixml $PSParameters
+		if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
+
+		$ReportsFoldertmp = $XMLParameter.ReportsFolder.ToString()
+		if ((Test-Path -Path $ReportsFoldertmp\logs) -eq $false) { New-Item -Path "$ReportsFoldertmp\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+		[string]$Transcriptlog = "$ReportsFoldertmp\logs\XDAudit_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
+		Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
+		$timer = [Diagnostics.Stopwatch]::StartNew();
+
+		Write-Colour "Using Variables from Parameters.xml: ", $XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan, DarkYellow -LinesAfter 1
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
+		$XMLParameter.PSObject.Properties | Where-Object { $_.name -notlike 'TrustedDomains' } | ForEach-Object { Write-Color $_.name, ":", $_.value  -Color Yellow, DarkCyan, Green -ShowTime; New-Variable -Name $_.name -Value $_.value -Force -Scope local }
+
+		Write-Colour "Creating credentials for Trusted domains:" -ShowTime -Color DarkCyan -LinesBefore 2
+		$Trusteddomains = @()
+		foreach ($domain in $XMLParameter.TrustedDomains) {
+			$serviceaccount = Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring()) | Get-Credential -Store
+			if ($null -eq $serviceaccount) {
+				$serviceaccount = BetterCredentials\Get-Credential -Message ("Service Account for domain: " + $domain.NetBiosName.ToString())
+				Set-Credential -Credential $serviceaccount -Target $domain.Discription.ToString() -Persistence LocalComputer -Description ("Service Account for domain: " + $domain.NetBiosName.ToString())
+			}
+			Write-Color -Text $domain.FQDN, ":", $serviceaccount.username  -Color Yellow, DarkCyan, Green -ShowTime
+			$CusObject = New-Object PSObject -Property @{
+				FQDN        = $domain.FQDN
+				Credentials = $serviceaccount
+			}
+			$Trusteddomains += $CusObject
+		}
+		$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
+		if ($null -eq $CTXAdmin) {
+			$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
+			Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
+		}
+		Write-Colour "Citrix Admin Credentials: ", $CTXAdmin.UserName -ShowTime -Color yellow, Green -LinesBefore 2
+
+		#endregion
 		########################################
 		## Build other variables
 		#########################################
