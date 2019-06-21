@@ -1,7 +1,7 @@
 $XDUserPage = New-UDPage -Name "User Details" -Icon user -Content {
 New-UDCollapsible -Items {
 #region Section1
-New-UDCollapsibleItem  -Endpoint {
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5'  -Endpoint {
 			New-UDInput -Title "Username" -Endpoint {
 				param(
 					[Parameter(Mandatory)]
@@ -25,7 +25,7 @@ New-UDCollapsibleItem  -Endpoint {
 #endregion
 
 #region Section1
-New-UDCollapsibleItem -Endpoint {
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
 	New-UDInput -Title "Compare Users" -Content {
 		New-UDInputField -Name 'Username1' -Type textbox -Placeholder 'Username1'
 		New-UDInputField -Name 'Username2' -Type textbox -Placeholder 'Username2'
@@ -63,16 +63,16 @@ New-UDCollapsibleItem -Endpoint {
 #endregion
 
 #region Section1
-New-UDCollapsibleItem  -Endpoint {
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
 	New-UDInput -Title "Username" -Endpoint {
 		param(
 			[Parameter(Mandatory)]
 			[UniversalDashboard.ValidationErrorMessage("Invalid user")]
 			[ValidateScript( { Get-ADUser -Identity $_ })]
 			[string]$Username)
-        
+
 		New-UDInputAction -Content @(
-        
+
 		$UserDetail = Get-CitrixUserAccessDetail -Username $username -AdminServer $CTXDDC -DomainFQDN 'corp.dsarena.com' -DomainCredentials $TrustedDomains[0].Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC -Verbose
 		$userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
 		$Desktops = $UserDetail.PublishedDesktops | Sort-Object -Property DesktopGroupName -Unique

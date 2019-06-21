@@ -17,7 +17,7 @@ New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
 } # onclick
 
 New-UDCollapsible -Items {
-New-UDCollapsibleItem -Id 'AuditXML1' -Title 'Latest Health Check Report'-Content {
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Id 'AuditXML1' -Title 'Latest Health Check Report'-Content {
     New-UDCard -Id 'Audit1' -Endpoint {
 	param ($AuditReport)
     $AuditReport = Get-Item ((Get-ChildItem $ReportsFolder\XDAudit\*.html | Sort-Object -Property LastWriteTime -Descending)[0]) | Select-Object *
@@ -25,7 +25,7 @@ New-UDCollapsibleItem -Id 'AuditXML1' -Title 'Latest Health Check Report'-Conten
 }
 } -Active
 #region Machine
-New-UDCollapsibleItem -Id 'AuditXML2' -Endpoint {
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Id 'AuditXML2' -Endpoint {
 		New-UDInput -Title "Machine Catalogs" -Content {
             $auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
             $SelectCatalog =  $auditXML.MashineCatalog  | Select-Object MachineCatalogName | ForEach-Object {$_.MachineCatalogName}
@@ -47,7 +47,7 @@ New-UDCollapsibleItem -Id 'AuditXML2' -Endpoint {
 } -Title "Machine Catalog Details" -FontColor black
 #endregion
 #region Delivery
-New-UDCollapsibleItem -Id 'AuditXML3'  -Endpoint {
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Id 'AuditXML3'  -Endpoint {
 		New-UDInput -Title "Delivery Groups" -Content {
             $auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
             $SelecGroup =  $auditXML.DeliveryGroups  | Select-Object DesktopGroupName | ForEach-Object {$_.DesktopGroupName}
@@ -69,7 +69,7 @@ New-UDCollapsibleItem -Id 'AuditXML3'  -Endpoint {
 } -Title "Delivery Groups Details" -FontColor black
 #endregion
 #region Apps
-New-UDCollapsibleItem -Id 'AuditXML4'  -Endpoint {
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Id 'AuditXML4'  -Endpoint {
 		New-UDInput -Title "Published Applications" -Content {
             $auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
             $SelectApp =  $auditXML.PublishedApps  | Select-Object PublishedName | ForEach-Object {$_.PublishedName}
@@ -85,15 +85,16 @@ New-UDCollapsibleItem -Id 'AuditXML4'  -Endpoint {
         $showPubApp = $auditXML.PublishedApps | Where-Object {$_.PublishedName -like $PubApp}
         $ShowAppDelGroup =  $showPubApp | Select-Object DesktopGroupName
 		$showPubApplist = $showPubApp[0].psobject.Properties | Select-Object -Property Name, Value
-	  
+
 	    New-UDHeading -Text (Get-Date -DisplayHint DateTime).ToString() -Size 2
         New-UDLayout -Columns 3 -Content {
             New-UDGrid -Title 'Delivery Groups for Application' -NoPaging -NoFilter -Endpoint { $ShowAppDelGroup | Out-UDGridData }
 		    New-UDGrid -Title 'Published Application' -NoPaging -NoFilter -Endpoint { $showPubApplist | Out-UDGridData }
-        }   
-          
+        }
+
         )}
 } -Title "Published Application Details" -FontColor black
+
 }
 } -ArgumentList @("CTXAdmin", "CTXDDC", "CTXStoreFront", "RDSLicensServer", "RDSLicensType", "ReportsFolder", "ParametersFolder", "DashboardTitle", "SaveExcelReport")
 #endregion

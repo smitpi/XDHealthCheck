@@ -12,24 +12,31 @@ $MyRedTheme = New-UDTheme -Name "MyRedTheme" -Definition @{
 		FontColor       = "rgb(0, 0, 0)"
 	}
 	UDCard      = @{
-		BackgroundColor = "rgb(229, 229, 229)"
+		BackgroundColor = '#ffffff'
 		FontColor       = "rgb(0, 0, 0)"
 	}
 	UDInput     = @{
-		BackgroundColor = "rgb(229, 229, 229)"
+		BackgroundColor = '#ffffff'
 		FontColor       = "rgb(0, 0, 0)"
 	}
 	UDTable     = @{
-		BackgroundColor = "rgb(229, 229, 229)"
+		BackgroundColor = '#ffffff'
 		FontColor       = "rgb(0, 0, 0)"
 	}
-	UDGrid     = @{
-		BackgroundColor = "rgb(229, 229, 229)"
+	UDGrid      = @{
+		BackgroundColor = '#ffffff'
 		FontColor       = "rgb(0, 0, 0)"
 	}
+	 '.btn'       = @{
+        'color'            = "#65e251"
+        'background-color' = "#FFFFFF"
+    }
+    '.btn:hover' = @{
+        'color'            = '#327a27'
+        'background-color' = "#FFFFFF"
+    }
 
-
-} -Parent "default"
+}
 
 
 $SampleTheme = New-UDTheme -Name 'SampleTheme' -Definition @{
