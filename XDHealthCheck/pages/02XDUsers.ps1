@@ -1,7 +1,7 @@
 $XDUserPage = New-UDPage -Name "User Details" -Icon user -Content {
 New-UDCollapsible -Items {
 #region Section1
-		New-UDCollapsibleItem -BackgroundColor '#E5E5E5'  -Endpoint {
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5'   -Endpoint {
 			New-UDInput -Title "Username" -Endpoint {
 				param(
 					[Parameter(Mandatory)]

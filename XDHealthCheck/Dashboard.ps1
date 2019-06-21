@@ -119,5 +119,6 @@ $DashboardParams = @{
 }
 
 $MyDashboard = New-UDDashboard @DashboardParams
-
+Get-UDDashboard | Stop-UDDashboard
 Start-UDDashboard -Port $ConfigurationFile.dashboard.port -Dashboard $MyDashboard -Name $UDTitle
+Start-Process http://localhost:8090
