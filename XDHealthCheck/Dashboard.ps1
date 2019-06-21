@@ -112,7 +112,7 @@ $Navigation = New-UDSideNav -Content {
 	New-UDSideNavItem -Text "Config Audit" -PageName "Audit Results" -Icon folder_open
 	New-UDSideNavItem -Text "User Details" -PageName "User Details" -Icon user
 	New-UDSideNavItem -Text "Build Machines" -PageName "Build Machines" -Icon server
-    New-UDSideNavItem -Text "PowerShell Repository" -PageName "PowerShell Repository" -Icon paper_plane 
+    New-UDSideNavItem -Text "PowerShell Repository" -PageName "PowerShell Repository" -Icon paper_plane
 	New-UDSideNavItem -Divider
     New-UDSideNavItem -Text "Live Health Check" -PageName "Live Health Check" -Icon address_book
 	New-UDSideNavItem -Divider
