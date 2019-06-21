@@ -74,11 +74,12 @@ Function Compare-ADUser {
 		[Parameter(Mandatory = $false, Position = 4)]
 		[switch]$RunAsPSRemote = $false,
 		[Parameter(Mandatory = $false, Position = 5)]
-		[String]$PSRemoteServerName)
+		[String]$PSRemoteServerName,
+		[Parameter(Mandatory = $false, Position = 5)]
+        [PSCredential]$PSRemoteCredentials)
 
-
-		$ValidUser1 = Get-FullUserDetail -UserToQuery $Username1  -DomainFQDN 'corp.dsarena.com' -DomainCredentials $DomainCredentials -RunAsPSRemote -PSRemoteServerName $PSRemoteServerName
-		$ValidUser2 = Get-FullUserDetail -UserToQuery $Username2  -DomainFQDN 'corp.dsarena.com' -DomainCredentials $DomainCredentials -RunAsPSRemote -PSRemoteServerName $PSRemoteServerName
+		$ValidUser1 = Get-FullUserDetail -UserToQuery $Username1 -DomainFQDN $DomainFQDN -DomainCredentials $DomainCredentials -RunAsPSRemote -PSRemoteServerName $PSRemoteServerName -PSRemoteCredentials $PSRemoteCredentials
+		$ValidUser2 = Get-FullUserDetail -UserToQuery $Username2 -DomainFQDN $DomainFQDN -DomainCredentials $DomainCredentials -RunAsPSRemote -PSRemoteServerName $PSRemoteServerName -PSRemoteCredentials $PSRemoteCredentials
 		$userDetailList1 = $ValidUser1.UserSummery.psobject.Properties | Select-Object -Property Name, Value
 		$userDetailList2 = $ValidUser2.UserSummery.psobject.Properties | Select-Object -Property Name, Value
 

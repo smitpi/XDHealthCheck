@@ -25,60 +25,66 @@ $XDDashPage = New-UDPage -Name "Health Check" -Icon medkit -Content {
 	$3DAYSReport = Get-Item ($htmlindex[2]) | Select-Object *
 	$HealthXML = Import-Clixml (Get-ChildItem $reportsfolder\XDHealth\*.xml)
 
-
-	New-UDCollapsible -Items {
-		New-UDCollapsibleItem -BackgroundColor '#E5E5E5'  -Title 'Red Flags' -Content {
-			New-UDCard -id 'Checkxml1' -Endpoint {
-				param ($HealthXML)
-				$HealthXML = Import-Clixml (Get-ChildItem $reportsfolder\XDHealth\*.xml)
-				New-UDLayout -Columns 1 -Content {
-					New-UDGrid -Title 'Red Flags' -BackgroundColor whi  -NoPaging -NoFilter -Endpoint { $HealthXML.Redflags | Out-UDGridData } }
-			}
-		} -Active
-		#region Section1
-		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Title ("Health Check Report - " + $htmlindex[0].LastWriteTime.tostring()) -Content {
-			New-UDCard -Id 'Healcheck1' -Endpoint {
-				param ($TodayReport)
-				$htmlindex = Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending
-				$TodayReport = Get-Item ($htmlindex[0]) | Select-Object *
-				New-UDHtml ([string](Get-Content $TodayReport.FullName)) }
-		}
-		#endregion
+New-UDCollapsible -Items {
+New-UDCollapsibleItem -BackgroundColor '#E5E5E5'  -Title 'Red Flags' -Content {
+	New-UDCard -id 'Checkxml1' -Endpoint {
+		param ($HealthXML)
+		$HealthXML = Import-Clixml (Get-ChildItem $reportsfolder\XDHealth\*.xml)
+		New-UDLayout -Columns 1 -Content {
+			New-UDGrid -Title 'Red Flags' -BackgroundColor whi  -NoPaging -NoFilter -Endpoint { $HealthXML.Redflags | Out-UDGridData } }
+	}
+} -Active
+#region Section1
+New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Title ("Health Check Report - " + $htmlindex[0].LastWriteTime.tostring()) -Content {
+	New-UDCard -Id 'Healcheck1' -Endpoint {
+		param ($TodayReport)
+		$htmlindex = Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending
+		$TodayReport = Get-Item ($htmlindex[0]) | Select-Object *
+		New-UDHtml ([string](Get-Content $TodayReport.FullName)) }
+}
+#endregion
 		#region Section2
-		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Title ("Health Check Report - " + $htmlindex[1].LastWriteTime.tostring()) -Content {
-			New-UDCard -Id 'Healcheck2' -Endpoint {
-				param ($2DAYSReport)
-				$htmlindex = Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending
-				$2DAYSReport = Get-Item ($htmlindex[1]) | Select-Object *
-				New-UDHtml ([string](Get-Content $2DAYSReport.FullName)) }
-		}
+New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Title ("Health Check Report - " + $htmlindex[1].LastWriteTime.tostring()) -Content {
+	New-UDCard -Id 'Healcheck2' -Endpoint {
+		param ($2DAYSReport)
+		$htmlindex = Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending
+		$2DAYSReport = Get-Item ($htmlindex[1]) | Select-Object *
+		New-UDHtml ([string](Get-Content $2DAYSReport.FullName)) }
+}
 		#endregion
 		#region Section3
-		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Title ("Health Check Report - " + $htmlindex[2].LastWriteTime.tostring()) -Content {
-			New-UDCard -Id 'Healcheck3' -Endpoint {
-				param ($3DAYSReport)
-				$htmlindex = Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending
-				$3DAYSReport = Get-Item ($htmlindex[2]) | Select-Object *
+New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Title ("Health Check Report - " + $htmlindex[2].LastWriteTime.tostring()) -Content {
+	New-UDCard -Id 'Healcheck3' -Endpoint {
+		param ($3DAYSReport)
+		$htmlindex = Get-ChildItem $ReportsFolder\XDHealth\*.html | Sort-Object -Property LastWriteTime -Descending
+		$3DAYSReport = Get-Item ($htmlindex[2]) | Select-Object *
 
-				New-UDHtml ([string](Get-Content $3DAYSReport.FullName)) }
-			#endregion
+		New-UDHtml ([string](Get-Content $3DAYSReport.FullName)) }
+	#endregion
 
-		} # Main Collapsible
+} # Main Collapsible
 		#endregion
 		#region Section0
-		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Title 'Live Results' -Id 'Checkxml1' -Endpoint {
-			param($CheckXML)
-			$CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
 
-			$LastRunXML = $CheckXML.DateCollected.split("_")
-			$Dayxml = $LastRunXML[0].Split("-")[0]
-			$Monthxml = $LastRunXML[0].Split("-")[1]
-			$yearxml = $LastRunXML[0].Split("-")[2]
+}
+} # Page
 
-			$LastRun = Get-Date -Day $LastRunXML[0].Split("-")[0] -Month $LastRunXML[0].Split("-")[1] -Year $LastRunXML[0].Split("-")[2] -Hour $LastRunXML[1].Split(":")[0] -Minute $LastRunXML[1].Split(":")[1]
+$XDDashPage
+<#
+New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Title 'Live Results' -Id 'Checkxml1' -Endpoint {
+	param($CheckXML)
+	$CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
 
-			$HeddingText = "XenDesktop Check " + $LastRunXML
+	$LastRunXML = $CheckXML.DateCollected.split("_")
+	$Dayxml = $LastRunXML[0].Split("-")[0]
+	$Monthxml = $LastRunXML[0].Split("-")[1]
+	$yearxml = $LastRunXML[0].Split("-")[2]
+
+	$LastRun = Get-Date -Day $LastRunXML[0].Split("-")[0] -Month $LastRunXML[0].Split("-")[1] -Year $LastRunXML[0].Split("-")[2] -Hour $LastRunXML[1].Split(":")[0] -Minute $LastRunXML[1].Split(":")[1]
+
+	$HeddingText = "XenDesktop Check " + $LastRunXML
 			New-UDMuPaper -Content { New-UDHeading -Text $HeddingText -Size 3 } -Elevation 4
+			New-UDMuPaper -Content {
 			New-UDRow {
 				New-UDColumn -Size 12 {
 					New-UDLayout -Columns  -Content {
@@ -99,14 +105,12 @@ $XDDashPage = New-UDPage -Name "Health Check" -Icon medkit -Content {
 						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Tainted Objects' -Endpoint { $CheckXML.CitrixRemoteFarmDetails.ADObjects.TaintedObjects | Out-UDGridData }
 					}
 				}
-			} -Elevation 4
-			#endregion
-		}
+			}
+	} -Elevation 4
+	#endregion
 	}
-} # Page
 
-$XDDashPage
-<#
+
 $CheckXML.CitrixRemoteFarmDetails.SessionCounts.psobject.Properties | foreach {('"' + $_.name + '"')} | Join-String -Separator ","
 
 #region Section1

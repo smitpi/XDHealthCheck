@@ -6,7 +6,7 @@ $homepage = New-UDPage -Name "Home" -Icon home -DefaultHomePage -Content {
 				$CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
 				$CheckXML.CitrixRemoteFarmDetails.SiteDetails.Summary.psobject.Properties | Select-Object -Property Name, Value | Out-UDTableData -Property @("Name", "Value")
 			}
-			
+
 		} -Elevation 4
 		New-UDMuPaper -Content {
 			New-UDTable -Title "Logged in User Information" -Headers @(" ", " ") -Endpoint {

@@ -92,6 +92,7 @@ Function Get-CitrixLicenseInformation {
 		foreach ($lic in $ctxlic) {
 			$Licenses = New-Object PSObject -Property @{
 				LicenseProductName = $lic.LocalizedLicenseProductName
+				LicenseModel       = $lic.LocalizedLicenseModel
 				LicensesInstalled  = $lic.LicensesAvailable
 				LicensesInUse      = $lic.LicensesInUse
 				LicensesAvailable  = ([int]$lic.LicensesAvailable - [int]$lic.LicensesInUse)

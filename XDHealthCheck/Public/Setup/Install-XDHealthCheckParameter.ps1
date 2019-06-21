@@ -106,6 +106,7 @@ function Install-XDHealthCheckParameter {
 		$ReportsFolder = Read-Host 'Path to the Reports Folder'
 		$ParametersFolder = Read-Host 'Path to where the Parameters.xml will be saved'
 		$DashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'
+		$RemoveOldReports = Read-Host 'Remove Reports older than (in days)'
 
 		Write-Color -Text 'Save reports to an excel report' -Color DarkGray -LinesAfter 1
 		Write-Color "1: ", "Yes"  -Color Yellow, Green

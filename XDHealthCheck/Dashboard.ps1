@@ -61,9 +61,6 @@ if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; br
 
 $ReportsFoldertmp = $XMLParameter.ReportsFolder.ToString()
 if ((Test-Path -Path $ReportsFoldertmp\logs) -eq $false) { New-Item -Path "$ReportsFoldertmp\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-#[string]$Transcriptlog = "$ReportsFoldertmp\logs\XDAudit_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
-#Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
-#$timer = [Diagnostics.Stopwatch]::StartNew();
 
 Write-Colour "Using Variables from Parameters.xml: ", $XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan, DarkYellow -LinesAfter 1
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
@@ -95,10 +92,6 @@ Write-Colour "Citrix Admin Credentials: ", $CTXAdmin.UserName -ShowTime -Color y
 ########################################
 ## build pages
 #########################################
-#$XMLParameter.PSObject.Properties | ForEach-Object {($_.Name)} | Join-String -Separator '","'
-
-
-
 
 $ConfigurationFile = Get-Content (Join-Path $PSScriptRoot dbconfig.json) | ConvertFrom-Json
 Try { Import-Module (Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -ErrorAction Stop }
@@ -113,16 +106,34 @@ $Pages = Foreach ($Page in $PageFolder) {
 }
 $UDTitle = $DashboardTitle + " | Dashboard"
 
-$Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @("DateCollected","CTXDDC","CTXStoreFront","RDSLicensServer","RDSLicensType","TrustedDomains","ReportsFolder","ParametersFolder","DashboardTitle","SaveExcelReport","SendEmail","EmailFrom","EmailTo","SMTPServer","SMTPServerPort","SMTPEnableSSL","CTXAdmin","XMLParameterFilePath")
+$Navigation = New-UDSideNav -Content {
+	New-UDSideNavItem -Text "Home Page" -PageName "Home" -Icon home
+	New-UDSideNavItem -Text "Health Check" -PageName "Health Check" -Icon medkit
+	New-UDSideNavItem -Text "Config Audit" -PageName "Audit Results" -Icon folder_open
+	New-UDSideNavItem -Text "User Details" -PageName "User Details" -Icon user
+	New-UDSideNavItem -Text "Build Machines" -PageName "Build Machines" -Icon server
+    New-UDSideNavItem -Text "PowerShell Repository" -PageName "PowerShell Repository" -Icon paper_plane 
+	New-UDSideNavItem -Divider
+	New-UDSideNavItem -Text "Citrix Director" -Url 'https://director.absacorp.com' -Icon cloud
+	New-UDSideNavItem -Divider
+	New-UDSideNavItem -Text "Google" -Url 'https://www.google.com' -Icon cloud
+}
+
+$footer = New-UDFooter -Copyright 'Designed by Pierre Smit for Absa EUV'
+
+$Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @($XMLParameter.PSObject.Properties | ForEach-Object { $_.Name })
 
 $DashboardParams = @{
 	Title                  = $UDTitle
 	Theme                  = $Myredtheme
 	Pages                  = $Pages
 	EndpointInitialization = $Initialization
+	Navigation 			   =  $Navigation
+	footer 				   = $footer
 }
 
 $MyDashboard = New-UDDashboard @DashboardParams
-Get-UDDashboard | Stop-UDDashboard
+
+#Get-UDDashboard | Stop-UDDashboard
 Start-UDDashboard -Port $ConfigurationFile.dashboard.port -Dashboard $MyDashboard -Name $UDTitle
-Start-Process http://localhost:8090
+#Start-Process http://localhost:8095

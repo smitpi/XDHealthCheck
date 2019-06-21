@@ -3,52 +3,40 @@ New-UDCollapsible -Items {
 #region Section1
 New-UDCollapsibleItem  -Endpoint {
 			New-UDInput -Content {
-                New-UDInputField -Name 'Username' -Type textbox -Placeholder 'Username'
-                New-UDInputField -Name 'Domain' -Values @('corp.dsarena.com','ds1.ad.absa.co.za','client.barclayscorp.com','intranet.barcapint.com') -Type select -Placeholder 'Domain'
-            } -Endpoint {
-		param([string]$Username,$DomainFQDN)
-		New-UDCollapsibleItem -BackgroundColor '#E5E5E5'   -Endpoint {
-			New-UDInput -Title "Username" -Endpoint {
-				param(
-					[Parameter(Mandatory)]
-					[UniversalDashboard.ValidationErrorMessage("Invalid user")]
-					[ValidateScript( { Get-ADUser -Identity $_ })]
-					[string]$Username)
-
+				New-UDInputField -Name 'Username' -Type textbox -Placeholder 'Username'
+				New-UDInputField -Name 'Domain' -Values @('corp.dsarena.com', 'ds1.ad.absa.co.za', 'client.barclayscorp.com', 'intranet.barcapint.com') -Type select -Placeholder 'Domain'
+			} -Endpoint {
+				param([string]$Username, $Domain)
 
 		New-UDInputAction -Content @(
-        $domaincreds = $TrustedDomains| where {$_.fqdn -like $Domain}
-	    $validuser = Get-FullUserDetail -UserToQuery $username  -DomainFQDN $Domain -DomainCredentials $domaincreds -RunAsPSRemote -PSRemoteServerName $CTXDDC -PSRemoteCredentials $CTXAdmin
+		$domaincreds = $TrustedDomains | Where-Object { $_.fqdn -like $Domain }
+	    $validuser = Get-FullUserDetail -UserToQuery $username  -DomainFQDN $Domain -DomainCredentials $domaincreds.Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC -PSRemoteCredentials $CTXAdmin
 	    $UserDetail = $validuser.UserSummery.psobject.Properties | Select-Object -Property Name, Value
 
 	    New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
 	    New-UDLayout -Columns 2 -Content {
 		    New-UDGrid -Id 'UserGrid1'  -Headers @("Name", "Value") -Properties @("Name", "Value") -NoPaging -Endpoint { $UserDetail | Out-UDGridData }
-					New-UDGrid -Id 'UserGrid2' -Headers @("SamAccountName", "GroupScope") -Properties @("SamAccountName", "GroupScope") -NoPaging -Endpoint { $validuser.AllUserGroups | Select-Object SamAccountName, GroupScope | Out-UDGridData }
+						New-UDGrid -Id 'UserGrid2' -Headers @("SamAccountName", "GroupScope") -Properties @("SamAccountName", "GroupScope") -NoPaging -Endpoint { $validuser.AllUserGroups | Select-Object SamAccountName, GroupScope | Out-UDGridData }
+					}
+
+				)
 			}
 
-		)
-	}
 } -Title "Single user Details" -FontColor black
 #endregion
 
 #region Section1
-		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
+New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
 	New-UDInput -Title "Compare Users" -Content {
 		New-UDInputField -Name 'Username1' -Type textbox -Placeholder 'Username1'
 		New-UDInputField -Name 'Username2' -Type textbox -Placeholder 'Username2'
+        New-UDInputField -Name 'Domain' -Values @('corp.dsarena.com', 'ds1.ad.absa.co.za', 'client.barclayscorp.com', 'intranet.barcapint.com') -Type select -Placeholder 'Domain'
 	} -Endpoint {
 		param(
-			[Parameter(Mandatory)]
-			[UniversalDashboard.ValidationErrorMessage("Invalid user")]
-			[ValidateScript( { Get-ADUser -Identity $_ })]
-			[string]$Username1,
-			[Parameter(Mandatory)]
-			[UniversalDashboard.ValidationErrorMessage("Invalid user")]
-			[ValidateScript( { Get-ADUser -Identity $_ })]
-			[string]$Username2)
+			[string]$Username1,[string]$Username2,$Domain)
 
-				$compareUsers = Compare-ADUser -Username1 $Username1 -Username2 $Username2 -DomainFQDN 'corp.dsarena.com' -DomainCredentials $TrustedDomains[0].Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC -Verbose
+		$domaincreds = $TrustedDomains | Where-Object { $_.fqdn -like $Domain }
+		$compareUsers = Compare-ADUser -Username1 $Username1 -Username2 $Username2 -DomainFQDN $domain -DomainCredentials $domaincreds.Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC -PSRemoteCredentials $CTXAdmin -Verbose
 
 		New-UDInputAction -Content  @(
 			New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
@@ -71,7 +59,7 @@ New-UDCollapsibleItem  -Endpoint {
 #endregion
 
 #region Section1
-		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
+New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
 	New-UDInput -Title "Username" -Endpoint {
 		param(
 			[Parameter(Mandatory)]
@@ -94,7 +82,7 @@ New-UDCollapsibleItem  -Endpoint {
 	}
 )
 }
-} 	 -Title "Check User Access In Citrix" -FontColor black
+} -Title "Check User Access In Citrix" -FontColor black
 #endregion
 } # Main Collapsible
 } # Page
