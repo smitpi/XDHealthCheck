@@ -1,6 +1,6 @@
 $homepage = New-UDPage -Name "Home" -Icon home -DefaultHomePage -Content {
 	New-UDMuPaper -Content { New-UDHeading -Text 'Welcome to Citrix Dashboard' -Size 3 } -Elevation 4
-	New-UDLayout -Columns 2 -Content {
+	
 		New-UDCard -BackgroundColor "#e5e5e5" -Endpoint {
         $CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
 
@@ -14,18 +14,17 @@ $homepage = New-UDPage -Name "Home" -Icon home -DefaultHomePage -Content {
 	        $HeddingText = "Data Refreshed on: " + $LastRunXML
 
 	        New-UDMuPaper -Content { New-UDHeading -Text $HeddingText -Size 6 } -Elevation 2
+            New-UDLayout -Columns 2 -Content {
 
 			New-UDTable -Title "Site Information" -Headers @(" ", " ") -Endpoint {
 				$CheckXML.CitrixRemoteFarmDetails.SiteDetails.Summary.psobject.Properties | Select-Object -Property Name, Value | Out-UDTableData -Property @("Name", "Value")
 			}
-
-		}
-		New-UDCard -BackgroundColor "#e5e5e5" -Content {
 			New-UDTable -Title "Logged in User Information" -Headers @(" ", " ") -Endpoint {
 				$user = Get-ADUser $env:USERNAME -Properties * | Select-Object Name, GivenName, Surname, UserPrincipalName, EmailAddress, EmployeeID, EmployeeNumber, HomeDirectory, Enabled, Created, Modified, LastLogonDate, samaccountname
 				$user.psobject.Properties | Select-Object -Property Name, Value | Out-UDTableData -Property @("Name", "Value")
 			}
-		} 
+		
+        } 
 	}
 
 }
