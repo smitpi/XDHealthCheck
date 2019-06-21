@@ -112,7 +112,7 @@ $Navigation = New-UDSideNav -Content {
 	New-UDSideNavItem -Text "Config Audit" -PageName "Audit Results" -Icon folder_open
 	New-UDSideNavItem -Text "User Details" -PageName "User Details" -Icon user
 	New-UDSideNavItem -Text "Build Machines" -PageName "Build Machines" -Icon server
-    New-UDSideNavItem -Text "PowerShell Repository" -PageName "PowerShell Repository" -Icon paper_plane 
+    New-UDSideNavItem -Text "PowerShell Repository" -PageName "PowerShell Repository" -Icon paper_plane
 	New-UDSideNavItem -Divider
 	New-UDSideNavItem -Text "Citrix Director" -Url 'https://director.absacorp.com' -Icon cloud
 	New-UDSideNavItem -Divider
@@ -134,6 +134,6 @@ $DashboardParams = @{
 
 $MyDashboard = New-UDDashboard @DashboardParams
 
-#Get-UDDashboard | Stop-UDDashboard
+Get-UDDashboard | Stop-UDDashboard
 Start-UDDashboard -Port $ConfigurationFile.dashboard.port -Dashboard $MyDashboard -Name $UDTitle
-#Start-Process http://localhost:8095
+Start-Process http://localhost:8095

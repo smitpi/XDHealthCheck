@@ -4,13 +4,13 @@ New-UDCollapsible -Items {
 New-UDCollapsibleItem  -Endpoint {
 			New-UDInput -Content {
 				New-UDInputField -Name 'Username' -Type textbox -Placeholder 'Username'
-				New-UDInputField -Name 'Domain' -Values @('corp.dsarena.com', 'ds1.ad.absa.co.za', 'client.barclayscorp.com', 'intranet.barcapint.com') -Type select -Placeholder 'Domain'
+				New-UDInputField -Name 'Domain1' -Values @($TrustedDomains | ForEach-Object { $_.fqdn }) -Type select -Placeholder 'Domain1'
 			} -Endpoint {
-				param([string]$Username, $Domain)
+				param([string]$Username, $Domain1)
 
 		New-UDInputAction -Content @(
-		$domaincreds = $TrustedDomains | Where-Object { $_.fqdn -like $Domain }
-	    $validuser = Get-FullUserDetail -UserToQuery $username  -DomainFQDN $Domain -DomainCredentials $domaincreds.Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC -PSRemoteCredentials $CTXAdmin
+		$domaincreds = $TrustedDomains | Where-Object { $_.fqdn -like $Domain1 }
+	    $validuser = Get-FullUserDetail -UserToQuery $username  -DomainFQDN $Domain1 -DomainCredentials $domaincreds.Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC -PSRemoteCredentials $CTXAdmin
 	    $UserDetail = $validuser.UserSummery.psobject.Properties | Select-Object -Property Name, Value
 
 	    New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
@@ -30,7 +30,7 @@ New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
 	New-UDInput -Title "Compare Users" -Content {
 		New-UDInputField -Name 'Username1' -Type textbox -Placeholder 'Username1'
 		New-UDInputField -Name 'Username2' -Type textbox -Placeholder 'Username2'
-        New-UDInputField -Name 'Domain' -Values @('corp.dsarena.com', 'ds1.ad.absa.co.za', 'client.barclayscorp.com', 'intranet.barcapint.com') -Type select -Placeholder 'Domain'
+        New-UDInputField -Name 'Domain' -Values @($TrustedDomains | ForEach-Object {$_.fqdn}) -Type select -Placeholder 'Domain'
 	} -Endpoint {
 		param(
 			[string]$Username1,[string]$Username2,$Domain)

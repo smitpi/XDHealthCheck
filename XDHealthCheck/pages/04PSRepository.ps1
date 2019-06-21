@@ -2,16 +2,16 @@ $PSRepository = New-UDPage -Name "PowerShell Repository" -Icon paper_plane -Cont
 New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
 $PSUpdate = Start-RSJob -ScriptBlock {
     $repository = Get-PSRepository | Where-Object {$_.Name -notlike 'PSGallery'}
-    $psrep = New-Object PSObject -Property @{               
+    $psrep = New-Object PSObject -Property @{
         DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
         ResultScript  = Find-script -Repository $repository.Name | Select-Object -Property Name, Type, Author, Description
-        ResultModule  = Find-Module -Repository $repository.Name  | Select-Object -Property Name, Type, Author, Description       
-      } | select DateCollected,ResultScript,ResultModule
+        ResultModule  = Find-Module -Repository $repository.Name  | Select-Object -Property Name, Type, Author, Description
+      } | Select-Object DateCollected,ResultScript,ResultModule
 
        $PSXML = "$ReportsFolder\PSRepository.xml"
         if (Test-Path -Path $PSXML) { Remove-Item $PSXML -Force -Verbose }
 	    $psrep | Export-Clixml -Path $PSXML -Depth 25 -NoClobber -Force
-} 
+}
 		do {
             Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white'} -Persistent -BackgroundColor green
 			Start-Sleep -Seconds 10
