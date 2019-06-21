@@ -112,13 +112,16 @@ $Navigation = New-UDSideNav -Content {
 	New-UDSideNavItem -Text "Config Audit" -PageName "Audit Results" -Icon folder_open
 	New-UDSideNavItem -Text "User Details" -PageName "User Details" -Icon user
 	New-UDSideNavItem -Text "Build Machines" -PageName "Build Machines" -Icon server
-    New-UDSideNavItem -Text "PowerShell Repository" -PageName "PowerShell Repository" -Icon paper_plane
+    New-UDSideNavItem -Text "PowerShell Repository" -PageName "PowerShell Repository" -Icon paper_plane 
 	New-UDSideNavItem -Divider
     New-UDSideNavItem -Text "Live Health Check" -PageName "Live Health Check" -Icon address_book
 	New-UDSideNavItem -Divider
-	New-UDSideNavItem -Text "Citrix Director" -Url 'https://director.absacorp.com' -Icon cloud
-	New-UDSideNavItem -Divider
+    New-UDSideNavItem -SubHeader -Text 'Support Sites'
+    New-UDSideNavItem -Text "Citrix Director" -Url 'https://director.absacorp.com' -Icon cloud
+	New-UDSideNavItem -Text "Africa Access" -Url 'https://africaaccess.absacorp.com' -Icon lock_open
+	New-UDSideNavItem -Text "ABSA Workspace" -Url 'https://workspace.absacorp.com' -Icon page4
 	New-UDSideNavItem -Text "Google" -Url 'https://www.google.com' -Icon cloud
+
 }
 
 $footer = New-UDFooter -Copyright 'Designed by Pierre Smit for Absa EUV'
@@ -130,7 +133,7 @@ $DashboardParams = @{
 	Theme                  = $Myredtheme
 	Pages                  = $Pages
 	EndpointInitialization = $Initialization
-	Navigation 			   =  $Navigation
+	Navigation 			   = $Navigation
 	footer 				   = $footer
 }
 

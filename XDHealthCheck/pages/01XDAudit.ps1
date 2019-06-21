@@ -1,7 +1,7 @@
 #region Page2
 $XDAuditPage = New-UDPage -Name "Audit Results" -Icon folder_open -Content {
 New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
-        $job = Start-RSJob -ScriptBlock { Initialize-CitrixAudit -XMLParameterFilePath  $args[0] -Verbose } -ArgumentList @($env:PSParameters)
+        $job = Start-RSJob -ScriptBlock { Initialize-CitrixAudit -XMLParameterFilePath  $args[0] -Verbose } -ArgumentList @(((Get-Item $profile).DirectoryName + "\Parameters.xml")) -ModulesToImport @('XDHealthCheck') -FunctionFilesToImport "..\XDHealthCheck.psm1" 
 		do {
             Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white'} -Persistent -BackgroundColor green
 			Start-Sleep -Seconds 10

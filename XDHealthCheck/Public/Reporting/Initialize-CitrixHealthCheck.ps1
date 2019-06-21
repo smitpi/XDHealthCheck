@@ -124,7 +124,7 @@ function Initialize-CitrixHealthCheck {
 	$CitrixLicenseInformation = Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
 	$CitrixRemoteFarmDetails = Get-CitrixFarmDetail -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
 	$CitrixServerEventLogs = Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin
-	$RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicensServer  -RemoteCredentials $CTXAdmin | ForEach-Object { $_.$RDSLicensType } | Where-Object { $_.IssuedLicenses -gt 500}
+	$RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicensServer  -RemoteCredentials $CTXAdmin | ForEach-Object { $_.$RDSLicensType } | Where-Object { $_.IssuedLicenses -gt 500 } | select TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
 	$CitrixConfigurationChanges = Get-CitrixConfigurationChange -AdminServer $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin
 	$StoreFrontDetails = Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote
 	$ServerPerformance = Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin

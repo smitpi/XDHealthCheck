@@ -96,7 +96,7 @@ Function Get-CitrixLicenseInformation {
 				LicensesInstalled  = $lic.LicensesAvailable
 				LicensesInUse      = $lic.LicensesInUse
 				LicensesAvailable  = ([int]$lic.LicensesAvailable - [int]$lic.LicensesInUse)
-			} | Select-Object LicenseProductName, LicensesInstalled, LicensesInUse, LicensesAvailable
+			} | Select-Object LicenseProductName, LicenseModel, LicensesInstalled, LicensesInUse, LicensesAvailable
 			$AllDetails += $Licenses
 		}
 			Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] License Details"
@@ -106,7 +106,7 @@ Function Get-CitrixLicenseInformation {
 	$LicDetails = @()
 	if ($RunAsPSRemote -eq $true) { $LicDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:get-license} -ArgumentList @($AdminServer, $VerbosePreference) -Credential $RemoteCredentials }
 	else { $LicDetails = get-license -AdminAddress $AdminServer }
-	$LicDetails | Select-Object LicenseProductName, LicensesInstalled, LicensesInUse, LicensesAvailable
+	$LicDetails | Select-Object LicenseProductName, LicenseModel, LicensesInstalled, LicensesInUse, LicensesAvailable
 
 
 } #end Function
