@@ -7,8 +7,15 @@ New-UDCollapsibleItem  -Endpoint {
                 New-UDInputField -Name 'Domain' -Values @('corp.dsarena.com','ds1.ad.absa.co.za','client.barclayscorp.com','intranet.barcapint.com') -Type select -Placeholder 'Domain'
             } -Endpoint {
 		param([string]$Username,$DomainFQDN)
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5'   -Endpoint {
+			New-UDInput -Title "Username" -Endpoint {
+				param(
+					[Parameter(Mandatory)]
+					[UniversalDashboard.ValidationErrorMessage("Invalid user")]
+					[ValidateScript( { Get-ADUser -Identity $_ })]
+					[string]$Username)
 
-        
+
 		New-UDInputAction -Content @(
         $domaincreds = $TrustedDomains| where {$_.fqdn -like $Domain}
 	    $validuser = Get-FullUserDetail -UserToQuery $username  -DomainFQDN $Domain -DomainCredentials $domaincreds -RunAsPSRemote -PSRemoteServerName $CTXDDC -PSRemoteCredentials $CTXAdmin
@@ -26,7 +33,7 @@ New-UDCollapsibleItem  -Endpoint {
 #endregion
 
 #region Section1
-New-UDCollapsibleItem -Endpoint {
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
 	New-UDInput -Title "Compare Users" -Content {
 		New-UDInputField -Name 'Username1' -Type textbox -Placeholder 'Username1'
 		New-UDInputField -Name 'Username2' -Type textbox -Placeholder 'Username2'
@@ -64,16 +71,16 @@ New-UDCollapsibleItem -Endpoint {
 #endregion
 
 #region Section1
-New-UDCollapsibleItem  -Endpoint {
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
 	New-UDInput -Title "Username" -Endpoint {
 		param(
 			[Parameter(Mandatory)]
 			[UniversalDashboard.ValidationErrorMessage("Invalid user")]
 			[ValidateScript( { Get-ADUser -Identity $_ })]
 			[string]$Username)
-        
+
 		New-UDInputAction -Content @(
-        
+
 		$UserDetail = Get-CitrixUserAccessDetail -Username $username -AdminServer $CTXDDC -DomainFQDN 'corp.dsarena.com' -DomainCredentials $TrustedDomains[0].Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC -Verbose
 		$userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
 		$Desktops = $UserDetail.PublishedDesktops | Sort-Object -Property DesktopGroupName -Unique

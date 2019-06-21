@@ -106,6 +106,19 @@ $Pages = Foreach ($Page in $PageFolder) {
 }
 $UDTitle = $DashboardTitle + " | Dashboard"
 
+$Navigation = New-UDSideNav -Content {
+	New-UDSideNavItem -Text "Home Page" -PageName "Home" -Icon home
+	New-UDSideNavItem -Text "Health Check" -PageName "Health Check" -Icon medkit
+	New-UDSideNavItem -Text "Config Audit" -PageName "Audit Results" -Icon folder_open
+	New-UDSideNavItem -Text "User Details" -PageName "User Details" -Icon user
+	New-UDSideNavItem -Divider
+	New-UDSideNavItem -Text "Citrix Director" -Url 'https://director.absacorp.com' -Icon cloud
+	New-UDSideNavItem -Divider
+	New-UDSideNavItem -Text "Google" -Url 'https://www.google.com' -Icon cloud
+}
+
+$footer = New-UDFooter -Copyright 'Designed by Pierre Smit for Absa EUV'
+
 $Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @($XMLParameter.PSObject.Properties | ForEach-Object { $_.Name })
 
 $DashboardParams = @{
@@ -113,10 +126,12 @@ $DashboardParams = @{
 	Theme                  = $Myredtheme
 	Pages                  = $Pages
 	EndpointInitialization = $Initialization
+	Navigation 			   =  $Navigation
+	footer 				   = $footer
 }
 
 $MyDashboard = New-UDDashboard @DashboardParams
 
 Get-UDDashboard | Stop-UDDashboard
 Start-UDDashboard -Port $ConfigurationFile.dashboard.port -Dashboard $MyDashboard -Name $UDTitle
-Start-Process http://localhost:10000
+Start-Process http://localhost:8090
