@@ -65,7 +65,7 @@ Function Initialize-CitrixUserAccessReport {
 		[string]$Username)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
-    ##########################################
+	##########################################
 	#region xml imports
 	##########################################
 
@@ -78,38 +78,45 @@ Function Initialize-CitrixUserAccessReport {
 	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 	$timer = [Diagnostics.Stopwatch]::StartNew();
 
-	Write-Colour "Using Variables from Parameters.xml: ",$XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan,DarkYellow -LinesAfter 1
+	Write-Colour "Using Variables from Parameters.xml: ", $XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan, DarkYellow -LinesAfter 1
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
-	$XMLParameter.PSObject.Properties | Where-Object {$_.name -notlike 'TrustedDomains'} | ForEach-Object {Write-Color $_.name,":",$_.value  -Color Yellow,DarkCyan,Green -ShowTime;  New-Variable -Name $_.name -Value $_.value -Force -Scope local }
+	$XMLParameter.PSObject.Properties | Where-Object { $_.name -notlike 'TrustedDomains' } | ForEach-Object { Write-Color $_.name, ":", $_.value  -Color Yellow, DarkCyan, Green -ShowTime; New-Variable -Name $_.name -Value $_.value -Force -Scope local }
 
-    Write-Colour "Creating credentials for Trusted domains:" -ShowTime -Color DarkCyan -LinesBefore 2
-    $Trusteddomains = @()
-    foreach ($domain in $XMLParameter.TrustedDomains) {
-                 $serviceaccount = Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring())  | Get-Credential -Store
-	            if ($null -eq $serviceaccount) {
-		            $serviceaccount = BetterCredentials\Get-Credential -Message ("Service Account for domain: " + $_.NetBiosName.ToString())
-		            Set-Credential -Credential $serviceaccount -Target $_.Discription.ToString() -Persistence LocalComputer -Description ("Service Account for domain: " + $_.NetBiosName.ToString())}
+	Write-Colour "Creating credentials for Trusted domains:" -ShowTime -Color DarkCyan -LinesBefore 2
+	$Trusteddomains = @()
+	foreach ($domain in $XMLParameter.TrustedDomains) {
+		$serviceaccount = Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring()) | Get-Credential -Store
+		if ($null -eq $serviceaccount) {
+			$serviceaccount = BetterCredentials\Get-Credential -Message ("Service Account for domain: " + $_.NetBiosName.ToString())
+			Set-Credential -Credential $serviceaccount -Target $_.Discription.ToString() -Persistence LocalComputer -Description ("Service Account for domain: " + $_.NetBiosName.ToString())
+		}
 
-                write-Color -Text $domain.FQDN,":",$serviceaccount.username  -Color Yellow,DarkCyan,Green -ShowTime
-                $CusObject = New-Object PSObject -Property @{
-			                            FQDN        = $domain.FQDN
-                                        Credentials = $serviceaccount
-		        }
-	            $Trusteddomains += $CusObject
-                }
-    $CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
+		Write-Color -Text $domain.FQDN, ":", $serviceaccount.username  -Color Yellow, DarkCyan, Green -ShowTime
+		$CusObject = New-Object PSObject -Property @{
+			FQDN        = $domain.FQDN
+			Credentials = $serviceaccount
+		}
+		$Trusteddomains += $CusObject
+	}
+	$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
 	if ($null -eq $CTXAdmin) {
 		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
 		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 	}
-    Write-Colour "Citrix Admin Credentials: ",$CTXAdmin.UserName -ShowTime -Color yellow,Green -LinesBefore 2
+	Write-Colour "Citrix Admin Credentials: ", $CTXAdmin.UserName -ShowTime -Color yellow, Green -LinesBefore 2
 
-    #endregion
+	#endregion
 
-    ##########################################
+	##########################################
 	#region checking folders and report names
 	##########################################
 	if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+	if ([bool]$RemoveOldReports) {
+		$oldReports = (Get-Date).AddDays(-$RemoveOldReports)
+		Get-ChildItem $ReportsFolder\XDUsers *.html | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+		Get-ChildItem $ReportsFolder\XDUsers *.xlsx | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+		Get-ChildItem $ReportsFolder\logs\XDUserAccess_TransmissionLogs* | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+	}
 	[string]$Reportname = $ReportsFolder + "\XDUsers\XDUserAccessReport_" + $Username + "_" + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 
 	#endregion
@@ -129,6 +136,7 @@ Function Initialize-CitrixUserAccessReport {
 	########################################
 	#region Setting some table color and settings
 	########################################
+
 	$TableSettings = @{
 		#Style          = 'stripe'
 		Style          = 'cell-border'
@@ -138,18 +146,18 @@ Function Initialize-CitrixUserAccessReport {
 	}
 
 	$SectionSettings = @{
-		HeaderBackGroundColor = 'white'
-		HeaderTextAlignment   = 'center'
-		HeaderTextColor       = 'red'
 		BackgroundColor       = 'white'
 		CanCollapse           = $true
+		HeaderBackGroundColor = 'white'
+		HeaderTextAlignment   = 'center'
+		HeaderTextColor       = $HeaderColor
 	}
 
 	$TableSectionSettings = @{
-		HeaderTextColor       = 'white'
-		HeaderTextAlignment   = 'center'
-		HeaderBackGroundColor = 'red'
 		BackgroundColor       = 'white'
+		HeaderBackGroundColor = $HeaderColor
+		HeaderTextAlignment   = 'center'
+		HeaderTextColor       = 'white'
 	}
 	#endregion
 

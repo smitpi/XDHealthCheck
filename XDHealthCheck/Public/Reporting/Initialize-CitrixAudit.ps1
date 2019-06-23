@@ -61,7 +61,7 @@ function Initialize-CitrixAudit {
 		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
 		[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml"
-		)
+	)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
 
@@ -72,44 +72,51 @@ function Initialize-CitrixAudit {
 	$XMLParameter = Import-Clixml $XMLParameterFilePath
 	if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
 
-    $ReportsFoldertmp = $XMLParameter.ReportsFolder.ToString()
+	$ReportsFoldertmp = $XMLParameter.ReportsFolder.ToString()
 	if ((Test-Path -Path $ReportsFoldertmp\logs) -eq $false) { New-Item -Path "$ReportsFoldertmp\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 	[string]$Transcriptlog = "$ReportsFoldertmp\logs\XDAudit_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
 	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 	$timer = [Diagnostics.Stopwatch]::StartNew();
 
-	Write-Colour "Using Variables from Parameters.xml: ",$XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan,DarkYellow -LinesAfter 1
+	Write-Colour "Using Variables from Parameters.xml: ", $XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan, DarkYellow -LinesAfter 1
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
-	$XMLParameter.PSObject.Properties | Where-Object {$_.name -notlike 'TrustedDomains'} | ForEach-Object {Write-Color $_.name,":",$_.value  -Color Yellow,DarkCyan,Green -ShowTime;  New-Variable -Name $_.name -Value $_.value -Force -Scope local }
+	$XMLParameter.PSObject.Properties | Where-Object { $_.name -notlike 'TrustedDomains' } | ForEach-Object { Write-Color $_.name, ":", $_.value  -Color Yellow, DarkCyan, Green -ShowTime; New-Variable -Name $_.name -Value $_.value -Force -Scope local }
 
-    Write-Colour "Creating credentials for Trusted domains:" -ShowTime -Color DarkCyan -LinesBefore 2
-    $Trusteddomains = @()
-    foreach ($domain in $XMLParameter.TrustedDomains) {
-                 $serviceaccount = Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring())  | Get-Credential -Store
-	            if ($null -eq $serviceaccount) {
-		            $serviceaccount = BetterCredentials\Get-Credential -Message ("Service Account for domain: " + $domain.NetBiosName.ToString())
-		            Set-Credential -Credential $serviceaccount -Target $domain.Discription.ToString() -Persistence LocalComputer -Description ("Service Account for domain: " + $domain.NetBiosName.ToString())
-				}
-                write-Color -Text $domain.FQDN,":",$serviceaccount.username  -Color Yellow,DarkCyan,Green -ShowTime
-                $CusObject = New-Object PSObject -Property @{
-			                            FQDN        = $domain.FQDN
-                                        Credentials = $serviceaccount
-		        }
-	            $Trusteddomains += $CusObject
-                }
-    $CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
+	Write-Colour "Creating credentials for Trusted domains:" -ShowTime -Color DarkCyan -LinesBefore 2
+	$Trusteddomains = @()
+	foreach ($domain in $XMLParameter.TrustedDomains) {
+		$serviceaccount = Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring()) | Get-Credential -Store
+		if ($null -eq $serviceaccount) {
+			$serviceaccount = BetterCredentials\Get-Credential -Message ("Service Account for domain: " + $domain.NetBiosName.ToString())
+			Set-Credential -Credential $serviceaccount -Target $domain.Discription.ToString() -Persistence LocalComputer -Description ("Service Account for domain: " + $domain.NetBiosName.ToString())
+		}
+		Write-Color -Text $domain.FQDN, ":", $serviceaccount.username  -Color Yellow, DarkCyan, Green -ShowTime
+		$CusObject = New-Object PSObject -Property @{
+			FQDN        = $domain.FQDN
+			Credentials = $serviceaccount
+		}
+		$Trusteddomains += $CusObject
+	}
+	$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
 	if ($null -eq $CTXAdmin) {
 		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
 		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 	}
-    Write-Colour "Citrix Admin Credentials: ",$CTXAdmin.UserName -ShowTime -Color yellow,Green -LinesBefore 2
+	Write-Colour "Citrix Admin Credentials: ", $CTXAdmin.UserName -ShowTime -Color yellow, Green -LinesBefore 2
 
-    #endregion
+	#endregion
 	##########################################
 	#region checking folders and report names
 	##########################################
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 	if ((Test-Path -Path $ReportsFolder\XDAudit) -eq $false) { New-Item -Path "$ReportsFolder\XDAudit" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+
+	if ([bool]$RemoveOldReports) {
+		$oldReports = (Get-Date).AddDays(-$RemoveOldReports)
+		Get-ChildItem $ReportsFolder\XDAudit *.html | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+		Get-ChildItem $ReportsFolder\XDAudit *.xlsx | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+		Get-ChildItem $ReportsFolder\logs\XDAudit_TransmissionLogs* | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+	}
 
 	[string]$Reportname = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 	[string]$XMLExport = $ReportsFolder + "\XDAudit\XD_Audit.xml"
@@ -154,6 +161,7 @@ function Initialize-CitrixAudit {
 	########################################
 	#region Setting some table color and settings
 	########################################
+
 	$TableSettings = @{
 		#Style          = 'stripe'
 		Style          = 'cell-border'
@@ -163,18 +171,18 @@ function Initialize-CitrixAudit {
 	}
 
 	$SectionSettings = @{
-		HeaderBackGroundColor = 'white'
-		HeaderTextAlignment   = 'center'
-		HeaderTextColor       = 'red'
 		BackgroundColor       = 'white'
 		CanCollapse           = $true
+		HeaderBackGroundColor = 'white'
+		HeaderTextAlignment   = 'center'
+		HeaderTextColor       = $HeaderColor
 	}
 
 	$TableSectionSettings = @{
-		HeaderTextColor       = 'white'
-		HeaderTextAlignment   = 'center'
-		HeaderBackGroundColor = 'red'
 		BackgroundColor       = 'white'
+		HeaderBackGroundColor = $HeaderColor
+		HeaderTextAlignment   = 'center'
+		HeaderTextColor       = 'white'
 	}
 	#endregion
 
@@ -209,7 +217,39 @@ function Initialize-CitrixAudit {
 	}
 	#endregion
 
+	#######################
+	#region Sending email reports
+	#######################
+	if ($SendEmail) {
+
+		$smtpClientCredentials = Find-Credential | Where-Object target -Like "*Healthcheck_smtp" | Get-Credential -Store
+		if ($smtpClientCredentials -eq $null) {
+			$Account = BetterCredentials\Get-Credential -Message "smtp login for HealthChecks email"
+			Set-Credential -Credential $Account -Target "Healthcheck_smtp" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
+		}
+
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing]Sending Report Email"
+		$emailMessage = New-Object System.Net.Mail.MailMessage
+		$emailMessage.From = $emailFrom
+		$emailMessage.To.Add($emailTo)
+		$emailMessage.Subject = "Citrix Audit Results Report on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)
+		$emailMessage.IsBodyHtml = $true
+		$emailMessage.Body = 'Please see attached reports'
+		$emailMessage.Attachments.Add($Reportname)
+		$emailMessage.Attachments.Add($ExcelReportname)
+
+
+		$smtpClient = New-Object System.Net.Mail.SmtpClient( $smtpServer , $smtpServerPort )
+		$smtpClient.Credentials = [Net.NetworkCredential]$smtpClientCredentials
+		$smtpClient.EnableSsl = $smtpEnableSSL
+		$smtpClient.Timeout = 30000000
+		$smtpClient.Send( $emailMessage )
+	}
+	#endregion
+
 	$timer.Stop()
 	$timer.Elapsed | Select-Object Days, Hours, Minutes, Seconds | Format-List
 	Stop-Transcript
 }
+
+

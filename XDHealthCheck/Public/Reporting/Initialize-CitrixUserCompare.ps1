@@ -112,6 +112,13 @@ Function Initialize-CitrixUserCompare {
 	#region checking folders and report names
 	##########################################
 	if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+
+	if ([bool]$RemoveOldReports) {
+		$oldReports = (Get-Date).AddDays(-$RemoveOldReports)
+		Get-ChildItem $ReportsFolder\XDUsers *.html | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+		Get-ChildItem $ReportsFolder\XDUsers *.xlsx | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+		Get-ChildItem $ReportsFolder\logs\XDCompareUsers_TransmissionLogs* | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+	}
 	[string]$Reportname = $ReportsFolder + "\XDUsers\XDCompare_" + $Username1 + "_" + $Username2 + "_" + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 
 	#endregion
@@ -126,6 +133,7 @@ Function Initialize-CitrixUserCompare {
 	########################################
 	#region Setting some table color and settings
 	########################################
+
 	$TableSettings = @{
 		#Style          = 'stripe'
 		Style          = 'cell-border'
@@ -135,18 +143,18 @@ Function Initialize-CitrixUserCompare {
 	}
 
 	$SectionSettings = @{
-		HeaderBackGroundColor = 'white'
-		HeaderTextAlignment   = 'center'
-		HeaderTextColor       = 'red'
 		BackgroundColor       = 'white'
 		CanCollapse           = $true
+		HeaderBackGroundColor = 'white'
+		HeaderTextAlignment   = 'center'
+		HeaderTextColor       = $HeaderColor
 	}
 
 	$TableSectionSettings = @{
-		HeaderTextColor       = 'white'
-		HeaderTextAlignment   = 'center'
-		HeaderBackGroundColor = 'red'
 		BackgroundColor       = 'white'
+		HeaderBackGroundColor = $HeaderColor
+		HeaderTextAlignment   = 'center'
+		HeaderTextColor       = 'white'
 	}
 	#endregion
 

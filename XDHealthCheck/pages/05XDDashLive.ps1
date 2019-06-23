@@ -1,30 +1,19 @@
 $DashLive = New-UDPage -Name "Live Health Check" -Icon address_book -Content {
 	New-UDMuPaper -Content { New-UDHeading -Text 'XenDesktop Health Check' -Size 3 } -Elevation 4
 	New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
-		#$job = Start-RSJob -ScriptBlock { Initialize-CitrixHealthCheck -XMLParameterFilePath  $args[0] -Verbose } -ArgumentList @(((Get-Item $profile).DirectoryName + "\Parameters.xml")) -ModulesToImport @("..\XDHealthCheck.psm1") -FunctionFilesToImport "..\XDHealthCheck.psm1"
-		$job = Start-Job -Name refresh -InitializationScript { Import-Module ((Get-Item $PSScriptRoot).parent + "\XDHealthCheck.psm1") } -ScriptBlock { Initialize-CitrixHealthCheck -XMLParameterFilePath  $args[0] } -ArgumentList @(((Get-Item $profile).DirectoryName + "\Parameters.xml"))
-		Show-UDToast -Message 'Starting Data Refresh' -MessageSize large -Duration 3
-		do {
-			Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white' } -Persistent -BackgroundColor green
-			Start-Sleep -Seconds 10
-			Hide-UDModal
-
-		}   until( $job.State -notlike 'Running')
-		$CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
+		Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white' } -Persistent -BackgroundColor green
+		Initialize-CitrixHealthCheck -XMLParameterFilePath $XMLParameterFilePath -Verbose
+		Hide-UDModal
+		$Cache:CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
 		Sync-UDElement -Id 'xml2' -Broadcast
-
-
-
-
-
 	}
-New-UDLayout -Columns 1  -Content {
+	New-UDLayout -Columns 1  -Content {
 		New-UDCard -BackgroundColor "#e5e5e5" -Id 'xml2' -Endpoint {
-						param($CheckXML)
+			param($Cache:CheckXML)
 
-			$CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
+			$Cache:CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
 
-			$LastRunXML = $CheckXML.DateCollected.split("_")
+			$LastRunXML = $Cache:CheckXML.DateCollected.split("_")
 			$Dayxml = $LastRunXML[0].Split("-")[0]
 			$Monthxml = $LastRunXML[0].Split("-")[1]
 			$yearxml = $LastRunXML[0].Split("-")[2]
@@ -37,43 +26,63 @@ New-UDLayout -Columns 1  -Content {
 			New-UDRow {
 				New-UDColumn -Size 12 {
 					New-UDLayout -Columns 2  -Content {
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Sessions' -Endpoint { ($CheckXML.CitrixRemoteFarmDetails.SessionCounts.psobject.Properties | Select-Object -Property Name, Value) | Out-UDTableData -Property @("Name", "Value") }
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Config Changes in the last 7 days' -Endpoint { ($CheckXML.CitrixConfigurationChanges.Summary | Where-Object { $_.name -ne "" } | Sort-Object count -Descending | Select-Object -First 5 -Property count, name) | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Sessions' -Endpoint { ($Cache:CheckXML.CitrixRemoteFarmDetails.SessionCounts.psobject.Properties | Select-Object -Property Name, Value) | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Config Changes in the last 7 days' -Endpoint { ($Cache:CheckXML.CitrixConfigurationChanges.Summary | Where-Object { $_.name -ne "" } | Sort-Object count -Descending | Select-Object -First 5 -Property count, name) | Out-UDGridData }
 					}
 					New-UDLayout -Columns 2  -Content {
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Controllers' -Endpoint { $CheckXML.CitrixRemoteFarmDetails.Controllers.Summary | Out-UDGridData }
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix DB Connection' -Endpoint { $CheckXML.CitrixRemoteFarmDetails.DBConnection | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Controllers' -Endpoint { $Cache:CheckXML.CitrixRemoteFarmDetails.Controllers.Summary | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix DB Connection' -Endpoint { $Cache:CheckXML.CitrixRemoteFarmDetails.DBConnection | Out-UDGridData }
 					}
 					New-UDLayout -Columns 2  -Content {
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Licenses' -Endpoint { $CheckXML.CitrixLicenseInformation | Out-UDGridData }
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'RDS Licenses' -Endpoint { $CheckXML.RDSLicenseInformation.'Per Device' | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Licenses' -Endpoint { $Cache:CheckXML.CitrixLicenseInformation | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'RDS Licenses' -Endpoint { $Cache:CheckXML.RDSLicenseInformation.'Per Device' | Out-UDGridData }
 					}
 					New-UDLayout -Columns 2  -Content {
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Error Counts' -Endpoint { ($CheckXML.CitrixServerEventLogs.SingleServer | Select-Object ServerName, Errors, Warning) | Out-UDGridData }
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Events Top Events' -Endpoint { ($CheckXML.CitrixServerEventLogs.TotalProvider | Select-Object -First ($CheckXML.CitrixServerEventLogs.SingleServer).count) | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Error Counts' -Endpoint { ($Cache:CheckXML.CitrixServerEventLogs.SingleServer | Select-Object ServerName, Errors, Warning) | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Events Top Events' -Endpoint { ($Cache:CheckXML.CitrixServerEventLogs.TotalProvider | Select-Object -First ($Cache:CheckXML.CitrixServerEventLogs.SingleServer).count) | Out-UDGridData }
 					}
 					New-UDLayout -Columns 2  -Content {
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'StoreFront Site' -Endpoint { $CheckXML.StoreFrontDetails.SiteDetails | Out-UDGridData }
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'StoreFront Server' -Endpoint { $CheckXML.StoreFrontDetails.ServerDetails | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'StoreFront Site' -Endpoint { $Cache:CheckXML.StoreFrontDetails.SiteDetails | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'StoreFront Server' -Endpoint { $Cache:CheckXML.StoreFrontDetails.ServerDetails | Out-UDGridData }
 					}
 					New-UDLayout -Columns 1  -Content {
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Server Performace' -Endpoint { ($CheckXML.ServerPerformance) | Out-UDGridData }
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Delivery Groups' -Endpoint { $CheckXML.CitrixRemoteFarmDetails.DeliveryGroups | Out-UDGridData }
-						New-UDGrid -NoFilter -NoPaging -Title 'Citrix UnRegistered Desktops' -Endpoint { $CheckXML.CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops | Out-UDGridData }
-						New-UDGrid -NoFilter -NoPaging -Title 'Citrix UnRegistered Servers' -Endpoint { $CheckXML.CitrixRemoteFarmDetails.Machines.UnRegisteredServers | Out-UDGridData }
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Tainted Objects' -Endpoint { $CheckXML.CitrixRemoteFarmDetails.ADObjects.TaintedObjects | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Server Performace' -Endpoint { ($Cache:CheckXML.ServerPerformance) | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Delivery Groups' -Endpoint { $Cache:CheckXML.CitrixRemoteFarmDetails.DeliveryGroups | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -Title 'Citrix UnRegistered Desktops' -Endpoint { $Cache:CheckXML.CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -Title 'Citrix UnRegistered Servers' -Endpoint { $Cache:CheckXML.CitrixRemoteFarmDetails.Machines.UnRegisteredServers | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Tainted Objects' -Endpoint { $Cache:CheckXML.CitrixRemoteFarmDetails.ADObjects.TaintedObjects | Out-UDGridData }
 					}
 				}
 			}
 			#endregion
 		}
-}
+	}
 }
 
 
 $DashLive
 
 <#
+		$job = Start-RSJob -ScriptBlock { Initialize-CitrixHealthCheck -XMLParameterFilePath $XMLParameterFilePath } -ModulesToImport (Join-Path (Get-Item $PSScriptRoot).Parent xdhealthcheck.psm1) -VariablesToImport @('ParametersFolder','XMLParameterFilePath', 'XMLParameter')
+		Show-UDToast -Message 'Starting Data Refresh' -MessageSize large -Duration 3
+		do {
+			Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white' } -Persistent -BackgroundColor green
+			Start-Sleep -Seconds 10
+			Hide-UDModal
+
+		}   until( $job.State -notlike 'Running')
+		if ($job.HasErrors) {
+			Show-UDModal -Content {
+				New-UDCard -Endpoint {
+					param($job, $joberror)
+					New-UDParagraph -Text ( $joberror = $job | Select-Object -ExpandProperty error)  -Color 'white'
+					New-UDButton -OnClick { Hide-UDModal } -Text 'OK' -Flat -BackgroundColor green -FontColor white
+			 } -BackgroundColor red -Persistent
+
+		 }
+		}
+		$Cache:CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
+		Sync-UDElement -Id 'xml2' -Broadcast
 
 
 New-UDMuButton -Text "Refresh" -Variant contained -Style @{ backgroundColor = "green"; color = "white" } -onClick {
@@ -82,7 +91,7 @@ New-UDMuButton -Text "Refresh" -Variant contained -Style @{ backgroundColor = "g
 	do {
 		New-UDPreloader -Circular -Size large
 	}   until( $job.State -notlike 'Running')
-	$CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
+	$Cache:CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
 	Sync-UDElement -Id 'xml2' -Broadcast
 
 }

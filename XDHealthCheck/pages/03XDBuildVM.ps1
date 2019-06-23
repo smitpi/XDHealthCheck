@@ -3,8 +3,8 @@ New-UDCollapsible -Items {
 #region Section1
 New-UDCollapsibleItem -Title "Machine Catalogs"  -Endpoint {
 New-UDInput  -Content {
-            $auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
-            $SelectCatalog =  $auditXML.MashineCatalog  | Select-Object MachineCatalogName | ForEach-Object {$_.MachineCatalogName}
+            $Cache:auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
+            $SelectCatalog =  $Cache:auditXML.MashineCatalog  | Select-Object MachineCatalogName | ForEach-Object {$_.MachineCatalogName}
              New-UDInputField -Name machineCatalog -Values @($SelectCatalog) -Type select
          } -Endpoint {param([string]$machineCatalog)
 
@@ -17,8 +17,8 @@ New-UDInput  -Content {
 
 New-UDCollapsibleItem -Title "Delivery Group"  -Endpoint {
 New-UDInput  -Content {
-            $auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
-            $SelectCatalog =  $auditXML.DeliveryGroups | Select-Object DesktopGroupName | ForEach-Object {$_.DesktopGroupName}
+            $Cache:auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
+            $SelectCatalog =  $Cache:auditXML.DeliveryGroups | Select-Object DesktopGroupName | ForEach-Object {$_.DesktopGroupName}
              New-UDInputField -Name DeliveryGroups -Values @($SelectCatalog) -Type select
          } -Endpoint {param([string]$DeliveryGroups)
 
@@ -29,6 +29,6 @@ New-UDInput  -Content {
            }
 }
 
-} 
+}
 } -ArgumentList @("CTXAdmin", "CTXDDC", "CTXStoreFront", "RDSLicensServer", "RDSLicensType", "ReportsFolder", "ParametersFolder", "DashboardTitle", "SaveExcelReport")
 $XDBuildvm

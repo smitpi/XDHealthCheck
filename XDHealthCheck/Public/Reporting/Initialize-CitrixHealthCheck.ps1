@@ -102,6 +102,13 @@ function Initialize-CitrixHealthCheck {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 
 	if ((Test-Path -Path $ReportsFolder\XDHealth) -eq $false) { New-Item -Path "$ReportsFolder\XDHealth" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+
+	if ([bool]$RemoveOldReports) {
+		$oldReports = (Get-Date).AddDays(-$RemoveOldReports)
+		Get-ChildItem $ReportsFolder\XDHealth *.html | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+		Get-ChildItem $ReportsFolder\XDHealth *.xlsx | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+		Get-ChildItem $ReportsFolder\logs\XDHealth_TransmissionLogs* | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+	}
 	[string]$Reportname = $ReportsFolder + "\XDHealth\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 	[string]$XMLExport = $ReportsFolder + "\XDHealth\XD_Healthcheck.xml"
 	[string]$ExcelReportname = $ReportsFolder + "\XDHealth\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
@@ -194,6 +201,7 @@ function Initialize-CitrixHealthCheck {
 	########################################
 	#region Setting some table color and settings
 	########################################
+
 	$TableSettings = @{
 		#Style          = 'stripe'
 		Style          = 'cell-border'
@@ -203,18 +211,18 @@ function Initialize-CitrixHealthCheck {
 	}
 
 	$SectionSettings = @{
-		HeaderBackGroundColor = 'white'
-		HeaderTextAlignment   = 'center'
-		HeaderTextColor       = 'red'
 		BackgroundColor       = 'white'
 		CanCollapse           = $true
+		HeaderBackGroundColor = 'white'
+		HeaderTextAlignment   = 'center'
+		HeaderTextColor       = $HeaderColor
 	}
 
 	$TableSectionSettings = @{
-		HeaderTextColor       = 'white'
-		HeaderTextAlignment   = 'center'
-		HeaderBackGroundColor = 'red'
 		BackgroundColor       = 'white'
+		HeaderBackGroundColor = $HeaderColor
+		HeaderTextAlignment   = 'center'
+		HeaderTextColor       = 'white'
 	}
 	#endregion
 

@@ -106,6 +106,13 @@ function Install-XDHealthCheckParameter {
 		$ReportsFolder = Read-Host 'Path to the Reports Folder'
 		$ParametersFolder = Read-Host 'Path to where the Parameters.xml will be saved'
 		$DashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'
+
+		[System.Collections.ArrayList]$rbgcolor = @("AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenrod", "DarkGray", "DarkGreen", "DarkGrey", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "Goldenrod", "Gray", "Green", "GreenYellow", "Grey", "Honeydew", "HotPink", "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenrodYellow", "LightGray", "LightGreen", "LightGrey", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquamarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenrod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "Seashell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen")
+
+		Write-Color ($rbgcolor | Join-String -Separator '","') -Color Green
+		While ($rbgcolor.Contains($HeaderColor) -eq $false) {
+			$HeaderColor = Read-Host 'Reports Header Color'
+		}
 		$RemoveOldReports = Read-Host 'Remove Reports older than (in days)'
 
 		Write-Color -Text 'Save reports to an excel report' -Color DarkGray -LinesAfter 1
@@ -154,33 +161,34 @@ function Install-XDHealthCheckParameter {
 			}
 		}
 		$AllXDData = New-Object PSObject -Property @{
-			DateCollected    = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-			CTXDDC           =	$CTXDDC
-			CTXStoreFront    =	$CTXStoreFront
-			RDSLicensServer  =	$RDSLicensServer
-			RDSLicensType    =	$RDSLicensType
-			TrustedDomains   =  $trusteddomains
-			ReportsFolder    =	$ReportsFolder
+			DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+			CTXDDC =	$CTXDDC
+			CTXStoreFront =	$CTXStoreFront
+			RDSLicensServer =	$RDSLicensServer
+			RDSLicensType =	$RDSLicensType
+			TrustedDomains = $trusteddomains
+			ReportsFolder =	$ReportsFolder
 			ParametersFolder =	$ParametersFolder
-			DashboardTitle   =	$DashboardTitle
-			SaveExcelReport  =	$SaveExcelReport
-			SendEmail        =	$SendEmail
-			EmailFrom        =  $FromAddress
-			EmailTo          =  $ToAddress
-			SMTPServer       =	$smtpServer
-            SMTPServerPort   =  $smtpServerPort
-            SMTPEnableSSL    =  $smtpEnableSSL
-		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicensServer , RDSLicensType, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, SaveExcelReport , SendEmail , emailFrom , emailTo , smtpServer , smtpServerPort , smtpEnableSSL
+			DashboardTitle =	$DashboardTitle
+			HeaderColor = $HeaderColor
+			RemoveOldReports = $RemoveOldReports
+			SaveExcelReport =	$SaveExcelReport
+			SendEmail =	$SendEmail
+			EmailFrom = $FromAddress
+			EmailTo = $ToAddress
+			SMTPServer =	$smtpServer
+			SMTPServerPort = $smtpServerPort
+			SMTPEnableSSL = $smtpEnableSSL
+		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicensServer , RDSLicensType, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, HeaderColor, RemoveOldReports, SaveExcelReport , SendEmail , emailFrom , emailTo , smtpServer , smtpServerPort , smtpEnableSSL
 
         if (Test-Path -Path "$ParametersFolder\Parameters.xml") { Remove-Item "$ParametersFolder\Parameters.xml" -Force -Verbose }
 		$AllXDData | Export-Clixml -Path "$ParametersFolder\Parameters.xml" -Depth 3 -NoClobber -Force
 
 		$Global:PSParameters = $ParametersFolder + "\Parameters.xml"
 		[System.Environment]::SetEnvironmentVariable('PSParameters', $PSParameters, [System.EnvironmentVariableTarget]::User)
-
-
-
     }
+
+
 
 	function Test-Parameter {
 

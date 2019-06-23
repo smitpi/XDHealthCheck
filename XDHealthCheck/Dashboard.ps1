@@ -49,7 +49,7 @@ PARAM(
 	[Parameter(Mandatory = $false, Position = 0)]
 	[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
 	[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml"
-    )
+)
 
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 ##########################################
@@ -92,10 +92,15 @@ Write-Colour "Citrix Admin Credentials: ", $CTXAdmin.UserName -ShowTime -Color y
 ########################################
 ## build pages
 #########################################
+# $XMLParameter.PSObject.Properties | ForEach-Object { $_.Name } | Join-String -Separator '","'
 
 $ConfigurationFile = Get-Content (Join-Path $PSScriptRoot dbconfig.json) | ConvertFrom-Json
 Try { Import-Module (Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -ErrorAction Stop }
 Catch {	Write-Warning "Valid function module not found"; }
+
+[System.Collections.ArrayList]$AllVariable += $XMLParameter.PSObject.Properties | ForEach-Object { $_.Name }
+$AllVariable.Add('XMLParameterFilePath')
+$AllVariable.Add('XMLParameter')
 
 . (Join-Path $PSScriptRoot "themes\*.ps1")
 
@@ -112,12 +117,13 @@ $Navigation = New-UDSideNav -Content {
 	New-UDSideNavItem -Text "Config Audit" -PageName "Audit Results" -Icon folder_open
 	New-UDSideNavItem -Text "User Details" -PageName "User Details" -Icon user
 	New-UDSideNavItem -Text "Build Machines" -PageName "Build Machines" -Icon server
-    New-UDSideNavItem -Text "PowerShell Repository" -PageName "PowerShell Repository" -Icon paper_plane
+	New-UDSideNavItem -Text "PowerShell Repository" -PageName "PowerShell Repository" -Icon paper_plane
 	New-UDSideNavItem -Divider
-    New-UDSideNavItem -Text "Live Health Check" -PageName "Live Health Check" -Icon address_book
+	New-UDSideNavItem -Text "Live Health Check" -PageName "Live Health Check" -Icon address_book
+	New-UDSideNavItem -Text "Live Audit Results" -PageName "Live Audit Results" -Icon folder
 	New-UDSideNavItem -Divider
-    New-UDSideNavItem -SubHeader -Text 'Support Sites'
-    New-UDSideNavItem -Text "Citrix Director" -Url 'https://director.absacorp.com' -Icon cloud
+	New-UDSideNavItem -SubHeader -Text 'Support Sites'
+	New-UDSideNavItem -Text "Citrix Director" -Url 'https://director.absacorp.com' -Icon cloud
 	New-UDSideNavItem -Text "Africa Access" -Url 'https://africaaccess.absacorp.com' -Icon lock_open
 	New-UDSideNavItem -Text "ABSA Workspace" -Url 'https://workspace.absacorp.com' -Icon page4
 	New-UDSideNavItem -Text "Google" -Url 'https://www.google.com' -Icon cloud
@@ -126,19 +132,19 @@ $Navigation = New-UDSideNav -Content {
 
 $footer = New-UDFooter -Copyright "Designed by Pierre Smit for $DashboardTitle"
 
-$Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @($XMLParameter.PSObject.Properties | ForEach-Object { $_.Name })
+$Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @($AllVariable)
 
 $DashboardParams = @{
 	Title                  = $UDTitle
 	Theme                  = $Othertheme
 	Pages                  = $Pages
 	EndpointInitialization = $Initialization
-	Navigation 			   = $Navigation
-	footer 				   = $footer
+	Navigation             = $Navigation
+	footer                 = $footer
 }
 
 $MyDashboard = New-UDDashboard @DashboardParams
 
-  Get-UDDashboard | Stop-UDDashboard
+Get-UDDashboard | Stop-UDDashboard
 Start-UDDashboard -Port $ConfigurationFile.dashboard.port -Dashboard $MyDashboard -Name $UDTitle
 Start-Process http://localhost:8095

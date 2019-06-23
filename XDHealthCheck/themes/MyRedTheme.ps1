@@ -44,11 +44,11 @@ $OtherTheme = New-UDTheme -Name "OtherTheme" -Definition @{
 		FontColor       = "rgb(0, 0, 0)"
 	}
 	UDNavBar     = @{
-		BackgroundColor = "rgb(2, 198, 247)"
+		BackgroundColor = $HeaderColor
 		FontColor       = "rgb(0, 0, 0)"
 	}
 	UDFooter     = @{
-		BackgroundColor = "rgb(2, 198, 247)"
+		BackgroundColor = $HeaderColor
 		FontColor       = "rgb(0, 0, 0)"
 	}
 	UDCard       = @{

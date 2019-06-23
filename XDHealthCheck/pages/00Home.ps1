@@ -2,8 +2,8 @@ $homepage = New-UDPage -Name "Home" -Icon home -DefaultHomePage -Content {
 	New-UDMuPaper -Content { New-UDHeading -Text 'Welcome to XenDesktop Dashboard' -Size 3 } -Elevation 4
 
 	New-UDCard -BackgroundColor "#e5e5e5" -Endpoint {
-	$CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
-			$LastRunXML = $CheckXML.DateCollected.split("_")
+	$Cache:CheckXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDHealth\*.xml)
+			$LastRunXML = $Cache:CheckXML.DateCollected.split("_")
 			$Dayxml = $LastRunXML[0].Split("-")[0]
 			$Monthxml = $LastRunXML[0].Split("-")[1]
 			$yearxml = $LastRunXML[0].Split("-")[2]
@@ -14,18 +14,18 @@ $homepage = New-UDPage -Name "Home" -Icon home -DefaultHomePage -Content {
 			New-UDLayout -Columns 2 -Content {
 
 				New-UDTable -Title "Site Information" -Headers @(" ", " ") -Endpoint {
-					$CheckXML.CitrixRemoteFarmDetails.SiteDetails.Summary.psobject.Properties | Select-Object -Property Name, Value | Out-UDTableData -Property @("Name", "Value")
+					$Cache:CheckXML.CitrixRemoteFarmDetails.SiteDetails.Summary.psobject.Properties | Select-Object -Property Name, Value | Out-UDTableData -Property @("Name", "Value")
 				}
-				New-UDTable -Title 'Red Flags' -Headers @("#", "Discription") -Endpoint { $CheckXML.Redflags | Out-UDTableData -Property  @("#", "Discription")
+				New-UDTable -Title 'Red Flags' -Headers @("#", "Discription") -Endpoint { $Cache:CheckXML.Redflags | Out-UDTableData -Property  @("#", "Discription")
 				}
 
 			}
-		
+
 	}
 
 }
 $homepage
-#-Text ("Data Collected at: " + $CheckXML.DateCollected.ToString())
+#-Text ("Data Collected at: " + $Cache:CheckXML.DateCollected.ToString())
 <#
  #
  New-UDGrid -Title "Processes" -Headers @("Process Name", "Id", "View Modules") -Properties @("Name", "Id", "ViewModules") -Endpoint {
