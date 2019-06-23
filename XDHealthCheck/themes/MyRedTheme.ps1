@@ -38,6 +38,46 @@ $MyRedTheme = New-UDTheme -Name "MyRedTheme" -Definition @{
 
 }
 
+$OtherTheme = New-UDTheme -Name "OtherTheme" -Definition @{
+	UDDashboard  = @{
+		BackgroundColor = "rgb(229, 229, 229)"
+		FontColor       = "rgb(0, 0, 0)"
+	}
+	UDNavBar     = @{
+		BackgroundColor = "rgb(2, 198, 247)"
+		FontColor       = "rgb(0, 0, 0)"
+	}
+	UDFooter     = @{
+		BackgroundColor = "rgb(2, 198, 247)"
+		FontColor       = "rgb(0, 0, 0)"
+	}
+	UDCard       = @{
+		BackgroundColor = '#ffffff'
+		FontColor       = "rgb(0, 0, 0)"
+	}
+	UDInput      = @{
+		BackgroundColor = '#ffffff'
+		FontColor       = "rgb(0, 0, 0)"
+	}
+	UDTable      = @{
+		BackgroundColor = '#ffffff'
+		FontColor       = "rgb(0, 0, 0)"
+	}
+	UDGrid       = @{
+		BackgroundColor = '#ffffff'
+		FontColor       = "rgb(0, 0, 0)"
+	}
+	'.btn'       = @{
+		'color'            = "#65e251"
+		'background-color' = "#FFFFFF"
+	}
+	'.btn:hover' = @{
+		'color'            = '#327a27'
+		'background-color' = "#FFFFFF"
+	}
+
+}
+
 
 $SampleTheme = New-UDTheme -Name 'SampleTheme' -Definition @{
 	UDDashboard  = @{

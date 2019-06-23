@@ -182,7 +182,7 @@ function Initialize-CitrixHealthCheck {
 		CitrixLicenseInformation   = $CitrixLicenseInformation
 		CitrixRemoteFarmDetails    = $CitrixRemoteFarmDetails
 		CitrixServerEventLogs      = $CitrixServerEventLogs
-		RDSLicenseInformation      = $RDSLicenseInformation
+		RDSLicenseInformation      = $RDSLicenseInformation | Select-Object TypeAndModel,ProductVersion,TotalLicenses,IssuedLicenses,AvailableLicenses
 		CitrixConfigurationChanges = $CitrixConfigurationChanges
 		StoreFrontDetails          = $StoreFrontDetails
 		ServerPerformance          = $ServerPerformance

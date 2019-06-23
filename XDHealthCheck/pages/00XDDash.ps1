@@ -1,6 +1,6 @@
 $XDDashPage = New-UDPage -Name "Health Check" -Icon medkit -Content {
 	New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
-		$job = Start-RSJob -ScriptBlock { Initialize-CitrixHealthCheck -XMLParameterFilePath  $args[0] -Verbose } -ArgumentList @(((Get-Item $profile).DirectoryName + "\Parameters.xml")) -ModulesToImport @('XDHealthCheck') -FunctionFilesToImport "..\XDHealthCheck.psm1" 
+		$job = Start-RSJob -ScriptBlock { Initialize-CitrixHealthCheck -XMLParameterFilePath  $args[0] -Verbose } -ArgumentList @(((Get-Item $profile).DirectoryName + "\Parameters.xml")) -ModulesToImport @('XDHealthCheck') -FunctionFilesToImport "..\XDHealthCheck.psm1"
 		do {
 			Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white' } -Persistent -BackgroundColor green
 			Start-Sleep -Seconds 10
@@ -31,7 +31,7 @@ New-UDCollapsibleItem -BackgroundColor '#E5E5E5'  -Title 'Red Flags' -Content {
 		param ($HealthXML)
 		$HealthXML = Import-Clixml (Get-ChildItem $reportsfolder\XDHealth\*.xml)
 		New-UDLayout -Columns 1 -Content {
-			New-UDGrid -Title 'Red Flags' -BackgroundColor whi  -NoPaging -NoFilter -Endpoint { $HealthXML.Redflags | Out-UDGridData } }
+			New-UDGrid -Title 'Red Flags'  -NoPaging -NoFilter -Endpoint { $HealthXML.Redflags | Out-UDGridData } }
 	}
 } -Active
 #region Section1

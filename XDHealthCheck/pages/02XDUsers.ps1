@@ -1,16 +1,16 @@
 $XDUserPage = New-UDPage -Name "User Details" -Icon user -Content {
 New-UDCollapsible -Items {
 #region Section1
-New-UDCollapsibleItem  -Endpoint {
+		New-UDCollapsibleItem -BackgroundColor '#E5E5E5'  -Endpoint {
 			New-UDInput -Content {
 				New-UDInputField -Name 'Username' -Type textbox -Placeholder 'Username'
-				New-UDInputField -Name 'UserDomain' -Values @($TrustedDomains | ForEach-Object {$_.fqdn}) -Type select  -Placeholder 'UserDomain'
+				New-UDInputField -Name 'UserDomain' -Values @($TrustedDomains | ForEach-Object {$_.fqdn}) -Type select
 			} -Endpoint {
-				param([string]$Username, $UserDomain)
+				param($Username, $UserDomain)
 
 		New-UDInputAction -Content @(
 		$domaincreds = $TrustedDomains | Where-Object { $_.fqdn -like $UserDomain }
-	    $validuser = Get-FullUserDetail -UserToQuery $username  -DomainFQDN $UserDomain -DomainCredentials $domaincreds.Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC -PSRemoteCredentials $CTXAdmin
+	    $validuser = Get-FullUserDetail -UserToQuery $username  -DomainFQDN $domaincreds.fqdn -DomainCredentials $domaincreds.Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC -PSRemoteCredentials $CTXAdmin
 	    $UserDetail = $validuser.UserSummery.psobject.Properties | Select-Object -Property Name, Value
 
 	    New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center
@@ -30,13 +30,13 @@ New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
 	New-UDInput -Title "Compare Users" -Content {
 		New-UDInputField -Name 'Username1' -Type textbox -Placeholder 'Username1'
 		New-UDInputField -Name 'Username2' -Type textbox -Placeholder 'Username2'
-        New-UDInputField -Name 'UserDomain' -Values @($TrustedDomains | ForEach-Object {$_.fqdn}) -Type select -Placeholder 'UserDomain'
+        New-UDInputField -Name 'UserDomain' -Values @($TrustedDomains | ForEach-Object {$_.fqdn}) -Type select
 	} -Endpoint {
 		param(
 			[string]$Username1,[string]$Username2,$UserDomain)
 
 		$domaincreds = $TrustedDomains | Where-Object { $_.fqdn -like $UserDomain }
-		$compareUsers = Compare-ADUser -Username1 $Username1 -Username2 $Username2 -DomainFQDN $UserDomain -DomainCredentials $domaincreds.Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC -PSRemoteCredentials $CTXAdmin -Verbose
+		$compareUsers = Compare-ADUser -Username1 $Username1 -Username2 $Username2 -DomainFQDN $domaincreds.fqdn -DomainCredentials $domaincreds.Credentials -RunAsPSRemote -PSRemoteServerName $CTXDDC -PSRemoteCredentials $CTXAdmin -Verbose
 
 		New-UDInputAction -Content  @(
 			New-UDCard -Text (Get-Date -DisplayHint DateTime).ToString()-TextSize Medium -TextAlignment center

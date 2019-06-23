@@ -112,7 +112,7 @@ $Navigation = New-UDSideNav -Content {
 	New-UDSideNavItem -Text "Config Audit" -PageName "Audit Results" -Icon folder_open
 	New-UDSideNavItem -Text "User Details" -PageName "User Details" -Icon user
 	New-UDSideNavItem -Text "Build Machines" -PageName "Build Machines" -Icon server
-    New-UDSideNavItem -Text "PowerShell Repository" -PageName "PowerShell Repository" -Icon paper_plane 
+    New-UDSideNavItem -Text "PowerShell Repository" -PageName "PowerShell Repository" -Icon paper_plane
 	New-UDSideNavItem -Divider
     New-UDSideNavItem -Text "Live Health Check" -PageName "Live Health Check" -Icon address_book
 	New-UDSideNavItem -Divider
@@ -124,13 +124,13 @@ $Navigation = New-UDSideNav -Content {
 
 }
 
-$footer = New-UDFooter -Copyright 'Designed by Pierre Smit for Absa EUV'
+$footer = New-UDFooter -Copyright "Designed by Pierre Smit for $DashboardTitle"
 
 $Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @($XMLParameter.PSObject.Properties | ForEach-Object { $_.Name })
 
 $DashboardParams = @{
 	Title                  = $UDTitle
-	Theme                  = $Myredtheme
+	Theme                  = $Othertheme
 	Pages                  = $Pages
 	EndpointInitialization = $Initialization
 	Navigation 			   = $Navigation
