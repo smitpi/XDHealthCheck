@@ -1,26 +1,23 @@
-$PSRepository = New-UDPage -Name "PowerShell Repository" -Icon paper_plane -Content {
+$PSRepository = New-UDPage -Name "PowerShell Repository" -Icon columns -Content {
 New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
-$PSUpdate = Start-RSJob -ScriptBlock {
     $repository = Get-PSRepository | Where-Object {$_.Name -notlike 'PSGallery'}
-    $psrep = New-Object PSObject -Property @{
+    $Cache:psrep = New-Object PSObject -Property @{
         DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-        ResultScript  = Find-script -Repository $repository.Name | Select-Object -Property Name, Type, Author, Description
-        ResultModule  = Find-Module -Repository $repository.Name  | Select-Object -Property Name, Type, Author, Description
+        ResultScript  = Find-script -Repository $repository.Name | Select-Object -Property Name, Version, Author,tags, Description
+        ResultModule  = Find-Module -Repository $repository.Name  | Select-Object -Property Name, Version, Author,tags, Description
       } | Select-Object DateCollected,ResultScript,ResultModule
 
        $PSXML = "$ReportsFolder\PSRepository.xml"
         if (Test-Path -Path $PSXML) { Remove-Item $PSXML -Force -Verbose }
-	    $psrep | Export-Clixml -Path $PSXML -Depth 25 -NoClobber -Force
-}
+	   $Cache:psrep| Export-Clixml -Path $PSXML -Depth 25 -NoClobber -Force
+
 		do {
             Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white'} -Persistent -BackgroundColor green
 			Start-Sleep -Seconds 10
 			Hide-UDModal
 }   until( $PSUpdate.State -notlike 'Running')
 
-
 }
-
 New-UDMuPaper -Content { New-UDHeading -Text 'Powershell Repository' -Size 3 } -Elevation 4
 
 New-UDCollapsible -Items {
@@ -34,7 +31,7 @@ New-UDCollapsibleItem -Id 'PSScript'-Content {
 
                 }
     }
-} -Title '    PowerShell Scripts' -Icon arrow_right
+} -Title '    PowerShell Scripts'
 
 New-UDCollapsibleItem -Id 'PSModule'-Content {
     New-UDLayout -Columns 1 -Content {
@@ -46,7 +43,26 @@ New-UDCollapsibleItem -Id 'PSModule'-Content {
 
                 }
     }
-} -Title '    PowerShell Modules' -Icon arrow_right
+} -Title '    PowerShell Modules'
+
+New-UDCollapsibleItem -Id 'process' -Content {
+New-UDGrid -Title "Processes" -Headers @("Process Name", "Id", "View Modules") -Properties @("Name", "Id", "ViewModules") -Endpoint {
+             Get-Process | ForEach-Object {
+                  [PSCustomObject]@{
+                       Name = $_.Name
+                       Id = $_.Id
+                       ViewModules = New-UDButton -Text "View Modules" -OnClick (New-UDEndpoint -Endpoint {
+                           Show-UDModal -Content {
+                              New-UDTable -Title "Modules" -Headers @("Name", "Path") -Content {
+                                    $ArgumentList[0] | Out-UDTableData -Property @("ModuleName", "FileName")
+                              }
+                           }
+                       } -ArgumentList $_.Modules)
+                  }
+              } | Out-UDGridData
+              }
+
+}
 }
 }
 

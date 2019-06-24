@@ -1,4 +1,4 @@
-$DashLive = New-UDPage -Name "Live Health Check" -Icon address_book -Content {
+$DashLive = New-UDPage -Name "Live Health Check" -Icon medkit -Content {
 	New-UDMuPaper -Content { New-UDHeading -Text 'XenDesktop Health Check' -Size 3 } -Elevation 4
 	New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
 		Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white' } -Persistent -BackgroundColor green
@@ -35,7 +35,7 @@ $DashLive = New-UDPage -Name "Live Health Check" -Icon address_book -Content {
 					}
 					New-UDLayout -Columns 2  -Content {
 						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Licenses' -Endpoint { $Cache:CheckXML.CitrixLicenseInformation | Out-UDGridData }
-						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'RDS Licenses' -Endpoint { $Cache:CheckXML.RDSLicenseInformation.'Per Device' | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'RDS Licenses' -Endpoint { $Cache:CheckXML.RDSLicenseInformation | Out-UDGridData }
 					}
 					New-UDLayout -Columns 2  -Content {
 						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Error Counts' -Endpoint { ($Cache:CheckXML.CitrixServerEventLogs.SingleServer | Select-Object ServerName, Errors, Warning) | Out-UDGridData }
@@ -48,8 +48,8 @@ $DashLive = New-UDPage -Name "Live Health Check" -Icon address_book -Content {
 					New-UDLayout -Columns 1  -Content {
 						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Server Performace' -Endpoint { ($Cache:CheckXML.ServerPerformance) | Out-UDGridData }
 						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Delivery Groups' -Endpoint { $Cache:CheckXML.CitrixRemoteFarmDetails.DeliveryGroups | Out-UDGridData }
+						New-UDGrid -NoFilter -NoPaging -Title 'Citrix UnRegistered Servers' -Endpoint { $Cache:CheckXML.CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops | Out-UDGridData }
 						New-UDGrid -NoFilter -NoPaging -Title 'Citrix UnRegistered Desktops' -Endpoint { $Cache:CheckXML.CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops | Out-UDGridData }
-						New-UDGrid -NoFilter -NoPaging -Title 'Citrix UnRegistered Servers' -Endpoint { $Cache:CheckXML.CitrixRemoteFarmDetails.Machines.UnRegisteredServers | Out-UDGridData }
 						New-UDGrid -NoFilter -NoPaging -PageSize 25 -Title 'Citrix Tainted Objects' -Endpoint { $Cache:CheckXML.CitrixRemoteFarmDetails.ADObjects.TaintedObjects | Out-UDGridData }
 					}
 				}

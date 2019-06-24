@@ -5,7 +5,7 @@ New-UDCollapsible -Items {
 			New-UDInput -Content {
 				[System.Collections.ArrayList]$DomainList = @()
 				$DomainList = $TrustedDomains | ForEach-Object { $_.fqdn }
-				$DomainList.Insert(0, " ")
+				$DomainList.Insert(0, "Select a Domain")
 
 				New-UDInputField -Name 'Username' -Type textbox -Placeholder 'User ID'
 				New-UDInputField -Name 'UserDomain' -Values @($DomainList) -Type select -Placeholder 'User Domain'
@@ -33,7 +33,7 @@ New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
 			New-UDInput -Title "Compare Users" -Content {
 				[System.Collections.ArrayList]$DomainList = @()
 				$DomainList = $TrustedDomains | ForEach-Object { $_.fqdn }
-				$DomainList.Insert(0, " ")
+				$DomainList.Insert(0, "Select a Domain")
 				New-UDInputField -Name 'Username1' -Type textbox -Placeholder 'First User ID'
 				New-UDInputField -Name 'Username2' -Type textbox -Placeholder 'Second User ID'
 				New-UDInputField -Name 'UserDomain' -Values @($DomainList) -Type select -Placeholder 'User Domain'
@@ -68,7 +68,7 @@ New-UDCollapsibleItem -BackgroundColor '#E5E5E5' -Endpoint {
 			New-UDInput -Content {
 				[System.Collections.ArrayList]$DomainList = @()
 				$DomainList = $TrustedDomains | ForEach-Object { $_.fqdn }
-				$DomainList.Insert(0, " ")
+				$DomainList.Insert(0, "Select a Domain")
 				New-UDInputField -Name 'Username' -Type textbox -Placeholder 'User ID'
 				New-UDInputField -Name 'UserDomain' -Values @($DomainList) -Type select -Placeholder 'User Domain'
 			} -Endpoint {

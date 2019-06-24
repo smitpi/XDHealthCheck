@@ -30,13 +30,13 @@
     .NOTES
         Title:      Get-FarmReport
         Author:     Floris van der Ploeg
-        Created:    2018-11-14		
+        Created:    2018-11-14
         ChangeLog:
             2018-11-14 - Initial version
             2018-11-27 - Fixed hotfixes header formatting and missing information (machine name, change type)
 #>
 
-function Invoke-FarmDocumentation {
+function Get-CitrixFarmDocumentation {
 [CmdletBinding()]
 Param (
     [Parameter(Mandatory=$true)][string]$DeliveryController,
@@ -46,8 +46,8 @@ Param (
 )
 
 <# Global variables #>
-$Global:ScriptPath  = Split-Path $MyInvocation.MyCommand.Path -Parent
-$Global:ScriptName  = Split-Path $MyInvocation.MyCommand.Path -Leaf
+#$Global:ScriptPath  = Split-Path $MyInvocation.MyCommand.Path -Parent
+#$Global:ScriptName  = Split-Path $MyInvocation.MyCommand.Path -Leaf
 $Global:URLSuffix   = "/Citrix/Monitor/OData/v2/Data"
 $Global:cache       = New-Object -TypeName System.Net.CredentialCache
 $Global:WordObject  = $null
@@ -159,7 +159,7 @@ Function Invoke-ODataRequest {
         [Parameter(Mandatory=$true)][string]$Table,
         [Parameter(Mandatory=$false)][string]$TableFilter = "",
         [Parameter(Mandatory=$false)][string]$SubObject = $null,
-        [Parameter(Mandatory=$false)][HashTable]$ArgumentList        
+        [Parameter(Mandatory=$false)][HashTable]$ArgumentList
     )
 
     # Create the return object
@@ -237,7 +237,7 @@ Function New-Table {
     foreach ($column in $Columns) {
         $tbl_object.Columns.Add($column) | Out-Null
     }
-    
+
     return ,$tbl_object
 }
 
@@ -427,7 +427,7 @@ Function Save-Report {
         [Parameter(Mandatory=$true)][string]$Path,
         [Parameter(Mandatory=$true)][ValidateSet("DOCX","PDF","HTML")][string]$ReportType
     )
-    
+
     if ($ReportType -eq "DOCX") {
         $Global:DocObject.SaveAs([ref]$Path, [ref][Microsoft.Office.Interop.Word.WdSaveFormat]::wdFormatDocumentDefault)
     } elseif ($ReportType -eq "PDF") {
@@ -477,7 +477,7 @@ Function Add-ReportTable {
         [Parameter(Mandatory=$false)][string[]]$ExcludeColumns = $null,
         [Parameter(Mandatory=$false)][string[]]$IncludeColumns = $null
     )
-    
+
     if ($PSCmdlet.ParameterSetName -eq "AsTable") {
         # Calculate row and column count
         if ($Table.Rows.Count -gt 0) {
@@ -1132,7 +1132,7 @@ if ($connection.Status -eq $true) {
 
     # Insert the header
     Add-ReportHeader -Name "Machines" -ReportType $exportextension -Style $Styles[$formattingextension]["HeaderStyle"]
-    
+
     $machinesreport = New-Table -Columns "Id","Sid","Name","Domain","DNS Name","IP Address","HostedMachineId","Hosting Server Name","Hosted Machine Name","Assigned","Maintenance Mode Enabled","Pending Update","Agent Version","Associated User Fullnames","Associated Usernames","Associated User UPNs","Registration State","Registration State Last Changed","Last Deregistered Code","Last Deregistered","Current Powerstate","Controller DNS Name","Powered On","Powerstate Last Changed","Functional Level","Last Failure","Windows Connection Setting","Preparing","Fault State","Operating System","Current Load Index","Machine Catalog","Desktop Group","Hypervisor","Machine Role","Created","Last Modified"
     foreach ($item in $machines.Select("LifecycleState = 0 OR LifecycleState = 2")) {
         $row = $machinesreport.NewRow()
@@ -1199,7 +1199,7 @@ if ($connection.Status -eq $true) {
     Add-ReportTable -Table $machinesreport -ReportType $exportextension -IncludeColumns "Name","DNS Name","IP Address","Registration State","Machine Catalog","Desktop Group","Agent Version","Operating System"  -NoRecordsText "No Machines found"
 
     Add-PageBreak -ReportType $exportextension
-    
+
     # Set the page orientation to portrait
     Set-PageOrientation -ReportType $exportextension -Orientation Portrait
 
@@ -1210,7 +1210,7 @@ if ($connection.Status -eq $true) {
 
     # Insert the header
     Add-ReportHeader -Name "Applications" -ReportType $exportextension -Style $Styles[$formattingextension]["HeaderStyle"]
-    
+
     $applicationsreport = New-Table -Columns "Id","Folder","Browser Name","Display Name","Application Type","Enabled","Date Created","Date Modified","Desktop Groups"
     foreach ($item in $applications.Select("LifecycleState = 0 OR LifecycleState = 2")) {
         $row = $applicationsreport.NewRow()
@@ -1246,13 +1246,13 @@ if ($connection.Status -eq $true) {
 
     # Sort the table
     $applicationsreport = Sort-Table -Table $applicationsreport -SortColumn "Folder"
-    
+
     # Add list of applications
     Add-ReportTable -Table $applicationsreport -ReportType $exportextension -IncludeColumns "Folder","Display Name","Enabled" -NoRecordsText "No Applications found"
 
     # Add each application details
     Add-ReportHeader -Name "Application Details" -ReportType $exportextension -Style $Styles[$formattingextension]["SubHeaderStyle"]
-    
+
     # Sort the applications based on name
     $applicationsreport = Sort-Table -Table $applicationsreport -SortColumn "Display Name"
     foreach ($item in $applicationsreport.Rows) {
@@ -1270,7 +1270,7 @@ if ($connection.Status -eq $true) {
 
     # Insert the header
     Add-ReportHeader -Name "Hotfixes" -ReportType $exportextension -Style $Styles[$formattingextension]["HeaderStyle"]
-    
+
     $hotfixesreport = New-Table -Columns "Id","Name","Article URL","Article Name","File Name","File Format","Version","Component Name","Component Version","Date Created","Date Modified"
     foreach ($item in $hotfixes.Rows) {
         $row = $hotfixesreport.NewRow()
@@ -1340,7 +1340,7 @@ if ($connection.Status -eq $true) {
 
     # Insert the header
     Add-ReportHeader -Name "Appendix" -ReportType $exportextension -Style $Styles[$formattingextension]["HeaderStyle"]
-    
+
     $appendix = @{
         "Allocation Types" = $AllocationType;
         "Application Types" = $ApplicationType;
@@ -1377,13 +1377,13 @@ if ($connection.Status -eq $true) {
 
     # Save the report
     Write-Log -Value "Saving report to $Path" -Color Green
-    Save-Report -Path $Path -ReportType $exportextension    
+    Save-Report -Path $Path -ReportType $exportextension
 
     # Cleanup
     Write-Log -Value "Cleaning up environment" -Color Yellow
 
     if ($exportextension -eq "DOCX" -or $exportextension -eq "PDF") {
-        # Quit word 
+        # Quit word
         $WordObject.Quit()
     }
 

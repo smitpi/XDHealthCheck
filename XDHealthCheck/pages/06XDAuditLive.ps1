@@ -1,5 +1,5 @@
 #region Page2
-$XDAuditPagelive = New-UDPage -Name "Live Audit Results" -Icon folder -Content {
+$XDAuditPagelive = New-UDPage -Name "Live Audit Results" -Icon folder_open -Content {
 	New-UDMuPaper -Content { New-UDHeading -Text 'XenDesktop Audit Results' -Size 3 } -Elevation 4
 	New-UDButton -Text "Refresh" -Icon cloud -IconAlignment left -onClick {
 		Show-UDModal -Content { New-UDHeading -Text "Refreshing your data"  -Color 'white' } -Persistent -BackgroundColor green
@@ -45,7 +45,7 @@ $XDAuditPagelive = New-UDPage -Name "Live Audit Results" -Icon folder -Content {
 				$Cache:auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
 				[System.Collections.ArrayList]$SelectCatalog = @()
 				$SelectCatalog = $Cache:auditXML.MashineCatalog | Select-Object MachineCatalogName | ForEach-Object { $_.MachineCatalogName }
-				$SelectCatalog.Insert(0, " ")
+				$SelectCatalog.Insert(0, "Select a Mashine Catalog")
 				New-UDInputField -Name machineCatalog -Values @($SelectCatalog) -Type select -Placeholder "Machine Catalog"
 			} -Endpoint {
 				param(
@@ -67,7 +67,7 @@ $XDAuditPagelive = New-UDPage -Name "Live Audit Results" -Icon folder -Content {
 				$Cache:auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
 				[System.Collections.ArrayList]$SelecGroup = @()
 				$SelecGroup = $Cache:auditXML.DeliveryGroups | Select-Object DesktopGroupName | ForEach-Object { $_.DesktopGroupName }
-				$SelecGroup.Insert(0, " ")
+				$SelecGroup.Insert(0, "Select a Delivery Groups")
 				New-UDInputField -Name DeliveryGroups -Values @($SelecGroup) -Type select -Placeholder "Delivery Groups"
 			} -Endpoint {
 				param(
@@ -90,7 +90,7 @@ $XDAuditPagelive = New-UDPage -Name "Live Audit Results" -Icon folder -Content {
 				$Cache:auditXML = Import-Clixml (Get-ChildItem $ReportsFolder\XDAudit\*.xml)
 				[System.Collections.ArrayList]$SelectApp = @()
 				$SelectApp = $Cache:auditXML.PublishedApps | Select-Object PublishedName | ForEach-Object { $_.PublishedName }
-				$SelectApp.Insert(0, " ")
+				$SelectApp.Insert(0, "Select a Published Application")
 
 				#$AppUnique = $SelectApp | sort -Unique
 				New-UDInputField -Name PubApp -Values @($SelectApp) -Type select -Placeholder "Published Applications"
