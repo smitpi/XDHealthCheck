@@ -48,7 +48,7 @@ Universal Dashboard
 PARAM(
 	[Parameter(Mandatory = $false, Position = 0)]
 	[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
-	[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml"
+	[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json"
     )
 
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"

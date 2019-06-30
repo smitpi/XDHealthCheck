@@ -53,8 +53,8 @@ Function Initialize-CitrixUserCompare {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
-		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
-		[string]$XMLParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.xml",
+		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".json") })]
+		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json",
 		[Parameter(Mandatory = $true, Position = 1)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
@@ -66,51 +66,22 @@ Function Initialize-CitrixUserCompare {
 
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
-  ##########################################
+	##########################################
 	#region xml imports
 	##########################################
-
-	$XMLParameter = Import-Clixml $XMLParameterFilePath
-	if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
-
- 	$ReportsFoldertmp = $XMLParameter.ReportsFolder.ToString()
-	if ((Test-Path -Path $ReportsFoldertmp\logs) -eq $false) { New-Item -Path "$ReportsFoldertmp\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-	[string]$Transcriptlog = "$ReportsFoldertmp\logs\XDCompareUsers_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
-	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
-	$timer = [Diagnostics.Stopwatch]::StartNew();
-
-	Write-Colour "Using Variables from Parameters.xml: ",$XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan,DarkYellow -LinesAfter 1
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
-	$XMLParameter.PSObject.Properties | Where-Object {$_.name -notlike 'TrustedDomains'} | ForEach-Object {Write-Color $_.name,":",$_.value  -Color Yellow,DarkCyan,Green -ShowTime;  New-Variable -Name $_.name -Value $_.value -Force -Scope local }
-
-    Write-Colour "Creating credentials for Trusted domains:" -ShowTime -Color DarkCyan -LinesBefore 2
-    $Trusteddomains = @()
-    foreach ($domain in $XMLParameter.TrustedDomains) {
-                 $serviceaccount = Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring())  | Get-Credential -Store
-	            if ($null -eq $serviceaccount) {
-		            $serviceaccount = BetterCredentials\Get-Credential -Message ("Service Account for domain: " + $_.NetBiosName.ToString())
-		            Set-Credential -Credential $serviceaccount -Target $_.Discription.ToString() -Persistence LocalComputer -Description ("Service Account for domain: " + $_.NetBiosName.ToString())}
-
-                write-Color -Text $domain.FQDN,":",$serviceaccount.username  -Color Yellow,DarkCyan,Green -ShowTime
-                $CusObject = New-Object PSObject -Property @{
-			                            FQDN        = $domain.FQDN
-                                        Credentials = $serviceaccount
-		        }
-	            $Trusteddomains += $CusObject
-                }
-    $CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
-	if ($null -eq $CTXAdmin) {
-		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
-		Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
-	}
-    Write-Colour "Citrix Admin Credentials: ",$CTXAdmin.UserName -ShowTime -Color yellow,Green -LinesBefore 2
-
-    #endregion
-
+	Import-Module XDHealthCheck -Force
+	Import-ParametersFile -JSONParameterFilePath $JSONParameterFilePath
+	#endregion
 
 	##########################################
 	#region checking folders and report names
 	##########################################
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
+	if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
+	[string]$Transcriptlog = "$ReportsFolder\logs\XDUser_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
+	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
+	$timer = [Diagnostics.Stopwatch]::StartNew();
+
 	if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 
 	if ([bool]$RemoveOldReports) {
