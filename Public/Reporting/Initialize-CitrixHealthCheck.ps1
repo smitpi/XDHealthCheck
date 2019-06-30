@@ -183,6 +183,8 @@ function Initialize-CitrixHealthCheck {
 		SessionCounts                  = $CitrixRemoteFarmDetails.SessionCounts
 		Controllers                    = $CitrixRemoteFarmDetails.Controllers.Summary
 		DBConnection                   = $CitrixRemoteFarmDetails.DBConnection
+		#SharedServers   			   = $CitrixRemoteFarmDetails.Machines.AllMachines | where {$_.OSType -like 'Windows 2016'}
+		#VirtualDesktop				   = $CitrixRemoteFarmDetails.Machines.AllMachines | where {$_.OSType -like 'Windows 10' -and $_.DesktopGroupName -notlike 'REMOTE-PC'}
 		CitrixLicenseInformation       = $CitrixLicenseInformation
 		RDSLicenseInformation          = $RDSLicenseInformation
 		CitrixServerEventLogs          = ($CitrixServerEventLogs.SingleServer | Select-Object ServerName, Errors, Warning)
@@ -195,9 +197,9 @@ function Initialize-CitrixHealthCheck {
 		UnRegisteredDesktops           = $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops
 		UnRegisteredServers            = $CitrixRemoteFarmDetails.Machines.UnRegisteredServers
 		TaintedObjects                 = $CitrixRemoteFarmDetails.ADObjects.TaintedObjects
-	} | Select-Object DateCollected, Redflags, SiteDetails, SessionCounts, Controllers, DBConnection, CitrixLicenseInformation, RDSLicenseInformation, CitrixServerEventLogs, TotalProvider, StoreFrontDetailsSiteDetails, StoreFrontDetailsServerDetails, CitrixConfigurationChanges, ServerPerformance, DeliveryGroups, UnRegisteredDesktops, UnRegisteredServers, TaintedObjects
+	} | Select-Object DateCollected, Redflags, SiteDetails, SessionCounts, Controllers, DBConnection, SharedServers, VirtualDesktop, CitrixLicenseInformation, RDSLicenseInformation, CitrixServerEventLogs, TotalProvider, StoreFrontDetailsSiteDetails, StoreFrontDetailsServerDetails, CitrixConfigurationChanges, ServerPerformance, DeliveryGroups, UnRegisteredDesktops, UnRegisteredServers, TaintedObjects
 
-	$ReportXDData | Export-Clixml -Path $ReportsXMLExport -Depth 25 -NoClobber -Force
+	$ReportXDData | Export-Clixml -Path $ReportsXMLExport -NoClobber -Force
 
 	#endregion
 

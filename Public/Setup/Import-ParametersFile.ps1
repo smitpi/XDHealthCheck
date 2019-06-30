@@ -58,7 +58,7 @@ Function Import-ParametersFile {
 	Write-Colour "Using Variables from Parameters.json: ", $JSONParameterFilePath.ToString() -ShowTime -Color DarkCyan, DarkYellow -LinesAfter 1
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 	$JSONParameter.PSObject.Properties | Where-Object { $_.name -notlike 'TrustedDomains' } | ForEach-Object { Write-Color $_.name, ":", $_.value  -Color Yellow, DarkCyan, Green -ShowTime; New-Variable -Name $_.name -Value $_.value -Force -Scope global }
-	New-Variable -Name 'JSONParameterFilePath' -Value $JSONParameterFilePath -Scope global
+	New-Variable -Name 'JSONParameterFilePath' -Value $JSONParameterFilePath -Scope global -force
 
 	Write-Colour "Creating credentials for Trusted domains:" -ShowTime -Color DarkCyan -LinesBefore 2
 	$Global:Trusteddomains = @()
@@ -81,6 +81,16 @@ Function Import-ParametersFile {
 		Set-Credential -Credential $AdminAccount -Target "CTXAdmin" -Persistence LocalComputer -Description "Account used for Citrix queries" -Verbose
 	}
 	Write-Colour "Citrix Admin Credentials: ", $CTXAdmin.UserName -ShowTime -Color yellow, Green -LinesBefore 2
+	if ($SendEmail) {
+		$global:SMTPClientCredentials = Find-Credential | Where-Object target -Like "*Healthcheck_smtp" | Get-Credential -Store
+		if ($null -eq $SMTPClientCredentials) {
+			$Account = BetterCredentials\Get-Credential -Message "smtp login for HealthChecks email"
+			Set-Credential -Credential $Account -Target "Healthcheck_smtp" -Persistence LocalComputer -Description "Account used for XD health checks" -Verbose
+		}
+		Write-Colour "SMTP Credentials: ", $SMTPClientCredentials.UserName -ShowTime -Color yellow, Green -LinesBefore 2
+
+	}
+
 	if ($RedoCredentials) {
 		foreach ($domain in $JSONParameter.TrustedDomains) {Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring()) | Remove-Credential -Verbose}
         Find-Credential | Where-Object target -Like "*CTXAdmin" | Remove-Credential -Verbose
