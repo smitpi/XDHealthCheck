@@ -38,12 +38,7 @@ Created [15/06/2019_14:19] Initial Script Creating
  Setup script for XDHealthCheck Module
 
 #>
-
-Param()
-
-
-
-function Install-XDHealthCheckParameter {
+function Install-ParametersFile {
 	$Global:VerbosePreference = 'silentlyContinue'
 
 	### Prepare NuGet / PSGallery
@@ -104,11 +99,11 @@ function Install-XDHealthCheckParameter {
 			    }
              }
 		$ReportsFolder = Read-Host 'Path to the Reports Folder'
-		$ParametersFolder = Read-Host 'Path to where the Parameters.xml will be saved'
+		$ParametersFolder = Read-Host 'Path to where the Parameters.json will be saved'
 		$DashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'
 
 		[System.Collections.ArrayList]$rbgcolor = @("AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenrod", "DarkGray", "DarkGreen", "DarkGrey", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "Goldenrod", "Gray", "Green", "GreenYellow", "Grey", "Honeydew", "HotPink", "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenrodYellow", "LightGray", "LightGreen", "LightGrey", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquamarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenrod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "Seashell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen")
-
+		$HeaderColor = $rbgcolor | Out-GridView -OutputMode Single
 		Write-Color ($rbgcolor | Join-String -Separator '","') -Color Green
 		While ($rbgcolor.Contains($HeaderColor) -eq $false) {
 			$HeaderColor = Read-Host 'Reports Header Color'
@@ -161,80 +156,41 @@ function Install-XDHealthCheckParameter {
 			}
 		}
 		$AllXDData = New-Object PSObject -Property @{
-			DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-			CTXDDC =	$CTXDDC
-			CTXStoreFront =	$CTXStoreFront
-			RDSLicensServer =	$RDSLicensServer
-			RDSLicensType =	$RDSLicensType
-			TrustedDomains = $trusteddomains
-			ReportsFolder =	$ReportsFolder
-			ParametersFolder =	$ParametersFolder
-			DashboardTitle =	$DashboardTitle
-			HeaderColor = $HeaderColor
-			RemoveOldReports = $RemoveOldReports
-			SaveExcelReport =	$SaveExcelReport
-			SendEmail =	$SendEmail
-			EmailFrom = $FromAddress
-			EmailTo = $ToAddress
-			SMTPServer =	$smtpServer
-			SMTPServerPort = $smtpServerPort
-			SMTPEnableSSL = $smtpEnableSSL
-		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicensServer , RDSLicensType, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, HeaderColor, RemoveOldReports, SaveExcelReport , SendEmail , emailFrom , emailTo , smtpServer , smtpServerPort , smtpEnableSSL
+			DateCollected 			= (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+			CTXDDC 					= $CTXDDC
+			CTXStoreFront 			= $CTXStoreFront
+			RDSLicensServer 		= $RDSLicensServer
+			RDSLicensType 			= $RDSLicensType
+			TrustedDomains 			= $trusteddomains
+			ReportsFolder 			= $ReportsFolder
+			ParametersFolder 		= $ParametersFolder
+			DashboardTitle 			= $DashboardTitle
+			HeaderColor 			= $HeaderColor
+			RemoveOldReports 		= $RemoveOldReports
+			SaveExcelReport 		= $SaveExcelReport
+			SendEmail 				= $SendEmail
+			EmailFrom 				= $FromAddress
+			EmailTo 				= $ToAddress
+			SMTPServer 				= $smtpServer
+			SMTPServerPort 			= $smtpServerPort
+			SMTPEnableSSL 			= $smtpEnableSSL
+		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicensServer , RDSLicensType, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, HeaderColor, RemoveOldReports, SaveExcelReport , SendEmail , EmailFrom , EmailTo , SMTPServer , SMTPServerPort , SMTPEnableSSL
 
-        if (Test-Path -Path "$ParametersFolder\Parameters.xml") { Remove-Item "$ParametersFolder\Parameters.xml" -Force -Verbose }
-		$AllXDData | Export-Clixml -Path "$ParametersFolder\Parameters.xml" -Depth 3 -NoClobber -Force
+		if (Test-Path -Path "$ParametersFolder\Parameters.json") { Remove-Item "$ParametersFolder\Parameters.json" -Force -Verbose }
+		$AllXDData | ConvertTo-Json -Depth 5 | Out-File -FilePath "$ParametersFolder\Parameters.json"
 
-		$Global:PSParameters = $ParametersFolder + "\Parameters.xml"
+		$Global:PSParameters = $ParametersFolder + "\Parameters.json"
 		[System.Environment]::SetEnvironmentVariable('PSParameters', $PSParameters, [System.EnvironmentVariableTarget]::User)
     }
-
-
 
 	function Test-Parameter {
 
 		if ($PSParameters -eq $null) {
-			$PSParameters = Read-Host 'Full Path to Parameters.xml file'
-			if ((Get-Item $PSParameters).Extension -ne 'xml') { Write-Error 'Invalid xml file'; break }
+			$PSParameters = Read-Host 'Full Path to Parameters.json file'
+			if ((Get-Item $PSParameters).Extension -ne 'json') { Write-Error 'Invalid json file'; break }
 		}
-
-		Write-Colour "Using Variables from: ", $PSParameters.ToString() -ShowTime -Color Yellow, green -LinesAfter 1
-
-		$XMLParameter = Import-Clixml $PSParameters
-		if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
-
-		$ReportsFoldertmp = $XMLParameter.ReportsFolder.ToString()
-		if ((Test-Path -Path $ReportsFoldertmp\logs) -eq $false) { New-Item -Path "$ReportsFoldertmp\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-		[string]$Transcriptlog = "$ReportsFoldertmp\logs\XDAudit_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
-		Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
-		$timer = [Diagnostics.Stopwatch]::StartNew();
-
-		Write-Colour "Using Variables from Parameters.xml: ", $XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan, DarkYellow -LinesAfter 1
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
-		$XMLParameter.PSObject.Properties | Where-Object { $_.name -notlike 'TrustedDomains' } | ForEach-Object { Write-Color $_.name, ":", $_.value  -Color Yellow, DarkCyan, Green -ShowTime; New-Variable -Name $_.name -Value $_.value -Force -Scope local }
-
-		Write-Colour "Creating credentials for Trusted domains:" -ShowTime -Color DarkCyan -LinesBefore 2
-		$Trusteddomains = @()
-		foreach ($domain in $XMLParameter.TrustedDomains) {
-			$serviceaccount = Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring()) | Get-Credential -Store
-			if ($null -eq $serviceaccount) {
-				$serviceaccount = BetterCredentials\Get-Credential -Message ("Service Account for domain: " + $domain.NetBiosName.ToString())
-				Set-Credential -Credential $serviceaccount -Target $domain.Discription.ToString() -Persistence LocalComputer -Description ("Service Account for domain: " + $domain.NetBiosName.ToString())
-			}
-			Write-Color -Text $domain.FQDN, ":", $serviceaccount.username  -Color Yellow, DarkCyan, Green -ShowTime
-			$CusObject = New-Object PSObject -Property @{
-				FQDN        = $domain.FQDN
-				Credentials = $serviceaccount
-			}
-			$Trusteddomains += $CusObject
-		}
-		$CTXAdmin = Find-Credential | Where-Object target -Like "*Healthcheck" | Get-Credential -Store
-		if ($null -eq $CTXAdmin) {
-			$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX HealthChecks"
-			Set-Credential -Credential $AdminAccount -Target "Healthcheck" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
-		}
-		Write-Colour "Citrix Admin Credentials: ", $CTXAdmin.UserName -ShowTime -Color yellow, Green -LinesBefore 2
-
-		#endregion
+		Import-Module XDHealthCheck -Force
+		Import-ParametersFile -JSONParameterFilePath $PSParameters
 		########################################
 		## Build other variables
 		#########################################
@@ -282,6 +238,28 @@ function Install-XDHealthCheckParameter {
 		Write-Color -Text '_________________________________________' -Color Green
 		Write-Color -Text 'Tests Complete' -Color green -ShowTime
 	}
+
+	function Change-Parameter {
+		
+		if ($PSParameters -eq $null) {
+			$PSParameters = Read-Host 'Full Path to Parameters.json file'
+			if ((Get-Item $PSParameters).Extension -ne 'json') { Write-Error 'Invalid json file'; break }
+		}
+		$Setting = $null
+		$JSONParameter = Get-Content ($PSParameters) | ConvertFrom-Json
+		[System.Collections.ArrayList]$Setting = $JSONParameter.PSObject.Properties | select name, value
+
+		$input = 'y'
+		While ($input -ne "n") {
+			$index = 0
+			$setting | ForEach-Object { Write-Color $index.ToString(), ") ", $_.name, ":", $_.value  -Color DarkCyan, DarkCyan, Yellow, DarkCyan, Green; $index ++ }
+			$selection = Read-Host  "Select setting to change"
+			Write-Color "Changing : ", $setting[$selection].Name -Color DarkCyan, Yellow -NoNewLine
+			$Setting[$selection].Value = Read-Host " "
+			$input = Read-Host "Change more settings? (y/n)"
+		}
+	}
+
 
 	#region
 	Write-Color -Text 'Make a selection from below' -Color DarkGray -LinesBefore 5
