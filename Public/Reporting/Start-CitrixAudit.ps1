@@ -55,7 +55,7 @@ Param()
 
 
 
-function Initialize-CitrixAudit {
+function Start-CitrixAudit {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]

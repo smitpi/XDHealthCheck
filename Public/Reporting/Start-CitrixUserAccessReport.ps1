@@ -3,7 +3,7 @@
 
 .VERSION 1.0.3
 
-.GUID 310be7d5-f671-4eaa-8011-8552cdcfc75c
+.GUID 4ea395a2-cac4-4d05-b184-4d9bf20c80bf
 
 .AUTHOR Pierre Smit
 
@@ -26,7 +26,7 @@
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Created [07/06/2019_04:05]
+Created [08/06/2019_11:18]
 Updated [09/06/2019_09:18]
 Updated [15/06/2019_01:11]
 Updated [15/06/2019_13:59] Updated Reports
@@ -44,12 +44,16 @@ Updated [15/06/2019_13:59] Updated Reports
 <#
 
 .DESCRIPTION
-Reports on user details
+User Access report
+Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 
 #>
 
 Param()
-Function Initialize-CitrixUserCompare {
+
+
+
+Function Start-CitrixUserAccessReport {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
@@ -58,12 +62,7 @@ Function Initialize-CitrixUserCompare {
 		[Parameter(Mandatory = $true, Position = 1)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[string]$Username1,
-		[Parameter(Mandatory = $true, Position = 2)]
-		[ValidateNotNull()]
-		[ValidateNotNullOrEmpty()]
-		[string]$Username2)
-
+		[string]$Username)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
 	##########################################
@@ -82,23 +81,28 @@ Function Initialize-CitrixUserCompare {
 	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 	$timer = [Diagnostics.Stopwatch]::StartNew();
 
-	if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 
+	if ((Test-Path -Path $ReportsFolder\XDUsers) -eq $false) { New-Item -Path "$ReportsFolder\XDUsers" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 	if ([bool]$RemoveOldReports) {
 		$oldReports = (Get-Date).AddDays(-$RemoveOldReports)
 		Get-ChildItem $ReportsFolder\XDUsers *.html | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
 		Get-ChildItem $ReportsFolder\XDUsers *.xlsx | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
-		Get-ChildItem $ReportsFolder\logs\XDCompareUsers_TransmissionLogs* | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+		Get-ChildItem $ReportsFolder\logs\XDUserAccess_TransmissionLogs* | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
 	}
-	[string]$Reportname = $ReportsFolder + "\XDUsers\XDCompare_" + $Username1 + "_" + $Username2 + "_" + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
+	[string]$Reportname = $ReportsFolder + "\XDUsers\XDUserAccessReport_" + $Username + "_" + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
 
 	#endregion
+
 
 
 	########################################
 	#region Connect and get info
 	########################################
-	$compareusers = Compare-ADUser -Username1 $Username1 -Username2 $Username2
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
+
+	$UserDetail = Get-CitrixUserAccessDetail -Username $Username -AdminServer $CTXDDC
+	$userDetailList = $UserDetail.UserDetail.psobject.Properties | Select-Object -Property Name, Value
+	$DesktopsCombined = $UserDetail.DirectPublishedDesktops + $UserDetail.PublishedDesktops | Sort-Object -Property DesktopGroupName -Unique
 	#endregion
 
 	########################################
@@ -132,24 +136,22 @@ Function Initialize-CitrixUserCompare {
 	#######################
 	#region Building HTML the report
 	#######################
-	$HeddingText = $DashboardTitle + " | XenDesktop Report | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
-	New-HTML -TitleText "Compared Users Report"  -FilePath $Reportname -ShowHTML {
+	$HeddingText = $DashboardTitle + " | Access Report for User: " + $UserDetail.UserDetail.Name + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
+	New-HTML -TitleText "Access Report" -FilePath $Reportname -ShowHTML {
 		New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
-		New-HTMLSection -HeaderText 'User Details' @SectionSettings  -Content {
-			New-HTMLSection -HeaderText $compareusers.User1Details.user1Headding @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.userDetailList1 }
-			New-HTMLSection -HeaderText $compareusers.User2Details.user2Headding @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.userDetailList2 }
+		New-HTMLSection  @SectionSettings  -Content {
+			New-HTMLSection -HeaderText 'User details' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $userDetailList }
+			New-HTMLSection -HeaderText 'Current Applications' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $UserDetail.AccessPublishedApps }
+			New-HTMLSection -HeaderText  'Current Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $DesktopsCombined }
 		}
-		New-HTMLSection @SectionSettings -HeaderText 'Comparison of the User Groups'   -Content {
-			New-HTMLSection -HeaderText $compareusers.User1Details.user1HeaddingMissing @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.User1Missing }
-			New-HTMLSection -HeaderText $compareusers.User1Details.user2HeaddingMissing @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.User2Missing }
-			New-HTMLSection -HeaderText 'Same Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.SameGroups }
-		}
-		New-HTMLSection @SectionSettings -HeaderText 'All User Groups'   -Content {
-			New-HTMLSection -HeaderText $compareusers.User1Details.user1Headding @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.allusergroups1 }
-			New-HTMLSection -HeaderText  $compareusers.User2Details.user2Headding @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.allusergroups2 }
+		New-HTMLSection  @SectionSettings  -Content {
+			New-HTMLSection -HeaderText 'Requires Access to these Apps' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $UserDetail.NoAccessPublishedApps }
+			New-HTMLSection -HeaderText 'AD Group Membership' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $UserDetail.AllUserGroups }
 		}
 	}
 	#endregion
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending]Healthcheck Complete"
+
 	$timer.Stop()
 	$timer.Elapsed | Select-Object Days, Hours, Minutes, Seconds | Format-List
 	Stop-Transcript
