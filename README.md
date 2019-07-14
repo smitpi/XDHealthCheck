@@ -11,6 +11,6 @@ Functions to connect to a Citrix Farm and extract details for a HTML Health chec
 
 And answer the setup questions.
 
-Once everything is setup you can run  ```Initialize-CitrixHealthCheck -XMLParameterFilePath <ParametersFile>``` for the main health check report, or run ```Initialize-CitrixAudit -XMLParameterFilePath <ParametersFile>``` for an audit on machine catalogues, delivery groups and published applications.
-  
+Once everything is setup you can run  ```Start-CitrixHealthCheck -JSONParameterFilePath <ParametersFile>``` for the main health check report, or run ```Start-CitrixAudit -JSONParameterFilePath <ParametersFile>``` for an audit on machine catalogues, delivery groups and published applications.
+
 I’ve also created some reports under Reporting folder.

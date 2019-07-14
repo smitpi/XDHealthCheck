@@ -223,7 +223,7 @@ function Install-XDHealthCheckParameter {
 		switch ($selection) {
 			'1' { Set-Parameter }
 			'2' { Test-Parameter }
-			'3' { Initialize-CitrixHealthCheck -XMLParameterFilePath $PSParameters -Verbose }
+			'3' { Start-CitrixHealthCheck -JSONParameterFilePath $PSParameters -Verbose }
 
 		}
 	}

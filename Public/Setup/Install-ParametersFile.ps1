@@ -240,7 +240,7 @@ function Install-ParametersFile {
 	}
 
 	function Change-Parameter {
-		
+
 		if ($PSParameters -eq $null) {
 			$PSParameters = Read-Host 'Full Path to Parameters.json file'
 			if ((Get-Item $PSParameters).Extension -ne 'json') { Write-Error 'Invalid json file'; break }
@@ -274,7 +274,7 @@ function Install-ParametersFile {
 		switch ($selection) {
 			'1' { Set-Parameter }
 			'2' { Test-Parameter }
-			'3' { Initialize-CitrixHealthCheck -XMLParameterFilePath $PSParameters -Verbose }
+			'3' { Start-CitrixHealthCheck -JSONParameterFilePath $PSParameters -Verbose }
 
 		}
 	}
