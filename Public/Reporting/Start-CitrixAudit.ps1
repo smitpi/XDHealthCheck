@@ -118,7 +118,6 @@ function Start-CitrixAudit {
 	########################################
 	$AllXDData = New-Object PSObject -Property @{
 		DateCollected           = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-		CitrixRemoteFarmDetails = $CitrixRemoteFarmDetails
 		MashineCatalog          = $CitrixObjects.MashineCatalog
 		DeliveryGroups          = $CitrixObjects.DeliveryGroups
 		PublishedApps           = $CitrixObjects.PublishedApps
