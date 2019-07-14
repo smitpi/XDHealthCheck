@@ -80,7 +80,15 @@ Function Import-ParametersFile {
 		$AdminAccount = BetterCredentials\Get-Credential -Message "Admin Account: DOMAIN\Username for CTX Admin"
 		Set-Credential -Credential $AdminAccount -Target "CTXAdmin" -Persistence LocalComputer -Description "Account used for Citrix queries" -Verbose
 	}
-	Write-Colour "Citrix Admin Credentials: ", $CTXAdmin.UserName -ShowTime -Color yellow, Green -LinesBefore 2
+
+	$global:NSAdmin = Find-Credential | Where-Object target -Like "*NSAdmin" | Get-Credential -Store
+	if ($null -eq $CTXAdmin) {
+		$NSAccount = BetterCredentials\Get-Credential -Message "Admin Account for Netscaler"
+		Set-Credential -Credential $NSAccount -Target "NSAdmin" -Persistence LocalComputer -Description "Account used for Citrix Netscaler" -Verbose
+	}
+	Write-Colour "Netscaler Admin Credentials: ", $NSAdmin.UserName -ShowTime -Color yellow, Green -LinesBefore 1
+	Write-Colour "Citrix Admin Credentials: ", $CTXAdmin.UserName -ShowTime -Color yellow, Green
+
 	if ($SendEmail) {
 		$global:SMTPClientCredentials = Find-Credential | Where-Object target -Like "*Healthcheck_smtp" | Get-Credential -Store
 		if ($null -eq $SMTPClientCredentials) {
@@ -94,6 +102,7 @@ Function Import-ParametersFile {
 	if ($RedoCredentials) {
 		foreach ($domain in $JSONParameter.TrustedDomains) {Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring()) | Remove-Credential -Verbose}
         Find-Credential | Where-Object target -Like "*CTXAdmin" | Remove-Credential -Verbose
+		Find-Credential | Where-Object target -Like "*NSAdmin" | Remove-Credential -Verbose
 	}
 
 } #end Function
