@@ -56,13 +56,13 @@ Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Det
 #region xml imports
 ##########################################
 
-$XMLParameter = Import-Clixml $XMLParameterFilePath
+$XMLParameter = Import-Clixml $JSONParameterFilePath
 if ($null -eq $XMLParameter) { Write-Error "Valid Parameters file not found"; break }
 
 $ReportsFoldertmp = $XMLParameter.ReportsFolder.ToString()
 if ((Test-Path -Path $ReportsFoldertmp\logs) -eq $false) { New-Item -Path "$ReportsFoldertmp\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 
-Write-Colour "Using Variables from Parameters.xml: ", $XMLParameterFilePath.ToString() -ShowTime -Color DarkCyan, DarkYellow -LinesAfter 1
+Write-Colour "Using Variables from Parameters.xml: ", $JSONParameterFilePath.ToString() -ShowTime -Color DarkCyan, DarkYellow -LinesAfter 1
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 $XMLParameter.PSObject.Properties | Where-Object { $_.name -notlike 'TrustedDomains' } | ForEach-Object { Write-Color $_.name, ":", $_.value  -Color Yellow, DarkCyan, Green -ShowTime; New-Variable -Name $_.name -Value $_.value -Force -Scope local }
 
@@ -110,7 +110,7 @@ $Pages = Foreach ($Page in $PageFolder) {
 }
 $UDTitle = $DashboardTitle + " | Dashboard"
 
-$Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @("DateCollected","CTXDDC","CTXStoreFront","RDSLicensServer","RDSLicensType","TrustedDomains","ReportsFolder","ParametersFolder","DashboardTitle","SaveExcelReport","SendEmail","EmailFrom","EmailTo","SMTPServer","SMTPServerPort","SMTPEnableSSL","CTXAdmin","XMLParameterFilePath")
+$Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @("DateCollected","CTXDDC","CTXStoreFront","RDSLicensServer","RDSLicensType","TrustedDomains","ReportsFolder","ParametersFolder","DashboardTitle","SaveExcelReport","SendEmail","EmailFrom","EmailTo","SMTPServer","SMTPServerPort","SMTPEnableSSL","CTXAdmin","JSONParameterFilePath")
 
 $DashboardParams = @{
 	Title                  = $UDTitle
