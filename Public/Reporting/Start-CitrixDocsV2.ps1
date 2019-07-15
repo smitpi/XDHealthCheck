@@ -71,14 +71,19 @@ Function Start-CitrixDocsV2 {
 	if ((Test-Path -Path $ReportsFolder\XDDocs) -eq $false) { New-Item -Path "$ReportsFolder\XDDocs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
 	if ([bool]$RemoveOldReports) {
 		$oldReports = (Get-Date).AddDays(-$RemoveOldReports)
-		Get-ChildItem $ReportsFolder\XDDocs *| Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
+		Get-ChildItem $ReportsFolder\XDDocs * | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
 		Get-ChildItem $ReportsFolder\logs\XDUserAccess_TransmissionLogs* | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
 	}
+
+	[string]$WordReportname = $ReportsFolder + "\XDDocs\XD_Farm." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".docx"
+	[string]$HTMLReportname = $ReportsFolder + "\XDDocs\XD_Farm." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".HTML"
 	#endregion
 	##########################################
 	#region checking folders and report names
 	##########################################
-    Get-CitrixDocumentationV2 -MSWord -AddDateTime -AdminAddress $CTXDDC  -CSV -Folder "$ReportsFolder\XDDocs" -Verbose
+	 Get-CitrixFarmDocumentation -DeliveryController $CTXDDC -Path $WordReportname -Protocol HTTP -Credential $CTXAdmin -Verbose
+	 Get-CitrixFarmDocumentation -DeliveryController $CTXDDC -Path $HTMLReportname -Protocol HTTP -Credential $CTXAdmin -Verbose
+	#Get-CitrixDocumentationV2 -MSWord -AddDateTime -AdminAddress $CTXDDC  -CSV -Folder "$ReportsFolder\XDDocs" -Verbose
 
 
 

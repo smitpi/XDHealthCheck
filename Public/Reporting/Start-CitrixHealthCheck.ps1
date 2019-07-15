@@ -57,7 +57,6 @@ function Start-CitrixHealthCheck {
 	##########################################
 	#region xml imports
 	##########################################
-	Import-Module XDHealthCheck -Force
 	Import-ParametersFile -JSONParameterFilePath $JSONParameterFilePath
 	#endregion
 
@@ -91,9 +90,10 @@ function Start-CitrixHealthCheck {
 	########################################
 	#region Build other variables
 	#########################################
-	$CTXControllers = Invoke-Command -ComputerName $CTXDDC -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-BrokerController | Select-Object dnsname } | ForEach-Object { $_.dnsname }
-	$CTXLicenseServer = Invoke-Command -ComputerName $CTXDDC -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-BrokerSite -AdminAddress $AdminServer | Select-Object LicenseServerName } | ForEach-Object { $_.LicenseServerName }
-	$CTXStoreFrontFarm = Invoke-Command -ComputerName $CTXStoreFront -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-STFServerGroup | Select-Object -ExpandProperty ClusterMembers | Select-Object hostname | ForEach-Object { ([System.Net.Dns]::GetHostByName(($_.hostname))).Hostname } }
+	[array]$CTXControllers = Invoke-Command -ComputerName $CTXDDC -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-BrokerController | Select-Object dnsname } | ForEach-Object { $_.dnsname }
+	[array]$CTXLicenseServer = Invoke-Command -ComputerName $CTXDDC -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-BrokerSite -AdminAddress $AdminServer | Select-Object LicenseServerName } | ForEach-Object { $_.LicenseServerName }
+	[array]$CTXStoreFrontFarm = Invoke-Command -ComputerName $CTXStoreFront -Credential $CTXAdmin -ScriptBlock { Add-PSSnapin citrix* ; Get-STFServerGroup | Select-Object -ExpandProperty ClusterMembers | Select-Object hostname | ForEach-Object { ([System.Net.Dns]::GetHostByName(($_.hostname))).Hostname } }
+	$CTXCore = @()
 	$CTXCore = $CTXControllers + $CTXStoreFrontFarm + $CTXLicenseServer | Sort-Object -Unique
 	#endregion
 
@@ -150,7 +150,7 @@ function Start-CitrixHealthCheck {
 			$index = $index + 1
 			$Object = New-Object PSCustomObject
 			$Object | Add-Member -MemberType NoteProperty -Name "#" -Value $index.ToString()
-			$Object | Add-Member -MemberType NoteProperty -Name "Discription" -Value $flag
+			$Object | Add-Member -MemberType NoteProperty -Name "Description" -Value $flag
 			$FlagReport += $Object
 		}
 		$FlagReport

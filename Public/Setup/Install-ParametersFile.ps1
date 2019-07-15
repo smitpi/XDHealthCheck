@@ -98,13 +98,24 @@ function Install-ParametersFile {
 				$input = Read-Host "Add more trusted domains? (y/n)"
 			    }
              }
+			$CTXNS = @()
+			$input = ''
+			While ($input -ne "n") {
+				If ($input -ne $null) {
+				$CusObject = New-Object PSObject -Property @{
+					NSIP    = Read-Host 'Netscaler IP (Management)'
+					NSAdmin = Read-Host 'Root Username'
+				} | select NSIP, NSAdmin
+                $CTXNS += $CusObject
+				$input = Read-Host "Add more Netscalers? (y/n)"
+			    }
+             }
 		$ReportsFolder = Read-Host 'Path to the Reports Folder'
 		$ParametersFolder = Read-Host 'Path to where the Parameters.json will be saved'
 		$DashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'
 
 		[System.Collections.ArrayList]$rbgcolor = @("AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenrod", "DarkGray", "DarkGreen", "DarkGrey", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "Goldenrod", "Gray", "Green", "GreenYellow", "Grey", "Honeydew", "HotPink", "IndianRed", "Indigo", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenrodYellow", "LightGray", "LightGreen", "LightGrey", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquamarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenrod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "Seashell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen")
 		$HeaderColor = $rbgcolor | Out-GridView -OutputMode Single
-		Write-Color ($rbgcolor | Join-String -Separator '","') -Color Green
 		While ($rbgcolor.Contains($HeaderColor) -eq $false) {
 			$HeaderColor = Read-Host 'Reports Header Color'
 		}
@@ -161,6 +172,7 @@ function Install-ParametersFile {
 			CTXStoreFront 			= $CTXStoreFront
 			RDSLicensServer 		= $RDSLicensServer
 			RDSLicensType 			= $RDSLicensType
+			CTXNS  					= $CTXNS
 			TrustedDomains 			= $trusteddomains
 			ReportsFolder 			= $ReportsFolder
 			ParametersFolder 		= $ParametersFolder
@@ -174,7 +186,7 @@ function Install-ParametersFile {
 			SMTPServer 				= $smtpServer
 			SMTPServerPort 			= $smtpServerPort
 			SMTPEnableSSL 			= $smtpEnableSSL
-		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicensServer , RDSLicensType, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, HeaderColor, RemoveOldReports, SaveExcelReport , SendEmail , EmailFrom , EmailTo , SMTPServer , SMTPServerPort , SMTPEnableSSL
+		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicensServer , RDSLicensType, CTXNS, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, HeaderColor, RemoveOldReports, SaveExcelReport , SendEmail , EmailFrom , EmailTo , SMTPServer , SMTPServerPort , SMTPEnableSSL
 
 		if (Test-Path -Path "$ParametersFolder\Parameters.json") { Remove-Item "$ParametersFolder\Parameters.json" -Force -Verbose }
 		$AllXDData | ConvertTo-Json -Depth 5 | Out-File -FilePath "$ParametersFolder\Parameters.json"
