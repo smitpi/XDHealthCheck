@@ -132,9 +132,9 @@ Function Start-CitrixUserCompare {
 	#######################
 	#region Building HTML the report
 	#######################
-	$HeddingText = $DashboardTitle + " | XenDesktop Report | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
+	$HeadingText = $DashboardTitle + " | XenDesktop Report | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
 	New-HTML -TitleText "Compared Users Report"  -FilePath $Reportname -ShowHTML {
-		New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
+		New-HTMLHeading -Heading h1 -HeadingText $HeadingText -Color Black
 		New-HTMLSection -HeaderText 'User Details' @SectionSettings  -Content {
 			New-HTMLSection -HeaderText $compareusers.User1Details.user1Headding @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.User1Details.userDetailList1 }
 			New-HTMLSection -HeaderText $compareusers.User2Details.user2Headding @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.userDetailList2 }

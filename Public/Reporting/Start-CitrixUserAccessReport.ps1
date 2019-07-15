@@ -136,9 +136,9 @@ Function Start-CitrixUserAccessReport {
 	#######################
 	#region Building HTML the report
 	#######################
-	$HeddingText = $DashboardTitle + " | Access Report for User: " + $UserDetail.UserDetail.Name + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
+	$HeadingText = $DashboardTitle + " | Access Report for User: " + $UserDetail.UserDetail.Name + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
 	New-HTML -TitleText "Access Report" -FilePath $Reportname -ShowHTML {
-		New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
+		New-HTMLHeading -Heading h1 -HeadingText $HeadingText -Color Black
 		New-HTMLSection  @SectionSettings  -Content {
 			New-HTMLSection -HeaderText 'User details' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $userDetailList }
 			New-HTMLSection -HeaderText 'Current Applications' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $UserDetail.AccessPublishedApps }

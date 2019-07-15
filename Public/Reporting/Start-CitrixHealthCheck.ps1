@@ -236,9 +236,9 @@ function Start-CitrixHealthCheck {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Building HTML Page"
 	$emailbody = New-HTML -TitleText 'Red Flags' { New-HTMLTable  @TableSettings  -DataTable $flags }
 
-	$HeddingText = $DashboardTitle + " | XenDesktop Report | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
+	$HeadingText = $DashboardTitle + " | XenDesktop Report | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
 	New-HTML -TitleText "XenDesktop Report"  -FilePath $Reportname {
-		New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
+		New-HTMLHeading -Heading h1 -HeadingText $HeadingText -Color Black
 		New-HTMLSection @SectionSettings  -Content {
 			New-HTMLSection -HeaderText 'Citrix Sessions' @TableSectionSettings { New-HTMLTable   @TableSettings  -DataTable $CitrixRemoteFarmDetails.SessionCounts $Conditions_sessions }
 		}

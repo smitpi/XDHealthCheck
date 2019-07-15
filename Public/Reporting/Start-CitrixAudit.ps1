@@ -163,9 +163,9 @@ function Start-CitrixAudit {
 	#######################
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Building HTML Page"
 
-	$HeddingText = $DashboardTitle + " | XenDesktop Audit | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
+	$HeadingText = $DashboardTitle + " | XenDesktop Audit | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
 	New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname {
-		New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
+		New-HTMLHeading -Heading h1 -HeadingText $HeadingText -Color Black
 		New-HTMLSection @SectionSettings  -Content {
 			New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable @TableSettings  -DataTable $MashineCatalog }
 		}
