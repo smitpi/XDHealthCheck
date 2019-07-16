@@ -62,7 +62,7 @@ Function Get-CitrixNetscalerDetails {
 		param($NSIP, $NSCredentials)
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Connecting to Netscaler"
 		Connect-NetScaler -IPAddress $NSIP -Credential $NSCredentials
-
+Try {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Site Details"
 		[PSCustomObject]@{
 			DateCollected   = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
@@ -74,8 +74,6 @@ Function Get-CitrixNetscalerDetails {
 				Version             = (Get-NSVersion).DisplayName
 				'HA State'         = (Get-NSHANode | Where-Object { $_.ipaddress -like $nsip }).state
 				'HA Status'         = (Get-NSHANode | Where-Object { $_.ipaddress -like $nsip }).hastatus
-				#'Netscaler Modes'   = (Get-NSMode).mode | Join-String -Separator ","
-				#'Netscaler Feature'   = (Get-NSFeature).Feature | Join-String -Separator ","
 			} | Select-Object Name,'Last Backup Date','Last Backup Name','Last Backup Level',Version,'HA State','HA Status'
 			NSIP4           = Get-NSIPResource | Select-Object ipaddress, type, vserver
 			NSCert          = Get-NSSSLCertificate | Select-Object certkey, daystoexpiration, subject, linkcertkeyname
@@ -87,6 +85,8 @@ Function Get-CitrixNetscalerDetails {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Disconnecting"
 
 		Disconnect-NetScaler
+}
+catch { }
 		#$ALLNS
 	}
 	$NSDetails = @()
