@@ -43,14 +43,13 @@ Param()
 
 
 
-Function Start-CitrixDocsV2 {
+Function Start-CitrixDocumentation  {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".json") })]
-		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json",
-		[switch]$DOCX = $false,
-		[switch]$HTML = $false)
+		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json"
+		)
 
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
@@ -83,8 +82,15 @@ Function Start-CitrixDocsV2 {
 	##########################################
 	#region checking folders and report names
 	##########################################
-	if ($DOCX) { Get-CitrixFarmDocumentation -DeliveryController $CTXDDC -Path $WordReportname -Protocol HTTP -Credential $CTXAdmin -Verbose }
-	if ($HTML) { Get-CitrixFarmDocumentation -DeliveryController $CTXDDC -Path $HTMLReportname -Protocol HTTP -Credential $CTXAdmin -Verbose }
+	 #Get-CitrixFarmDocumentation -DeliveryController $CTXDDC -Path $WordReportname -Protocol HTTP -Credential $CTXAdmin -Verbose
+	 #Get-CitrixFarmDocumentation -DeliveryController $CTXDDC -Path $HTMLReportname -Protocol HTTP -Credential $CTXAdmin -Verbose
+	#Get-CitrixDocumentationV2 -MSWord -AddDateTime -AdminAddress $CTXDDC  -CSV -Folder "$ReportsFolder\XDDocs" -Verbose
+
+	Get-CitrixFarmDocumentationV2 -MSWord -AddDateTime -AdminAddress $CTXDDC -CSV -Folder "$ReportsFolder\XDDocs" -ScriptInfo
+	Get-CitrixFarmDocumentationV2 -HTML -AddDateTime -AdminAddress $CTXDDC -CSV -Folder "$ReportsFolder\XDDocs" -ScriptInfo
+	Get-CitrixNetscalerDocumentation -MSWord -AddDateTime -NSIP '192.168.5.15' -Credential $NSAdmin -Folder "$ReportsFolder\XDDocs" -ScriptInfo
+	Get-CitrixNetscalerDocumentation -PDF -AddDateTime -NSIP '192.168.5.15' -Credential $NSAdmin -Folder "$ReportsFolder\XDDocs" -ScriptInfo
+
 
 	$timer.Stop()
 	$timer.Elapsed | Select-Object Days, Hours, Minutes, Seconds | Format-List
