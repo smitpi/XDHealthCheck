@@ -6,7 +6,7 @@ Functions to connect to a Citrix Farm and extract details for a HTML Health chec
 
 - ```Install-Module -Name XDHealthCheck```
 - ```Import-Module XDHealthCheck```
-- ```Install-XDHealthCheckParameter```
+- ```Install-ParametersFile```
 
 
 And answer the setup questions.
