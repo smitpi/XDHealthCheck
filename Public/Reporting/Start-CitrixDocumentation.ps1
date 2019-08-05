@@ -87,9 +87,7 @@ Function Start-CitrixDocumentation  {
 	#Get-CitrixDocumentationV2 -MSWord -AddDateTime -AdminAddress $CTXDDC  -CSV -Folder "$ReportsFolder\XDDocs" -Verbose
 
 	Get-CitrixFarmDocumentationV2 -MSWord -AddDateTime -AdminAddress $CTXDDC -CSV -Folder "$ReportsFolder\XDDocs" -ScriptInfo
-	Get-CitrixFarmDocumentationV2 -HTML -AddDateTime -AdminAddress $CTXDDC -CSV -Folder "$ReportsFolder\XDDocs" -ScriptInfo
-	Get-CitrixNetscalerDocumentation -MSWord -AddDateTime -NSIP '192.168.5.15' -Credential $NSAdmin -Folder "$ReportsFolder\XDDocs" -ScriptInfo
-	Get-CitrixNetscalerDocumentation -PDF -AddDateTime -NSIP '192.168.5.15' -Credential $NSAdmin -Folder "$ReportsFolder\XDDocs" -ScriptInfo
+	Get-CitrixNetscalerDocumentation -MSWord -AddDateTime -NSIP $CTXNS[0].NSIP -Credential $NSAdmin -Folder "$ReportsFolder\XDDocs" -ScriptInfo
 
 
 	$timer.Stop()
