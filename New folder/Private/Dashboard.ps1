@@ -49,7 +49,7 @@ PARAM(
 	[Parameter(Mandatory = $false, Position = 0)]
 	[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".xml") })]
 	[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json"
-    )
+)
 
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 ##########################################
@@ -110,7 +110,7 @@ $Pages = Foreach ($Page in $PageFolder) {
 }
 $UDTitle = $DashboardTitle + " | Dashboard"
 
-$Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @("DateCollected","CTXDDC","CTXStoreFront","RDSLicensServer","RDSLicensType","TrustedDomains","ReportsFolder","ParametersFolder","DashboardTitle","SaveExcelReport","SendEmail","EmailFrom","EmailTo","SMTPServer","SMTPServerPort","SMTPEnableSSL","CTXAdmin","JSONParameterFilePath")
+$Initialization = New-UDEndpointInitialization -Module @(Join-Path $PSScriptRoot $ConfigurationFile.dashboard.rootmodule) -Variable @("DateCollected", "CTXDDC", "CTXStoreFront", "RDSLicenseServer", "RDSLicensType", "TrustedDomains", "ReportsFolder", "ParametersFolder", "DashboardTitle", "SaveExcelReport", "SendEmail", "EmailFrom", "EmailTo", "SMTPServer", "SMTPServerPort", "SMTPEnableSSL", "CTXAdmin", "JSONParameterFilePath")
 
 $DashboardParams = @{
 	Title                  = $UDTitle

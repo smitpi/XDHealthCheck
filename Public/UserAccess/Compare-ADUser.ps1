@@ -44,7 +44,7 @@ Updated [15/06/2019_13:59] Updated Reports
 <#
 
 .DESCRIPTION
-Find the diferences in ad groups
+Find the differences in ad groups
 
 #>
 

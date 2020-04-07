@@ -63,10 +63,10 @@ Function Import-ParametersFile {
 	Write-Colour "Creating credentials for Trusted domains:" -ShowTime -Color DarkCyan -LinesBefore 2
 	$Global:Trusteddomains = @()
 	foreach ($domain in $JSONParameter.TrustedDomains) {
-		$serviceaccount = Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring()) | Get-Credential -Store
+		$serviceaccount = Find-Credential | Where-Object target -Like ("*" + $domain.Description.tostring()) | Get-Credential -Store
 		if ($null -eq $serviceaccount) {
 			$serviceaccount = BetterCredentials\Get-Credential -Message ("Service Account for domain: " + $domain.NetBiosName.ToString())
-			Set-Credential -Credential $serviceaccount -Target $domain.Discription.ToString() -Persistence LocalComputer -Description ("Service Account for domain: " + $domain.NetBiosName.ToString())
+			Set-Credential -Credential $serviceaccount -Target $domain.Description.ToString() -Persistence LocalComputer -Description ("Service Account for domain: " + $domain.NetBiosName.ToString())
 		}
 		Write-Color -Text $domain.FQDN, ":", $serviceaccount.username  -Color Yellow, DarkCyan, Green -ShowTime
 		$CusObject = New-Object PSObject -Property @{
@@ -100,7 +100,7 @@ Function Import-ParametersFile {
 	}
 
 	if ($RedoCredentials) {
-		foreach ($domain in $JSONParameter.TrustedDomains) {Find-Credential | Where-Object target -Like ("*" + $domain.Discription.tostring()) | Remove-Credential -Verbose}
+		foreach ($domain in $JSONParameter.TrustedDomains) {Find-Credential | Where-Object target -Like ("*" + $domain.Description.tostring()) | Remove-Credential -Verbose}
         Find-Credential | Where-Object target -Like "*CTXAdmin" | Remove-Credential -Verbose
 		Find-Credential | Where-Object target -Like "*NSAdmin" | Remove-Credential -Verbose
 	}

@@ -40,20 +40,20 @@ Created [15/06/2019_14:19] Initital Script Creating
 #>
 
 function Install-XDHealthCheckParameter {
-Clear-Host
+	Clear-Host
 	Write-Host 'Installing needed Modules' -ForegroundColor Cyan
 	if ((Get-PSRepository -Name PSGallery).InstallationPolicy -notlike 'Trusted') { Set-PSRepository -Name PSGallery -InstallationPolicy Trusted }
 
 	if ([bool](Get-Module -Name PSWriteColor) -eq $false) {
 		Install-Module -Name PSWriteColor -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck
 		Import-Module -Name PSWriteColor -Force
-		}
+	}
 
 	Write-Color -Text 'Installing BetterCredentials Module' -Color DarkCyan -ShowTime
 	if ([bool](Get-Module -Name BetterCredentials) -eq $false) {
-    Install-Module -Name BetterCredentials -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck
-    Import-Module BetterCredentials
-    }
+		Install-Module -Name BetterCredentials -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck
+		Import-Module BetterCredentials
+	}
 
 	Write-Color -Text 'Installing ImportExcel Module' -Color DarkCyan -ShowTime
 	if ([bool](Get-Module -Name ImportExcel) -eq $false) { Install-Module -Name ImportExcel -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck }
@@ -97,11 +97,11 @@ Clear-Host
 		Write-Color -Text 'Setup Complete' -Color green -ShowTime
 	}
 	function Test-Parameter {
-    Clear-Host
+		Clear-Host
 
 		if ($PSParameters -eq $null) {
 			$PSParameters = Read-Host 'Full Path to Parameters.xml file'
-        }
+		}
 		[xml]$Parameters = Get-Content $PSParameters
 
 		Write-Color -Text 'Checking Credentials' -Color DarkCyan -ShowTime
@@ -150,13 +150,13 @@ Clear-Host
 
 		$DDC = Invoke-Command -ComputerName $CTXDDC.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
 		$StoreFront = Invoke-Command -ComputerName $CTXStoreFront -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
-		$LicensServer = Invoke-Command -ComputerName $RDSLicensServer -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
+		$LicensServer = Invoke-Command -ComputerName $RDSLicenseServer -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
 
 		if ($DDC -like '') { Write-Error '$XDDDC is not valid' }
 		else { Write-Color -Text "$DDC is valid" -Color green -ShowTime }
 		if ($StoreFront -like '') { Write-Error '$XDStoreFront is not valid' }
 		else { Write-Color -Text "$StoreFront is valid" -Color green -ShowTime }
-		if ($LicensServer -like '') { Write-Error '$RDSLicensServer is not valid' }
+		if ($LicensServer -like '') { Write-Error '$RDSLicenseServer is not valid' }
 		else { Write-Color -Text "$LicensServer is valid" -Color green -ShowTime }
 
 		if ($SendEmail) {

@@ -51,13 +51,13 @@ function Install-XDHealthCheckParameter {
 	if ([bool](Get-Module -Name PSWriteColor) -eq $false) {
 		Install-Module -Name PSWriteColor -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force
 		Import-Module -Name PSWriteColor -Force
-		}
+	}
 
 	Write-Color -Text 'Installing BetterCredentials Module' -Color DarkCyan -ShowTime
 	if ([bool](Get-Module -Name BetterCredentials) -eq $false) {
-        Install-Module -Name BetterCredentials -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force
-        Import-Module BetterCredentials
-        }
+		Install-Module -Name BetterCredentials -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force
+		Import-Module BetterCredentials
+	}
 
 	Write-Color -Text 'Installing ImportExcel Module' -Color DarkCyan -ShowTime
 	if ([bool](Get-Module -Name ImportExcel) -eq $false) { Install-Module -Name ImportExcel -Scope CurrentUser -Repository PSGallery -AllowClobber -SkipPublisherCheck -Force }
@@ -74,7 +74,7 @@ function Install-XDHealthCheckParameter {
 
 		[string]$CTXDDC = Read-Host 'A Citrix Data Collector FQDN'
 		[string]$CTXStoreFront = Read-Host 'A Citrix StoreFront FQDN'
-		[string]$RDSLicensServer = Read-Host 'RDS LicenseServer FQDN'
+		[string]$RDSLicenseServer = Read-Host 'RDS LicenseServer FQDN'
 
 		Write-Color -Text 'Add RDS License Type' -Color DarkGray -LinesAfter 1
 		Write-Color "1: ", "Per Device"  -Color Yellow, Green
@@ -138,21 +138,21 @@ function Install-XDHealthCheckParameter {
 			DateCollected    = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
 			CTXDDC           =	$CTXDDC
 			CTXStoreFront    =	$CTXStoreFront
-			RDSLicensServer  =	$RDSLicensServer
+			RDSLicenseServer =	$RDSLicenseServer
 			RDSLicensType    =	$RDSLicensType
 			ReportsFolder    =	$ReportsFolder
 			ParametersFolder =	$ParametersFolder
 			DashboardTitle   =	$DashboardTitle
 			SaveExcelReport  =	$SaveExcelReport
 			SendEmail        =	$SendEmail
-			emailFrom        =  $FromAddress
-			emailTo          =  $ToAddress
+			emailFrom        = $FromAddress
+			emailTo          = $ToAddress
 			smtpServer       =	$smtpServer
-            smtpServerPort   =  $smtpServerPort
-            smtpEnableSSL    =  $smtpEnableSSL
-		} | select DateCollected,CTXDDC ,CTXStoreFront ,RDSLicensServer ,RDSLicensType ,ReportsFolder ,ParametersFolder ,DashboardTitle,SaveExcelReport ,SendEmail ,emailFrom ,emailTo ,smtpServer ,smtpServerPort ,smtpEnableSSL
+			smtpServerPort   = $smtpServerPort
+			smtpEnableSSL    = $smtpEnableSSL
+		} | select DateCollected, CTXDDC , CTXStoreFront , RDSLicenseServer , RDSLicensType , ReportsFolder , ParametersFolder , DashboardTitle, SaveExcelReport , SendEmail , emailFrom , emailTo , smtpServer , smtpServerPort , smtpEnableSSL
 
-        if (Test-Path -Path "$ParametersFolder\Parameters.xml") { Remove-Item "$ParametersFolder\Parameters.xml" -Force -Verbose }
+		if (Test-Path -Path "$ParametersFolder\Parameters.xml") { Remove-Item "$ParametersFolder\Parameters.xml" -Force -Verbose }
 		$AllXDData | Export-Clixml -Path "$ParametersFolder\Parameters.xml" -Depth 3 -NoClobber -Force
 
 		$Global:PSParameters = $ParametersFolder + "\Parameters.xml"
@@ -160,16 +160,16 @@ function Install-XDHealthCheckParameter {
 
 
 
-    }
+	}
 
 	function Test-Parameter {
 
 		if ($PSParameters -eq $null) {
 			$PSParameters = Read-Host 'Full Path to Parameters.xml file'
 			if ((Get-Item $PSParameters).Extension -ne 'xml') { Write-Error 'Invalid xml file'; break }
-        }
-        $Parameters = Import-Clixml $PSParameters
-        $Parameters
+		}
+		$Parameters = Import-Clixml $PSParameters
+		$Parameters
 		$Parameters.PSObject.Properties | ForEach-Object { New-Variable -Name $_.name -Value $_.value -Force -Scope local }
 		Write-Color -Text 'Checking Credentials' -Color DarkCyan -ShowTime
 		########################################
@@ -191,13 +191,13 @@ function Install-XDHealthCheckParameter {
 
 		$DDC = Invoke-Command -ComputerName $CTXDDC.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
 		$StoreFront = Invoke-Command -ComputerName $CTXStoreFront.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
-		$LicensServer = Invoke-Command -ComputerName $RDSLicensServer.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
+		$LicensServer = Invoke-Command -ComputerName $RDSLicenseServer.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
 
 		if ($DDC -like '') { Write-Error '$XDDDC is not valid' }
 		else { Write-Color -Text "$DDC is valid" -Color green -ShowTime }
 		if ($StoreFront -like '') { Write-Error '$XDStoreFront is not valid' }
 		else { Write-Color -Text "$StoreFront is valid" -Color green -ShowTime }
-		if ($LicensServer -like '') { Write-Error '$RDSLicensServer is not valid' }
+		if ($LicensServer -like '') { Write-Error '$RDSLicenseServer is not valid' }
 		else { Write-Color -Text "$LicensServer is valid" -Color green -ShowTime }
 
 		if ($SendEmail) {

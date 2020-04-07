@@ -107,7 +107,7 @@ function Start-CitrixHealthCheck {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Eventlog Details"
 	$CitrixServerEventLogs = Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting RDS Details"
-	$RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicensServer  -RemoteCredentials $CTXAdmin | ForEach-Object { $_.$RDSLicensType } | Where-Object { $_.IssuedLicenses -gt 500 } | select TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
+	$RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicenseServer  -RemoteCredentials $CTXAdmin | ForEach-Object { $_.$RDSLicensType } | Where-Object { $_.IssuedLicenses -gt 500 } | select TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Config changes Details"
 	$CitrixConfigurationChanges = Get-CitrixConfigurationChange -AdminServer $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Storefront Details"
@@ -181,7 +181,7 @@ function Start-CitrixHealthCheck {
 		Redflags                       = $flags
 		SiteDetails                    = $CitrixRemoteFarmDetails.SiteDetails.Summary
 		SessionCounts                  = $CitrixRemoteFarmDetails.SessionCounts
-		RebootSchedule				   = $CitrixRemoteFarmDetails.RebootSchedule
+		RebootSchedule                 = $CitrixRemoteFarmDetails.RebootSchedule
 		Controllers                    = $CitrixRemoteFarmDetails.Controllers.Summary
 		DBConnection                   = $CitrixRemoteFarmDetails.DBConnection
 		CitrixLicenseInformation       = $CitrixLicenseInformation

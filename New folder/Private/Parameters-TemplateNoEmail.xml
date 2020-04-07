@@ -16,7 +16,7 @@
 			<Scope>Local</Scope>
 		</Variable>
 		<Variable>
-			<Name>RDSLicensServer</Name>
+			<Name>RDSLicenseServer</Name>
 			<Value></Value>
 			<!-- RDS LicenseServer FQDN -->
 			<Type>[string]</Type>

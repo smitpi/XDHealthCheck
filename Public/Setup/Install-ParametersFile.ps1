@@ -42,16 +42,16 @@ function Install-ParametersFile {
 	$Global:VerbosePreference = 'silentlyContinue'
 
 	### Prepare NuGet / PSGallery
-	if (!(Get-PackageProvider | Where-Object { $_.Name -eq 'NuGet' })) {"Installing NuGet"; Install-PackageProvider -Name NuGet -force | Out-Null}
+	if (!(Get-PackageProvider | Where-Object { $_.Name -eq 'NuGet' })) { "Installing NuGet"; Install-PackageProvider -Name NuGet -force | Out-Null }
 
 	"Preparing PSGallery repository"
 	Import-PackageProvider -Name NuGet -force | Out-Null
-	if ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne 'Trusted') {Set-PSRepository -Name PSGallery -InstallationPolicy Trusted}
+	if ((Get-PSRepository -Name PSGallery).InstallationPolicy -ne 'Trusted') { Set-PSRepository -Name PSGallery -InstallationPolicy Trusted }
 
 	"Install PSWriteColor"
 	$PSWriteColor = Get-Module -Name PSWriteColor -ListAvailable
-	if (!$PSWriteColor) { "Installing PSWriteColor";Install-Module PSWriteColor}
-	else {"Using PSWriteColor $($PSWriteColor.Version)"}
+	if (!$PSWriteColor) { "Installing PSWriteColor"; Install-Module PSWriteColor }
+	else { "Using PSWriteColor $($PSWriteColor.Version)" }
 
 	"Install BetterCredentials"
 	$BetterCredentials = Get-Module -Name BetterCredentials -ListAvailable
@@ -73,7 +73,7 @@ function Install-ParametersFile {
 
 		[string]$CTXDDC = Read-Host 'A Citrix Data Collector FQDN'
 		[string]$CTXStoreFront = Read-Host 'A Citrix StoreFront FQDN'
-		[string]$RDSLicensServer = Read-Host 'RDS LicenseServer FQDN'
+		[string]$RDSLicenseServer = Read-Host 'RDS LicenseServer FQDN'
 
 		Write-Color -Text 'Add RDS License Type' -Color DarkGray -LinesAfter 1
 		Write-Color "1: ", "Per Device"  -Color Yellow, Green
@@ -84,32 +84,32 @@ function Install-ParametersFile {
 			'2' { [string]$RDSLicensType = 'Per User' }
 		}
 		$trusteddomains = @()
-			$input = ''
-			While ($input -ne "n") {
-				If ($input -ne $null) {
-                    $FQDN  = Read-Host 'FQDN for the domain'
-                    $NetBiosName = Read-Host 'Net Bios Name for Domain '
-                $CusObject = New-Object PSObject -Property @{
-			        FQDN  = $FQDN
-                    NetBiosName = $NetBiosName
-                    Discription = $NetBiosName + "_ServiceAccount"
-                    } | select FQDN,NetBiosName,Discription
-                $trusteddomains += $CusObject
+		$input = ''
+		While ($input -ne "n") {
+			If ($input -ne $null) {
+				$FQDN = Read-Host 'FQDN for the domain'
+				$NetBiosName = Read-Host 'Net Bios Name for Domain '
+				$CusObject = New-Object PSObject -Property @{
+					FQDN        = $FQDN
+					NetBiosName = $NetBiosName
+					Discription = $NetBiosName + "_ServiceAccount"
+				} | Select-Object FQDN, NetBiosName, Discription
+				$trusteddomains += $CusObject
 				$input = Read-Host "Add more trusted domains? (y/n)"
-			    }
-             }
-			$CTXNS = @()
-			$input = ''
-			While ($input -ne "n") {
-				If ($input -ne $null) {
+			}
+		}
+		$CTXNS = @()
+		$input = ''
+		While ($input -ne "n") {
+			If ($input -ne $null) {
 				$CusObject = New-Object PSObject -Property @{
 					NSIP    = Read-Host 'Netscaler IP (Management)'
 					NSAdmin = Read-Host 'Root Username'
-				} | select NSIP, NSAdmin
-                $CTXNS += $CusObject
+				} | Select-Object NSIP, NSAdmin
+				$CTXNS += $CusObject
 				$input = Read-Host "Add more Netscalers? (y/n)"
-			    }
-             }
+			}
+		}
 		$ReportsFolder = Read-Host 'Path to the Reports Folder'
 		$ParametersFolder = Read-Host 'Path to where the Parameters.json will be saved'
 		$DashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'
@@ -167,33 +167,33 @@ function Install-ParametersFile {
 			}
 		}
 		$AllXDData = New-Object PSObject -Property @{
-			DateCollected 			= (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-			CTXDDC 					= $CTXDDC
-			CTXStoreFront 			= $CTXStoreFront
-			RDSLicensServer 		= $RDSLicensServer
-			RDSLicensType 			= $RDSLicensType
-			CTXNS  					= $CTXNS
-			TrustedDomains 			= $trusteddomains
-			ReportsFolder 			= $ReportsFolder
-			ParametersFolder 		= $ParametersFolder
-			DashboardTitle 			= $DashboardTitle
-			HeaderColor 			= $HeaderColor
-			RemoveOldReports 		= $RemoveOldReports
-			SaveExcelReport 		= $SaveExcelReport
-			SendEmail 				= $SendEmail
-			EmailFrom 				= $FromAddress
-			EmailTo 				= $ToAddress
-			SMTPServer 				= $smtpServer
-			SMTPServerPort 			= $smtpServerPort
-			SMTPEnableSSL 			= $smtpEnableSSL
-		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicensServer , RDSLicensType, CTXNS, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, HeaderColor, RemoveOldReports, SaveExcelReport , SendEmail , EmailFrom , EmailTo , SMTPServer , SMTPServerPort , SMTPEnableSSL
+			DateCollected    = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+			CTXDDC           = $CTXDDC
+			CTXStoreFront    = $CTXStoreFront
+			RDSLicenseServer = $RDSLicenseServer
+			RDSLicensType    = $RDSLicensType
+			CTXNS            = $CTXNS
+			TrustedDomains   = $trusteddomains
+			ReportsFolder    = $ReportsFolder
+			ParametersFolder = $ParametersFolder
+			DashboardTitle   = $DashboardTitle
+			HeaderColor      = $HeaderColor
+			RemoveOldReports = $RemoveOldReports
+			SaveExcelReport  = $SaveExcelReport
+			SendEmail        = $SendEmail
+			EmailFrom        = $FromAddress
+			EmailTo          = $ToAddress
+			SMTPServer       = $smtpServer
+			SMTPServerPort   = $smtpServerPort
+			SMTPEnableSSL    = $smtpEnableSSL
+		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicenseServer , RDSLicensType, CTXNS, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, HeaderColor, RemoveOldReports, SaveExcelReport , SendEmail , EmailFrom , EmailTo , SMTPServer , SMTPServerPort , SMTPEnableSSL
 
 		if (Test-Path -Path "$ParametersFolder\Parameters.json") { Remove-Item "$ParametersFolder\Parameters.json" -Force -Verbose }
 		$AllXDData | ConvertTo-Json -Depth 5 | Out-File -FilePath "$ParametersFolder\Parameters.json"
 
 		$Global:PSParameters = $ParametersFolder + "\Parameters.json"
 		[System.Environment]::SetEnvironmentVariable('PSParameters', $PSParameters, [System.EnvironmentVariableTarget]::User)
-    }
+	}
 
 	function Test-Parameter {
 
@@ -211,13 +211,13 @@ function Install-ParametersFile {
 
 		$DDC = Invoke-Command -ComputerName $CTXDDC.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
 		$StoreFront = Invoke-Command -ComputerName $CTXStoreFront.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
-		$LicensServer = Invoke-Command -ComputerName $RDSLicensServer.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
+		$LicensServer = Invoke-Command -ComputerName $RDSLicenseServer.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
 
 		if ($DDC -like '') { Write-Error '$XDDDC is not valid' }
 		else { Write-Color -Text "$DDC is valid" -Color green -ShowTime }
 		if ($StoreFront -like '') { Write-Error '$XDStoreFront is not valid' }
 		else { Write-Color -Text "$StoreFront is valid" -Color green -ShowTime }
-		if ($LicensServer -like '') { Write-Error '$RDSLicensServer is not valid' }
+		if ($LicensServer -like '') { Write-Error '$RDSLicenseServer is not valid' }
 		else { Write-Color -Text "$LicensServer is valid" -Color green -ShowTime }
 
 		if ($SendEmail) {
