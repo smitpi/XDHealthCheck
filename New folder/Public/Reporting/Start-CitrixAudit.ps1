@@ -67,6 +67,7 @@ function Start-CitrixAudit {
 	##########################################
 	#region xml imports
 	##########################################
+	Import-Module XDHealthCheck -Force
 	Import-ParametersFile -JSONParameterFilePath $JSONParameterFilePath
 	#endregion
 
@@ -107,7 +108,6 @@ function Start-CitrixAudit {
 	########################################
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
 	$CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC -RunAsPSRemote -RemoteCredentials $CTXAdmin -Verbose
-
 	$MashineCatalog = $CitrixObjects.MashineCatalog | Select-Object MachineCatalogName, AllocationType, SessionSupport, UnassignedCount, UsedCount, MasterImageVM, MasterImageSnapshotName, MasterImageSnapshotCount, MasterImageVMDate
 	$DeliveryGroups = $CitrixObjects.DeliveryGroups | Select-Object DesktopGroupName, Enabled, InMaintenanceMode, TotalApplications, TotalDesktops, DesktopsUnregistered, UserAccess, GroupAccess
 	$PublishedApps = $CitrixObjects.PublishedApps | Select-Object DesktopGroupName, DesktopGroupUsersAccess, DesktopGroupGroupAccess, Enabled, ApplicationName, PublishedAppGroupAccess, PublishedAppUserAccess
@@ -121,8 +121,6 @@ function Start-CitrixAudit {
 		MashineCatalog          = $CitrixObjects.MashineCatalog
 		DeliveryGroups          = $CitrixObjects.DeliveryGroups
 		PublishedApps           = $CitrixObjects.PublishedApps
-        VDAServers              = $CitrixObjects.VDAServers
-        VDAWorkstations         = $CitrixObjects.VDAWorkstations
 		MashineCatalogSum       = $MashineCatalog
 		DeliveryGroupsSum       = $DeliveryGroups
 		PublishedAppsSum        = $PublishedApps
@@ -184,12 +182,9 @@ function Start-CitrixAudit {
 	#######################
 	if ($SaveExcelReport) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
-		$AllXDData.MashineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MashineCatalog -AutoSize  -Title "Citrix Mashine Catalog" -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.MashineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MashineCatalog -AutoSize  -Title "CitrixMashine Catalog" -TitleBold -TitleSize 20 -FreezePane 3
 		$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize  -Title "Citrix Delivery Groups" -TitleBold -TitleSize 20 -FreezePane 3
 		$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize  -Title "Citrix PublishedApps" -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.VDAServers | Export-Excel -Path $ExcelReportname -WorksheetName VDAServers -AutoSize  -Title "Citrix VDA Servers" -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.VDAWorkstations | Export-Excel -Path $ExcelReportname -WorksheetName VDAWorkstations -AutoSize  -Title "Citrix VDA Workstations" -TitleBold -TitleSize 20 -FreezePane 3
-
 	}
 	#endregion
 
@@ -207,16 +202,16 @@ function Start-CitrixAudit {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing]Sending Report Email"
 		$emailMessage = New-Object System.Net.Mail.MailMessage
 		$emailMessage.From = $emailFrom
-        $emailTo | ForEach-Object {$emailMessage.To.Add($_)}
-
-		$emailMessage.Subject =  $DashboardTitle + " - Citrix Audit Results Report on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)
+		$emailMessage.To.Add($emailTo)
+		$emailMessage.Subject = "Citrix Audit Results Report on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)
 		$emailMessage.IsBodyHtml = $true
 		$emailMessage.Body = 'Please see attached reports'
 		$emailMessage.Attachments.Add($Reportname)
 		$emailMessage.Attachments.Add($ExcelReportname)
 
+
 		$smtpClient = New-Object System.Net.Mail.SmtpClient( $smtpServer , $smtpServerPort )
-		#$smtpClient.Credentials = [Net.NetworkCredential]$smtpClientCredentials
+		$smtpClient.Credentials = [Net.NetworkCredential]$smtpClientCredentials
 		$smtpClient.EnableSsl = $smtpEnableSSL
 		$smtpClient.Timeout = 30000000
 		$smtpClient.Send( $emailMessage )

@@ -55,13 +55,13 @@ Param()
 
 
 
-function Start-CitrixAudit {
+function Start-IntranetF2CitrixAudit {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".json") })]
-		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json"
-	)
+		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Reports\IntranetF2\Parameters.json"
+			)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
 	##########################################
@@ -73,6 +73,7 @@ function Start-CitrixAudit {
 	##########################################
 	#region checking folders and report names
 	##########################################
+	$ctxadmin = $Trusteddomains[0].Credentials
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 
 	if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
@@ -126,8 +127,8 @@ function Start-CitrixAudit {
 		MashineCatalogSum       = $MashineCatalog
 		DeliveryGroupsSum       = $DeliveryGroups
 		PublishedAppsSum        = $PublishedApps
-	}
-	if (Test-Path -Path $XMLExport) { Remove-Item $XMLExport -Force -Verbose }
+        }
+    if (Test-Path -Path $XMLExport) { Remove-Item $XMLExport -Force -Verbose }
 	$AllXDData | Export-Clixml -Path $XMLExport -Depth 25 -NoClobber -Force
 	#endregion
 
@@ -184,12 +185,11 @@ function Start-CitrixAudit {
 	#######################
 	if ($SaveExcelReport) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
-		$AllXDData.MashineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MashineCatalog -AutoSize  -Title "Citrix Mashine Catalog" -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.MashineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MashineCatalog -AutoSize  -Title "CitrixMashine Catalog" -TitleBold -TitleSize 20 -FreezePane 3
 		$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize  -Title "Citrix Delivery Groups" -TitleBold -TitleSize 20 -FreezePane 3
 		$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize  -Title "Citrix PublishedApps" -TitleBold -TitleSize 20 -FreezePane 3
 		$AllXDData.VDAServers | Export-Excel -Path $ExcelReportname -WorksheetName VDAServers -AutoSize  -Title "Citrix VDA Servers" -TitleBold -TitleSize 20 -FreezePane 3
 		$AllXDData.VDAWorkstations | Export-Excel -Path $ExcelReportname -WorksheetName VDAWorkstations -AutoSize  -Title "Citrix VDA Workstations" -TitleBold -TitleSize 20 -FreezePane 3
-
 	}
 	#endregion
 
@@ -207,13 +207,13 @@ function Start-CitrixAudit {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing]Sending Report Email"
 		$emailMessage = New-Object System.Net.Mail.MailMessage
 		$emailMessage.From = $emailFrom
-        $emailTo | ForEach-Object {$emailMessage.To.Add($_)}
-
+        $emailTo | foreach {$emailMessage.To.Add($_)}
 		$emailMessage.Subject =  $DashboardTitle + " - Citrix Audit Results Report on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)
 		$emailMessage.IsBodyHtml = $true
 		$emailMessage.Body = 'Please see attached reports'
 		$emailMessage.Attachments.Add($Reportname)
 		$emailMessage.Attachments.Add($ExcelReportname)
+
 
 		$smtpClient = New-Object System.Net.Mail.SmtpClient( $smtpServer , $smtpServerPort )
 		#$smtpClient.Credentials = [Net.NetworkCredential]$smtpClientCredentials

@@ -48,10 +48,7 @@ Function Start-CitrixDocumentation  {
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".json") })]
-		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json",
-		[Parameter(Mandatory = $false, Position = 1)]
-        [ValidateSet('HTML','MSWORD')]
-        [string]$Format        
+		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json"
 		)
 
 
@@ -89,10 +86,8 @@ Function Start-CitrixDocumentation  {
 	 #Get-CitrixFarmDocumentation -DeliveryController $CTXDDC -Path $HTMLReportname -Protocol HTTP -Credential $CTXAdmin -Verbose
 	#Get-CitrixDocumentationV2 -MSWord -AddDateTime -AdminAddress $CTXDDC  -CSV -Folder "$ReportsFolder\XDDocs" -Verbose
 
-if ($format = 'HTML') {Get-CitrixFarmDocumentationV2 -HTML -AddDateTime -AdminAddress $CTXDDC -CSV -Folder "$ReportsFolder\XDDocs" -ScriptInfo}
-if ($format = 'MSWORD') {Get-CitrixFarmDocumentationV2 -MSWord -AddDateTime -AdminAddress $CTXDDC -CSV -Folder "$ReportsFolder\XDDocs" -ScriptInfo}
-#	Get-CitrixNetscalerDocumentation -MSWord -AddDateTime -NSIP '192.168.5.15' -Credential $NSAdmin -Folder "$ReportsFolder\XDDocs" -ScriptInfo#
-	#Get-CitrixNetscalerDocumentation -PDF -AddDateTime -NSIP '192.168.5.15' -Credential $NSAdmin -Folder "$ReportsFolder\XDDocs" -ScriptInfo
+	Get-CitrixFarmDocumentationV2 -MSWord -AddDateTime -AdminAddress $CTXDDC -CSV -Folder "$ReportsFolder\XDDocs" -ScriptInfo
+	Get-CitrixNetscalerDocumentation -MSWord -AddDateTime -NSIP $CTXNS[0].NSIP -Credential $NSAdmin -Folder "$ReportsFolder\XDDocs" -ScriptInfo
 
 
 	$timer.Stop()

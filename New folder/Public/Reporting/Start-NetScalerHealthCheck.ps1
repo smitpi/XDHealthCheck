@@ -189,7 +189,7 @@ function Start-NetScalerHealthCheck {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing]Sending Report Email"
 		$emailMessage = New-Object System.Net.Mail.MailMessage
 		$emailMessage.From = $emailFrom
-        $emailTo | foreach {$emailMessage.To.Add($_)}
+		$emailMessage.To.Add($emailTo)
 		$emailMessage.Subject = "Citrix Health Check Report on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)
 		$emailMessage.IsBodyHtml = $true
 		$emailMessage.Body = $emailbody
@@ -198,7 +198,7 @@ function Start-NetScalerHealthCheck {
 		$emailMessage.Attachments.Add((Get-ChildItem $ReportsFolder\XDNS *.xlsx | Sort-Object LastWriteTime -Descending)[0])
 		$emailMessage.Attachments.Add((Get-ChildItem $ReportsFolder\XDNS *.xlsx | Sort-Object LastWriteTime -Descending)[1])
 		$smtpClient = New-Object System.Net.Mail.SmtpClient( $smtpServer , $smtpServerPort )
-		#$smtpClient.Credentials = [Net.NetworkCredential]$smtpClientCredentials
+		$smtpClient.Credentials = [Net.NetworkCredential]$smtpClientCredentials
 		$smtpClient.EnableSsl = $smtpEnableSSL
 		$smtpClient.Timeout = 30000000
 		$smtpClient.Send( $emailMessage )

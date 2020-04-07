@@ -119,8 +119,8 @@ Function Get-CitrixFarmDetail {
 		}
 
 		function Get-CTXBrokerMachine($AdminServer) {
-			$NonRemotepc = Get-BrokerDesktopGroup -AdminAddress $AdminServer | Where-Object { $_.IsRemotePC -eq $false } | ForEach-Object { Get-BrokerMachine -MaxRecordCount 10000 -AdminAddress $AdminBox -DesktopGroupName $_.name | Select-Object DNSName, CatalogName, DesktopGroupName, CatalogUid, AssociatedUserNames, DesktopGroupUid, DeliveryType, DesktopKind, DesktopUid, FaultState, IPAddress, IconUid, OSType, PowerActionPending, PowerState, PublishedApplications, RegistrationState, InMaintenanceMode, WindowsConnectionSetting }
-			$UnRegServer = $NonRemotepc | Where-Object { $_.RegistrationState -like "unreg*" -and $_.DeliveryType -notlike "DesktopsOnly" } | Select-Object DNSName, CatalogName, DesktopGroupName, FaultState
+			$NonRemotepc = Get-BrokerDesktopGroup -AdminAddress $AdminServer | Where-Object { $_.IsRemotePC -eq $false } | ForEach-Object { Get-BrokerMachine -MaxRecordCount 10000 -AdminAddress $AdminBox -DesktopGroupName $_.name | Select-Object DNSName, CatalogName, DesktopGroupName, CatalogUid, AssociatedUserNames, DesktopGroupUid, DeliveryType, DesktopKind, DesktopUid, FaultState, IPAddress, IconUid, OSType, PublishedApplications, RegistrationState, WindowsConnectionSetting }
+			$UnRegServer = $NonRemotepc | Where-Object { $_.RegistrationState -like "unreg*" -and $_.DeliveryType -notlike "DesktopsOnly" } | Select-Object DNSName, CatalogName, DesktopGroupName, AssociatedUserNames, FaultState
 			$UnRegDesktop = $NonRemotepc | Where-Object { $_.RegistrationState -like "unreg*" -and $_.DeliveryType -like "DesktopsOnly" } | Select-Object DNSName, CatalogName, DesktopGroupName, AssociatedUserNames, FaultState
 			$CusObject = New-Object PSObject -Property @{
 				AllMachines          = $NonRemotepc
@@ -167,25 +167,6 @@ Function Get-CitrixFarmDetail {
 
 		function Get-CTXRebootSchedule ($AdminServer) { Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer | Select-Object Day, DesktopGroupName, Enabled, Frequency, Name, RebootDuration, StartTime}
 
-		function Get-VDAUptime($AdminServer) {
-			$VDAUptime = @()
-			Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000 | Where-Object { $_.OStype -like 'Windows 2016' -and $_.DesktopGroupName -notlike $null } | ForEach-Object {
-				$OS = Get-CimInstance Win32_OperatingSystem -ComputerName $_.DNSName | Select-Object *
-				$Uptime = (Get-Date) - ($OS.LastBootUpTime)
-				$updays = [math]::Round($uptime.Days, 0)
-				$CusObject = New-Object PSObject -Property @{
-					ComputerName         = $_.dnsname
-					DesktopGroupName     = $_.DesktopGroupName
-					SessionCount         = $_.SessionCount
-					InMaintenanceMode    = $_.InMaintenanceMode
-					MachineInternalState = $_.MachineInternalState
-					Uptime               = $updays
-				} | Select-Object ComputerName, DesktopGroupName, SessionCount, InMaintenanceMode, MachineInternalState, Uptime
-				$VDAUptime += $CusObject
-			}
-			$VDAUptime
-		}
-
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Site Details"
 		$SiteDetails = Get-CTXSiteDetail -AdminServer $AdminServer
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Controllers Details"
@@ -202,8 +183,6 @@ Function Get-CitrixFarmDetail {
 		$DBConnection = Get-CTXDBConnection -AdminServer $AdminServer
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Reboot Schedule Details"
 		$RebootSchedule = Get-CTXRebootSchedule -AdminServer $AdminServer
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] VDA Uptime"
-		$VDAUptime = Get-VDAUptime -AdminServer $AdminServer
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"
 		$SessionCounts = New-Object PSObject -Property @{
 			'Active Sessions'       = ($Sessions | Where-Object -Property Sessionstate -EQ "Active").count
@@ -223,9 +202,8 @@ Function Get-CitrixFarmDetail {
 			DeliveryGroups  = $DeliveryGroups
 			DBConnection    = $DBConnection
 			SessionCounts   = $SessionCounts
-			RebootSchedule  = $RebootSchedule
-			VDAUptime 		= $VDAUptime
-		} | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule, VDAUptime
+			RebootSchedule = $RebootSchedule
+		} | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule
 		$CustomCTXObject
 	}
 
@@ -233,7 +211,7 @@ $FarmDetails = @()
 if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:CitrixFarmDetails} -ArgumentList  @($AdminServer) -Credential $RemoteCredentials }
 else { $FarmDetails = CitrixFarmDetails -AdminServer $AdminServer}
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] All Details"
-	$FarmDetails | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule, VDAUptime
+	$FarmDetails | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule
 
 } #end Function
 

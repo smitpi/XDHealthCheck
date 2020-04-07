@@ -77,27 +77,22 @@ Function Get-CitrixSingleServerPerformance {
 		[PSCredential]$RemoteCredentials)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Performance Details for $($server.ToString())"
-
+	$CtrList = @(
+		"\Processor(_Total)\% Processor Time",
+		"\memory\% committed bytes in use",
+		"\LogicalDisk(C:)\% Free Space",
+		"\LogicalDisk(D:)\% Free Space"
+	)
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Perfmon Details for $($server.ToString())"
-	$perf = Invoke-Command -ComputerName $Server -ScriptBlock	{
-		$CtrList = @(
-			"\Processor(_Total)\% Processor Time",
-			"\memory\% committed bytes in use",
-			"\LogicalDisk(C:)\% Free Space",
-			"\LogicalDisk(D:)\% Free Space"
-		)
-			Get-Counter $CtrList -ErrorAction SilentlyContinue | Select-Object -ExpandProperty CounterSamples
-	} -Credential $RemoteCredentials
+	$perf = Get-Counter $CtrList -ComputerName $server  -ErrorAction SilentlyContinue | Select-Object -ExpandProperty CounterSamples
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Services Details for $($server.ToString())"
-	$services = Invoke-Command -ComputerName $Server -ScriptBlock	{
-		Get-Service citrix* | Where-Object { ($_.starttype -eq "Automatic" -and $_.status -eq "Stopped") }
-	} -Credential $RemoteCredentials
+	$services = Get-Service -ComputerName $server citrix* | Where-Object { ($_.starttype -eq "Automatic" -and $_.status -eq "Stopped") }
 	if ([bool]$Services.DisplayName -eq $true) { $ServicesJoin = [String]::Join(';', $Services.DisplayName) }
-		else { $ServicesJoin = '' }
+	else { $ServicesJoin = '' }
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Uptime Details for $($server.ToString())"
-	$OS = Invoke-Command -ComputerName $Server -ScriptBlock	{ Get-CimInstance Win32_OperatingSystem | Select-Object * } -Credential $RemoteCredentials
+	$OS = Get-CimInstance Win32_OperatingSystem -ComputerName $server | Select-Object *
 	$Uptime = (Get-Date) - ($OS.LastBootUpTime)
 	$updays = [math]::Round($uptime.Days, 0)
 
@@ -107,7 +102,7 @@ Function Get-CitrixSingleServerPerformance {
 		'CPU %'            = [Decimal]::Round(($perf[0].CookedValue), 2).tostring()
 		'Memory %'         = [Decimal]::Round(($perf[1].CookedValue), 2).tostring()
 		'CDrive % Free'    = [Decimal]::Round(($perf[2].CookedValue), 2).tostring()
-		'DDrive % Free'    = [Decimal]::Round(($perf[3].CookedValue), 2).tostring()
+		'DDrive % Free'      = [Decimal]::Round(($perf[3].CookedValue), 2).tostring()
 		Uptime             = $updays.tostring()
 		'Stopped Services' = $ServicesJoin
 	} | Select-Object ServerName, 'CPU %', 'Memory %', 'CDrive % Free', 'DDrive % Free', Uptime, 'Stopped Services'

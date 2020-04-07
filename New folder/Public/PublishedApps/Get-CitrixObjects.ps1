@@ -161,9 +161,9 @@ Function Get-CitrixObjects {
 			foreach ($PublishedApp in $PublishedApps) {
 				Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Published Application: $($DeskG.DesktopGroupName.ToString()) - $($PublishedApp.PublishedName.ToString())"
 				[System.Collections.ArrayList]$PublishedAppGroup = @()
-				[System.Collections.ArrayList]$PublishedAppUser = @($PublishedApp.AssociatedUserNames | Where-Object { $_ -notlike $null })
+				[System.Collections.ArrayList]$PublishedAppUser = @($PublishedApp.AssociatedUserUPNs | Where-Object { $_ -notlike $null })
 				$index = 0
-				foreach ($upn in $PublishedApp.AssociatedUserNames) {
+				foreach ($upn in $PublishedApp.AssociatedUserUPNs) {
 					if ($null -like $upn) { $PublishedAppGroup += @($PublishedApp.AssociatedUserNames)[$index] }
 					$index ++
 				}
@@ -191,48 +191,15 @@ Function Get-CitrixObjects {
 			}
 			}
 
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Server Details"
-        $VDAServers = @()
-        Get-BrokerMachine  -AdminAddress $AdminServer -MaxRecordCount 100000 | Where-Object {$_.OSType -like "Windows 20*"} | ForEach-Object {
-            $VDASCusObject = New-Object PSObject -Property @{
-                DNSName              = $_.DNSName
-                CatalogName          = $_.CatalogName
-                DesktopGroupName     = $_.DesktopGroupName
-                IPAddress            = $_.IPAddress
-                AgentVersion         = $_.AgentVersion
-                OSType               = $_.OSType
-                RegistrationState    = $_.RegistrationState
-				InMaintenanceMode    = $_.InMaintenanceMode
-           } | Select-Object DNSName,CatalogName,DesktopGroupName,IPAddress,AgentVersion,OSType,RegistrationState,InMaintenanceMode
-           $VDAServers += $VDASCusObject
-        }
 
-        Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Workstation Details"
-        $VDAWorkstations = @()
-        Get-BrokerMachine  -AdminAddress $AdminServer -MaxRecordCount 100000 | Where-Object {$_.OSType -notlike "Windows 20*"} | ForEach-Object {
-            $VDAWCusObject = New-Object PSObject -Property @{
-                DNSName              = $_.DNSName
-                CatalogName          = $_.CatalogName
-                DesktopGroupName     = $_.DesktopGroupName
-                IPAddress            = $_.IPAddress
-                AgentVersion         = $_.AgentVersion
-                AssociatedUserNames  = @(($_.AssociatedUserNames) | Out-String).Trim()
-                OSType               = $_.OSType
-                RegistrationState    = $_.RegistrationState
-				InMaintenanceMode    = $_.InMaintenanceMode
-           } | Select-Object DNSName,CatalogName,DesktopGroupName,IPAddress,AgentVersion,AssociatedUserNames,OSType,RegistrationState,InMaintenanceMode
-           $VDAWorkstations += $VDAWCusObject
-        }
 
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Published Applications"
 
 		$CusObject = New-Object PSObject -Property @{
-			DateCollected   = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-			MashineCatalog  = $CTXMachineCatalog
-			DeliveryGroups  = $CTXDeliveryGroup
-			PublishedApps   = $HostedApps
-            VDAServers      = $VDAServers
-            VDAWorkstations = $VDAWorkstations
+			DateCollected  = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+			MashineCatalog = $CTXMachineCatalog
+			DeliveryGroups = $CTXDeliveryGroup
+			PublishedApps  = $HostedApps
 		}
 		$CusObject
 	}
@@ -241,7 +208,7 @@ $AppDetail = @()
 if ($RunAsPSRemote -eq $true) { $AppDetail = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:GetAllConfig} -ArgumentList  @($AdminServer) -Credential $RemoteCredentials }
 else { $AppDetail = GetAllConfig -AdminServer $AdminServer }
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] All Details"
-$AppDetail | Select-Object DateCollected, MashineCatalog, DeliveryGroups, PublishedApps,VDAServers,VDAWorkstations
+$AppDetail | Select-Object DateCollected, MashineCatalog, DeliveryGroups, PublishedApps
 } #end Function
 
 
