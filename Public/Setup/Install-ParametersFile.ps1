@@ -80,8 +80,8 @@ function Install-ParametersFile {
 		Write-Color "2: ", "Per User"  -Color Yellow, Green
 		$selection = Read-Host "Please make a selection"
 		switch ($selection) {
-			'1' { [string]$RDSLicensType = 'Per Device' }
-			'2' { [string]$RDSLicensType = 'Per User' }
+			'1' { [string]$RDSLicenseType = 'Per Device' }
+			'2' { [string]$RDSLicenseType = 'Per User' }
 		}
 		$trusteddomains = @()
 		$input = ''
@@ -171,7 +171,7 @@ function Install-ParametersFile {
 			CTXDDC           = $CTXDDC
 			CTXStoreFront    = $CTXStoreFront
 			RDSLicenseServer = $RDSLicenseServer
-			RDSLicensType    = $RDSLicensType
+			RDSLicenseType   = $RDSLicenseType
 			CTXNS            = $CTXNS
 			TrustedDomains   = $trusteddomains
 			ReportsFolder    = $ReportsFolder
@@ -186,7 +186,7 @@ function Install-ParametersFile {
 			SMTPServer       = $smtpServer
 			SMTPServerPort   = $smtpServerPort
 			SMTPEnableSSL    = $smtpEnableSSL
-		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicenseServer , RDSLicensType, CTXNS, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, HeaderColor, RemoveOldReports, SaveExcelReport , SendEmail , EmailFrom , EmailTo , SMTPServer , SMTPServerPort , SMTPEnableSSL
+		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicenseServer , RDSLicenseType, CTXNS, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, HeaderColor, RemoveOldReports, SaveExcelReport , SendEmail , EmailFrom , EmailTo , SMTPServer , SMTPServerPort , SMTPEnableSSL
 
 		if (Test-Path -Path "$ParametersFolder\Parameters.json") { Remove-Item "$ParametersFolder\Parameters.json" -Force -Verbose }
 		$AllXDData | ConvertTo-Json -Depth 5 | Out-File -FilePath "$ParametersFolder\Parameters.json"
