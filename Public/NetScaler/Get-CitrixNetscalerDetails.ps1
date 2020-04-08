@@ -59,12 +59,12 @@ Function Get-CitrixNetscalerDetails {
 
 	function getns {
 		[CmdletBinding()]
-		param($NSIP, [SecureString] $NSCredentials)
+		param($NSIP, $NSCredentials)
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Connecting to Netscaler"
 		Connect-NetScaler -IPAddress $NSIP -Credential $NSCredentials
 Try {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Site Details"
-		[PSCustomObject]@{
+[PSCustomObject]@{
 			DateCollected   = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
 			NSDetails       = [PSCustomObject]@{
 				Name                = (Get-NSHostname).hostname
@@ -87,7 +87,6 @@ Try {
 		Disconnect-NetScaler
 }
 catch { }
-		#$ALLNS
 	}
 	$NSDetails = @()
 	if ($RunAsPSRemote -eq $true) { $NSDetails = Invoke-Command -ComputerName $RemoteServer -ScriptBlock ${Function:getns} -ArgumentList  @($NSIP, $NSCredentials) -Credential $RemoteCredentials }

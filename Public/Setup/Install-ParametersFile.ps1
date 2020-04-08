@@ -55,7 +55,7 @@ function Install-ParametersFile {
 
 	"Install BetterCredentials"
 	$BetterCredentials = Get-Module -Name BetterCredentials -ListAvailable
-	if (!$BetterCredentials) { "Installing BetterCredentials"; Install-Module BetterCredentials }
+	if (!$BetterCredentials) { "Installing BetterCredentials"; Install-Module BetterCredentials -AllowClobber }
 	else { "Using BetterCredentials $($BetterCredentials.Version)" }
 
 	"Install ImportExcel"
@@ -67,6 +67,12 @@ function Install-ParametersFile {
 	$PSWriteHTML = Get-Module -Name PSWriteHTML -ListAvailable
 	if (!$PSWriteHTML) { "Installing PSWriteHTML"; Install-Module PSWriteHTML }
 	else { "Using PSWriteHTML $($PSWriteHTML.Version)" }
+
+	"Install NetScaler"
+	$PSWriteHTML = Get-Module -Name NetScaler -ListAvailable
+	if (!$PSWriteHTML) { "Installing NetScaler"; Install-Module NetScaler }
+	else { "Using NetScaler $($NetScaler.Version)" }
+
 
 
 	Function Set-Parameter {
@@ -199,9 +205,8 @@ function Install-ParametersFile {
 
 		if ($PSParameters -eq $null) {
 			$PSParameters = Read-Host 'Full Path to Parameters.json file'
-			if ((Get-Item $PSParameters).Extension -ne 'json') { Write-Error 'Invalid json file'; break }
 		}
-		Import-Module XDHealthCheck -Force
+		Import-Module XDHealthCheck -Force -Verbose
 		Import-ParametersFile -JSONParameterFilePath $PSParameters
 		########################################
 		## Build other variables
@@ -209,9 +214,9 @@ function Install-ParametersFile {
 
 		Write-Color -Text 'Checking PS Remoting to servers' -Color DarkCyan -ShowTime
 
-		$DDC = Invoke-Command -ComputerName $CTXDDC.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
-		$StoreFront = Invoke-Command -ComputerName $CTXStoreFront.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
-		$LicenseServer = Invoke-Command -ComputerName $RDSLicenseServer.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
+		$DDC = Invoke-Command -ComputerName $CTXDDC.ToString() -Credential $CTXAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
+		$StoreFront = Invoke-Command -ComputerName $CTXStoreFront.ToString() -Credential $CTXAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
+		$LicenseServer = Invoke-Command -ComputerName $RDSLicenseServer.ToString() -Credential $CTXAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
 
 		if ($DDC -like '') { Write-Error '$XDDDC is not valid' }
 		else { Write-Color -Text "$DDC is valid" -Color green -ShowTime }
