@@ -73,10 +73,10 @@ Function Get-CitrixConfigurationChange {
 		$exportpath = (Get-Item (Get-Item Env:\TEMP).value).FullName + "\ctxreportlog.csv"
 
 		if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Procesess] Exporting Changes"
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
 
 		Export-LogReportCsv -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Procesess] Importing Changes"
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
 
 		$LogExportAll = Import-Csv -Path $exportpath -Delimiter ","
 		$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike "" } | Select-Object -Property High*

@@ -63,10 +63,10 @@ function Install-ParametersFile {
 	if (!$ImportExcel) { "Installing ImportExcel"; Install-Module ImportExcel }
 	else { "Using ImportExcel $($ImportExcel.Version)" }
 
-	"Install UniversalDashboard"
-	$UniversalDashboard = Get-Module -Name UniversalDashboard.Community -ListAvailable
-	if (!$UniversalDashboard) { "Installing UniversalDashboard"; Install-Module UniversalDashboard.Community }
-	else { "Using UniversalDashboard $($UniversalDashboard.Version)" }
+	"Install PSWriteHTML"
+	$PSWriteHTML = Get-Module -Name PSWriteHTML -ListAvailable
+	if (!$PSWriteHTML) { "Installing PSWriteHTML"; Install-Module PSWriteHTML }
+	else { "Using PSWriteHTML $($PSWriteHTML.Version)" }
 
 
 	Function Set-Parameter {
@@ -92,8 +92,8 @@ function Install-ParametersFile {
 				$CusObject = New-Object PSObject -Property @{
 					FQDN        = $FQDN
 					NetBiosName = $NetBiosName
-					Discription = $NetBiosName + "_ServiceAccount"
-				} | Select-Object FQDN, NetBiosName, Discription
+					Description = $NetBiosName + "_ServiceAccount"
+				} | Select-Object FQDN, NetBiosName, Description
 				$trusteddomains += $CusObject
 				$input = Read-Host "Add more trusted domains? (y/n)"
 			}
@@ -148,7 +148,7 @@ function Install-ParametersFile {
 			$input = ''
 			While ($input -ne "n") {
 				If ($input -ne $null) {
-					$emailtoA = Read-Host 'Email Address of the Resipient'
+					$emailtoA = Read-Host 'Email Address of the Recipient'
 					$emailtoN = Read-Host 'Full Name of the Recipient'
 					$ToAddress += $emailtoN + " <" + $emailtoA + ">"
 				}
@@ -211,14 +211,14 @@ function Install-ParametersFile {
 
 		$DDC = Invoke-Command -ComputerName $CTXDDC.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
 		$StoreFront = Invoke-Command -ComputerName $CTXStoreFront.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
-		$LicensServer = Invoke-Command -ComputerName $RDSLicenseServer.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
+		$LicenseServer = Invoke-Command -ComputerName $RDSLicenseServer.ToString() -Credential $XDAdmin -ScriptBlock { [System.Net.Dns]::GetHostByName(($env:COMPUTERNAME)).Hostname }
 
 		if ($DDC -like '') { Write-Error '$XDDDC is not valid' }
 		else { Write-Color -Text "$DDC is valid" -Color green -ShowTime }
 		if ($StoreFront -like '') { Write-Error '$XDStoreFront is not valid' }
 		else { Write-Color -Text "$StoreFront is valid" -Color green -ShowTime }
-		if ($LicensServer -like '') { Write-Error '$RDSLicenseServer is not valid' }
-		else { Write-Color -Text "$LicensServer is valid" -Color green -ShowTime }
+		if ($LicenseServer -like '') { Write-Error '$RDSLicenseServer is not valid' }
+		else { Write-Color -Text "$LicenseServer is valid" -Color green -ShowTime }
 
 		if ($SendEmail) {
 			Write-Color -Text 'Checking Sending Emails' -Color DarkCyan -ShowTime
@@ -259,7 +259,7 @@ function Install-ParametersFile {
 		}
 		$Setting = $null
 		$JSONParameter = Get-Content ($PSParameters) | ConvertFrom-Json
-		[System.Collections.ArrayList]$Setting = $JSONParameter.PSObject.Properties | select name, value
+		[System.Collections.ArrayList]$Setting = $JSONParameter.PSObject.Properties | Select-Object name, value
 
 		$input = 'y'
 		While ($input -ne "n") {

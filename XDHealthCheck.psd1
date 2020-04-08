@@ -12,7 +12,7 @@
 RootModule = 'XDHealthCheck.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.11.12'
+ModuleVersion = '0.2.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -95,7 +95,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'Citrix'
+        Tags = 'Citrix,XenDesktop'
 
         # A URL to the license for this module.
         # LicenseUri = ''
@@ -107,14 +107,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Updated [15/06/2019_16:32]
-Updated [15/06/2019_16:54]
-Updated [15/06/2019_17:50]
-Updated [15/06/2019_18:02]
-Updated [15/06/2019_18:10]
-Updated [15/06/2019_19:21]
-Updated [16/06/2019_20:02] Added a dashboard
-Updated [20/06/2019_20:37] Added a POSH UD Dashboard'
+        ReleaseNotes = ''
 
         # Prerelease string of this module
         # Prerelease = ''
@@ -123,7 +116,7 @@ Updated [20/06/2019_20:37] Added a POSH UD Dashboard'
         # RequireLicenseAcceptance = $false
 
         # External dependent modules of this module
-        ExternalModuleDependencies = @('BetterCredentials',' PSWriteColor','ImportExcel','PSWriteHTML','UniversalDashboard.Community')
+        ExternalModuleDependencies = @('BetterCredentials',' PSWriteColor','ImportExcel','PSWriteHTML')
 
     } # End of PSData hashtable
 

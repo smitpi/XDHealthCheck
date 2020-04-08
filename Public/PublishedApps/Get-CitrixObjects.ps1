@@ -89,8 +89,7 @@ Function Get-CitrixObjects {
 				$mastervm = ($MasterImagesplit | Where-Object { $_ -like '*.vm' }).Replace(".vm", '')
 				if ($masterSnapshotcount -gt 1) { $masterSnapshot = ($MasterImagesplit | Where-Object { $_ -like '*.snapshot' })[-1].Replace(".snapshot", '') }
 				else { $masterSnapshot = ($MasterImagesplit | Where-Object { $_ -like '*.snapshot' }).Replace(".snapshot", '') }
-			}
-			else {
+			} else {
 				$mastervm = ''
 				$masterSnapshot = ''
 				$masterSnapshotcount = 0
@@ -146,8 +145,8 @@ Function Get-CitrixObjects {
 				TotalApplications      = $DesktopGroup.TotalApplications
 				TotalDesktops          = $DesktopGroup.TotalDesktops
 				Tags                   = @(($DesktopGroup.Tags) | Out-String).Trim()
-    			UserAccess             = @(($BrokerAccess.UPN) | Out-String).Trim()
-    			GroupAccess            = @(($BrokerGroups.Name) | Out-String).Trim()
+				UserAccess             = @(($BrokerAccess.UPN) | Out-String).Trim()
+				GroupAccess            = @(($BrokerGroups.Name) | Out-String).Trim()
 			} | Select-Object DesktopGroupName, Uid, DeliveryType, DesktopKind, Description, DesktopsDisconnected, DesktopsFaulted, DesktopsInUse, DesktopsUnregistered, Enabled, IconUid, InMaintenanceMode, SessionSupport, TotalApplicationGroups, TotalApplications, TotalDesktops, Tags, UserAccess, GroupAccess
 			$CTXDeliveryGroup += $CusObject
 		}
@@ -189,59 +188,59 @@ Function Get-CitrixObjects {
 				} | Select-Object DesktopGroupName, DesktopGroupUid, DesktopGroupUsersAccess, DesktopGroupGroupAccess, ApplicationName, ApplicationType, AdminFolderName, ClientFolder, Description, Enabled, CommandLineExecutable, CommandLineArgument, WorkingDirectory, Tags, PublishedName, PublishedAppName, PublishedAppGroupAccess, PublishedAppUserAccess
 				$HostedApps += $CusObject
 			}
-			}
+		}
 
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Server Details"
-        $VDAServers = @()
-        Get-BrokerMachine  -AdminAddress $AdminServer -MaxRecordCount 100000 | Where-Object {$_.OSType -like "Windows 20*"} | ForEach-Object {
-            $VDASCusObject = New-Object PSObject -Property @{
-                DNSName              = $_.DNSName
-                CatalogName          = $_.CatalogName
-                DesktopGroupName     = $_.DesktopGroupName
-                IPAddress            = $_.IPAddress
-                AgentVersion         = $_.AgentVersion
-                OSType               = $_.OSType
-                RegistrationState    = $_.RegistrationState
-				InMaintenanceMode    = $_.InMaintenanceMode
-           } | Select-Object DNSName,CatalogName,DesktopGroupName,IPAddress,AgentVersion,OSType,RegistrationState,InMaintenanceMode
-           $VDAServers += $VDASCusObject
-        }
+		$VDAServers = @()
+		Get-BrokerMachine  -AdminAddress $AdminServer -MaxRecordCount 100000 | Where-Object { $_.OSType -like "Windows 20*" } | ForEach-Object {
+			$VDASCusObject = New-Object PSObject -Property @{
+				DNSName           = $_.DNSName
+				CatalogName       = $_.CatalogName
+				DesktopGroupName  = $_.DesktopGroupName
+				IPAddress         = $_.IPAddress
+				AgentVersion      = $_.AgentVersion
+				OSType            = $_.OSType
+				RegistrationState = $_.RegistrationState
+				InMaintenanceMode = $_.InMaintenanceMode
+			} | Select-Object DNSName, CatalogName, DesktopGroupName, IPAddress, AgentVersion, OSType, RegistrationState, InMaintenanceMode
+			$VDAServers += $VDASCusObject
+		}
 
-        Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Workstation Details"
-        $VDAWorkstations = @()
-        Get-BrokerMachine  -AdminAddress $AdminServer -MaxRecordCount 100000 | Where-Object {$_.OSType -notlike "Windows 20*"} | ForEach-Object {
-            $VDAWCusObject = New-Object PSObject -Property @{
-                DNSName              = $_.DNSName
-                CatalogName          = $_.CatalogName
-                DesktopGroupName     = $_.DesktopGroupName
-                IPAddress            = $_.IPAddress
-                AgentVersion         = $_.AgentVersion
-                AssociatedUserNames  = @(($_.AssociatedUserNames) | Out-String).Trim()
-                OSType               = $_.OSType
-                RegistrationState    = $_.RegistrationState
-				InMaintenanceMode    = $_.InMaintenanceMode
-           } | Select-Object DNSName,CatalogName,DesktopGroupName,IPAddress,AgentVersion,AssociatedUserNames,OSType,RegistrationState,InMaintenanceMode
-           $VDAWorkstations += $VDAWCusObject
-        }
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Workstation Details"
+		$VDAWorkstations = @()
+		Get-BrokerMachine  -AdminAddress $AdminServer -MaxRecordCount 100000 | Where-Object { $_.OSType -notlike "Windows 20*" } | ForEach-Object {
+			$VDAWCusObject = New-Object PSObject -Property @{
+				DNSName             = $_.DNSName
+				CatalogName         = $_.CatalogName
+				DesktopGroupName    = $_.DesktopGroupName
+				IPAddress           = $_.IPAddress
+				AgentVersion        = $_.AgentVersion
+				AssociatedUserNames = @(($_.AssociatedUserNames) | Out-String).Trim()
+				OSType              = $_.OSType
+				RegistrationState   = $_.RegistrationState
+				InMaintenanceMode   = $_.InMaintenanceMode
+			} | Select-Object DNSName, CatalogName, DesktopGroupName, IPAddress, AgentVersion, AssociatedUserNames, OSType, RegistrationState, InMaintenanceMode
+			$VDAWorkstations += $VDAWCusObject
+		}
 
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Published Applications"
 
 		$CusObject = New-Object PSObject -Property @{
 			DateCollected   = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-			MashineCatalog  = $CTXMachineCatalog
+			MachineCatalog  = $CTXMachineCatalog
 			DeliveryGroups  = $CTXDeliveryGroup
 			PublishedApps   = $HostedApps
-            VDAServers      = $VDAServers
-            VDAWorkstations = $VDAWorkstations
+			VDAServers      = $VDAServers
+			VDAWorkstations = $VDAWorkstations
 		}
 		$CusObject
 	}
 
-$AppDetail = @()
-if ($RunAsPSRemote -eq $true) { $AppDetail = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:GetAllConfig} -ArgumentList  @($AdminServer) -Credential $RemoteCredentials }
-else { $AppDetail = GetAllConfig -AdminServer $AdminServer }
-Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] All Details"
-$AppDetail | Select-Object DateCollected, MashineCatalog, DeliveryGroups, PublishedApps,VDAServers,VDAWorkstations
+	$AppDetail = @()
+	if ($RunAsPSRemote -eq $true) { $AppDetail = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:GetAllConfig} -ArgumentList  @($AdminServer) -Credential $RemoteCredentials }
+	else { $AppDetail = GetAllConfig -AdminServer $AdminServer }
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] All Details"
+	$AppDetail | Select-Object DateCollected, MachineCatalog, DeliveryGroups, PublishedApps, VDAServers, VDAWorkstations
 } #end Function
 
 

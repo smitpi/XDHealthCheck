@@ -59,7 +59,7 @@ Function Get-CitrixNetscalerDetails {
 
 	function getns {
 		[CmdletBinding()]
-		param($NSIP, $NSCredentials)
+		param($NSIP, [SecureString] $NSCredentials)
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Connecting to Netscaler"
 		Connect-NetScaler -IPAddress $NSIP -Credential $NSCredentials
 Try {
