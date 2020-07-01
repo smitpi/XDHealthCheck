@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 07f17625-4521-42d4-91a3-d02507d2e7b7
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME
+.COMPANYNAME iOCO Tech
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -32,10 +32,13 @@ Updated [06/06/2019_19:26]
 Updated [09/06/2019_09:18]
 Updated [15/06/2019_01:11]
 Updated [15/06/2019_13:59] Updated Reports
+Updated [01/07/2020_14:43] Script Fle Info was updated
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 
 
@@ -47,7 +50,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 <#
 
-.DESCRIPTION
+.DESCRIPTION 
 Citrix XenDesktop HTML Health Check Report
 
 #>

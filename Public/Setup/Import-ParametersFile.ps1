@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID bcf1a3eb-5df0-40d1-9e90-1c67e328d550
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME
+.COMPANYNAME iOCO Tech
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -27,15 +27,18 @@
 
 .RELEASENOTES
 Created [25/06/2019_14:04] Initial Script Creating
+Updated [01/07/2020_14:43] Script Fle Info was updated
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <#
 
-.DESCRIPTION
- Import Variables to session
+.DESCRIPTION 
+Import Variables to session
 
 #>
 

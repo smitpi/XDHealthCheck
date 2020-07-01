@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 11d2e083-fcea-48c4-bb9f-093840ea5d0e
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME
+.COMPANYNAME iOCO Tech
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -31,10 +31,13 @@ Updated [06/06/2019_19:26]
 Updated [09/06/2019_09:18]
 Updated [15/06/2019_01:11]
 Updated [15/06/2019_13:59] Updated Reports
+Updated [01/07/2020_14:43] Script Fle Info was updated
 
 .PRIVATEDATA Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 
-#>
+#> 
+
+
 
 
 
@@ -46,7 +49,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 <#
 
-.DESCRIPTION
+.DESCRIPTION 
 Citrix XenDesktop HTML Health Check Report
 
 #>

@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID a90021c2-9c0b-462b-a0c2-5bffaadab328
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME
+.COMPANYNAME iOCO Tech
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -29,10 +29,13 @@
 Created [09/06/2019_12:53]
 Updated [15/06/2019_01:11]
 Updated [15/06/2019_13:59] Updated Reports
+Updated [01/07/2020_14:43] Script Fle Info was updated
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 
 
@@ -40,7 +43,7 @@ Updated [15/06/2019_13:59] Updated Reports
 
 <#
 
-.DESCRIPTION
+.DESCRIPTION 
 Xendesktop Farm Details
 
 #>

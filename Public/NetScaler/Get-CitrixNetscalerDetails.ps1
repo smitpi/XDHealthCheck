@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID 2546a5c6-3f4a-4fc1-9150-f735f56aca14
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME
+.COMPANYNAME iOCO Tech
 
 .COPYRIGHT
 
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -27,15 +27,18 @@
 
 .RELEASENOTES
 Created [14/07/2019_08:32] Initital Script Creating
+Updated [01/07/2020_14:43] Script Fle Info was updated
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <#
 
-.DESCRIPTION
- XDHealthCheck Netscaler
+.DESCRIPTION 
+XDHealthCheck Netscaler
 
 #>
 

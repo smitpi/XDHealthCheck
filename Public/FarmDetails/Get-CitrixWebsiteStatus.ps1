@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID eeec293e-564f-4b3e-a252-74b1e96493df
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME  
+.COMPANYNAME iOCO Tech
 
 .COPYRIGHT
 
@@ -34,10 +34,13 @@ Updated [06/06/2019_19:25]
 Updated [09/06/2019_09:18]
 Updated [15/06/2019_01:11]
 Updated [15/06/2019_13:59] Updated Reports
+Updated [01/07/2020_14:43] Script Fle Info was updated
 
 .PRIVATEDATA
 
 #> 
+
+
 
 
 

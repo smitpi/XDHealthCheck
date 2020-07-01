@@ -3,6 +3,50 @@
 
 .VERSION 1.0.0
 
+.GUID 7703f542-0274-4653-b61f-b5ee32980012
+
+.AUTHOR Pierre Smit
+
+.COMPANYNAME iOCO Tech
+
+.COPYRIGHT
+
+.TAGS Citrix
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+Created [01/07/2020_14:43] Initital Script Creating
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ Function for Citrix XenDesktop HTML Health Check Report 
+
+#> 
+
+Param()
+
+
+
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
 .GUID ea771bac-90e2-4db5-b5f9-06fb61b98ba2
 
 .AUTHOR Pierre Smit
