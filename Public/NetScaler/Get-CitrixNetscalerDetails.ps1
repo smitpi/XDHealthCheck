@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.4
 
 .GUID 2546a5c6-3f4a-4fc1-9150-f735f56aca14
 
@@ -28,6 +28,9 @@
 .RELEASENOTES
 Created [14/07/2019_08:32] Initital Script Creating
 Updated [01/07/2020_14:43] Script Fle Info was updated
+Updated [01/07/2020_15:42] Script Fle Info was updated
+Updated [01/07/2020_16:07] Script Fle Info was updated
+Updated [01/07/2020_16:13] Script Fle Info was updated
 
 .PRIVATEDATA
 
@@ -35,10 +38,16 @@ Updated [01/07/2020_14:43] Script Fle Info was updated
 
 
 
+
+
+
+
+
+
 <#
 
 .DESCRIPTION 
-XDHealthCheck Netscaler
+Function for Citrix XenDesktop HTML Health Check Report
 
 #>
 

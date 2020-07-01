@@ -1,13 +1,13 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.2
 
-.GUID
+.GUID fce0b5d2-4e70-46db-868f-c730cca11832
 
 .AUTHOR Pierre Smit
 
-.COMPANYNAME
+.COMPANYNAME iOCO Tech
 
 .COPYRIGHT
 
@@ -19,33 +19,36 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Created [22/05/2019_19:17]
-Updated [24/05/2019_19:25]
-Updated [06/06/2019_19:26]
-Updated [09/06/2019_09:18]
-Updated [15/06/2019_01:11]
-Updated [15/06/2019_13:59] Updated Reports
+Created [01/07/2020_16:01] Initital Script Creating
+Updated [01/07/2020_16:07] Script Fle Info was updated
+Updated [01/07/2020_16:13] Script Fle Info was updated
 
 .PRIVATEDATA
 
-#>
+#> 
 
-<#
 
-.DESCRIPTION
-Citrix XenDesktop HTML Health Check Report
 
-#>
+
+
+<# 
+
+.DESCRIPTION 
+Function for Citrix XenDesktop HTML Health Check Report
+
+#> 
 
 Param()
-function Start-NetScalerHealthCheck {
+
+
+Function Start-NetScalerHealthCheck {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
@@ -211,3 +214,4 @@ function Start-NetScalerHealthCheck {
 	$timer.Elapsed | Select-Object Days, Hours, Minutes, Seconds | Format-List
 	Stop-Transcript
 }
+ #end Function

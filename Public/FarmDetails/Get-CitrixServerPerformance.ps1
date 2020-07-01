@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.6
 
 .GUID a90021c2-9c0b-462b-a0c2-5bffaadab328
 
@@ -11,7 +11,7 @@
 
 .COPYRIGHT
 
-.TAGS Windows
+.TAGS Citrix
 
 .LICENSEURI
 
@@ -30,6 +30,9 @@ Created [09/06/2019_12:53]
 Updated [15/06/2019_01:11]
 Updated [15/06/2019_13:59] Updated Reports
 Updated [01/07/2020_14:43] Script Fle Info was updated
+Updated [01/07/2020_15:42] Script Fle Info was updated
+Updated [01/07/2020_16:07] Script Fle Info was updated
+Updated [01/07/2020_16:13] Script Fle Info was updated
 
 .PRIVATEDATA
 
@@ -41,10 +44,16 @@ Updated [01/07/2020_14:43] Script Fle Info was updated
 
 
 
+
+
+
+
+
+
 <#
 
 .DESCRIPTION 
-Xendesktop Farm Details
+Function for Citrix XenDesktop HTML Health Check Report
 
 #>
 

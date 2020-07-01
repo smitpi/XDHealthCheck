@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.4
 
 .GUID bcf1a3eb-5df0-40d1-9e90-1c67e328d550
 
@@ -11,7 +11,7 @@
 
 .COPYRIGHT
 
-.TAGS Powershell
+.TAGS Citrix
 
 .LICENSEURI
 
@@ -28,6 +28,9 @@
 .RELEASENOTES
 Created [25/06/2019_14:04] Initial Script Creating
 Updated [01/07/2020_14:43] Script Fle Info was updated
+Updated [01/07/2020_15:42] Script Fle Info was updated
+Updated [01/07/2020_16:07] Script Fle Info was updated
+Updated [01/07/2020_16:13] Script Fle Info was updated
 
 .PRIVATEDATA
 
@@ -35,10 +38,16 @@ Updated [01/07/2020_14:43] Script Fle Info was updated
 
 
 
+
+
+
+
+
+
 <#
 
 .DESCRIPTION 
-Import Variables to session
+Function for Citrix XenDesktop HTML Health Check Report
 
 #>
 

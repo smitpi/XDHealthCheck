@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.3
 
 .GUID 7703f542-0274-4653-b61f-b5ee32980012
 
@@ -27,15 +27,24 @@
 
 .RELEASENOTES
 Created [01/07/2020_14:43] Initital Script Creating
+Updated [01/07/2020_15:42] Script Fle Info was updated
+Updated [01/07/2020_16:07] Script Fle Info was updated
+Updated [01/07/2020_16:13] Script Fle Info was updated
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
+
+
+
+
 
 <# 
 
 .DESCRIPTION 
- Function for Citrix XenDesktop HTML Health Check Report 
+Function for Citrix XenDesktop HTML Health Check Report
 
 #> 
 

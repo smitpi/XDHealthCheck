@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.8
 
 .GUID 11d2e083-fcea-48c4-bb9f-093840ea5d0e
 
@@ -32,6 +32,9 @@ Updated [09/06/2019_09:18]
 Updated [15/06/2019_01:11]
 Updated [15/06/2019_13:59] Updated Reports
 Updated [01/07/2020_14:43] Script Fle Info was updated
+Updated [01/07/2020_15:42] Script Fle Info was updated
+Updated [01/07/2020_16:07] Script Fle Info was updated
+Updated [01/07/2020_16:13] Script Fle Info was updated
 
 .PRIVATEDATA Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
 
@@ -47,10 +50,16 @@ Updated [01/07/2020_14:43] Script Fle Info was updated
 
 
 
+
+
+
+
+
+
 <#
 
 .DESCRIPTION 
-Citrix XenDesktop HTML Health Check Report
+Function for Citrix XenDesktop HTML Health Check Report
 
 #>
 
