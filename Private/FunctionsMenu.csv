@@ -2,6 +2,6 @@ Section,Method,Command,Arguments,Name,Description
 Module Setup,powershell_inline,"Import-Module C:\Utils\LabScripts\Private\XDHealthCheck\XDHealthCheck.psm1;Install-UserPSProfile",,PS User Profile,Create New PS User Profile.
 Module Setup,powershell_inline,"Import-Module C:\Utils\LabScripts\Private\XDHealthCheck\XDHealthCheck.psm1; Install-ParametersFile",,XD Config file,Create New config file with server details.
 Module Setup,powershell_inline,"Import-Module C:\Utils\LabScripts\Private\XDHealthCheck\XDHealthCheck.psm1;Import-ParametersFile -RedoCredentials;Import-ParametersFile",,Redo Credencials,Redo the saved credentials.
-HealthCheck,powershell_inline,I"mport-Module C:\Utils\LabScripts\Private\XDHealthCheck\XDHealthCheck.psm1;Start-CitrixHealthCheck",,XD HealthCheck,Creats the health check file.
+HealthCheck,powershell_inline,"Import-Module C:\Utils\LabScripts\Private\XDHealthCheck\XDHealthCheck.psm1;Start-CitrixHealthCheck",,XD HealthCheck,Creats the health check file.
 HealthCheck,powershell_inline,"Import-Module C:\Utils\LabScripts\Private\XDHealthCheck\XDHealthCheck.psm1; Start-CitrixAudit",,XD Config Audit,Creats the Config Audit file.
 

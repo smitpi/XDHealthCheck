@@ -239,7 +239,15 @@ function Install-ParametersFile {
 		[System.Environment]::SetEnvironmentVariable('PSParameters', $PSParameters, [System.EnvironmentVariableTarget]::User)
 		Import-ParametersFile -JSONParameterFilePath $PSParameters
 
-	}
+$WScriptShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WScriptShell.CreateShortcut('C:\Users\Public\Desktop\XDHealthCheck.lnk')
+$Shortcut.TargetPath = 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
+$Shortcut.Arguments = '-ExecutionPolicy Bypass -WindowStyle Hidden -Command "& {Import-Module XDHealthCheck -force;Start-XDMenu}"'
+$Shortcut.IconLocation = (Join-Path -Path ((Get-Module XDHealthCheck).ModuleBase).ToString() -ChildPath "Private\run2.ico")
+#Save the Shortcut to the TargetPath
+$Shortcut.Save()
+
+}
 
 
 
