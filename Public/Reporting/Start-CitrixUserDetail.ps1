@@ -96,20 +96,18 @@ Function Start-CitrixUserDetail {
 	#######################
 
 	$HeddingText = 'Reported on: ' + (Get-Date -Format dd) + ' ' + (Get-Date -Format MMMM) + ',' + (Get-Date -Format yyyy) + ' ' + (Get-Date -Format HH:mm)
-	New-HTML -TitleText 'User Detail' -ShowHTML -FilePath $Reportname {
+	New-HTML -TitleText 'User Detail' -FilePath $Reportname {
 		New-HTMLHeading -Heading h1 -HeadingText $HeddingText -Color Black
 		New-HTMLSection @SectionSettings -Content {
-			New-HTMLSection -HeaderText $UserDetail.UserSummery.UserPrincipalName  @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($UserDetail.UserSummery.psobject.Properties | Select-Object -Property Name, Value) -HideFooter }
-			New-HTMLSection -HeaderText 'Group Membership'  @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($UserDetail.AllUserGroups | Select-Object SamAccountName) -HideFooter }
+			New-HTMLSection -HeaderText $UserDetail.UserSummery.UserPrincipalName @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($UserDetail.UserSummery.psobject.Properties | Select-Object -Property Name, Value) -HideFooter }
+			New-HTMLSection -HeaderText 'Group Membership' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($UserDetail.AllUserGroups | Select-Object SamAccountName) -HideFooter }
 		}
-		New-HTMLSection @SectionSettings -HeaderText 'All User Detail'  -Content {
+		New-HTMLSection @SectionSettings -HeaderText 'All User Detail' -Content {
 			New-HTMLSection -HeaderText $UserDetail.UserSummery.UserPrincipalName -CanCollapse -Collapsed @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($UserDetail.AllUserDetails.psobject.Properties | Select-Object -Property Name, Value) -HideFooter }
 		}
 	}
+		Start-Process -FilePath 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList "--app=$Reportname"
 
-	$timer.Stop()
-	$timer.Elapsed | Select-Object Days,Hours,Minutes,Seconds | Format-List
-	Stop-Transcript
 
 } #end Function
 

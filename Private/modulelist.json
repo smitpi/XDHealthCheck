@@ -22,5 +22,14 @@
 	},
 	{
 		"Name": "NetScaler"
+	},
+	{
+		"Name": "IPv4Toolbox"
+	},
+	{
+		"Name": "PSScriptTools"
+	},
+	{
+		"Name": "PSScriptMenuGui"
 	}
 ]
