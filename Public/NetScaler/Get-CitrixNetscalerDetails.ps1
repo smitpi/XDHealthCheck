@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 2546a5c6-3f4a-4fc1-9150-f735f56aca14
 
@@ -9,21 +9,21 @@
 
 .COMPANYNAME iOCO Tech
 
-.COPYRIGHT
+.COPYRIGHT 
 
 .TAGS Citrix
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 Created [14/07/2019_08:32] Initital Script Creating
@@ -31,10 +31,11 @@ Updated [01/07/2020_14:43] Script Fle Info was updated
 Updated [01/07/2020_15:42] Script Fle Info was updated
 Updated [01/07/2020_16:07] Script Fle Info was updated
 Updated [01/07/2020_16:13] Script Fle Info was updated
-
-.PRIVATEDATA
+Updated [06/03/2021_20:58] Script Fle Info was updated
 
 #> 
+
+
 
 
 

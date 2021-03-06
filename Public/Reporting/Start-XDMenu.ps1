@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID 9da8c9af-0838-424c-a18f-31253725c945
 
@@ -27,13 +27,16 @@
 
 .RELEASENOTES
 Created [06/03/2021_18:58] Initital Script Creating
+Updated [06/03/2021_20:58] Script Fle Info was updated
 
-#>
+#> 
+
+
 
 <# 
 
 .DESCRIPTION 
- Gui Menu for users 
+Gui Menu for users
 
 #> 
 

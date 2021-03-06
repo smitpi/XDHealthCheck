@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.9
 
 .GUID 11d2e083-fcea-48c4-bb9f-093840ea5d0e
 
@@ -9,21 +9,21 @@
 
 .COMPANYNAME iOCO Tech
 
-.COPYRIGHT
+.COPYRIGHT 
 
 .TAGS Citrix
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 Created [06/06/2019_06:00] Initial Script Creating
@@ -35,10 +35,11 @@ Updated [01/07/2020_14:43] Script Fle Info was updated
 Updated [01/07/2020_15:42] Script Fle Info was updated
 Updated [01/07/2020_16:07] Script Fle Info was updated
 Updated [01/07/2020_16:13] Script Fle Info was updated
-
-.PRIVATEDATA Requires -Modules BetterCredentials, PSWriteColor,ImportExcel,PSWriteHTML
+Updated [06/03/2021_20:58] Script Fle Info was updated
 
 #> 
+
+
 
 
 
