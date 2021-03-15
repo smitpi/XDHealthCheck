@@ -107,7 +107,7 @@ Function Start-CitrixUserDetail {
 			New-HTMLSection -HeaderText $UserDetail.UserSummery.UserPrincipalName -CanCollapse -Collapsed @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($UserDetail.AllUserDetails.psobject.Properties | Select-Object -Property Name, Value) -HideFooter }
 		}
 	}
-		Start-Process -FilePath 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList "--app=$Reportname"
+		Start-Process -FilePath 'C:\Program Files\Google\Chrome\Application\chrome.exe' -ArgumentList "--app=$Reportname"
 
 
 } #end Function

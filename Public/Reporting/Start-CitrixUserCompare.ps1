@@ -116,6 +116,6 @@ Function Start-CitrixUserCompare {
 			New-HTMLSection -HeaderText $compareusers.User2Details.user2Headding @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.allusergroups2 -HideFooter }
 		}
 	}
-Start-Process -FilePath 'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe' -ArgumentList "--app=$Reportname"
+Start-Process -FilePath 'C:\Program Files\Google\Chrome\Application\chrome.exe' -ArgumentList "--app=$Reportname"
 } #end Function
 
