@@ -1,3 +1,45 @@
+
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
+.GUID a265cd9f-74a3-4f89-bc6e-e173eef23de0
+
+.AUTHOR Pierre Smit
+
+.COMPANYNAME iOCO Tech
+
+.COPYRIGHT 
+
+.TAGS Other
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+Created [15/03/2021_23:27] Initital Script Creating
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ designer 
+
+#> 
+
+Param()
+
+
 $FormUserCompare = New-Object -TypeName System.Windows.Forms.Form
 [System.Windows.Forms.Button]$btn = $null
 [System.Windows.Forms.Label]$lblUsername1 = $null

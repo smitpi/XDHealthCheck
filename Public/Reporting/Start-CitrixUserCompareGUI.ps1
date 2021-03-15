@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID 9203d8c1-e715-41b8-add7-15b79fa17e23
 
@@ -27,13 +27,16 @@
 
 .RELEASENOTES
 Created [15/03/2021_18:58] Initital Script Creating
+Updated [15/03/2021_23:28] Script Fle Info was updated
 
-#>
+#> 
+
+
 
 <# 
 
 .DESCRIPTION 
- Gui Wrapper for script 
+Gui Wrapper for script
 
 #> 
 

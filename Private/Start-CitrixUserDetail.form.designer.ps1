@@ -1,3 +1,45 @@
+
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
+.GUID fde7149d-265c-4dd4-9dca-ccd8a97322b1
+
+.AUTHOR Pierre Smit
+
+.COMPANYNAME iOCO Tech
+
+.COPYRIGHT 
+
+.TAGS Other
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+Created [15/03/2021_23:28] Initital Script Creating
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ designer 
+
+#> 
+
+Param()
+
+
 $FormUserDetail = New-Object -TypeName System.Windows.Forms.Form
 [System.Windows.Forms.Button]$btn = $null
 [System.Windows.Forms.Label]$lblUsername = $null

@@ -1,7 +1,7 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.10
 
 .GUID 8f756c95-9e99-4932-bdd9-b63c4b98405b
 
@@ -36,8 +36,11 @@ Updated [26/05/2019_16:48] testing
 Updated [03/06/2019_12:13]
 Updated [20/06/2019_19:58]
 Updated [06/03/2021_20:58] Script Fle Info was updated
+Updated [15/03/2021_23:28] Script Fle Info was updated
 
 #> 
+
+
 
 
 
