@@ -70,14 +70,18 @@ Function Get-CitrixConfigurationChange {
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[string]$DDC,
+		[string]$AdminServer,
 		[Parameter(Mandatory = $true, Position = 1)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[int32]$Indays)
+		[int32]$Indays,
+		[Parameter(Mandatory = $true, Position = 2)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[PSCredential]$RemoteCredentials)
 
-	Invoke-Command -ComputerName $DDC -ScriptBlock {
-		param($DDC, $Indays)
+	Invoke-Command -ComputerName $AdminServer -ScriptBlock {
+		param($AdminServer, $Indays, $VerbosePreference)
 		Add-PSSnapin citrix* -ErrorAction SilentlyContinue
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
 
@@ -105,7 +109,7 @@ Function Get-CitrixConfigurationChange {
 
 		$CTXObject
 
-	} -ArgumentList @($DDC, $Indays)
+	} -ArgumentList @($AdminServer, $Indays, $VerbosePreference) -Credential $RemoteCredentials
 
 } #end Function
 
