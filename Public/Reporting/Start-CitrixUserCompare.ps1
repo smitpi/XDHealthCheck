@@ -119,6 +119,10 @@ Function Start-CitrixUserCompare {
 			New-HTMLSection -HeaderText $compareusers.User2Details.user2Headding @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $compareusers.User2Details.allusergroups2 -HideFooter }
 		}
 	}
-Start-Process -FilePath 'C:\Program Files\Google\Chrome\Application\chrome.exe' -ArgumentList "--app=$Reportname"
+    New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
+
+    $browser = Get-ItemPropertyValue -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.html\UserChoice' -name 'Progid'
+    $browserexec = ((Get-ItemPropertyValue -Path "HKCR:\$browser\shell\open\command" -Name "(Default)").split("-")[0]).replace('"','')
+    Start-Process -FilePath "$browserexec" -ArgumentList "--app=$Reportname"
 } #end Function
 

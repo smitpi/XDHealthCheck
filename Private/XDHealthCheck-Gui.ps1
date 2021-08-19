@@ -27,7 +27,7 @@ Add-Type -Name Window -Namespace Console -MemberDefinition '
 $global:PanelDraw = 1
 $global:Color1st = '#FFFFFF'
 $global:Color2nd = '#5c5c5c' #The darker background for the panels
-$global:LabelColor = '#FFFFFF'
+$global:LabelColor = '#6CB3B2'
 #endregion
 
 #region functions
@@ -188,24 +188,21 @@ $UserPanel = New-Panel -LabelText 'Users'
 
 #region add buttons
 #HealthPanel
-New-Button -Text 'Create Users PS Profile' -MyScriptPath 'Import-Module XDHealthCheck -force;Install-UserPSProfile' -method PSCommand -panel $SettinghPanel
-New-Button -Text 'Create PS Parameter File' -MyScriptPath 'Import-Module XDHealthCheck -force;Install-ParametersFile' -method PSFile -panel $SettinghPanel
-New-Button -Text 'Import PS Parameter File ' -MyScriptPath 'Import-Module XDHealthCheck -force;Import-ParametersFile' -method PSFile -panel $SettinghPanel
-New-Button -Text 'Recreate Script Credencials' -MyScriptPath 'Import-Module XDHealthCheck -force;Import-ParametersFile -RedoCredentials' -method PSFile -panel $SettinghPanel
-New-Button -text 'Update PS Modules' -MyScriptPath	'Import-Module XDHealthCheck -force;' -method PSFile -panel $SettinghPanel
+New-Button -Text 'Create Users PS Profile' -MyScriptPath 'Install-UserPSProfile' -method PSCommand -panel $SettinghPanel
+New-Button -Text 'Create PS Parameter File' -MyScriptPath 'Install-ParametersFile' -method PSCommand -panel $SettinghPanel
+New-Button -Text 'Import PS Parameter File ' -MyScriptPath 'Import-ParametersFile' -method PSCommand -panel $SettinghPanel
+New-Button -Text 'Recreate Script Credencials' -MyScriptPath 'Import-ParametersFile -RedoCredentials' -method PSCommand -panel $SettinghPanel
+New-Button -text 'Update PS Modules' -MyScriptPath	'Install-BasePSModules -UpdateModule' -method PSCommand -panel $SettinghPanel
 #P2
-New-Button -Text 'Run HealthCheck' -MyScriptPath 'Import-Module XDHealthCheck -force;Start-CitrixHealthCheck' -method PSFile -panel $HealthPanel
-New-Button -Text 'Open HealthCheck Folder' -MyScriptPath 'Import-Module XDHealthCheck -force;' -method PSFile -panel $HealthPanel
-New-Button -Text 'Run XDAudit' -MyScriptPath 'Import-Module XDHealthCheck -force;Start-CitrixAudit' -method PSFile -panel $HealthPanel
-New-Button -Text 'Open XDAudit Folder' -MyScriptPath 'Import-Module XDHealthCheck -force;' -method PSFile -panel $HealthPanel
-
+New-Button -Text 'Run HealthCheck' -MyScriptPath 'Start-CitrixHealthCheck' -method PSCommand -panel $HealthPanel
+New-Button -Text 'Run XDAudit' -MyScriptPath 'Start-CitrixAudit' -method PSCommand -panel $HealthPanel
+New-Button -Text 'Open Reports Folder' -MyScriptPath $('"explorer.exe" "$ReportsFolder"') -method Other -panel $HealthPanel
 #
-New-Button -Text 'Run Cloud Check' -MyScriptPath 'Import-Module XDHealthCheck -force;' -method PSFile -panel $CloudPanel
-New-Button -Text 'Open Cloud Check Folder' -MyScriptPath 'Import-Module XDHealthCheck -force;' -method PSFile -panel $CloudPanel
-
+New-Button -Text 'Run Cloud Check' -MyScriptPath '' -method PSCommand -panel $CloudPanel
+New-Button -Text 'Open Cloud Check Folder' -MyScriptPath '' -method PSCommand -panel $CloudPanel
 #
-New-Button -Text 'Report on User Access' -MyScriptPath 'Import-Module XDHealthCheck -force;' -method PSFile -panel $UserPanel
-New-Button -Text 'Compare Two Users' -MyScriptPath 'Import-Module XDHealthCheck -force;' -method PSFile -panel $UserPanel
+New-Button -Text 'Report on User Access' -MyScriptPath 'Start-CitrixUserDetailGUI' -method PSCommand -panel $UserPanel
+New-Button -Text 'Compare Two Users' -MyScriptPath 'Start-CitrixUserCompareGUI' -method PSCommand -panel $UserPanel
 
 #endregion
 
@@ -219,5 +216,5 @@ $PictureBox1.SizeMode = [System.Windows.Forms.PictureBoxSizeMode]::zoom
 $Form.controls.AddRange($PictureBox1)
 #endregion
 
-#Start-HideConsole
+Start-HideConsole
 [void]$Form.ShowDialog()

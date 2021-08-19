@@ -110,7 +110,12 @@ Function Start-CitrixUserDetail {
 			New-HTMLSection -HeaderText $UserDetail.UserSummery.UserPrincipalName -CanCollapse -Collapsed @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($UserDetail.AllUserDetails.psobject.Properties | Select-Object -Property Name, Value) -HideFooter }
 		}
 	}
-		Start-Process -FilePath 'C:\Program Files\Google\Chrome\Application\chrome.exe' -ArgumentList "--app=$Reportname"
+    New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
+
+    $browser = Get-ItemPropertyValue -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.html\UserChoice' -name 'Progid'
+    $browserexec = ((Get-ItemPropertyValue -Path "HKCR:\$browser\shell\open\command" -Name "(Default)").split("-")[0]).replace('"','')
+    Start-Process -FilePath "$browserexec" -ArgumentList "--app=$Reportname"
+
 
 
 } #end Function

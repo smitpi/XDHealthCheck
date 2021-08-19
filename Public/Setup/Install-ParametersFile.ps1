@@ -97,27 +97,20 @@ Created [15/06/2019_14:19] Initial Script Creating
 #>
 function Install-ParametersFile {
 
-	$wc = New-Object System.Net.WebClient
+try {
+	$wc = New-Object System.Net.WebClient 
 	$wc.Proxy.Credentials = [System.Net.CredentialCache]::DefaultNetworkCredentials 
 	[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
 	Install-PackageProvider Nuget -Force
 	#Register-PSRepository -Default -Verbose
 	Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+	Write-Host 'PSGalary:' -ForegroundColor Cyan -NoNewline
+	Write-Host "Succsessfull" -ForegroundColor Yellow
+}catch {Write-Error "Unable to setup PSGallery "}
+finally {Write-Error "Unable to setup PSGallery"}
 
-	$ModuleList = Join-Path -Path ((Get-Module XDHealthCheck).ModuleBase).ToString() -ChildPath Private\modulelist.json
-	$mods = Get-Content $ModuleList | ConvertFrom-Json
-
-	foreach ($mod in $mods) {
-		$PSModule = Get-Module -Name $mod.Name -ListAvailable | Select-Object -First 1
-		if ($PSModule.Name -like '') { 
-			Write-Host 'Installing Module:' -ForegroundColor Cyan -NoNewline
-			Write-Host $mod.Name -ForegroundColor Yellow
-			Install-Module -Name $mod.Name -Scope AllUsers -AllowClobber -Force 
-		} else {
-			Write-Host 'Using Installed Module:' -ForegroundColor Cyan -NoNewline
-			Write-Host $PSModule.Name - $PSModule.Path -ForegroundColor Yellow
-		}
-	}
+Install-BasePSModules
 
 		[string]$CTXDDC = Read-Host 'A Citrix Data Collector FQDN'
 		[string]$CTXStoreFront = Read-Host 'A Citrix StoreFront FQDN'
@@ -146,6 +139,7 @@ function Install-ParametersFile {
 				$input = Read-Host 'Add more trusted domains? (y/n)'
 			}
 		}
+<#
 		$CTXNS = @()
 		$input = ''
 		While ($input -ne 'n') {
@@ -157,7 +151,7 @@ function Install-ParametersFile {
 				$CTXNS += $CusObject
 				$input = Read-Host 'Add more Netscalers? (y/n)'
 			}
-		}
+		}#>
 		$ReportsFolder = Read-Host 'Path to the Reports Folder'
 		$ParametersFolder = Read-Host 'Path to where the Parameters.json will be saved'
 		$DashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'
@@ -220,7 +214,7 @@ function Install-ParametersFile {
 			CTXStoreFront    = $CTXStoreFront
 			RDSLicenseServer = $RDSLicenseServer
 			RDSLicenseType   = $RDSLicenseType
-			CTXNS            = $CTXNS
+#			CTXNS            = $CTXNS
 			TrustedDomains   = $trusteddomains
 			ReportsFolder    = $ReportsFolder
 			ParametersFolder = $ParametersFolder
@@ -234,7 +228,7 @@ function Install-ParametersFile {
 			SMTPServer       = $smtpServer
 			SMTPServerPort   = $smtpServerPort
 			SMTPEnableSSL    = $smtpEnableSSL
-		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicenseServer , RDSLicenseType, CTXNS, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, HeaderColor, RemoveOldReports, SaveExcelReport , SendEmail , EmailFrom , EmailTo , SMTPServer , SMTPServerPort , SMTPEnableSSL
+		} | Select-Object DateCollected, CTXDDC , CTXStoreFront , RDSLicenseServer , RDSLicenseType, TrustedDomains , ReportsFolder , ParametersFolder , DashboardTitle, HeaderColor, RemoveOldReports, SaveExcelReport , SendEmail , EmailFrom , EmailTo , SMTPServer , SMTPServerPort , SMTPEnableSSL
 
 		if (Test-Path -Path "$ParametersFolder\Parameters.json") { Remove-Item "$ParametersFolder\Parameters.json" -Force -Verbose }
 		$AllXDData | ConvertTo-Json -Depth 5 | Out-File -FilePath "$ParametersFolder\Parameters.json"
@@ -246,7 +240,7 @@ function Install-ParametersFile {
 $WScriptShell = New-Object -ComObject WScript.Shell
 $Shortcut = $WScriptShell.CreateShortcut('C:\Users\Public\Desktop\XDHealthCheck.lnk')
 $Shortcut.TargetPath = 'C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe'
-$Shortcut.Arguments = '-ExecutionPolicy Bypass -WindowStyle Hidden -Command "& {Import-Module XDHealthCheck -force;Start-XDMenu}"'
+$Shortcut.Arguments = '-ExecutionPolicy Bypass -WindowStyle Hidden -Command "& {Import-Module XDHealthCheck -force;Start-XDHealthCheckGui}"'
 $Shortcut.IconLocation = (Join-Path -Path ((Get-Module XDHealthCheck).ModuleBase).ToString() -ChildPath "Private\run2.ico")
 #Save the Shortcut to the TargetPath
 $Shortcut.Save()
