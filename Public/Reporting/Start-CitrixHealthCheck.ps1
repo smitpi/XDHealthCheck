@@ -59,8 +59,8 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 Function for Citrix XenDesktop HTML Health Check Report
 
 #>
+# .ExternalHelp  XDHealthCheck-help.xml
 
-Param()
 function Start-CitrixHealthCheck {
 	[CmdletBinding()]
 	PARAM(

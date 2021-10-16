@@ -51,50 +51,8 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 Function for Citrix XenDesktop HTML Health Check Report
 
 #> 
+# .ExternalHelp  XDHealthCheck-help.xml
 
-Param()
-
-
-
-<#PSScriptInfo
-
-.VERSION 1.0.0
-
-.GUID ea771bac-90e2-4db5-b5f9-06fb61b98ba2
-
-.AUTHOR Pierre Smit
-
-.COMPANYNAME
-
-.COPYRIGHT
-
-.TAGS PowerShell
-
-.LICENSEURI
-
-.PROJECTURI
-
-.ICONURI
-
-.EXTERNALMODULEDEPENDENCIES
-
-.REQUIREDSCRIPTS
-
-.EXTERNALSCRIPTDEPENDENCIES
-
-.RELEASENOTES
-Created [15/06/2019_14:19] Initial Script Creating
-
-.PRIVATEDATA
-
-#>
-
-<#
-
-.DESCRIPTION
- Setup script for XDHealthCheck Module
-
-#>
 function Install-ParametersFile {
 
 try {

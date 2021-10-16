@@ -1,4 +1,4 @@
-
+﻿
 <#PSScriptInfo
 
 .VERSION 1.0.0
@@ -19,7 +19,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -32,17 +32,18 @@ Created [14/02/2021_07:51] Initital Script Creating
 
 #>
 
-<# 
+<#
 
-.DESCRIPTION 
- Lab scripts 
+.DESCRIPTION
+ Install needed modules
 
-#> 
+#>
 
 Param()
 
+# .ExternalHelp  XDHealthCheck-help.xml
 
-Function Install-BasePSModules {
+Function Install-BasePSModule {
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq '.json') })]
@@ -70,10 +71,10 @@ Function Install-BasePSModules {
 
 	foreach ($mod in $mods) {
 		if ($ForceInstall -eq $false) { $PSModule = Get-Module -Name $mod.Name -ListAvailable | Select-Object -First 1 }
-		if ($PSModule.Name -like '') { 
+		if ($PSModule.Name -like '') {
 			Write-Host 'Installing Module:' -ForegroundColor Cyan -NoNewline
 			Write-Host $mod.Name -ForegroundColor Yellow
-			Install-Module -Name $mod.Name -Scope AllUsers -AllowClobber -Force 
+			Install-Module -Name $mod.Name -Scope AllUsers -AllowClobber -Force
 		} else {
 			Write-Host 'Using Installed Module:' -ForegroundColor Cyan -NoNewline
 			Write-Host $PSModule.Name - $PSModule.Path -ForegroundColor Yellow

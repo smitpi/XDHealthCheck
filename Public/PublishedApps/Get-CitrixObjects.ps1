@@ -68,9 +68,8 @@ Function for Citrix XenDesktop HTML Health Check Report
 
 #>
 
-Param()
 
-
+# .ExternalHelp  XDHealthCheck-help.xml
 
 Function Get-CitrixObjects {
 	[CmdletBinding()]

@@ -1,4 +1,4 @@
-
+﻿
 <#PSScriptInfo
 
 .VERSION 1.0.6
@@ -9,21 +9,21 @@
 
 .COMPANYNAME iOCO Tech
 
-.COPYRIGHT 
+.COPYRIGHT
 
 .TAGS Citrix
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 Created [25/06/2019_14:04] Initial Script Creating
@@ -34,7 +34,7 @@ Updated [01/07/2020_16:13] Script Fle Info was updated
 Updated [06/03/2021_20:58] Script Fle Info was updated
 Updated [15/03/2021_23:28] Script Fle Info was updated
 
-#> 
+#>
 
 
 
@@ -50,13 +50,11 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 
 <#
 
-.DESCRIPTION 
+.DESCRIPTION
 Function for Citrix XenDesktop HTML Health Check Report
 
 #>
-
-Param()
-
+# .ExternalHelp  XDHealthCheck-help.xml
 
 
 Function Import-ParametersFile {

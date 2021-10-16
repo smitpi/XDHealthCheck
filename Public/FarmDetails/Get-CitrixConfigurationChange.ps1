@@ -9,19 +9,19 @@
 
 .COMPANYNAME iOCO Tech
 
-.COPYRIGHT 
+.COPYRIGHT
 
 .TAGS Citrix
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
 .EXTERNALSCRIPTDEPENDENCIES 
 
@@ -63,7 +63,8 @@ Function for Citrix XenDesktop HTML Health Check Report
 
 #>
 
-Param()
+# .ExternalHelp  XDHealthCheck-help.xml
+
 Function Get-CitrixConfigurationChange {
 	[CmdletBinding()]
 	PARAM(

@@ -7,6 +7,7 @@ Locale: en-US
 ---
 
 # XDHealthCheck Module
+
 ## Description
 Creates daily health check, and config reports for your on premis Citrix farm.
 To get started, you need to run Install-ParametersFile. 
@@ -15,6 +16,7 @@ This will capture and save needed farm details, to allow scripts to run automati
 ## XDHealthCheck Cmdlets
 
 ### [Get-CitrixConfigurationChange](Get-CitrixConfigurationChange.md)
+
 Show the changes that was made to the farm
 
 ### [Get-CitrixFarmDetail](Get-CitrixFarmDetail.md)
