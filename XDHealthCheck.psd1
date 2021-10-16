@@ -30,7 +30,7 @@ CompanyName = 'iOCO Tech'
 Copyright = '(c) 2019 Pierre Smit. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'Citrix HealthCheck Scripts'
+Description = 'Creates daily health check, and config reports for your on premis Citrix farm.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -51,7 +51,7 @@ Description = 'Citrix HealthCheck Scripts'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
- #RequiredModules = @('BetterCredentials',' PSWriteColor','ImportExcel','PSWriteHTML')
+ RequiredModules = @('BetterCredentials',' PSWriteColor','ImportExcel','PSWriteHTML')
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -88,13 +88,13 @@ FunctionsToExport = 'Compare-TwoADUsers', 'Get-CitrixConfigurationChange',
                'Start-XDMenu'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-CmdletsToExport = @()
+#CmdletsToExport = @()
 
 # Variables to export from this module
 # VariablesToExport = @()
 
 # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-AliasesToExport = @()
+#AliasesToExport = @()
 
 # DSC resources to export from this module
 # DscResourcesToExport = @()
@@ -111,7 +111,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = 'citrix'
+        Tags = 'citrix','ctx'
 
         # A URL to the license for this module.
         # LicenseUri = ''
@@ -126,7 +126,7 @@ PrivateData = @{
         ReleaseNotes = 'Updated [19/08/2021_15:16] Added a gui to run scripts'
 
         # External dependent modules of this module
-        ExternalModuleDependencies = 'BetterCredentials',' PSWriteColor','ImportExcel','PSWriteHTML'
+        #ExternalModuleDependencies = 'BetterCredentials',' PSWriteColor','ImportExcel','PSWriteHTML'
 
     } # End of PSData hashtable
     

@@ -1,8 +1,0 @@
-Section,Method,Command,Arguments,Name,Description
-Module Setup,powershell_inline,"Install-UserPSProfile",,PS User Profile,Create New PS User Profile.
-Module Setup,powershell_inline,"Install-ParametersFile",,XD Config file,Create New config file with server details.
-Module Setup,powershell_inline,"Import-ParametersFile -RedoCredentials;Import-ParametersFile",,Redo Credencials,Redo the saved credentials.
-HealthCheck,powershell_inline,"Start-CitrixHealthCheck",,XD HealthCheck,Creats the health check file.
-HealthCheck,powershell_inline,"Start-CitrixAudit",,XD Config Audit,Creats the Config Audit file.
-"User Check",powershell_inline,"Start-CitrixUserDetailGUI",,Check User,Get details about a user.
-"User Check",powershell_inline,"Start-CitrixUserCompareGUI",,Compare Users,Compare two users.
