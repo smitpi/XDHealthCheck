@@ -19,6 +19,17 @@ Start-CitrixAudit [[-JSONParameterFilePath] <String>] [<CommonParameters>]
 ## DESCRIPTION
 Creates and distributes  a report on catalog, groups and published app config.
 
+HTML Reports
+
+- When creating a HTML report:
+- The logo can be changed by replacing the variable 
+  - $Global:Logourl =''
+- The colors of the report can be changed, by replacing:
+  - $global:colour1 = '#061820'
+  - $global:colour2 = '#FFD400'
+- Or permanently replace it by editing the following file
+- <Module base>\Private\Reports-Variables.ps1
+
 ## EXAMPLES
 
 ### Example 1

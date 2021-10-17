@@ -5,32 +5,31 @@ online version:
 schema: 2.0.0
 ---
 
-# Install-BasePSModules
+# Install-CTXPSModule
 
 ## SYNOPSIS
-Makes sure the needed modules are available.
+Checks and installs needed modules
 
 ## SYNTAX
 
 ```
-Install-BasePSModules [[-ModuleList] <String>] [-ForceInstall] [-UpdateModules] [-RemoveAll]
- [<CommonParameters>]
+Install-CTXPSModule [[-ModuleList] <String>] [-ForceInstall] [-UpdateModules] [-RemoveAll] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Makes sure the needed modules are available.
+Checks and installs needed modules
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> Install-BasePSModules -ModuleList 'c:\temp\\modulelist.json'
+PS C:\> Install-CTXPSModule -ModuleList 'C:\Temp\modules.json'
 ```
 
 ## PARAMETERS
 
 ### -ForceInstall
-Force Install / Reinstall of the modules
+Force reinstall of modules
 
 ```yaml
 Type: SwitchParameter
@@ -45,7 +44,7 @@ Accept wildcard characters: False
 ```
 
 ### -ModuleList
-Path to json file with the needed module list.
+Path to json file
 
 ```yaml
 Type: String
@@ -60,7 +59,7 @@ Accept wildcard characters: False
 ```
 
 ### -RemoveAll
-Force remove the modules in the list.
+Force Uninstall of the modules
 
 ```yaml
 Type: SwitchParameter
@@ -75,7 +74,7 @@ Accept wildcard characters: False
 ```
 
 ### -UpdateModules
-Run an module update
+Perform module update.
 
 ```yaml
 Type: SwitchParameter

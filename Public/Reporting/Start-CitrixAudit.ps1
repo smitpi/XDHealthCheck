@@ -150,29 +150,7 @@ function Start-CitrixAudit {
 	#region Setting some table color and settings
 	########################################
 
-	$TableSettings = @{
-		#Style          = 'stripe'
-		Style          = 'cell-border'
-		HideFooter     = $true
-		OrderMulti     = $true
-		TextWhenNoData = 'No Data to display here'
-	}
-
-	$SectionSettings = @{
-		BackgroundColor       = 'white'
-		CanCollapse           = $true
-		HeaderBackGroundColor = 'white'
-		HeaderTextAlignment   = 'center'
-		HeaderTextColor       = $HeaderColor
-	}
-
-	$TableSectionSettings = @{
-		BackgroundColor       = 'white'
-		HeaderBackGroundColor = $HeaderColor
-		HeaderTextAlignment   = 'center'
-		HeaderTextColor       = 'white'
-	}
-	#endregion
+	
 
 	#######################
 	#region Building HTML the report

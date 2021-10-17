@@ -68,7 +68,7 @@ try {
 }catch {Write-Error "Unable to setup PSGallery "}
 finally {Write-Error "Unable to setup PSGallery"}
 
-Install-BasePSModules
+Install-CTXPSModule
 
 		[string]$CTXDDC = Read-Host 'A Citrix Data Collector FQDN'
 		[string]$CTXStoreFront = Read-Host 'A Citrix StoreFront FQDN'

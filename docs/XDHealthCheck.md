@@ -1,22 +1,19 @@
 ---
 Module Name: XDHealthCheck
 Module Guid: 39f9295c-353e-4bb7-aee5-0c600dfd5eba
-Download Help Link: {{Please enter FwLink manually}}
-Help Version: 0.2.3
+Download Help Link: 
+Help Version: 0.2.4
 Locale: en-US
 ---
 
 # XDHealthCheck Module
-
 ## Description
-Creates daily health check, and config reports for your on premis Citrix farm.
-To get started, you need to run Install-ParametersFile. 
-This will capture and save needed farm details, to allow scripts to run automaticly. 
+Creates daily health check, and config reports for your on premise Citrix farm. 
+ - To get started, you need to run Install-ParametersFile. 
+ - This will capture and save needed farm details, to allow scripts to run automatically.
 
 ## XDHealthCheck Cmdlets
-
 ### [Get-CitrixConfigurationChange](Get-CitrixConfigurationChange.md)
-
 Show the changes that was made to the farm
 
 ### [Get-CitrixFarmDetail](Get-CitrixFarmDetail.md)
@@ -49,8 +46,8 @@ Report on StoreFront Status
 ### [Import-ParametersFile](Import-ParametersFile.md)
 Import the config file and creates the needed variables
 
-### [Install-BasePSModules](Install-BasePSModules.md)
-Makes sure the needed modules are available.
+### [Install-CTXPSModule](Install-CTXPSModule.md)
+Checks and installs needed modules
 
 ### [Install-ParametersFile](Install-ParametersFile.md)
 Create a json config with all needed farm details.

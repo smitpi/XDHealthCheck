@@ -19,6 +19,17 @@ Start-CitrixHealthCheck [[-JSONParameterFilePath] <String>] [<CommonParameters>]
 ## DESCRIPTION
 Creates and distributes  a report on citrix farm health.
 
+HTML Reports
+
+- When creating a HTML report:
+- The logo can be changed by replacing the variable 
+  - $Global:Logourl =''
+- The colors of the report can be changed, by replacing:
+  - $global:colour1 = '#061820'
+  - $global:colour2 = '#FFD400'
+- Or permanently replace it by editing the following file
+- <Module base>\Private\Reports-Variables.ps1
+
 ## EXAMPLES
 
 ### Example 1
@@ -37,7 +48,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -48,11 +59,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
 ## OUTPUTS
 
-### System.Object
 ## NOTES
 
 ## RELATED LINKS

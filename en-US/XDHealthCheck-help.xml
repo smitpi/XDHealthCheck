@@ -496,7 +496,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-CitrixServerEventLog</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>Serverlist</maml:name>
           <maml:Description>
             <maml:para>{{Fill Serverlist Description}}</maml:para>
@@ -508,7 +508,7 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>Days</maml:name>
           <maml:Description>
             <maml:para>Limit the search for only do many days.</maml:para>
@@ -520,7 +520,7 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>RemoteCredentials</maml:name>
           <maml:Description>
             <maml:para>Credentials if running remote</maml:para>
@@ -535,7 +535,7 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>Days</maml:name>
         <maml:Description>
           <maml:para>Limit the search for only do many days.</maml:para>
@@ -547,7 +547,7 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>RemoteCredentials</maml:name>
         <maml:Description>
           <maml:para>Credentials if running remote</maml:para>
@@ -559,7 +559,7 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>Serverlist</maml:name>
         <maml:Description>
           <maml:para>{{Fill Serverlist Description}}</maml:para>
@@ -572,26 +572,8 @@
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes>
-      <command:inputType>
-        <dev:type>
-          <maml:name>System.Array</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:inputType>
-    </command:inputTypes>
-    <command:returnValues>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>System.Object</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:returnValue>
-    </command:returnValues>
+    <command:inputTypes />
+    <command:returnValues />
     <maml:alertSet>
       <maml:alert>
         <maml:para></maml:para>
@@ -908,7 +890,7 @@
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Get-RDSLicenseInformation</maml:name>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>LicenseServer</maml:name>
           <maml:Description>
             <maml:para>Name of RDS License server</maml:para>
@@ -920,7 +902,7 @@
           </dev:type>
           <dev:defaultValue>None</dev:defaultValue>
         </command:parameter>
-        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+        <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>RemoteCredentials</maml:name>
           <maml:Description>
             <maml:para>Credentials if running remote</maml:para>
@@ -935,7 +917,7 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="0" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>LicenseServer</maml:name>
         <maml:Description>
           <maml:para>Name of RDS License server</maml:para>
@@ -947,7 +929,7 @@
         </dev:type>
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
-      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
+      <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>RemoteCredentials</maml:name>
         <maml:Description>
           <maml:para>Credentials if running remote</maml:para>
@@ -960,26 +942,8 @@
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes>
-      <command:inputType>
-        <dev:type>
-          <maml:name>System.String</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:inputType>
-    </command:inputTypes>
-    <command:returnValues>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>System.Object</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:returnValue>
-    </command:returnValues>
+    <command:inputTypes />
+    <command:returnValues />
     <maml:alertSet>
       <maml:alert>
         <maml:para></maml:para>
@@ -1226,23 +1190,23 @@
   </command:command>
   <command:command xmlns:maml="http://schemas.microsoft.com/maml/2004/10" xmlns:command="http://schemas.microsoft.com/maml/dev/command/2004/10" xmlns:dev="http://schemas.microsoft.com/maml/dev/2004/10" xmlns:MSHelp="http://msdn.microsoft.com/mshelp">
     <command:details>
-      <command:name>Install-BasePSModules</command:name>
+      <command:name>Install-CTXPSModule</command:name>
       <command:verb>Install</command:verb>
-      <command:noun>BasePSModules</command:noun>
+      <command:noun>CTXPSModule</command:noun>
       <maml:description>
-        <maml:para>Makes sure the needed modules are available.</maml:para>
+        <maml:para>Checks and installs needed modules</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Makes sure the needed modules are available.</maml:para>
+      <maml:para>Checks and installs needed modules</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
-        <maml:name>Install-BasePSModules</maml:name>
+        <maml:name>Install-CTXPSModule</maml:name>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
           <maml:name>ModuleList</maml:name>
           <maml:Description>
-            <maml:para>Path to json file with the needed module list.</maml:para>
+            <maml:para>Path to json file</maml:para>
           </maml:Description>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
@@ -1254,7 +1218,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>ForceInstall</maml:name>
           <maml:Description>
-            <maml:para>Force Install / Reinstall of the modules</maml:para>
+            <maml:para>Force reinstall of modules</maml:para>
           </maml:Description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -1265,7 +1229,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>RemoveAll</maml:name>
           <maml:Description>
-            <maml:para>Force remove the modules in the list.</maml:para>
+            <maml:para>Force Uninstall of the modules</maml:para>
           </maml:Description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -1276,7 +1240,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>UpdateModules</maml:name>
           <maml:Description>
-            <maml:para>Run an module update</maml:para>
+            <maml:para>Perform module update.</maml:para>
           </maml:Description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -1290,7 +1254,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>ForceInstall</maml:name>
         <maml:Description>
-          <maml:para>Force Install / Reinstall of the modules</maml:para>
+          <maml:para>Force reinstall of modules</maml:para>
         </maml:Description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -1302,7 +1266,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
         <maml:name>ModuleList</maml:name>
         <maml:Description>
-          <maml:para>Path to json file with the needed module list.</maml:para>
+          <maml:para>Path to json file</maml:para>
         </maml:Description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -1314,7 +1278,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>RemoveAll</maml:name>
         <maml:Description>
-          <maml:para>Force remove the modules in the list.</maml:para>
+          <maml:para>Force Uninstall of the modules</maml:para>
         </maml:Description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -1326,7 +1290,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>UpdateModules</maml:name>
         <maml:Description>
-          <maml:para>Run an module update</maml:para>
+          <maml:para>Perform module update.</maml:para>
         </maml:Description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -1364,7 +1328,7 @@
     <command:examples>
       <command:example>
         <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Install-BasePSModules -ModuleList 'c:\temp\\modulelist.json'</dev:code>
+        <dev:code>PS C:\&gt; Install-CTXPSModule -ModuleList 'C:\Temp\modules.json'</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
@@ -1419,6 +1383,11 @@
     </command:details>
     <maml:description>
       <maml:para>Creates and distributes  a report on catalog, groups and published app config.</maml:para>
+      <maml:para>HTML Reports</maml:para>
+      <maml:para>- When creating a HTML report:</maml:para>
+      <maml:para>- The logo can be changed by replacing the variable</maml:para>
+      <maml:para>  - $Global:Logourl ='' - The colors of the report can be changed, by replacing:   - $global:colour1 = '#061820'   - $global:colour2 = '#FFD400' - Or permanently replace it by editing the following file</maml:para>
+      <maml:para>- &lt;Module base&gt;\Private\Reports-Variables.ps1</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1498,11 +1467,16 @@
     </command:details>
     <maml:description>
       <maml:para>Creates and distributes  a report on citrix farm health.</maml:para>
+      <maml:para>HTML Reports</maml:para>
+      <maml:para>- When creating a HTML report:</maml:para>
+      <maml:para>- The logo can be changed by replacing the variable</maml:para>
+      <maml:para>  - $Global:Logourl ='' - The colors of the report can be changed, by replacing:   - $global:colour1 = '#061820'   - $global:colour2 = '#FFD400' - Or permanently replace it by editing the following file</maml:para>
+      <maml:para>- &lt;Module base&gt;\Private\Reports-Variables.ps1</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
         <maml:name>Start-CitrixHealthCheck</maml:name>
-        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+        <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>JSONParameterFilePath</maml:name>
           <maml:Description>
             <maml:para>Path to json config file.</maml:para>
@@ -1517,7 +1491,7 @@
       </command:syntaxItem>
     </command:syntax>
     <command:parameters>
-      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="0" aliases="none">
+      <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>JSONParameterFilePath</maml:name>
         <maml:Description>
           <maml:para>Path to json config file.</maml:para>
@@ -1530,26 +1504,8 @@
         <dev:defaultValue>None</dev:defaultValue>
       </command:parameter>
     </command:parameters>
-    <command:inputTypes>
-      <command:inputType>
-        <dev:type>
-          <maml:name>None</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:inputType>
-    </command:inputTypes>
-    <command:returnValues>
-      <command:returnValue>
-        <dev:type>
-          <maml:name>System.Object</maml:name>
-        </dev:type>
-        <maml:description>
-          <maml:para></maml:para>
-        </maml:description>
-      </command:returnValue>
-    </command:returnValues>
+    <command:inputTypes />
+    <command:returnValues />
     <maml:alertSet>
       <maml:alert>
         <maml:para></maml:para>

@@ -43,7 +43,7 @@ Param()
 
 # .ExternalHelp  XDHealthCheck-help.xml
 
-Function Install-BasePSModule {
+Function Install-CTXPSModule {
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq '.json') })]
