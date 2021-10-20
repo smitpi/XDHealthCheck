@@ -21,15 +21,15 @@ Import the config file and creates the needed variables
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> Import-ParametersFile -JSONParameterFilePath $JSONParameterFilePath
+### EXAMPLE 1
+```
+Import-ParametersFile -JSONParameterFilePath $JSONParameterFilePath
 ```
 
 ## PARAMETERS
 
 ### -JSONParameterFilePath
-Path to the config file
+Path to the json config file, created by Install-ParametersFile
 
 ```yaml
 Type: String
@@ -37,8 +37,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
-Default value: None
+Position: 1
+Default value: (Get-Item $profile).DirectoryName + '\Parameters.json'
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -52,8 +52,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 1
-Default value: None
+Position: 2
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -63,11 +63,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
 ## OUTPUTS
 
-### System.Object
 ## NOTES
 
 ## RELATED LINKS

@@ -44,28 +44,6 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <#
 
 .DESCRIPTION 
@@ -77,6 +55,26 @@ Function for Citrix XenDesktop HTML Health Check Report
 
 # .ExternalHelp  XDHealthCheck-help.xml
 Function Get-StoreFrontDetail {
+<#
+.SYNOPSIS
+Report on Storefront status.
+
+.DESCRIPTION
+Report on Storefront status.
+
+.PARAMETER StoreFrontServer
+Name of a storefront server
+
+.PARAMETER RunAsPSRemote
+Credentials if running psremote 
+
+.PARAMETER RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
+
+.EXAMPLE
+Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote
+
+#>
 	[CmdletBinding()]
     PARAM(
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]

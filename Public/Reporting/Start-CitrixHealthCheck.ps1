@@ -62,6 +62,41 @@ Function for Citrix XenDesktop HTML Health Check Report
 # .ExternalHelp  XDHealthCheck-help.xml
 
 function Start-CitrixHealthCheck {
+<#
+.SYNOPSIS
+Creates and distributes  a report on citrix farm health.
+
+.DESCRIPTION
+Creates and distributes  a report on citrix farm health.
+
+HTML Reports
+- When creating a HTML report:
+- The logo can be changed by replacing the variable 
+	- $Global:Logourl =''
+- The colors of the report can be changed, by replacing:
+	- $global:colour1 = '#061820'
+	- $global:colour2 = '#FFD400'
+- Or permanently replace it by editing the following file
+- <Module base>\Private\Reports-Variables.ps1
+
+.PARAMETER JSONParameterFilePath
+Path to the json config file, created by Install-ParametersFile
+
+.EXAMPLE
+Start-CitrixHealthCheck -JSONParameterFilePath 'C:\temp\Parameters.json'
+
+.NOTES
+HTML Reports
+- When creating a HTML report:
+- The logo can be changed by replacing the variable 
+	- $Global:Logourl =''
+- The colors of the report can be changed, by replacing:
+	- $global:colour1 = '#061820'
+	- $global:colour2 = '#FFD400'
+- Or permanently replace it by editing the following file
+- <Module base>\Private\Reports-Variables.ps1
+
+#>
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]

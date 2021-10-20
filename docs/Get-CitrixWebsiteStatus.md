@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-CitrixWebsiteStatus
 
 ## SYNOPSIS
-Report on Website Status
+Get the status of a website
 
 ## SYNTAX
 
@@ -17,20 +17,19 @@ Get-CitrixWebsiteStatus [-Websitelist] <Array> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Report on Website Status
+Get the status of a website
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\>  Get-CitrixWebsiteStatus -Websitelist 'https://store.example.com'
+### EXAMPLE 1
+```
+Get-CitrixWebsiteStatus -Websitelist 'https://store.example.com'
 ```
 
 ## PARAMETERS
 
 ### -Websitelist
-
-List of URLs
+List of websites to check
 
 ```yaml
 Type: Array
@@ -38,7 +37,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
@@ -49,11 +48,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.Array
-
 ## OUTPUTS
 
-### System.Object
 ## NOTES
 
 ## RELATED LINKS

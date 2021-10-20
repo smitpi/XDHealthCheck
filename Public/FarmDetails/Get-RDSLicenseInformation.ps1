@@ -48,33 +48,6 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <#
 
 .DESCRIPTION 
@@ -83,6 +56,23 @@ Function for Citrix XenDesktop HTML Health Check Report
 #>
 # .ExternalHelp  XDHealthCheck-help.xml
 Function Get-RDSLicenseInformation {
+<#
+.SYNOPSIS
+Report on RDS License Useage
+
+.DESCRIPTION
+Report on RDS License Useage
+
+.PARAMETER LicenseServer
+Name of a RDS License Server
+
+.PARAMETER RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
+
+.EXAMPLE
+Get-RDSLicenseInformation -LicenseServer $RDSLicenseServer  -RemoteCredentials $CTXAdmin
+
+#>
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]

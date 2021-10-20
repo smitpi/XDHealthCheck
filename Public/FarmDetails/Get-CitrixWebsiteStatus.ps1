@@ -79,6 +79,20 @@ Function for Citrix XenDesktop HTML Health Check Report
 
 
 Function Get-CitrixWebsiteStatus {
+<#
+.SYNOPSIS
+Get the status of a website
+
+.DESCRIPTION
+Get the status of a website
+
+.PARAMETER Websitelist
+List of websites to check
+
+.EXAMPLE
+Get-CitrixWebsiteStatus -Websitelist 'https://store.example.com'
+
+#>
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]

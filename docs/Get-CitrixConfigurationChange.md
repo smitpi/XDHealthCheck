@@ -8,7 +8,6 @@ schema: 2.0.0
 # Get-CitrixConfigurationChange
 
 ## SYNOPSIS
-
 Show the changes that was made to the farm
 
 ## SYNTAX
@@ -23,11 +22,10 @@ Show the changes that was made to the farm
 ## EXAMPLES
 
 ### Example 1
-```powershell
+
+```
 PS C:\> Get-CitrixConfigurationChange -DDC $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin
 ```
-
-{{ Add example description here }}
 
 ## PARAMETERS
 
@@ -67,7 +65,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ### System.String
-
 ## OUTPUTS
 
 ### System.Object

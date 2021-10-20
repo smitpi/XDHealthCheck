@@ -8,6 +8,7 @@ schema: 2.0.0
 # Start-CitrixHealthCheck
 
 ## SYNOPSIS
+
 Creates and distributes  a report on citrix farm health.
 
 ## SYNTAX
@@ -20,27 +21,32 @@ Start-CitrixHealthCheck [[-JSONParameterFilePath] <String>] [<CommonParameters>]
 Creates and distributes  a report on citrix farm health.
 
 HTML Reports
-
 - When creating a HTML report:
+
 - The logo can be changed by replacing the variable 
-  - $Global:Logourl =''
+	- $Global:Logourl =''
+	
 - The colors of the report can be changed, by replacing:
-  - $global:colour1 = '#061820'
-  - $global:colour2 = '#FFD400'
+	- $global:colour1 = '#061820'
+	- $global:colour2 = '#FFD400'
+	
 - Or permanently replace it by editing the following file
+
 - <Module base>\Private\Reports-Variables.ps1
+
+  
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> Start-CitrixHealthCheck -JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json"
+PS C:\> Start-CitrixHealthCheck -JSONParameterFilePath 'C:\temp\Parameters.json'
 ```
 
 ## PARAMETERS
 
 ### -JSONParameterFilePath
-Path to json config file.
+*Path to the json config file, created by Install-ParametersFile*
 
 ```yaml
 Type: String
@@ -49,7 +55,7 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: None
+Default value: (Get-Item $profile).DirectoryName + "\Parameters.json"
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

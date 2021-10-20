@@ -71,6 +71,30 @@ Function for Citrix XenDesktop HTML Health Check Report
 
 
 function Start-CitrixAudit {
+<#
+.SYNOPSIS
+Creates and distributes  a report on catalog, groups and published app config.
+
+.DESCRIPTION
+Creates and distributes  a report on catalog, groups and published app config.
+
+HTML Reports
+- When creating a HTML report:
+- The logo can be changed by replacing the variable 
+	- $Global:Logourl =''
+- The colors of the report can be changed, by replacing:
+	- $global:colour1 = '#061820'
+	- $global:colour2 = '#FFD400'
+- Or permanently replace it by editing the following file
+- <Module base>\Private\Reports-Variables.ps1
+
+.PARAMETER JSONParameterFilePath
+Path to the json config file, created by Install-ParametersFile
+
+.EXAMPLE
+Start-CitrixAudit -JSONParameterFilePath 'C:\temp\Parameters.json'
+
+#>
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]

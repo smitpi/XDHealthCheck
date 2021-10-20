@@ -23,7 +23,7 @@ Report on StoreFront Status
 ## EXAMPLES
 
 ### Example 1
-```powershell
+```
 PS C:\> Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote
 ```
 
@@ -54,7 +54,7 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: None
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -80,7 +80,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ### System.String
-
 ## OUTPUTS
 
 ### System.Object

@@ -45,30 +45,6 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <#
 
 .DESCRIPTION 
@@ -80,6 +56,26 @@ Function for Citrix XenDesktop HTML Health Check Report
 
 # .ExternalHelp XDHealthCheck-help.xml
 Function Get-CitrixLicenseInformation {
+<#
+.SYNOPSIS
+Show Citrix License details
+
+.DESCRIPTION
+Show Citrix License details
+
+.PARAMETER AdminServer
+Name of a data collector
+
+.PARAMETER RunAsPSRemote
+Credentials if running psremote 
+
+.PARAMETER RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
+
+.EXAMPLE
+Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
+
+#>
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]

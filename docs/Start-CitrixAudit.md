@@ -20,27 +20,26 @@ Start-CitrixAudit [[-JSONParameterFilePath] <String>] [<CommonParameters>]
 Creates and distributes  a report on catalog, groups and published app config.
 
 HTML Reports
-
 - When creating a HTML report:
 - The logo can be changed by replacing the variable 
-  - $Global:Logourl =''
+	- $Global:Logourl =''
 - The colors of the report can be changed, by replacing:
-  - $global:colour1 = '#061820'
-  - $global:colour2 = '#FFD400'
+	- $global:colour1 = '#061820'
+	- $global:colour2 = '#FFD400'
 - Or permanently replace it by editing the following file
-- <Module base>\Private\Reports-Variables.ps1
+- \<Module base\>\Private\Reports-Variables.ps1
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\>  Start-CitrixAudit -JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json"
+### EXAMPLE 1
+```
+Start-CitrixAudit -JSONParameterFilePath 'C:\temp\Parameters.json'
 ```
 
 ## PARAMETERS
 
 ### -JSONParameterFilePath
-Path to json config file.
+Path to the json config file, created by Install-ParametersFile
 
 ```yaml
 Type: String
@@ -48,8 +47,8 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 0
-Default value: None
+Position: 1
+Default value: (Get-Item $profile).DirectoryName + "\Parameters.json"
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -59,11 +58,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### None
-
 ## OUTPUTS
 
-### System.Object
 ## NOTES
 
 ## RELATED LINKS

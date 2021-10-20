@@ -34,27 +34,14 @@ Updated [06/06/2019_19:25]
 Updated [09/06/2019_09:18]
 Updated [15/06/2019_01:11]
 Updated [15/06/2019_13:59] Updated Reports
-Updated [01/07/2020_14:43] Script Fle Info was updated
-Updated [01/07/2020_15:42] Script Fle Info was updated
-Updated [01/07/2020_16:07] Script Fle Info was updated
-Updated [01/07/2020_16:13] Script Fle Info was updated
-Updated [06/03/2021_20:58] Script Fle Info was updated
-Updated [15/03/2021_23:28] Script Fle Info was updated
+Updated [01/07/2020_14:43] Script File Info was updated
+Updated [01/07/2020_15:42] Script File Info was updated
+Updated [01/07/2020_16:07] Script File Info was updated
+Updated [01/07/2020_16:13] Script File Info was updated
+Updated [06/03/2021_20:58] Script File Info was updated
+Updated [15/03/2021_23:28] Script File Info was updated
 
 #> 
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 <#
 
@@ -66,6 +53,24 @@ Function for Citrix XenDesktop HTML Health Check Report
 # .ExternalHelp  XDHealthCheck-help.xml
 
 Function Get-CitrixConfigurationChange {
+<#
+.SYNOPSIS
+Show the changes that was made to the farm
+
+.DESCRIPTION
+Show the changes that was made to the farm
+
+.PARAMETER DDC
+Name of data collector
+
+.PARAMETER Indays
+Limit the search, to only show changes from the last couple of days
+
+
+.EXAMPLE
+Get-CitrixConfigurationChange -DDC $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin
+
+#>
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]

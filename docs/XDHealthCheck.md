@@ -1,7 +1,7 @@
 ---
 Module Name: XDHealthCheck
 Module Guid: 39f9295c-353e-4bb7-aee5-0c600dfd5eba
-Download Help Link: 
+Download Help Link: NA
 Help Version: 0.2.4
 Locale: en-US
 ---
@@ -9,10 +9,21 @@ Locale: en-US
 # XDHealthCheck Module
 ## Description
 Creates daily health check, and config reports for your on premise Citrix farm. 
- - To get started, you need to run Install-ParametersFile. 
- - This will capture and save needed farm details, to allow scripts to run automatically.
+- To get started, you need to run Install-ParametersFile. 
+- This will capture and save needed farm details, to allow scripts to run automatically.
+
+HTML Reports
+- When creating a HTML report:
+- The logo can be changed by replacing the variable 
+ - $Global:Logourl =''
+- The colors of the report can be changed, by replacing:
+ - $global:colour1 = "#061820"
+ - $global:colour2 = "#FFD400"
+- Or permanently replace it by editing the following file
+- <Module base>\Private\Reports-Variables.ps1
 
 ## XDHealthCheck Cmdlets
+
 ### [Get-CitrixConfigurationChange](Get-CitrixConfigurationChange.md)
 Show the changes that was made to the farm
 
@@ -29,16 +40,16 @@ Get details about catalogs, delivery groups and published apps
 Get windows event log details
 
 ### [Get-CitrixServerPerformance](Get-CitrixServerPerformance.md)
-Show perfmon stats
+Combine perfmon of multiple servers for reporting.
 
 ### [Get-CitrixSingleServerPerformance](Get-CitrixSingleServerPerformance.md)
-Get perfmon detail
+Get perfmon statistics
 
 ### [Get-CitrixWebsiteStatus](Get-CitrixWebsiteStatus.md)
-Report on Website Status
+Get the status of a website
 
 ### [Get-RDSLicenseInformation](Get-RDSLicenseInformation.md)
-Report on RDS Licenses
+Report on RDS License Usage
 
 ### [Get-StoreFrontDetail](Get-StoreFrontDetail.md)
 Report on StoreFront Status

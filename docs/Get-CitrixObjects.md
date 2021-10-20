@@ -23,14 +23,13 @@ Get details about catalogs, delivery groups and published apps
 ## EXAMPLES
 
 ### Example 1
-```powershell
+```
 PS C:\>  Get-CitrixObjects -AdminServer $CTXDDC -RunAsPSRemote -RemoteCredentials $CTXAdmin -Verbose
 ```
 
 ## PARAMETERS
 
 ### -AdminServer
-
 Name of data collector
 
 ```yaml
@@ -46,7 +45,6 @@ Accept wildcard characters: False
 ```
 
 ### -RemoteCredentials
-
 Credentials if running remote
 
 ```yaml
@@ -62,7 +60,6 @@ Accept wildcard characters: False
 ```
 
 ### -RunAsPSRemote
-
 Enable function to run remotely, if the CItrix cmdlets are not available
 
 ```yaml
@@ -72,7 +69,7 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: None
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -83,7 +80,6 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## INPUTS
 
 ### None
-
 ## OUTPUTS
 
 ### System.Object

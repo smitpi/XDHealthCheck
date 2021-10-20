@@ -8,7 +8,8 @@ schema: 2.0.0
 # Get-RDSLicenseInformation
 
 ## SYNOPSIS
-Report on RDS Licenses
+
+Report on RDS License Usage
 
 ## SYNTAX
 
@@ -17,7 +18,7 @@ Get-RDSLicenseInformation [-LicenseServer] <String> [-RemoteCredentials] <PSCred
 ```
 
 ## DESCRIPTION
-Report on RDS Licenses
+Report on RDS License Usage
 
 ## EXAMPLES
 
@@ -29,7 +30,7 @@ PS C:\> Get-RDSLicenseInformation -LicenseServer $RDSLicenseServer  -RemoteCrede
 ## PARAMETERS
 
 ### -LicenseServer
-Name of RDS License server
+Name of a RDS License Server
 
 ```yaml
 Type: String
@@ -44,8 +45,7 @@ Accept wildcard characters: False
 ```
 
 ### -RemoteCredentials
-
-Credentials if running remote
+Enable function to run remotely, if the CItrix cmdlets are not available
 
 ```yaml
 Type: PSCredential

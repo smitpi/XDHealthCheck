@@ -30,39 +30,8 @@ PS C:\> Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials
 
 ## PARAMETERS
 
-### -Days
-Limit the search for only do many days.
-
-```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -RemoteCredentials
-
-Credentials if running remote
-
-```yaml
-Type: PSCredential
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Serverlist
-{{Fill Serverlist Description}}
+List of server names.
 
 ```yaml
 Type: Array
@@ -73,6 +42,36 @@ Required: True
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -Days
+Limit the search for only do many days.
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 2
+Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -RemoteCredentials
+Credentials used to connect to server remotely.
+
+```yaml
+Type: PSCredential
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 3
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

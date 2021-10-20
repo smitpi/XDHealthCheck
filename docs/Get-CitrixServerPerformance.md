@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-CitrixServerPerformance
 
 ## SYNOPSIS
-Show perfmon stats
+Combine perfmon of multiple servers for reporting.
 
 ## SYNTAX
 
@@ -17,35 +17,19 @@ Get-CitrixServerPerformance [-Serverlist] <Array> [-RemoteCredentials] <PSCreden
 ```
 
 ## DESCRIPTION
-Show perfmon stats
+Combine perfmon of multiple servers for reporting.
 
 ## EXAMPLES
 
-### Example 1
-```powershell
-PS C:\> Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin
+### EXAMPLE 1
+```
+Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin
 ```
 
 ## PARAMETERS
 
-### -RemoteCredentials
-
-Credentials if running remote
-
-```yaml
-Type: PSCredential
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 1
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Serverlist
-{{Fill Serverlist Description}}
+List of servers to get the permon details
 
 ```yaml
 Type: Array
@@ -53,9 +37,24 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 0
+Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
+
+```yaml
+Type: PSCredential
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 2
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -64,11 +63,8 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 
 ## INPUTS
 
-### System.Array
-
 ## OUTPUTS
 
-### System.Object
 ## NOTES
 
 ## RELATED LINKS
