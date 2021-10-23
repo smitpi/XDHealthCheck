@@ -53,19 +53,21 @@ Function for Citrix XenDesktop HTML Health Check Report
 # .ExternalHelp  XDHealthCheck-help.xml
 
 Function Get-CitrixConfigurationChange {
-<#
+	<#
 .SYNOPSIS
 Show the changes that was made to the farm
 
 .DESCRIPTION
 Show the changes that was made to the farm
 
-.PARAMETER DDC
+.PARAMETER AdminServer
 Name of data collector
 
 .PARAMETER Indays
 Limit the search, to only show changes from the last couple of days
 
+.PARAMETER RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
 
 .EXAMPLE
 Get-CitrixConfigurationChange -DDC $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin
@@ -73,22 +75,24 @@ Get-CitrixConfigurationChange -DDC $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmi
 #>
 	[CmdletBinding()]
 	PARAM(
-		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
+		[Parameter(Mandatory = $true)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[string]$DDC,
-		[Parameter(Mandatory = $true, Position = 1)]
+		[string]$AdminServer,
+		[Parameter(Mandatory = $true)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[int32]$Indays)
+		[int32]$Indays,
+		[Parameter(Mandatory = $true)]
+		[PSCredential]$RemoteCredentials)
 
-	Invoke-Command -ComputerName $DDC -ScriptBlock {
-		param($DDC, $Indays)
+	Invoke-Command -ComputerName $AdminServer -ScriptBlock {
+		param($AdminServer, $Indays)
 		Add-PSSnapin citrix* -ErrorAction SilentlyContinue
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
 
 		$startdate = (Get-Date).AddDays(-$Indays)
-		$exportpath = (Get-Item (Get-Item Env:\TEMP).value).FullName + "\ctxreportlog.csv"
+		$exportpath = (Get-Item (Get-Item Env:\TEMP).value).FullName + '\ctxreportlog.csv'
 
 		if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
@@ -96,8 +100,8 @@ Get-CitrixConfigurationChange -DDC $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmi
 		Export-LogReportCsv -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
 
-		$LogExportAll = Import-Csv -Path $exportpath -Delimiter ","
-		$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike "" } | Select-Object -Property High*
+		$LogExportAll = Import-Csv -Path $exportpath -Delimiter ','
+		$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike '' } | Select-Object -Property High*
 		$LogSum = $LogExportAll | Group-Object -Property 'High Level Operation Text' -NoElement
 
 		Remove-Item $exportpath -Force -ErrorAction SilentlyContinue
@@ -111,7 +115,7 @@ Get-CitrixConfigurationChange -DDC $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmi
 
 		$CTXObject
 
-	} -ArgumentList @($DDC, $Indays)
+	} -ArgumentList @($AdminServer, $Indays) -Credential $RemoteCredentials
 
 } #end Function
 

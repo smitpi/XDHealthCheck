@@ -180,8 +180,9 @@ Get-CitrixFarmDetail -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSR
 
 		function Get-VDAUptime($AdminServer) {
 			$VDAUptime = @()
-			Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000 | Where-Object { $_.OStype -like 'Windows 2016' -and $_.DesktopGroupName -notlike $null } | ForEach-Object {
-				$OS = Get-CimInstance Win32_OperatingSystem -ComputerName $_.DNSName | Select-Object *
+			Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000000 | Where-Object {$_.DesktopGroupName -notlike $null } | ForEach-Object {
+			try {	
+                $OS = Get-CimInstance Win32_OperatingSystem -ComputerName $_.DNSName -ErrorAction Stop | Select-Object *
 				$Uptime = (Get-Date) - ($OS.LastBootUpTime)
 				$updays = [math]::Round($uptime.Days, 0)
 				$CusObject = New-Object PSObject -Property @{
@@ -193,6 +194,7 @@ Get-CitrixFarmDetail -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSR
 					Uptime               = $updays
 				} | Select-Object ComputerName, DesktopGroupName, SessionCount, InMaintenanceMode, MachineInternalState, Uptime
 				$VDAUptime += $CusObject
+                } catch {Write-Warning "Cannot connect $($_.DNSName) to get uptime"}
 			}
 			$VDAUptime
 		}

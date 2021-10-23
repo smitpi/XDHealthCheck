@@ -2,7 +2,7 @@
 Module Name: XDHealthCheck
 Module Guid: 39f9295c-353e-4bb7-aee5-0c600dfd5eba
 Download Help Link: NA
-Help Version: 0.2.4
+Help Version: 0.2.6
 Locale: en-US
 ---
 
