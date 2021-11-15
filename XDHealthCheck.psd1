@@ -30,9 +30,8 @@ CompanyName = 'iOCO Tech'
 Copyright = '(c) 2019 Pierre Smit. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'Creates daily health check, and config reports for your on-premise Citrix farm. 
-- To get started, you need to run Install-ParametersFile. 
-- This will capture and save needed farm details, to allow scripts to run automatically.'
+Description = 'Creates daily health check and config reports for your on-premise Citrix farm. To get started, you need to run Install-ParametersFile.
+This will capture and save needed farm details, to allow scripts to run automatically.'
 
 # Minimum version of the Windows PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -53,7 +52,10 @@ Description = 'Creates daily health check, and config reports for your on-premis
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = 'ImportExcel', 'PSWriteHTML', 'PSWriteColor', 'BetterCredentials'
+RequiredModules = @('ImportExcel', 
+               'PSWriteHTML', 
+               'PSWriteColor', 
+               'BetterCredentials')
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -119,7 +121,7 @@ PrivateData = @{
         ReleaseNotes = 'Updated [16/11/2021_01:27] Added a function to change report colors and logo.'
 
         # External dependent modules of this module
-        # ExternalModuleDependencies = ''
+        #ExternalModuleDependencies = @('ImportExcel', 'PSWriteHTML', 'PSWriteColor', 'BetterCredentials')
 
     } # End of PSData hashtable
     
