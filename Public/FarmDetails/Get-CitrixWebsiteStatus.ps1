@@ -46,39 +46,11 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <#
 
 .DESCRIPTION 
 Function for Citrix XenDesktop HTML Health Check Report
 
-#>
-# .ExternalHelp  XDHealthCheck-help.xml
-
-
-Function Get-CitrixWebsiteStatus {
 <#
 .SYNOPSIS
 Get the status of a website
@@ -93,6 +65,7 @@ List of websites to check
 Get-CitrixWebsiteStatus -Websitelist 'https://store.example.com'
 
 #>
+Function Get-CitrixWebsiteStatus {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]

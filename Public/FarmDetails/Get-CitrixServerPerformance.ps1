@@ -61,11 +61,6 @@ Function for Citrix XenDesktop HTML Health Check Report
 
 #>
 
-
-# .ExternalHelp  XDHealthCheck-help.xml
-
-
-Function Get-CitrixServerPerformance {
 <#
 .SYNOPSIS
 Combine perfmon of multiple servers for reporting.
@@ -82,6 +77,7 @@ Enable function to run remotely, if the CItrix cmdlets are not available
 .EXAMPLE
 Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin
 #>	
+Function Get-CitrixServerPerformance {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]

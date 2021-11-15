@@ -51,9 +51,6 @@ Function for Citrix XenDesktop HTML Health Check Report
 #>
 
 
-# .ExternalHelp  XDHealthCheck-help.xml
-
-Function Get-CitrixObjects {
 <#
 .SYNOPSIS
 Get details of citrix objects
@@ -74,6 +71,7 @@ Enable function to run remotely, if the CItrix cmdlets are not available
 Get-CitrixObjects -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
 
 #>
+Function Get-CitrixObjects {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0)]

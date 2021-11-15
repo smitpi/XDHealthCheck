@@ -59,9 +59,6 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 Function for Citrix XenDesktop HTML Health Check Report
 
 #>
-# .ExternalHelp  XDHealthCheck-help.xml
-
-function Start-CitrixHealthCheck {
 <#
 .SYNOPSIS
 Creates and distributes  a report on citrix farm health.
@@ -69,34 +66,14 @@ Creates and distributes  a report on citrix farm health.
 .DESCRIPTION
 Creates and distributes  a report on citrix farm health.
 
-HTML Reports
-- When creating a HTML report:
-- The logo can be changed by replacing the variable 
-	- $Global:Logourl =''
-- The colors of the report can be changed, by replacing:
-	- $global:colour1 = '#061820'
-	- $global:colour2 = '#FFD400'
-- Or permanently replace it by editing the following file
-- <Module base>\Private\Reports-Variables.ps1
-
 .PARAMETER JSONParameterFilePath
 Path to the json config file, created by Install-ParametersFile
 
 .EXAMPLE
 Start-CitrixHealthCheck -JSONParameterFilePath 'C:\temp\Parameters.json'
 
-.NOTES
-HTML Reports
-- When creating a HTML report:
-- The logo can be changed by replacing the variable 
-	- $Global:Logourl =''
-- The colors of the report can be changed, by replacing:
-	- $global:colour1 = '#061820'
-	- $global:colour2 = '#FFD400'
-- Or permanently replace it by editing the following file
-- <Module base>\Private\Reports-Variables.ps1
-
 #>
+function Start-CitrixHealthCheck {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
@@ -267,6 +244,7 @@ HTML Reports
 
 	$HeadingText = $DashboardTitle + " | XenDesktop Report | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
 	New-HTML -TitleText "XenDesktop Report"  -FilePath $Reportname {
+		New-HTMLLogo -RightLogoString $XDHealth_LogoURL
 		New-HTMLHeading -Heading h1 -HeadingText $HeadingText -Color Black
 		New-HTMLSection @SectionSettings  -Content {
 			New-HTMLSection -HeaderText 'Citrix Sessions' @TableSectionSettings { New-HTMLTable   @TableSettings  -DataTable $CitrixRemoteFarmDetails.SessionCounts $Conditions_sessions }

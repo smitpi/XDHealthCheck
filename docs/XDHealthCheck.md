@@ -1,29 +1,24 @@
 ---
 Module Name: XDHealthCheck
 Module Guid: 39f9295c-353e-4bb7-aee5-0c600dfd5eba
-Download Help Link: NA
-Help Version: 0.2.6
+Download Help Link:
+help Version: 0.2.7
 Locale: en-US
 ---
 
 # XDHealthCheck Module
 ## Description
-Creates daily health check, and config reports for your on premise Citrix farm. 
+Creates daily health check, and config reports for your on-premise Citrix farm. 
 - To get started, you need to run Install-ParametersFile. 
 - This will capture and save needed farm details, to allow scripts to run automatically.
+- This will capture and save needed farm details, to allow scripts to run automatically.
 
-HTML Reports
-- When creating a HTML report:
-- The logo can be changed by replacing the variable 
- - $Global:Logourl =''
-- The colors of the report can be changed, by replacing:
- - $global:colour1 = "#061820"
- - $global:colour2 = "#FFD400"
-- Or permanently replace it by editing the following file
+HTML Reports - When creating a HTML report:
+- The logo can be changed by replacing the variable
+ - $Global:Logourl ='' - The colors of the report can be changed, by replacing:  - $global:colour1 = "#061820"  - $global:colour2 = "#FFD400" - Or permanently replace it by editing the following file
 - <Module base>\Private\Reports-Variables.ps1
 
 ## XDHealthCheck Cmdlets
-
 ### [Get-CitrixConfigurationChange](Get-CitrixConfigurationChange.md)
 Show the changes that was made to the farm
 
@@ -62,6 +57,9 @@ Checks and installs needed modules
 
 ### [Install-ParametersFile](Install-ParametersFile.md)
 Create a json config with all needed farm details.
+
+### [Set-XDHealthReportColors](Set-XDHealthReportColors.md)
+Set the color and logo for HTML Reports
 
 ### [Start-CitrixAudit](Start-CitrixAudit.md)
 Creates and distributes  a report on catalog, groups and published app config.

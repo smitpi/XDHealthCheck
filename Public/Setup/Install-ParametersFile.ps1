@@ -42,10 +42,7 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 Function for Citrix XenDesktop HTML Health Check Report
 
 #> 
-# .ExternalHelp  XDHealthCheck-help.xml
-
-function Install-ParametersFile {
-	<#
+<#
 .SYNOPSIS
 Create a json config file with all needed farm details.
 
@@ -56,6 +53,8 @@ Create a json config file with all needed farm details.
 Install-ParametersFile
 
 #>
+function Install-ParametersFile {
+
 	[Cmdletbinding()]
 	param ()
 	try {

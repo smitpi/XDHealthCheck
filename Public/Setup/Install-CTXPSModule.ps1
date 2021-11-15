@@ -41,9 +41,6 @@ Created [14/02/2021_07:51] Initital Script Creating
 
 Param()
 
-# .ExternalHelp  XDHealthCheck-help.xml
-
-Function Install-CTXPSModule {
 	<#
 .SYNOPSIS
 Checks and installs needed modules
@@ -67,6 +64,7 @@ Remove the modules
 Install-CTXPSModule -ModuleList 'C:\Temp\modules.json'
 
 #>
+Function Install-CTXPSModule {
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq '.json') })]

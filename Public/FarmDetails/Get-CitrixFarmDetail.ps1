@@ -51,11 +51,7 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 Function for Citrix XenDesktop HTML Health Check Report
 
 #>
-# .ExternalHelp  XDHealthCheck-help.xml
 
-
-
-Function Get-CitrixFarmDetail {
 <#
 .SYNOPSIS
 Get needed Farm details.
@@ -76,6 +72,7 @@ Enable function to run remotely, if the CItrix cmdlets are not available
 Get-CitrixFarmDetail -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
 
 #>
+Function Get-CitrixFarmDetail {
 		[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0)]

@@ -43,10 +43,6 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 Function for Citrix XenDesktop HTML Health Check Report
 
 #>
-# .ExternalHelp  XDHealthCheck-help.xml
-
-
-Function Import-ParametersFile {
 <#
 .SYNOPSIS
 Import the config file and creates the needed variables
@@ -64,6 +60,7 @@ Deletes the saved credentials, and allow you to recreate them.
 Import-ParametersFile -JSONParameterFilePath $JSONParameterFilePath
 
 #>
+Function Import-ParametersFile {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]

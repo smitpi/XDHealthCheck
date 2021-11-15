@@ -13,7 +13,8 @@ Show the changes that was made to the farm
 ## SYNTAX
 
 ```
-Get-CitrixConfigurationChange [-DDC] <String> [-Indays] <Int32> [<CommonParameters>]
+Get-CitrixConfigurationChange [-AdminServer] <String> [-Indays] <Int32> [-RemoteCredentials] <PSCredential>
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -29,7 +30,7 @@ PS C:\> Get-CitrixConfigurationChange -DDC $CTXDDC -Indays 7 -RemoteCredentials 
 
 ## PARAMETERS
 
-### -DDC
+### -AdminServer
 Name of data collector
 
 ```yaml
@@ -38,9 +39,9 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 0
+Position: 1
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
@@ -53,21 +54,34 @@ Parameter Sets: (All)
 Aliases:
 
 Required: True
-Position: 1
+Position: 2
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
+
+```yaml
+Type: PSCredential
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
 ### CommonParameters
-This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see about_CommonParameters (http://go.microsoft.com/fwlink/?LinkID=113216).
+This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
 
-### System.String
 ## OUTPUTS
 
-### System.Object
 ## NOTES
 
 ## RELATED LINKS

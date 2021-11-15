@@ -44,49 +44,18 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <#
 
 .DESCRIPTION 
 Function for Citrix XenDesktop HTML Health Check Report
 
 #>
-# .ExternalHelp  XDHealthCheck-help.xml
-
-
-
-function Start-CitrixAudit {
 <#
 .SYNOPSIS
 Creates and distributes  a report on catalog, groups and published app config.
 
 .DESCRIPTION
 Creates and distributes  a report on catalog, groups and published app config.
-
-HTML Reports
-- When creating a HTML report:
-- The logo can be changed by replacing the variable 
-	- $Global:Logourl =''
-- The colors of the report can be changed, by replacing:
-	- $global:colour1 = '#061820'
-	- $global:colour2 = '#FFD400'
-- Or permanently replace it by editing the following file
-- <Module base>\Private\Reports-Variables.ps1
 
 .PARAMETER JSONParameterFilePath
 Path to the json config file, created by Install-ParametersFile
@@ -95,6 +64,7 @@ Path to the json config file, created by Install-ParametersFile
 Start-CitrixAudit -JSONParameterFilePath 'C:\temp\Parameters.json'
 
 #>
+function Start-CitrixAudit {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
@@ -183,6 +153,7 @@ Start-CitrixAudit -JSONParameterFilePath 'C:\temp\Parameters.json'
 
 	$HeadingText = $DashboardTitle + " | XenDesktop Audit | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
 	New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname {
+		New-HTMLLogo -RightLogoString $XDHealth_LogoURL
 		New-HTMLHeading -Heading h1 -HeadingText $HeadingText -Color Black
 		New-HTMLSection @SectionSettings  -Content {
 			New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable @TableSettings  -DataTable $MachineCatalog }

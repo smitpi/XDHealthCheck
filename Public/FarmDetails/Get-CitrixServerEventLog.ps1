@@ -51,10 +51,6 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 .DESCRIPTION 
 Function for Citrix XenDesktop HTML Health Check Report
 
-#>
-# .ExternalHelp  XDHealthCheck-help.xml
-
-Function Get-CitrixServerEventLog {
 <#
 .SYNOPSIS
 Get windows event log details
@@ -75,6 +71,8 @@ Credentials used to connect to server remotely.
 Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin
 
 #>
+Function Get-CitrixServerEventLog {
+
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]

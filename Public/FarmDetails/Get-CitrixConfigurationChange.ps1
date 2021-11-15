@@ -48,12 +48,7 @@ Updated [15/03/2021_23:28] Script File Info was updated
 .DESCRIPTION 
 Function for Citrix XenDesktop HTML Health Check Report
 
-#>
-
-# .ExternalHelp  XDHealthCheck-help.xml
-
-Function Get-CitrixConfigurationChange {
-	<#
+<#
 .SYNOPSIS
 Show the changes that was made to the farm
 
@@ -73,6 +68,7 @@ Enable function to run remotely, if the CItrix cmdlets are not available
 Get-CitrixConfigurationChange -DDC $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin
 
 #>
+Function Get-CitrixConfigurationChange {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true)]

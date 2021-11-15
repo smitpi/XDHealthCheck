@@ -54,8 +54,6 @@ Function for Citrix XenDesktop HTML Health Check Report
 
 
 
-# .ExternalHelp XDHealthCheck-help.xml
-Function Get-CitrixLicenseInformation {
 <#
 .SYNOPSIS
 Show Citrix License details
@@ -75,7 +73,7 @@ Enable function to run remotely, if the CItrix cmdlets are not available
 .EXAMPLE
 Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
 
-#>
+#>Function Get-CitrixLicenseInformation {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]

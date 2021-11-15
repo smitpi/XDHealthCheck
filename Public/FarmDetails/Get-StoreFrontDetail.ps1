@@ -53,8 +53,6 @@ Function for Citrix XenDesktop HTML Health Check Report
 
 
 
-# .ExternalHelp  XDHealthCheck-help.xml
-Function Get-StoreFrontDetail {
 <#
 .SYNOPSIS
 Report on Storefront status.
@@ -74,7 +72,7 @@ Enable function to run remotely, if the CItrix cmdlets are not available
 .EXAMPLE
 Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote
 
-#>
+#>Function Get-StoreFrontDetail {
 	[CmdletBinding()]
     PARAM(
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
