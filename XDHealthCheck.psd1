@@ -53,10 +53,7 @@ Description = 'Creates daily health check, and config reports for your on-premis
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @('ImportExcel', 
-               'PSWriteHTML', 
-               'PSWriteColor', 
-               'BetterCredentials')
+RequiredModules = 'ImportExcel', 'PSWriteHTML', 'PSWriteColor', 'BetterCredentials'
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
