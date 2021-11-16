@@ -69,7 +69,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#examples">EXAMPLES</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#example-1">Example 1</a>
+    <li class="toctree-l3"><a class="reference internal" href="#example-1">EXAMPLE 1</a>
     </li>
         </ul>
     </li>
@@ -202,12 +202,12 @@
 <h2 id="description">DESCRIPTION</h2>
 <p>Show Citrix License details</p>
 <h2 id="examples">EXAMPLES</h2>
-<h3 id="example-1">Example 1</h3>
-<pre><code>PS C:\&gt;  Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
+<h3 id="example-1">EXAMPLE 1</h3>
+<pre><code>Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
 </code></pre>
 <h2 id="parameters">PARAMETERS</h2>
 <h3 id="-adminserver">-AdminServer</h3>
-<p>Name of data collector</p>
+<p>Name of a data collector</p>
 <pre><code class="language-yaml">Type: String
 Parameter Sets: (All)
 Aliases:
@@ -219,7 +219,7 @@ Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 </code></pre>
 <h3 id="-remotecredentials">-RemoteCredentials</h3>
-<p>Credentials if running remote</p>
+<p>Enable function to run remotely, if the CItrix cmdlets are not available</p>
 <pre><code class="language-yaml">Type: PSCredential
 Parameter Sets: (All)
 Aliases:
@@ -231,7 +231,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 </code></pre>
 <h3 id="-runaspsremote">-RunAsPSRemote</h3>
-<p>Enable function to run remotely, if the CItrix cmdlets are not available</p>
+<p>Credentials if running psremote</p>
 <pre><code class="language-yaml">Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:

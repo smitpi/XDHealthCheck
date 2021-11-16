@@ -97,7 +97,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#examples">EXAMPLES</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#example-1">Example 1</a>
+    <li class="toctree-l3"><a class="reference internal" href="#example-1">EXAMPLE 1</a>
     </li>
         </ul>
     </li>
@@ -194,20 +194,20 @@
               
                 <h1 id="get-storefrontdetail">Get-StoreFrontDetail</h1>
 <h2 id="synopsis">SYNOPSIS</h2>
-<p>Report on StoreFront Status</p>
+<p>Report on Storefront status.</p>
 <h2 id="syntax">SYNTAX</h2>
 <pre><code>Get-StoreFrontDetail [-StoreFrontServer] &lt;String&gt; [-RemoteCredentials] &lt;PSCredential&gt; [-RunAsPSRemote]
  [&lt;CommonParameters&gt;]
 </code></pre>
 <h2 id="description">DESCRIPTION</h2>
-<p>Report on StoreFront Status</p>
+<p>Report on Storefront status.</p>
 <h2 id="examples">EXAMPLES</h2>
-<h3 id="example-1">Example 1</h3>
-<pre><code>PS C:\&gt; Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote
+<h3 id="example-1">EXAMPLE 1</h3>
+<pre><code>Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote
 </code></pre>
 <h2 id="parameters">PARAMETERS</h2>
 <h3 id="-remotecredentials">-RemoteCredentials</h3>
-<p>Credentials if running remote</p>
+<p>Enable function to run remotely, if the CItrix cmdlets are not available</p>
 <pre><code class="language-yaml">Type: PSCredential
 Parameter Sets: (All)
 Aliases:
@@ -219,7 +219,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 </code></pre>
 <h3 id="-runaspsremote">-RunAsPSRemote</h3>
-<p>Enable function to run remotely, if the CItrix cmdlets are not available</p>
+<p>Credentials if running psremote</p>
 <pre><code class="language-yaml">Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
@@ -231,7 +231,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 </code></pre>
 <h3 id="-storefrontserver">-StoreFrontServer</h3>
-<p>Name of one of the StoreFront servers in the farm</p>
+<p>Name of a storefront server</p>
 <pre><code class="language-yaml">Type: String
 Parameter Sets: (All)
 Aliases:

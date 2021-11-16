@@ -121,7 +121,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#examples">EXAMPLES</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#example-1">Example 1</a>
+    <li class="toctree-l3"><a class="reference internal" href="#example-1">EXAMPLE 1</a>
     </li>
         </ul>
     </li>
@@ -196,36 +196,13 @@
 </code></pre>
 <h2 id="description">DESCRIPTION</h2>
 <p>Creates and distributes  a report on citrix farm health.</p>
-<p>HTML Reports
-- When creating a HTML report:</p>
-<ul>
-<li>
-<p>The logo can be changed by replacing the variable </p>
-<ul>
-<li>$Global:Logourl =''</li>
-</ul>
-</li>
-<li>
-<p>The colors of the report can be changed, by replacing:</p>
-<ul>
-<li>$global:colour1 = '#061820'</li>
-<li>$global:colour2 = '#FFD400'</li>
-</ul>
-</li>
-<li>
-<p>Or permanently replace it by editing the following file</p>
-</li>
-<li>
-<p><Module base>\Private\Reports-Variables.ps1</p>
-</li>
-</ul>
 <h2 id="examples">EXAMPLES</h2>
-<h3 id="example-1">Example 1</h3>
-<pre><code class="language-powershell">PS C:\&gt; Start-CitrixHealthCheck -JSONParameterFilePath 'C:\temp\Parameters.json'
+<h3 id="example-1">EXAMPLE 1</h3>
+<pre><code>Start-CitrixHealthCheck -JSONParameterFilePath 'C:\temp\Parameters.json'
 </code></pre>
 <h2 id="parameters">PARAMETERS</h2>
 <h3 id="-jsonparameterfilepath">-JSONParameterFilePath</h3>
-<p><em>Path to the json config file, created by Install-ParametersFile</em></p>
+<p>Path to the json config file, created by Install-ParametersFile</p>
 <pre><code class="language-yaml">Type: String
 Parameter Sets: (All)
 Aliases:

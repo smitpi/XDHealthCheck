@@ -105,7 +105,7 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#examples">EXAMPLES</a>
         <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#example-1">Example 1</a>
+    <li class="toctree-l3"><a class="reference internal" href="#example-1">EXAMPLE 1</a>
     </li>
         </ul>
     </li>
@@ -203,8 +203,8 @@
 <h2 id="description">DESCRIPTION</h2>
 <p>Checks and installs needed modules</p>
 <h2 id="examples">EXAMPLES</h2>
-<h3 id="example-1">Example 1</h3>
-<pre><code>PS C:\&gt; Install-CTXPSModule -ModuleList 'C:\Temp\modules.json'
+<h3 id="example-1">EXAMPLE 1</h3>
+<pre><code>Install-CTXPSModule -ModuleList 'C:\Temp\modules.json'
 </code></pre>
 <h2 id="parameters">PARAMETERS</h2>
 <h3 id="-forceinstall">-ForceInstall</h3>
@@ -220,19 +220,19 @@ Accept pipeline input: False
 Accept wildcard characters: False
 </code></pre>
 <h3 id="-modulelist">-ModuleList</h3>
-<p>Path to json file</p>
+<p>Path to json file.</p>
 <pre><code class="language-yaml">Type: String
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 1
-Default value: None
+Default value: (Join-Path -Path ((Get-Module XDHealthCheck).ModuleBase).ToString() -ChildPath Private\modulelist.json)
 Accept pipeline input: False
 Accept wildcard characters: False
 </code></pre>
 <h3 id="-removeall">-RemoveAll</h3>
-<p>Force Uninstall of the modules</p>
+<p>Remove the modules</p>
 <pre><code class="language-yaml">Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
@@ -244,7 +244,7 @@ Accept pipeline input: False
 Accept wildcard characters: False
 </code></pre>
 <h3 id="-updatemodules">-UpdateModules</h3>
-<p>Perform module update.</p>
+<p>Check for updates for the modules</p>
 <pre><code class="language-yaml">Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
