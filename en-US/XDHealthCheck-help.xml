@@ -37,7 +37,7 @@
             <maml:name>Int32</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>0</dev:defaultValue>
         </command:parameter>
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>RemoteCredentials</maml:name>
@@ -76,7 +76,7 @@
           <maml:name>Int32</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>0</dev:defaultValue>
       </command:parameter>
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>RemoteCredentials</maml:name>
@@ -100,8 +100,8 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Get-CitrixConfigurationChange -DDC $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-CitrixConfigurationChange -DDC $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
@@ -235,7 +235,7 @@
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>AdminServer</maml:name>
           <maml:description>
-            <maml:para>Name of data collector</maml:para>
+            <maml:para>Name of a data collector</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
@@ -247,7 +247,7 @@
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>RemoteCredentials</maml:name>
           <maml:description>
-            <maml:para>Credentials if running remote</maml:para>
+            <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
           <dev:type>
@@ -259,7 +259,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>RunAsPSRemote</maml:name>
           <maml:description>
-            <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
+            <maml:para>Credentials if running psremote</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -273,7 +273,7 @@
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>AdminServer</maml:name>
         <maml:description>
-          <maml:para>Name of data collector</maml:para>
+          <maml:para>Name of a data collector</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -285,7 +285,7 @@
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>RemoteCredentials</maml:name>
         <maml:description>
-          <maml:para>Credentials if running remote</maml:para>
+          <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
         <dev:type>
@@ -297,7 +297,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>RunAsPSRemote</maml:name>
         <maml:description>
-          <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
+          <maml:para>Credentials if running psremote</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -316,8 +316,8 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt;  Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
@@ -331,11 +331,11 @@
       <command:verb>Get</command:verb>
       <command:noun>CitrixObjects</command:noun>
       <maml:description>
-        <maml:para>Get details about catalogs, delivery groups and published apps</maml:para>
+        <maml:para>Get details of citrix objects</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Get details about catalogs, delivery groups and published apps</maml:para>
+      <maml:para>Get details of citrix objects. (Catalog, Delivery group and published apps)</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -343,7 +343,7 @@
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>AdminServer</maml:name>
           <maml:description>
-            <maml:para>Name of data collector</maml:para>
+            <maml:para>Name of a data collector</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
@@ -355,7 +355,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>RunAsPSRemote</maml:name>
           <maml:description>
-            <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
+            <maml:para>Credentials if running psremote</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -366,7 +366,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
           <maml:name>RemoteCredentials</maml:name>
           <maml:description>
-            <maml:para>Credentials if running remote</maml:para>
+            <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
           <dev:type>
@@ -381,7 +381,7 @@
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>AdminServer</maml:name>
         <maml:description>
-          <maml:para>Name of data collector</maml:para>
+          <maml:para>Name of a data collector</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -393,7 +393,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="4" aliases="none">
         <maml:name>RemoteCredentials</maml:name>
         <maml:description>
-          <maml:para>Credentials if running remote</maml:para>
+          <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
         <dev:type>
@@ -405,7 +405,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>RunAsPSRemote</maml:name>
         <maml:description>
-          <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
+          <maml:para>Credentials if running psremote</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -424,8 +424,8 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt;  Get-CitrixObjects -AdminServer $CTXDDC -RunAsPSRemote -RemoteCredentials $CTXAdmin -Verbose</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-CitrixObjects -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
@@ -533,8 +533,8 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
@@ -779,11 +779,11 @@
       <command:verb>Get</command:verb>
       <command:noun>RDSLicenseInformation</command:noun>
       <maml:description>
-        <maml:para>Report on RDS License Usage</maml:para>
+        <maml:para>Report on RDS License Useage</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Report on RDS License Usage</maml:para>
+      <maml:para>Report on RDS License Useage</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -849,8 +849,8 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Get-RDSLicenseInformation -LicenseServer $RDSLicenseServer  -RemoteCredentials $CTXAdmin</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-RDSLicenseInformation -LicenseServer $RDSLicenseServer  -RemoteCredentials $CTXAdmin</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
@@ -864,11 +864,11 @@
       <command:verb>Get</command:verb>
       <command:noun>StoreFrontDetail</command:noun>
       <maml:description>
-        <maml:para>Report on StoreFront Status</maml:para>
+        <maml:para>Report on Storefront status.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Report on StoreFront Status</maml:para>
+      <maml:para>Report on Storefront status.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -876,7 +876,7 @@
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
           <maml:name>StoreFrontServer</maml:name>
           <maml:description>
-            <maml:para>Name of one of the StoreFront servers in the farm</maml:para>
+            <maml:para>Name of a storefront server</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
@@ -888,7 +888,7 @@
         <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>RemoteCredentials</maml:name>
           <maml:description>
-            <maml:para>Credentials if running remote</maml:para>
+            <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
           <dev:type>
@@ -900,7 +900,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>RunAsPSRemote</maml:name>
           <maml:description>
-            <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
+            <maml:para>Credentials if running psremote</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -914,7 +914,7 @@
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>RemoteCredentials</maml:name>
         <maml:description>
-          <maml:para>Credentials if running remote</maml:para>
+          <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">PSCredential</command:parameterValue>
         <dev:type>
@@ -926,7 +926,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>RunAsPSRemote</maml:name>
         <maml:description>
-          <maml:para>Enable function to run remotely, if the CItrix cmdlets are not available</maml:para>
+          <maml:para>Credentials if running psremote</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -938,7 +938,7 @@
       <command:parameter required="true" variableLength="true" globbing="false" pipelineInput="True (ByValue)" position="1" aliases="none">
         <maml:name>StoreFrontServer</maml:name>
         <maml:description>
-          <maml:para>Name of one of the StoreFront servers in the farm</maml:para>
+          <maml:para>Name of a storefront server</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
@@ -957,8 +957,8 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
@@ -1068,14 +1068,14 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
           <maml:name>ModuleList</maml:name>
           <maml:description>
-            <maml:para>Path to json file</maml:para>
+            <maml:para>Path to json file.</maml:para>
           </maml:description>
           <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
           <dev:type>
             <maml:name>String</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>None</dev:defaultValue>
+          <dev:defaultValue>(Join-Path -Path ((Get-Module XDHealthCheck).ModuleBase).ToString() -ChildPath Private\modulelist.json)</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>ForceInstall</maml:name>
@@ -1091,7 +1091,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>RemoveAll</maml:name>
           <maml:description>
-            <maml:para>Force Uninstall of the modules</maml:para>
+            <maml:para>Remove the modules</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -1102,7 +1102,7 @@
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
           <maml:name>UpdateModules</maml:name>
           <maml:description>
-            <maml:para>Perform module update.</maml:para>
+            <maml:para>Check for updates for the modules</maml:para>
           </maml:description>
           <dev:type>
             <maml:name>SwitchParameter</maml:name>
@@ -1128,19 +1128,19 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="1" aliases="none">
         <maml:name>ModuleList</maml:name>
         <maml:description>
-          <maml:para>Path to json file</maml:para>
+          <maml:para>Path to json file.</maml:para>
         </maml:description>
         <command:parameterValue required="true" variableLength="false">String</command:parameterValue>
         <dev:type>
           <maml:name>String</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>None</dev:defaultValue>
+        <dev:defaultValue>(Join-Path -Path ((Get-Module XDHealthCheck).ModuleBase).ToString() -ChildPath Private\modulelist.json)</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>RemoveAll</maml:name>
         <maml:description>
-          <maml:para>Force Uninstall of the modules</maml:para>
+          <maml:para>Remove the modules</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -1152,7 +1152,7 @@
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="named" aliases="none">
         <maml:name>UpdateModules</maml:name>
         <maml:description>
-          <maml:para>Perform module update.</maml:para>
+          <maml:para>Check for updates for the modules</maml:para>
         </maml:description>
         <command:parameterValue required="false" variableLength="false">SwitchParameter</command:parameterValue>
         <dev:type>
@@ -1171,8 +1171,8 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Install-CTXPSModule -ModuleList 'C:\Temp\modules.json'</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Install-CTXPSModule -ModuleList 'C:\Temp\modules.json'</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
@@ -1186,11 +1186,11 @@
       <command:verb>Install</command:verb>
       <command:noun>ParametersFile</command:noun>
       <maml:description>
-        <maml:para>Create a json config with all needed farm details.</maml:para>
+        <maml:para>Create a json config file with all needed farm details.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Create a json config with all needed farm details.</maml:para>
+      <maml:para>Create a json config file with all needed farm details.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1207,8 +1207,8 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt;Install-ParametersFile</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Install-ParametersFile</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
@@ -1336,10 +1336,6 @@
     </command:details>
     <maml:description>
       <maml:para>Creates and distributes  a report on catalog, groups and published app config.</maml:para>
-      <maml:para>HTML Reports - When creating a HTML report:</maml:para>
-      <maml:para>- The logo can be changed by replacing the variable</maml:para>
-      <maml:para>	- $Global:Logourl ='' - The colors of the report can be changed, by replacing: 	- $global:colour1 = '#061820' 	- $global:colour2 = '#FFD400' - Or permanently replace it by editing the following file</maml:para>
-      <maml:para>- &lt;Module base&gt;\Private\Reports-Variables.ps1</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1401,12 +1397,6 @@
     </command:details>
     <maml:description>
       <maml:para>Creates and distributes  a report on citrix farm health.</maml:para>
-      <maml:para>HTML Reports - When creating a HTML report:</maml:para>
-      <maml:para>- The logo can be changed by replacing the variable  	- $Global:Logourl =''</maml:para>
-      <maml:para>- The colors of the report can be changed, by replacing: 	- $global:colour1 = '#061820' 	- $global:colour2 = '#FFD400'</maml:para>
-      <maml:para>- Or permanently replace it by editing the following file</maml:para>
-      <maml:para>- &lt;Module base&gt;\Private\Reports-Variables.ps1
-</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1448,8 +1438,8 @@
     </maml:alertSet>
     <command:examples>
       <command:example>
-        <maml:title>-------------------------- Example 1 --------------------------</maml:title>
-        <dev:code>PS C:\&gt; Start-CitrixHealthCheck -JSONParameterFilePath 'C:\temp\Parameters.json'</dev:code>
+        <maml:title>-------------------------- EXAMPLE 1 --------------------------</maml:title>
+        <dev:code>Start-CitrixHealthCheck -JSONParameterFilePath 'C:\temp\Parameters.json'</dev:code>
         <dev:remarks>
           <maml:para></maml:para>
         </dev:remarks>
