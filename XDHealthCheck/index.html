@@ -1,204 +1,78 @@
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <meta name="author" content="Pierre Smit">
   
-  <link rel="shortcut icon" href="../img/favicon.ico">
-  <title>XDHealthCheck Module - XDHealthCheck</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="author" content="Pierre Smit">
+    <link rel="canonical" href="https://smitpi.github.io/XDHealthCheck/XDHealthCheck/">
+    <link rel="shortcut icon" href="../img/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>XDHealthCheck Module - Documentation for XDHealthCheck</title>
+    <link href="../css/bootstrap-3.3.7.min.css" rel="stylesheet">
+    <link href="../css/font-awesome-4.7.0.css" rel="stylesheet">
+    <link href="../css/base.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/highlight.css">
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
 
-  <link rel="stylesheet" href="../css/theme.css" />
-  <link rel="stylesheet" href="../css/theme_extra.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css" />
-  
-  <script>
-    // Current page data
-    var mkdocs_page_name = "XDHealthCheck Module";
-    var mkdocs_page_input_path = "XDHealthCheck.md";
-    var mkdocs_page_url = null;
-  </script>
-  
-  <script src="../js/jquery-2.1.1.min.js" defer></script>
-  <script src="../js/modernizr-2.8.3.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-  <script>hljs.initHighlightingOnLoad();</script> 
+    <script src="../js/jquery-3.2.1.min.js"></script>
+    <script src="../js/bootstrap-3.3.7.min.js"></script>
+    <script src="../js/highlight.pack.js"></script>
+    
+    <base target="_top">
+    <script>
+      var base_url = '..';
+      var is_top_frame = false;
+        
+        var pageToc = [
+          {title: "XDHealthCheck Module", url: "#_top", children: [
+              {title: "Description", url: "#description" },
+              {title: "XDHealthCheck Cmdlets", url: "#xdhealthcheck-cmdlets" },
+          ]},
+        ];
+
+    </script>
+    <script src="../js/base.js"></script> 
 </head>
 
-<body class="wy-body-for-nav" role="document">
+<body>
+<script>
+if (is_top_frame) { $('body').addClass('wm-top-page'); }
+</script>
 
-  <div class="wy-grid-for-nav">
+
+
+<div class="container-fluid wm-page-content">
+  <a name="_top"></a>
+    
 
     
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
-    <div class="wy-side-scroll">
-      <div class="wy-side-nav-search">
-        <a href=".." class="icon icon-home"> XDHealthCheck</a>
-        <div role="search">
-  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
-      <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
-  </form>
-</div>
-      </div>
+    
+      
+    
 
-      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="..">XDHealthCheck</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Get-CitrixConfigurationChange/">Get-CitrixConfigurationChange</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Get-CitrixFarmDetail/">Get-CitrixFarmDetail</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Get-CitrixLicenseInformation/">Get-CitrixLicenseInformation</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Get-CitrixObjects/">Get-CitrixObjects</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Get-CitrixServerEventLog/">Get-CitrixServerEventLog</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Get-CitrixServerPerformance/">Get-CitrixServerPerformance</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Get-CitrixSingleServerPerformance/">Get-CitrixSingleServerPerformance</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Get-CitrixWebsiteStatus/">Get-CitrixWebsiteStatus</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Get-RDSLicenseInformation/">Get-RDSLicenseInformation</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Get-StoreFrontDetail/">Get-StoreFrontDetail</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Import-ParametersFile/">Import-ParametersFile</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Install-CTXPSModule/">Install-CTXPSModule</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Install-ParametersFile/">Install-ParametersFile</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Set-XDHealthReportColors/">Set-XDHealthReportColors</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Start-CitrixAudit/">Start-CitrixAudit</a>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../Start-CitrixHealthCheck/">Start-CitrixHealthCheck</a>
-                    </li>
-                </ul>
-                <ul class="current">
-                    <li class="toctree-l1 current"><a class="reference internal current" href="./">XDHealthCheck Module</a>
-    <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#description">Description</a>
-    </li>
-    <li class="toctree-l2"><a class="reference internal" href="#xdhealthcheck-cmdlets">XDHealthCheck Cmdlets</a>
-        <ul>
-    <li class="toctree-l3"><a class="reference internal" href="#get-citrixconfigurationchange">Get-CitrixConfigurationChange</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get-citrixfarmdetail">Get-CitrixFarmDetail</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get-citrixlicenseinformation">Get-CitrixLicenseInformation</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get-citrixobjects">Get-CitrixObjects</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get-citrixservereventlog">Get-CitrixServerEventLog</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get-citrixserverperformance">Get-CitrixServerPerformance</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get-citrixsingleserverperformance">Get-CitrixSingleServerPerformance</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get-citrixwebsitestatus">Get-CitrixWebsiteStatus</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get-rdslicenseinformation">Get-RDSLicenseInformation</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#get-storefrontdetail">Get-StoreFrontDetail</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#import-parametersfile">Import-ParametersFile</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#install-ctxpsmodule">Install-CTXPSModule</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#install-parametersfile">Install-ParametersFile</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#set-xdhealthreportcolors">Set-XDHealthReportColors</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#start-citrixaudit">Start-CitrixAudit</a>
-    </li>
-    <li class="toctree-l3"><a class="reference internal" href="#start-citrixhealthcheck">Start-CitrixHealthCheck</a>
-    </li>
-        </ul>
-    </li>
-    </ul>
-                    </li>
-                </ul>
-                <ul>
-                    <li class="toctree-l1"><a class="reference internal" href="../about_XDHealthCheck/">XDHealthCheck</a>
-                    </li>
-                </ul>
-      </div>
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav">
+      <a href="../Start-CitrixHealthCheck/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Start-CitrixHealthCheck/" class="btn btn-xs btn-link">
+        Start-CitrixHealthCheck
+      </a>
     </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="..">XDHealthCheck</a>
-      </nav>
-
-      
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="breadcrumbs navigation">
-  <ul class="wy-breadcrumbs">
-    <li><a href="..">Docs</a> &raquo;</li>
     
-      
-    
-    <li>XDHealthCheck Module</li>
-    <li class="wy-breadcrumbs-aside">
-      
-        <a href="https://github.com/smitpi/XDHealthCheck/edit/master/docs/XDHealthCheck.md"
-          class="icon icon-github"> Edit on GitHub</a>
-      
-    </li>
-  </ul>
-  
-  <hr/>
-</div>
+  </div>
 
-          <div role="main">
-            <div class="section">
-              
-                <h1 id="xdhealthcheck-module">XDHealthCheck Module</h1>
+    
+
+    <h1 id="xdhealthcheck-module">XDHealthCheck Module</h1>
 <h2 id="description">Description</h2>
 <p>Creates daily health check and config reports for your on-premise Citrix farm. To get started, you need to run Install-ParametersFile.
 This will capture and save needed farm details, to allow scripts to run automatically.</p>
@@ -235,62 +109,36 @@ This will capture and save needed farm details, to allow scripts to run automati
 <p>Creates and distributes  a report on catalog, groups and published app config.</p>
 <h3 id="start-citrixhealthcheck"><a href="../Start-CitrixHealthCheck/">Start-CitrixHealthCheck</a></h3>
 <p>Creates and distributes  a report on citrix farm health.</p>
-              
-            </div>
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+
+  <br>
+    
+
+    
+    
       
-        <a href="../about_XDHealthCheck/" class="btn btn-neutral float-right" title="XDHealthCheck">Next <span class="icon icon-circle-arrow-right"></span></a>
-      
-      
-        <a href="../Start-CitrixHealthCheck/" class="btn btn-neutral" title="Start-CitrixHealthCheck"><span class="icon icon-circle-arrow-left"></span> Previous</a>
-      
+    
+
+  <div class="row wm-article-nav-buttons" role="navigation" aria-label="navigation">
+    
+    <div class="wm-article-nav">
+      <a href="../Start-CitrixHealthCheck/" class="btn btn-xs btn-default pull-left">
+        <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        Previous</a><a href="../Start-CitrixHealthCheck/" class="btn btn-xs btn-link">
+        Start-CitrixHealthCheck
+      </a>
     </div>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <!-- Copyright etc -->
     
   </div>
 
-  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
-</footer>
-      
-        </div>
-      </div>
-
-    </section>
-
-  </div>
-
-  <div class="rst-versions" role="note" aria-label="versions">
-  <span class="rst-current-version" data-toggle="rst-current-version">
-    
-        <span>
-          <a href="https://github.com/smitpi/XDHealthCheck/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
-        </span>
-    
-    
-      <span><a href="../Start-CitrixHealthCheck/" style="color: #fcfcfc">&laquo; Previous</a></span>
-    
-    
-      <span><a href="../about_XDHealthCheck/" style="color: #fcfcfc">Next &raquo;</a></span>
-    
-  </span>
+    <br>
 </div>
-    <script>var base_url = '..';</script>
-    <script src="../js/theme_extra.js" defer></script>
-    <script src="../js/theme.js" defer></script>
-      <script src="../search/main.js" defer></script>
-    <script defer>
-        window.onload = function () {
-            SphinxRtdTheme.Navigation.enable(true);
-        };
-    </script>
+
+<footer class="container-fluid wm-page-content">
+      <p>
+        <a href="https://github.com/smitpi/XDHealthCheck/edit/master/docs/XDHealthCheck.md">Edit on smitpi/XDHealthCheck</a>
+      </p><p>(c) 2019 Pierre Smit. All rights reserved.</p>
+  <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a> using <a href="https://github.com/gristlabs/mkdocs-windmill">Windmill</a> theme by Grist Labs.</p>
+</footer>
 
 </body>
 </html>
