@@ -1,4 +1,15 @@
-site_name: XDHealthCheck
-repo_url: https://github.com/smitpi/XDHealthCheck
-site_author: Pierre Smit
-theme: readthedocs
+site_name: 'Documentation for XDHealthCheck'
+site_description: 'Documentation for XDHealthCheck'
+site_author: 'Pierre Smit'
+site_url: 'https://smitpi.github.io/XDHealthCheck'
+
+theme:
+  name: 'windmill'
+  language: 'en'
+
+
+repo_name: 'smitpi/XDHealthCheck'
+repo_url: 'https://github.com/smitpi/XDHealthCheck'
+
+copyright: '(c) 2019 Pierre Smit. All rights reserved.'
+
