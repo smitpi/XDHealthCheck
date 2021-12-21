@@ -1,7 +1,7 @@
 ---
 external help file: XDHealthCheck-help.xml
 Module Name: XDHealthCheck
-online version:
+online version: https://smitpi.github.io/XDHealthCheck/#Install-ParametersFile
 schema: 2.0.0
 ---
 

@@ -1,7 +1,7 @@
 ---
 external help file: XDHealthCheck-help.xml
 Module Name: XDHealthCheck
-online version:
+online version: https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerPerformance
 schema: 2.0.0
 ---
 
@@ -28,21 +28,6 @@ Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin
 
 ## PARAMETERS
 
-### -RemoteCredentials
-Enable function to run remotely, if the CItrix cmdlets are not available
-
-```yaml
-Type: PSCredential
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -Serverlist
 List of servers to get the permon details
 
@@ -55,6 +40,21 @@ Required: True
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
+
+```yaml
+Type: PSCredential
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 2
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

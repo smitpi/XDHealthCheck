@@ -1,7 +1,7 @@
 ---
 external help file: XDHealthCheck-help.xml
 Module Name: XDHealthCheck
-online version:
+online version: https://smitpi.github.io/XDHealthCheck/#Install-CTXPSModule
 schema: 2.0.0
 ---
 
@@ -28,21 +28,6 @@ Install-CTXPSModule -ModuleList 'C:\Temp\modules.json'
 
 ## PARAMETERS
 
-### -ForceInstall
-Force reinstall of modules
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -ModuleList
 Path to json file.
 
@@ -58,8 +43,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -RemoveAll
-Remove the modules
+### -ForceInstall
+Force reinstall of modules
 
 ```yaml
 Type: SwitchParameter
@@ -75,6 +60,21 @@ Accept wildcard characters: False
 
 ### -UpdateModules
 Check for updates for the modules
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -RemoveAll
+Remove the modules
 
 ```yaml
 Type: SwitchParameter

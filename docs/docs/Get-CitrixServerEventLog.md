@@ -1,7 +1,7 @@
 ---
 external help file: XDHealthCheck-help.xml
 Module Name: XDHealthCheck
-online version:
+online version: https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerEventLog
 schema: 2.0.0
 ---
 
@@ -28,6 +28,21 @@ Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdm
 ```
 
 ## PARAMETERS
+
+### -Serverlist
+List of server names.
+
+```yaml
+Type: Array
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 1
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
 
 ### -Days
 Limit the search for only do many days.
@@ -56,21 +71,6 @@ Required: True
 Position: 3
 Default value: None
 Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -Serverlist
-List of server names.
-
-```yaml
-Type: Array
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 1
-Default value: None
-Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 

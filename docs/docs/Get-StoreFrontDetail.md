@@ -1,7 +1,7 @@
 ---
 external help file: XDHealthCheck-help.xml
 Module Name: XDHealthCheck
-online version:
+online version: https://smitpi.github.io/XDHealthCheck/#Get-StoreFrontDetail
 schema: 2.0.0
 ---
 
@@ -28,6 +28,21 @@ Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdm
 ```
 
 ## PARAMETERS
+
+### -StoreFrontServer
+Name of a storefront server
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 1
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
 
 ### -RemoteCredentials
 Enable function to run remotely, if the CItrix cmdlets are not available
@@ -56,21 +71,6 @@ Required: False
 Position: 3
 Default value: False
 Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -StoreFrontServer
-Name of a storefront server
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 1
-Default value: None
-Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 ```
 

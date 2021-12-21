@@ -103,6 +103,18 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
 <pre><code>Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote
 </code></pre>
 <h2 id="parameters">PARAMETERS</h2>
+<h3 id="-storefrontserver">-StoreFrontServer</h3>
+<p>Name of a storefront server</p>
+<pre><code class="language-yaml">Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 1
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+</code></pre>
 <h3 id="-remotecredentials">-RemoteCredentials</h3>
 <p>Enable function to run remotely, if the CItrix cmdlets are not available</p>
 <pre><code class="language-yaml">Type: PSCredential
@@ -125,18 +137,6 @@ Required: False
 Position: 3
 Default value: False
 Accept pipeline input: False
-Accept wildcard characters: False
-</code></pre>
-<h3 id="-storefrontserver">-StoreFrontServer</h3>
-<p>Name of a storefront server</p>
-<pre><code class="language-yaml">Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 1
-Default value: None
-Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 </code></pre>
 <h3 id="commonparameters">CommonParameters</h3>

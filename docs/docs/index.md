@@ -1,28 +1,39 @@
+# XDHealthCheck
+ 
 ## Description
 Creates daily health check and config reports for your on-premise Citrix farm. To get started, you need to run Install-ParametersFile.
 This will capture and save needed farm details, to allow scripts to run automatically.
-
+ 
 ## Getting Started
-- `Install-Module -Name XDHealthCheck -Verbose`
-- `Import-Module XDHealthCheck -Verbose -Force`
-- `Get-Command -Module XDHealthCheck`
-
+```
+- Install-Module -Name XDHealthCheck -Verbose
+```
+OR
+```
+git clone https://github.com/smitpi/XDHealthCheck (Join-Path (get-item (Join-Path (Get-Item $profile).Directory 'Modules')).FullName -ChildPath XDHealthCheck)
+```
+Then:
+```
+- Import-Module XDHealthCheck -Verbose -Force
+ 
+- Get-Command -Module XDHealthCheck
+- Get-Help about_XDHealthCheck
+```
+ 
 ## Functions
-- [Get-CitrixConfigurationChange](Get-CitrixConfigurationChange.md) -- Show the changes that was made to the farm
-- [Get-CitrixFarmDetail](Get-CitrixFarmDetail.md) -- Get needed Farm details.
-- [Get-CitrixLicenseInformation](Get-CitrixLicenseInformation.md) -- Show Citrix License details
-- [Get-CitrixObjects](Get-CitrixObjects.md) -- Get details of citrix objects
-- [Get-CitrixServerEventLog](Get-CitrixServerEventLog.md) -- Get windows event log details
-- [Get-CitrixServerPerformance](Get-CitrixServerPerformance.md) -- Combine perfmon of multiple servers for reporting.
-- [Get-CitrixSingleServerPerformance](Get-CitrixSingleServerPerformance.md) -- Get perfmon statistics
-- [Get-CitrixWebsiteStatus](Get-CitrixWebsiteStatus.md) -- Get the status of a website
-- [Get-RDSLicenseInformation](Get-RDSLicenseInformation.md) -- Report on RDS License Useage
-- [Get-StoreFrontDetail](Get-StoreFrontDetail.md) -- Report on Storefront status.
-- [Import-ParametersFile](Import-ParametersFile.md) -- Import the config file and creates the needed variables
-- [Install-CTXPSModule](Install-CTXPSModule.md) -- Checks and installs needed modules
-- [Install-ParametersFile](Install-ParametersFile.md) -- Create a json config file with all needed farm details.
-- [Set-XDHealthReportColors](Set-XDHealthReportColors.md) -- Set the color and logo for HTML Reports
-- [Start-CitrixAudit](Start-CitrixAudit.md) -- Creates and distributes  a report on catalog, groups and published app config.
-- [Start-CitrixHealthCheck](Start-CitrixHealthCheck.md) -- Creates and distributes  a report on citrix farm health.
-
-
+- [Get-CitrixConfigurationChange](https://smitpi.github.io/XDHealthCheck/#Get-CitrixConfigurationChange) -- Show the changes that was made to the farm
+- [Get-CitrixFarmDetail](https://smitpi.github.io/XDHealthCheck/#Get-CitrixFarmDetail) -- Get needed Farm details.
+- [Get-CitrixLicenseInformation](https://smitpi.github.io/XDHealthCheck/#Get-CitrixLicenseInformation) -- Show Citrix License details
+- [Get-CitrixObjects](https://smitpi.github.io/XDHealthCheck/#Get-CitrixObjects) -- Get details of citrix objects
+- [Get-CitrixServerEventLog](https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerEventLog) -- Get windows event log details
+- [Get-CitrixServerPerformance](https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerPerformance) -- Combine perfmon of multiple servers for reporting.
+- [Get-CitrixSingleServerPerformance](https://smitpi.github.io/XDHealthCheck/#Get-CitrixSingleServerPerformance) -- Get perfmon statistics
+- [Get-CitrixWebsiteStatus](https://smitpi.github.io/XDHealthCheck/#Get-CitrixWebsiteStatus) -- Get the status of a website
+- [Get-RDSLicenseInformation](https://smitpi.github.io/XDHealthCheck/#Get-RDSLicenseInformation) -- Report on RDS License Useage
+- [Get-StoreFrontDetail](https://smitpi.github.io/XDHealthCheck/#Get-StoreFrontDetail) -- Report on Storefront status.
+- [Import-ParametersFile](https://smitpi.github.io/XDHealthCheck/#Import-ParametersFile) -- Import the config file and creates the needed variables
+- [Install-CTXPSModule](https://smitpi.github.io/XDHealthCheck/#Install-CTXPSModule) -- Checks and installs needed modules
+- [Install-ParametersFile](https://smitpi.github.io/XDHealthCheck/#Install-ParametersFile) -- Create a json config file with all needed farm details.
+- [Set-XDHealthReportColors](https://smitpi.github.io/XDHealthCheck/#Set-XDHealthReportColors) -- Set the color and logo for HTML Reports
+- [Start-CitrixAudit](https://smitpi.github.io/XDHealthCheck/#Start-CitrixAudit) -- Creates and distributes  a report on catalog, groups and published app config.
+- [Start-CitrixHealthCheck](https://smitpi.github.io/XDHealthCheck/#Start-CitrixHealthCheck) -- Creates and distributes  a report on citrix farm health.

@@ -103,6 +103,18 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
 <pre><code>Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin
 </code></pre>
 <h2 id="parameters">PARAMETERS</h2>
+<h3 id="-serverlist">-Serverlist</h3>
+<p>List of server names.</p>
+<pre><code class="language-yaml">Type: Array
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 1
+Default value: None
+Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+</code></pre>
 <h3 id="-days">-Days</h3>
 <p>Limit the search for only do many days.</p>
 <pre><code class="language-yaml">Type: Int32
@@ -125,18 +137,6 @@ Required: True
 Position: 3
 Default value: None
 Accept pipeline input: False
-Accept wildcard characters: False
-</code></pre>
-<h3 id="-serverlist">-Serverlist</h3>
-<p>List of server names.</p>
-<pre><code class="language-yaml">Type: Array
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 1
-Default value: None
-Accept pipeline input: True (ByValue)
 Accept wildcard characters: False
 </code></pre>
 <h3 id="commonparameters">CommonParameters</h3>

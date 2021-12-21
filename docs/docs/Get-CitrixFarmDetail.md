@@ -1,7 +1,7 @@
 ---
 external help file: XDHealthCheck-help.xml
 Module Name: XDHealthCheck
-online version:
+online version: https://smitpi.github.io/XDHealthCheck/#Get-CitrixFarmDetail
 schema: 2.0.0
 ---
 
@@ -44,21 +44,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -RemoteCredentials
-Enable function to run remotely, if the CItrix cmdlets are not available
-
-```yaml
-Type: PSCredential
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -RunAsPSRemote
 Credentials if running psremote
 
@@ -70,6 +55,21 @@ Aliases:
 Required: False
 Position: 2
 Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
+
+```yaml
+Type: PSCredential
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 3
+Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

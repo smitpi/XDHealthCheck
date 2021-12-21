@@ -102,18 +102,6 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
 <pre><code>Install-CTXPSModule -ModuleList 'C:\Temp\modules.json'
 </code></pre>
 <h2 id="parameters">PARAMETERS</h2>
-<h3 id="-forceinstall">-ForceInstall</h3>
-<p>Force reinstall of modules</p>
-<pre><code class="language-yaml">Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: Named
-Default value: False
-Accept pipeline input: False
-Accept wildcard characters: False
-</code></pre>
 <h3 id="-modulelist">-ModuleList</h3>
 <p>Path to json file.</p>
 <pre><code class="language-yaml">Type: String
@@ -126,8 +114,8 @@ Default value: (Join-Path -Path ((Get-Module XDHealthCheck).ModuleBase).ToString
 Accept pipeline input: False
 Accept wildcard characters: False
 </code></pre>
-<h3 id="-removeall">-RemoveAll</h3>
-<p>Remove the modules</p>
+<h3 id="-forceinstall">-ForceInstall</h3>
+<p>Force reinstall of modules</p>
 <pre><code class="language-yaml">Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
@@ -140,6 +128,18 @@ Accept wildcard characters: False
 </code></pre>
 <h3 id="-updatemodules">-UpdateModules</h3>
 <p>Check for updates for the modules</p>
+<pre><code class="language-yaml">Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
+Accept pipeline input: False
+Accept wildcard characters: False
+</code></pre>
+<h3 id="-removeall">-RemoveAll</h3>
+<p>Remove the modules</p>
 <pre><code class="language-yaml">Type: SwitchParameter
 Parameter Sets: (All)
 Aliases:
