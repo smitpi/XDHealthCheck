@@ -102,18 +102,6 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
 <pre><code>Get-CitrixSingleServerPerformance -Server ddc01 -RemoteCredentials $CTXAdmin
 </code></pre>
 <h2 id="parameters">PARAMETERS</h2>
-<h3 id="-remotecredentials">-RemoteCredentials</h3>
-<p>Enable function to run remotely, if the CItrix cmdlets are not available</p>
-<pre><code class="language-yaml">Type: PSCredential
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-</code></pre>
 <h3 id="-server">-Server</h3>
 <p>Server to get the permon details</p>
 <pre><code class="language-yaml">Type: String
@@ -124,6 +112,18 @@ Required: True
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+</code></pre>
+<h3 id="-remotecredentials">-RemoteCredentials</h3>
+<p>Enable function to run remotely, if the CItrix cmdlets are not available</p>
+<pre><code class="language-yaml">Type: PSCredential
+Parameter Sets: (All)
+Aliases:
+
+Required: True
+Position: 2
+Default value: None
+Accept pipeline input: False
 Accept wildcard characters: False
 </code></pre>
 <h3 id="commonparameters">CommonParameters</h3>

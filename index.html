@@ -34,11 +34,10 @@
       var is_top_frame = (window === window.parent);
         
         var pageToc = [
-          {title: "Description", url: "#_top", children: [
-          ]},
-          {title: "Getting Started", url: "#getting-started", children: [
-          ]},
-          {title: "Functions", url: "#functions", children: [
+          {title: "XDHealthCheck", url: "#_top", children: [
+              {title: "Description", url: "#description" },
+              {title: "Getting Started", url: "#getting-started" },
+              {title: "Functions", url: "#functions" },
           ]},
         ];
 
@@ -104,7 +103,7 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
       </li>
     </ul>
   <ul class="wm-toctree">
-        <li class="wm-toc-li wm-toc-lev1 "><a href="" class="wm-article-link wm-toc-text">Home</a>
+        <li class="wm-toc-li wm-toc-lev1 "><a href="" class="wm-article-link wm-toc-text">XDHealthCheck</a>
 </li>
         <li class="wm-toc-li wm-toc-lev1 "><a href="Get-CitrixConfigurationChange/" class="wm-article-link wm-toc-text">Get-CitrixConfigurationChange</a>
 </li>
@@ -137,8 +136,6 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
         <li class="wm-toc-li wm-toc-lev1 "><a href="Start-CitrixAudit/" class="wm-article-link wm-toc-text">Start-CitrixAudit</a>
 </li>
         <li class="wm-toc-li wm-toc-lev1 "><a href="Start-CitrixHealthCheck/" class="wm-article-link wm-toc-text">Start-CitrixHealthCheck</a>
-</li>
-        <li class="wm-toc-li wm-toc-lev1 "><a href="XDHealthCheck/" class="wm-article-link wm-toc-text">XDHealthCheck Module</a>
 </li>
   </ul>
 </nav>
@@ -173,33 +170,40 @@ if (is_top_frame) { $('body').addClass('wm-top-page'); }
 
     
 
-    <h2 id="description">Description</h2>
+    <h1 id="xdhealthcheck">XDHealthCheck</h1>
+<h2 id="description">Description</h2>
 <p>Creates daily health check and config reports for your on-premise Citrix farm. To get started, you need to run Install-ParametersFile.
 This will capture and save needed farm details, to allow scripts to run automatically.</p>
 <h2 id="getting-started">Getting Started</h2>
-<ul>
-<li><code>Install-Module -Name XDHealthCheck -Verbose</code></li>
-<li><code>Import-Module XDHealthCheck -Verbose -Force</code></li>
-<li><code>Get-Command -Module XDHealthCheck</code></li>
-</ul>
+<pre><code>- Install-Module -Name XDHealthCheck -Verbose
+</code></pre>
+<p>OR</p>
+<pre><code>git clone https://github.com/smitpi/XDHealthCheck (Join-Path (get-item (Join-Path (Get-Item $profile).Directory 'Modules')).FullName -ChildPath XDHealthCheck)
+</code></pre>
+<p>Then:</p>
+<pre><code>- Import-Module XDHealthCheck -Verbose -Force
+
+- Get-Command -Module XDHealthCheck
+- Get-Help about_XDHealthCheck
+</code></pre>
 <h2 id="functions">Functions</h2>
 <ul>
-<li><a href="Get-CitrixConfigurationChange/">Get-CitrixConfigurationChange</a> -- Show the changes that was made to the farm</li>
-<li><a href="Get-CitrixFarmDetail/">Get-CitrixFarmDetail</a> -- Get needed Farm details.</li>
-<li><a href="Get-CitrixLicenseInformation/">Get-CitrixLicenseInformation</a> -- Show Citrix License details</li>
-<li><a href="Get-CitrixObjects/">Get-CitrixObjects</a> -- Get details of citrix objects</li>
-<li><a href="Get-CitrixServerEventLog/">Get-CitrixServerEventLog</a> -- Get windows event log details</li>
-<li><a href="Get-CitrixServerPerformance/">Get-CitrixServerPerformance</a> -- Combine perfmon of multiple servers for reporting.</li>
-<li><a href="Get-CitrixSingleServerPerformance/">Get-CitrixSingleServerPerformance</a> -- Get perfmon statistics</li>
-<li><a href="Get-CitrixWebsiteStatus/">Get-CitrixWebsiteStatus</a> -- Get the status of a website</li>
-<li><a href="Get-RDSLicenseInformation/">Get-RDSLicenseInformation</a> -- Report on RDS License Useage</li>
-<li><a href="Get-StoreFrontDetail/">Get-StoreFrontDetail</a> -- Report on Storefront status.</li>
-<li><a href="Import-ParametersFile/">Import-ParametersFile</a> -- Import the config file and creates the needed variables</li>
-<li><a href="Install-CTXPSModule/">Install-CTXPSModule</a> -- Checks and installs needed modules</li>
-<li><a href="Install-ParametersFile/">Install-ParametersFile</a> -- Create a json config file with all needed farm details.</li>
-<li><a href="Set-XDHealthReportColors/">Set-XDHealthReportColors</a> -- Set the color and logo for HTML Reports</li>
-<li><a href="Start-CitrixAudit/">Start-CitrixAudit</a> -- Creates and distributes  a report on catalog, groups and published app config.</li>
-<li><a href="Start-CitrixHealthCheck/">Start-CitrixHealthCheck</a> -- Creates and distributes  a report on citrix farm health.</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Get-CitrixConfigurationChange">Get-CitrixConfigurationChange</a> -- Show the changes that was made to the farm</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Get-CitrixFarmDetail">Get-CitrixFarmDetail</a> -- Get needed Farm details.</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Get-CitrixLicenseInformation">Get-CitrixLicenseInformation</a> -- Show Citrix License details</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Get-CitrixObjects">Get-CitrixObjects</a> -- Get details of citrix objects</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerEventLog">Get-CitrixServerEventLog</a> -- Get windows event log details</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerPerformance">Get-CitrixServerPerformance</a> -- Combine perfmon of multiple servers for reporting.</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Get-CitrixSingleServerPerformance">Get-CitrixSingleServerPerformance</a> -- Get perfmon statistics</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Get-CitrixWebsiteStatus">Get-CitrixWebsiteStatus</a> -- Get the status of a website</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Get-RDSLicenseInformation">Get-RDSLicenseInformation</a> -- Report on RDS License Useage</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Get-StoreFrontDetail">Get-StoreFrontDetail</a> -- Report on Storefront status.</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Import-ParametersFile">Import-ParametersFile</a> -- Import the config file and creates the needed variables</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Install-CTXPSModule">Install-CTXPSModule</a> -- Checks and installs needed modules</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Install-ParametersFile">Install-ParametersFile</a> -- Create a json config file with all needed farm details.</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Set-XDHealthReportColors">Set-XDHealthReportColors</a> -- Set the color and logo for HTML Reports</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Start-CitrixAudit">Start-CitrixAudit</a> -- Creates and distributes  a report on catalog, groups and published app config.</li>
+<li><a href="https://smitpi.github.io/XDHealthCheck/#Start-CitrixHealthCheck">Start-CitrixHealthCheck</a> -- Creates and distributes  a report on citrix farm health.</li>
 </ul>
 
   <br>
@@ -238,5 +242,5 @@ This will capture and save needed farm details, to allow scripts to run automati
 </html>
 <!--
 MkDocs version : 1.2.3
-Build Date UTC : 2021-12-08 23:51:14.589173+00:00
+Build Date UTC : 2021-12-21 20:44:30.742388+00:00
 -->
