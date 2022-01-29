@@ -1,8 +1,12 @@
 {
-	"cSpell.words": [
-		"Gainsboro",
-		"Remoting",
-		"emailto",
-		"rbgcolor"
-	]
+	"spellright.language": [
+		"en"
+	],
+	"spellright.documentTypes": [
+		"markdown",
+		"latex",
+		"plaintext",
+		"powershell"
+	],
+	"powershell.scriptAnalysis.settingsPath": "ScriptAnalyzerSettings.psd1"
 }
