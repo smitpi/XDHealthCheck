@@ -6,7 +6,7 @@
 		[ValidateSet('Combine', 'Build')]
 		[string]$Update
 	)
-    $ModuleName = (Get-Item .).Name
+    $ModuleName = (Get-Item $PSScriptRoot).Name
 	if ($Update -like 'Build') {
 		try {
              if (test-path (Join-Path $PSScriptRoot "\Output")) {Remove-Item (Join-Path $PSScriptRoot "\Output") -Force -Recurse -ErrorAction Stop}
