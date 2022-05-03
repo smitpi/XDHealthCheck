@@ -9,21 +9,21 @@
 
 .COMPANYNAME HTPCZA Tech
 
-.COPYRIGHT
+.COPYRIGHT 
 
 .TAGS Citrix
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 Created [01/07/2020_14:43] Initital Script Creating
@@ -33,15 +33,15 @@ Updated [01/07/2020_16:13] Script Fle Info was updated
 Updated [06/03/2021_20:58] Script Fle Info was updated
 Updated [15/03/2021_23:28] Script Fle Info was updated
 
-#>
+#> 
 
 
-<#
+<# 
 
-.DESCRIPTION
+.DESCRIPTION 
 Function for Citrix XenDesktop HTML Health Check Report
 
-#>
+#> 
 <#
 .SYNOPSIS
 Create a json config file with all needed farm details.
@@ -84,7 +84,19 @@ function Install-ParametersFile {
 			$ClientInput = Read-Host 'Add more trusted domains? (y/n)'
 		}
 	}
-
+	<#
+		$CTXNS = @()
+		$ClientInput = ''
+		While ($ClientInput -ne 'n') {
+			If ($ClientInput -ne $null) {
+				$CusObject = New-Object PSObject -Property @{
+					NSIP    = Read-Host 'Netscaler IP (Management)'
+					NSAdmin = Read-Host 'Root Username'
+				} | Select-Object NSIP, NSAdmin
+				$CTXNS += $CusObject
+				$ClientInput = Read-Host 'Add more Netscalers? (y/n)'
+			}
+		}#>
 	$ReportsFolder = Read-Host 'Path to the Reports Folder'
 	$ParametersFolder = Read-Host 'Path to where the Parameters.json will be saved'
 	$DashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'

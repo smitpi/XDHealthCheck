@@ -9,21 +9,21 @@
 
 .COMPANYNAME HTPCZA Tech
 
-.COPYRIGHT
+.COPYRIGHT 
 
 .TAGS Citrix
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 Created [01/07/2020_14:43] Initital Script Creating
@@ -33,15 +33,15 @@ Updated [01/07/2020_16:13] Script Fle Info was updated
 Updated [06/03/2021_20:58] Script Fle Info was updated
 Updated [15/03/2021_23:28] Script Fle Info was updated
 
-#>
+#> 
 
 
-<#
+<# 
 
-.DESCRIPTION
+.DESCRIPTION 
 Function for Citrix XenDesktop HTML Health Check Report
 
-#>
+#> 
 <#
 .SYNOPSIS
 Create a json config file with all needed farm details.
@@ -54,8 +54,25 @@ Install-ParametersFile
 
 #>
 function Install-ParametersFile {
+
 	[Cmdletbinding()]
 	param ()
+	try {
+		$wc = New-Object System.Net.WebClient 
+		$wc.Proxy.Credentials = [System.Net.CredentialCache]::DefaultNetworkCredentials 
+		[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+		$null = Install-PackageProvider Nuget -Force
+		$null = Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+		Write-Host 'PSGalary:' -ForegroundColor Cyan -NoNewline
+		Write-Host 'Succsessfull' -ForegroundColor Yellow
+
+	}
+	catch { Write-Error 'Unable to setup PSGallery ' }
+	finally { Write-Error 'Unable to setup PSGallery' }
+
+	Install-CTXPSModule
 
 	[string]$CTXDDC = Read-Host 'A Citrix Data Collector FQDN'
 	[string]$CTXStoreFront = Read-Host 'A Citrix StoreFront FQDN'
@@ -84,7 +101,19 @@ function Install-ParametersFile {
 			$ClientInput = Read-Host 'Add more trusted domains? (y/n)'
 		}
 	}
-
+	<#
+		$CTXNS = @()
+		$ClientInput = ''
+		While ($ClientInput -ne 'n') {
+			If ($ClientInput -ne $null) {
+				$CusObject = New-Object PSObject -Property @{
+					NSIP    = Read-Host 'Netscaler IP (Management)'
+					NSAdmin = Read-Host 'Root Username'
+				} | Select-Object NSIP, NSAdmin
+				$CTXNS += $CusObject
+				$ClientInput = Read-Host 'Add more Netscalers? (y/n)'
+			}
+		}#>
 	$ReportsFolder = Read-Host 'Path to the Reports Folder'
 	$ParametersFolder = Read-Host 'Path to where the Parameters.json will be saved'
 	$DashboardTitle = Read-Host 'Title to be used in the reports and Dashboard'
@@ -159,6 +188,19 @@ function Install-ParametersFile {
 	else { $AllXDData | ConvertTo-Json -Depth 5 | Out-File -FilePath "$ParametersFolder\Parameters.json" -Force -Verbose }
 
 	Import-ParametersFile -JSONParameterFilePath "$ParametersFolder\Parameters.json"
+
+	Write-Color 'Testing PS Remote on needed servers:' -Color Cyan -LinesBefore 2 -ShowTime
+	try {
+		Write-Color 'DDC' -Color Yellow -ShowTime
+		Invoke-Command -ComputerName $CTXStoreFront -Credential $CTXAdmin -ScriptBlock { $env:COMPUTERNAME }
+		Write-Color 'Storefront' -Color Yellow -ShowTime
+		Invoke-Command -ComputerName $CTXDDC -Credential $CTXAdmin -ScriptBlock { $env:COMPUTERNAME }
+		Write-Color 'RDS License Server' -Color Yellow -ShowTime
+		Invoke-Command -ComputerName $RDSLicenseServer -Credential $CTXAdmin -ScriptBlock { $env:COMPUTERNAME }
+	}
+ catch { Write-Warning 'Please setup ps remoting to the DDC, StoreFront and RDS license server ' }
+        
+
 
 }
 
