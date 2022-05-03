@@ -79,32 +79,32 @@ Function Get-CitrixConfigurationChange {
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
 		[int32]$Indays
-        )
+	)
 
-		if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like "Citrix*"})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
+	if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
 
-		$startdate = (Get-Date).AddDays(-$Indays)
-		$exportpath = (Get-Item (Get-Item Env:\TEMP).value).FullName + '\ctxreportlog.csv'
+	if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
 
-		if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
+	Export-LogReportCsv -AdminAddress $AdminServer -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
 
-		Export-LogReportCsv -AdminAddress $AdminServer -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
+	$LogExportAll = Import-Csv -Path $exportpath -Delimiter ','
+	$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike '' } | Select-Object -Property High*
+	$LogSum = $LogExportAll | Group-Object -Property 'High Level Operation Text' -NoElement
 
-		$LogExportAll = Import-Csv -Path $exportpath -Delimiter ','
-		$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike '' } | Select-Object -Property High*
-		$LogSum = $LogExportAll | Group-Object -Property 'High Level Operation Text' -NoElement
+	Remove-Item $exportpath -Force -ErrorAction SilentlyContinue
+	$CTXObject = New-Object PSObject -Property @{
+		DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+		AllDetails    = $LogExportAll
+		Filtered      = $LogExport
+		Summary       = $LogSum
+	}
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
 
-		Remove-Item $exportpath -Force -ErrorAction SilentlyContinue
-		$CTXObject = New-Object PSObject -Property @{
-			DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-			AllDetails    = $LogExportAll
-			Filtered      = $LogExport
-			Summary       = $LogSum
-		}
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
+	$CTXObject
+
+} #end Function
 
 		$CTXObject
 
