@@ -78,18 +78,14 @@ Function Get-CitrixServerEventLog {
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[array]$Serverlist,
+		[string[]]$Serverlist,
 		[Parameter(Mandatory = $true, Position = 1)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[int32]$Days,
-		[Parameter(Mandatory = $true, Position = 2)]
-		[ValidateNotNull()]
-		[ValidateNotNullOrEmpty()]
-		[PSCredential]$RemoteCredentials)
-
-	function events {
-  param($Server, $days, $VerbosePreference)
+		[int32]$Days
+)
+    [System.Collections.ArrayList]$ServerEvents = @()
+	foreach ($server in $Serverlist) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Eventlog Details"
 
 		$eventtime = (Get-Date).AddDays(-$days)
@@ -98,39 +94,17 @@ Function Get-CitrixServerEventLog {
 		$serverWarning = $ctxevent | Where-Object -Property LevelDisplayName -EQ "Warning"
 		$TopProfider = $ctxevent | Where-Object { $_.LevelDisplayName -EQ "Warning" -or $_.LevelDisplayName -eq "Error" } | Group-Object -Property ProviderName | Sort-Object -Property count -Descending | Select-Object Name, Count
 
-		$CTXObject = New-Object PSObject -Property @{
-			ServerName  = ([System.Net.Dns]::GetHostByName(($env:computerName))).hostname
+		[void]$ServerEvents.Add([pscustomobject]@{
+			ServerName  = ([System.Net.Dns]::GetHostByName(($server))).hostname
 			Errors      = $servererrors.Count
 			Warning     = $serverWarning.Count
 			TopProfider = $TopProfider
 			All         = $ctxevent
-		}
+		})
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Eventlog Details"
-		$CTXObject
 	}
 
-	$Eventlogs = @()
-	foreach ($server in $Serverlist) {
-		$logs = Invoke-Command -ComputerName $Server -ScriptBlock ${Function:events} -ArgumentList  @($Server, $days, $VerbosePreference) -Credential $RemoteCredentials
-		$Eventlogs += $logs
-	}
 
-	$Eventlogs | ForEach-Object {
-		$TotalErrors = $TotalErrors + $_.Errors
-		$TotalWarnings = $TotalWarnings + $_.Warning
- }
-	[array]$TotalProvider += $Eventlogs | ForEach-Object { $_.TopProfider }
-	[array]$TotalAll += $Eventlogs | ForEach-Object { $_.all }
-
-	$CTXObject = New-Object PSObject -Property @{
-		DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-		SingleServer  = $Eventlogs | Select-Object ServerName, Errors, Warning, TopProfider, All
-		TotalErrors   = $TotalErrors
-		TotalWarnings = $TotalWarnings
-		TotalProvider = $TotalProvider | Sort-Object -Property count -Descending
-		TotalAll      = $TotalAll
-	}
-	$CTXObject
-
+$ServerEvents
 } #end Function
 

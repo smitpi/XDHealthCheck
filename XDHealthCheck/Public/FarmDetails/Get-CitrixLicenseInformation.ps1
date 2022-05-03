@@ -87,36 +87,23 @@ Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -
 		[Parameter(Mandatory = $false, Position = 2)]
 		[switch]$RunAsPSRemote = $false)
 
-
-	function get-license {
-		param($AdminServer, $VerbosePreference)
-		Add-PSSnapin Citrix*
+        Add-PSSnapin Citrix*
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] License Details"
 
 		$LicenseServer = Get-BrokerSite -AdminAddress $AdminServer | Select-Object LicenseServerName
 		[string]$licurl = "https://" + $LicenseServer.LicenseServerName + ":8083"
 		$cert = Get-LicCertificate -AdminAddress $licurl
 		$ctxlic = Get-LicInventory -AdminAddress $licurl -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 }
-		$AllDetails = @()
+		[System.Collections.ArrayList]$LicDetails = @()
 		foreach ($lic in $ctxlic) {
-			$Licenses = New-Object PSObject -Property @{
+            $LicDetails.Add([pscustomobject]@{
 				LicenseProductName = $lic.LocalizedLicenseProductName
 				LicenseModel       = $lic.LocalizedLicenseModel
 				LicensesInstalled  = $lic.LicensesAvailable
 				LicensesInUse      = $lic.LicensesInUse
 				LicensesAvailable  = ([int]$lic.LicensesAvailable - [int]$lic.LicensesInUse)
-			} | Select-Object LicenseProductName, LicenseModel, LicensesInstalled, LicensesInUse, LicensesAvailable
-			$AllDetails += $Licenses
-		}
-			Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] License Details"
-			$AllDetails
-		}
-
-	$LicDetails = @()
-	if ($RunAsPSRemote -eq $true) { $LicDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:get-license} -ArgumentList @($AdminServer, $VerbosePreference) -Credential $RemoteCredentials }
-	else { $LicDetails = get-license -AdminAddress $AdminServer }
-	$LicDetails | Select-Object LicenseProductName, LicenseModel, LicensesInstalled, LicensesInUse, LicensesAvailable
-
-
+			})
+        }
+        $LicDetails
 } #end Function
 

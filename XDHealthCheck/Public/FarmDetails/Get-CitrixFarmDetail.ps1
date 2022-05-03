@@ -73,177 +73,141 @@ Get-CitrixFarmDetail -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSR
 
 #>
 Function Get-CitrixFarmDetail {
-		[CmdletBinding()]
-	PARAM(
-		[Parameter(Mandatory = $true, Position = 0)]
-		[ValidateNotNull()]
-		[ValidateNotNullOrEmpty()]
-		[string]$AdminServer,
-		[Parameter(Mandatory = $false, Position = 1)]
-		[switch]$RunAsPSRemote = $false,
-		[Parameter(Mandatory = $false, Position = 2)]
-		[ValidateNotNull()]
-		[ValidateNotNullOrEmpty()]
-		[PSCredential]$RemoteCredentials)
+[CmdletBinding()]
+PARAM(
+[Parameter(Mandatory = $true, Position = 0)]
+[ValidateNotNull()]
+[ValidateNotNullOrEmpty()]
+[string]$AdminServer,
+[Parameter(Mandatory = $false, Position = 1)]
+[switch]$RunAsPSRemote = $false,
+[Parameter(Mandatory = $false, Position = 2)]
+[ValidateNotNull()]
+[ValidateNotNullOrEmpty()]
+[PSCredential]$RemoteCredentials)
 
 
+Add-PSSnapin Citrix*
 
-	function CitrixFarmDetails {
-		[CmdletBinding()]
-		param($AdminServer)
-
-		Add-PSSnapin Citrix*
-
-		function Get-CTXSiteDetail($AdminServer) {
-			$site = Get-BrokerSite -AdminAddress $AdminServer
-			$CustomCTXObject = New-Object PSObject -Property @{
-    			Summary    = $site | Select-Object Name, ConfigLastChangeTime, LicenseEdition, LicenseModel, LicenseServerName
-				AllDetails = $site
-			}
-			$CustomCTXObject
-		}
-
-		function Get-CTXController($AdminServer) {
-			$RegistedDesktops = @()
-			$controllsers = Get-BrokerController -AdminAddress $AdminServer
-			foreach ($server in $controllsers) {
-				$CustomCTXObject = New-Object PSObject -Property @{
-					Name                  = $server.dnsname
-					'Desktops Registered' = $server.DesktopsRegistered
-					'Last Activity Time'  = $server.LastActivityTime
-					'Last Start Time'     = $server.LastStartTime
-					State                 = $server.State
-					ControllerVersion     = $server.ControllerVersion
-				} | Select-Object Name, 'Desktops Registered', 'Last Activity Time', 'Last Start Time', State, ControllerVersion
-
-				$RegistedDesktops += $CustomCTXObject
-			}
-			$CustomCTXObject = New-Object PSObject -Property @{
-				Summary    = $RegistedDesktops
-				AllDetails = $controllsers
-			}
-
-			$CustomCTXObject
-		}
-
-		function Get-CTXBrokerMachine($AdminServer) {
-			$NonRemotepc = Get-BrokerDesktopGroup -AdminAddress $AdminServer | Where-Object { $_.IsRemotePC -eq $false } | ForEach-Object { Get-BrokerMachine -MaxRecordCount 10000 -AdminAddress $AdminBox -DesktopGroupName $_.name | Select-Object DNSName, CatalogName, DesktopGroupName, CatalogUid, AssociatedUserNames, DesktopGroupUid, DeliveryType, DesktopKind, DesktopUid, FaultState, IPAddress, IconUid, OSType, PowerActionPending, PowerState, PublishedApplications, RegistrationState, InMaintenanceMode, WindowsConnectionSetting }
-			$UnRegServer = $NonRemotepc | Where-Object { $_.RegistrationState -like "unreg*" -and $_.DeliveryType -notlike "DesktopsOnly" } | Select-Object DNSName, CatalogName, DesktopGroupName, FaultState
-			$UnRegDesktop = $NonRemotepc | Where-Object { $_.RegistrationState -like "unreg*" -and $_.DeliveryType -like "DesktopsOnly" } | Select-Object DNSName, CatalogName, DesktopGroupName, AssociatedUserNames, FaultState
-			$CusObject = New-Object PSObject -Property @{
-				AllMachines          = $NonRemotepc
-				UnRegisteredServers  = $UnRegServer
-				UnRegisteredDesktops = $UnRegDesktop
-			} | Select-Object AllMachines, UnRegisteredServers, UnRegisteredDesktops
-			$CusObject
-		}
-
-		function Get-CTXSession($AdminServer) { Get-BrokerSession -MaxRecordCount 10000 -AdminAddress $AdminServer }
-
-		function Get-CTXBrokerDesktopGroup($AdminServer) {
-			Get-BrokerDesktopGroup -AdminAddress $AdminServer | Select-Object Name, DeliveryType, DesktopKind, IsRemotePC, Enabled, TotalDesktops, DesktopsAvailable, DesktopsInUse, DesktopsUnregistered, InMaintenanceMode, Sessions, SessionSupport, TotalApplicationGroups, TotalApplications
-		}
-
-		function Get-CTXADObject($AdminServer) {
-			$tainted = $adobjects = $CusObject = $null
-			$adobjects = Get-AcctADAccount -MaxRecordCount 10000 -AdminAddress $AdminServer
-			$tainted = $adobjects | Where-Object { $_.state -like "tainted*" }
-			$CusObject = New-Object PSObject -Property @{
-				AllObjects     = $adobjects
-				TaintedObjects = $tainted
-			} | Select-Object AllObjects, TaintedObjects
-			$CusObject
-		}
-
-		function Get-CTXDBConnection($AdminServer) {
-			$dbArray = @()
-
-			$dbconnection = (Test-BrokerDBConnection -DBConnection(Get-BrokerDBConnection -AdminAddress $AdminBox))
-
-			if ([bool]($dbconnection.ExtraInfo.'Database.Status') -eq $False) { [string]$dbstatus = "Unavalable" }
-			else { [string]$dbstatus = $dbconnection.ExtraInfo.'Database.Status' }
-
-			$CCTXObject = New-Object PSObject -Property @{
-				"Service Status"       = $dbconnection.ServiceStatus.ToString()
-				"DB Connection Status" = $dbstatus
-				"Is Mirroring Enabled" = $dbconnection.ExtraInfo.'Database.IsMirroringEnabled'.ToString()
-				"DB Last Backup Date"  = $dbconnection.ExtraInfo.'Database.LastBackupDate'.ToString()
-			} | Select-Object  "Service Status", "DB Connection Status", "Is Mirroring Enabled", "DB Last Backup Date"
-			$dbArray = $CCTXObject.psobject.Properties | Select-Object -Property Name, Value
-			$dbArray
-		}
-
-		function Get-CTXRebootSchedule ($AdminServer) { Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer | Select-Object Day, DesktopGroupName, Enabled, Frequency, Name, RebootDuration, StartTime}
-
-		function Get-VDAUptime($AdminServer) {
-			$VDAUptime = @()
-			Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000000 | Where-Object {$_.DesktopGroupName -notlike $null } | ForEach-Object {
-			try {	
-                $OS = Get-CimInstance Win32_OperatingSystem -ComputerName $_.DNSName -ErrorAction Stop | Select-Object *
-				$Uptime = (Get-Date) - ($OS.LastBootUpTime)
-				$updays = [math]::Round($uptime.Days, 0)
-				$CusObject = New-Object PSObject -Property @{
-					ComputerName         = $_.dnsname
-					DesktopGroupName     = $_.DesktopGroupName
-					SessionCount         = $_.SessionCount
-					InMaintenanceMode    = $_.InMaintenanceMode
-					MachineInternalState = $_.MachineInternalState
-					Uptime               = $updays
-				} | Select-Object ComputerName, DesktopGroupName, SessionCount, InMaintenanceMode, MachineInternalState, Uptime
-				$VDAUptime += $CusObject
-                } catch {Write-Warning "Cannot connect $($_.DNSName) to get uptime"}
-			}
-			$VDAUptime
-		}
-
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Site Details"
-		$SiteDetails = Get-CTXSiteDetail -AdminServer $AdminServer
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Controllers Details"
-		$Controllers = Get-CTXController -AdminServer $AdminServer
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Machines Details"
-		$Machines = Get-CTXBrokerMachine -AdminServer $AdminServer
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] DeliveryGroups Details"
-		$DeliveryGroups = Get-CTXBrokerDesktopGroup -AdminAddress $AdminServer
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Sessions Details"
-		$Sessions = Get-CTXSession -AdminServer $AdminServer
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] ADObjects Details"
-		$ADObjects = Get-CTXADObject -AdminServer $AdminServer
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] DBConnection Details"
-		$DBConnection = Get-CTXDBConnection -AdminServer $AdminServer
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Reboot Schedule Details"
-		$RebootSchedule = Get-CTXRebootSchedule -AdminServer $AdminServer
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] VDA Uptime"
-		$VDAUptime = Get-VDAUptime -AdminServer $AdminServer
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"
-		$SessionCounts = New-Object PSObject -Property @{
-			'Active Sessions'       = ($Sessions | Where-Object -Property Sessionstate -EQ "Active").count
-			'Disconnected Sessions' = ($Sessions | Where-Object -Property Sessionstate -EQ "Disconnected").count
-			'Unregistered Servers'  = ($Machines.UnRegisteredServers | Measure-Object).count
-			'Unregistered Desktops' = ($Machines.UnRegisteredDesktops | Measure-Object).count
-			'Tainted Objects'       = ($ADObjects.TaintedObjects | Measure-Object).Count
-		} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Unregistered Servers', 'Unregistered Desktops', 'Tainted Objects'
-
-		$CustomCTXObject    = New-Object PSObject -Property @{
-			DateCollected   = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-			SiteDetails     = $SiteDetails
-			Controllers     = $Controllers
-			Machines        = $Machines
-			Sessions        = $Sessions
-			ADObjects       = $ADObjects
-			DeliveryGroups  = $DeliveryGroups
-			DBConnection    = $DBConnection
-			SessionCounts   = $SessionCounts
-			RebootSchedule  = $RebootSchedule
-			VDAUptime 		= $VDAUptime
-		} | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule, VDAUptime
-		$CustomCTXObject
+#region Site details
+Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Site Details"
+	$site = Get-BrokerSite -AdminAddress $AdminServer
+	$SiteDetails = New-Object PSObject -Property @{
+    	Summary    = $site | Select-Object Name, ConfigLastChangeTime, LicenseEdition, LicenseModel, LicenseServerName
+		AllDetails = $site
 	}
+#endregion
 
-$FarmDetails = @()
-if ($RunAsPSRemote -eq $true) { $FarmDetails = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:CitrixFarmDetails} -ArgumentList  @($AdminServer) -Credential $RemoteCredentials }
-else { $FarmDetails = CitrixFarmDetails -AdminServer $AdminServer}
-Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [End] All Details"
-	$FarmDetails | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, ADObjects, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule, VDAUptime
+#region Controllers
+Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Controllers Details"
+[System.Collections.ArrayList]$Controllers = @()
+Get-BrokerController -AdminAddress $AdminServer | ForEach-Object {
+    [void]$Controllers.Add([pscustomobject]@{
+            AllDetails = $_
+            Summary =  New-Object PSObject -Property @{
+				Name                  = $_.dnsname
+				'Desktops Registered' = $_.DesktopsRegistered
+				'Last Activity Time'  = $_.LastActivityTime
+				'Last Start Time'     = $_.LastStartTime
+				State                 = $_.State
+				ControllerVersion     = $_.ControllerVersion
+		}
+    })
+}
+#endregion
+
+#region Machines
+Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Machines Details"
+$NonRemotepc = Get-BrokerMachine -MaxRecordCount 1000000 -AdminAddress $AdminServer
+$UnRegServer = $NonRemotepc | Where-Object { $_.RegistrationState -like "unreg*" -and $_.DeliveryType -notlike "DesktopsOnly" } | Select-Object DNSName, CatalogName, DesktopGroupName, FaultState
+$UnRegDesktop = $NonRemotepc | Where-Object { $_.RegistrationState -like "unreg*" -and $_.DeliveryType -like "DesktopsOnly" } | Select-Object DNSName, CatalogName, DesktopGroupName, AssociatedUserNames, FaultState
+$Machines = New-Object PSObject -Property @{
+	AllMachines          = $NonRemotepc
+	UnRegisteredServers  = $UnRegServer
+	UnRegisteredDesktops = $UnRegDesktop
+} | Select-Object AllMachines, UnRegisteredServers, UnRegisteredDesktops
+#endregion
+
+#region sessions
+Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Sessions Details"
+$sessions = Get-BrokerSession -MaxRecordCount 1000000 -AdminAddress $AdminServer
+#endregion
+
+#region del groups
+Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] DeliveryGroups Details"
+$DeliveryGroups = Get-BrokerDesktopGroup -AdminAddress $AdminServer | Select-Object Name, DeliveryType, DesktopKind, IsRemotePC, Enabled, TotalDesktops, DesktopsAvailable, DesktopsInUse, DesktopsUnregistered, InMaintenanceMode, Sessions, SessionSupport, TotalApplicationGroups, TotalApplications
+#endregion		
+
+#region dbconnection	
+Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] DBConnection Details"
+	$dbArray = @()
+
+	$dbconnection = (Test-BrokerDBConnection -DBConnection(Get-BrokerDBConnection -AdminAddress $AdminServer))
+
+	if ([bool]($dbconnection.ExtraInfo.'Database.Status') -eq $False) { [string]$dbstatus = "Unavalable" }
+	else { [string]$dbstatus = $dbconnection.ExtraInfo.'Database.Status' }
+
+	$CCTXObject = New-Object PSObject -Property @{
+		"Service Status"       = $dbconnection.ServiceStatus.ToString()
+		"DB Connection Status" = $dbstatus
+		"Is Mirroring Enabled" = $dbconnection.ExtraInfo.'Database.IsMirroringEnabled'.ToString()
+		"DB Last Backup Date"  = $dbconnection.ExtraInfo.'Database.LastBackupDate'.ToString()
+	} | Select-Object  "Service Status", "DB Connection Status", "Is Mirroring Enabled", "DB Last Backup Date"
+
+	$DBConnection = $CCTXObject.psobject.Properties | Select-Object -Property Name, Value
+#endregion
+
+#region reboots
+Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Reboot Schedule Details"
+$RebootSchedule = Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer | Select-Object Day, DesktopGroupName, Enabled, Frequency, Name, RebootDuration, StartTime
+#endregion
+		
+#region uptime
+Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] VDA Uptime"	
+    [System.Collections.ArrayList]$VDAUptime = @()
+	Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000000 | Where-Object {$_.DesktopGroupName -notlike $null } | ForEach-Object {
+	try {	
+        $OS = Get-CimInstance Win32_OperatingSystem -ComputerName $_.DNSName -ErrorAction Stop | Select-Object *
+		$Uptime = (Get-Date) - ($OS.LastBootUpTime)
+		$updays = [math]::Round($uptime.Days, 0)
+    } catch {
+            Write-Warning "Unable to remote to $($_.DNSName), defaulting uptime to unknown"
+            $updays = "Unknown"}
+		[void]$VDAUptime.Add([pscustomobject]@{
+			ComputerName         = $_.dnsname
+			DesktopGroupName     = $_.DesktopGroupName
+			SessionCount         = $_.SessionCount
+			InMaintenanceMode    = $_.InMaintenanceMode
+			MachineInternalState = $_.MachineInternalState
+			Uptime               = $updays
+            LastRegistrationTime = $_.LastRegistrationTime
+		})
+	}
+#endregion
+
+#region counts
+Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"
+$SessionCounts = New-Object PSObject -Property @{
+	'Active Sessions'       = ($Sessions | Where-Object -Property Sessionstate -EQ "Active").count
+	'Disconnected Sessions' = ($Sessions | Where-Object -Property Sessionstate -EQ "Disconnected").count
+	'Unregistered Servers'  = ($Machines.UnRegisteredServers | Measure-Object).count
+	'Unregistered Desktops' = ($Machines.UnRegisteredDesktops | Measure-Object).count
+} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Unregistered Servers', 'Unregistered Desktops'
+#endregion
+
+$CustomCTXObject    = New-Object PSObject -Property @{
+	DateCollected   = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+	SiteDetails     = $SiteDetails
+	Controllers     = $Controllers
+	Machines        = $Machines
+	Sessions        = $Sessions
+	DeliveryGroups  = $DeliveryGroups
+	DBConnection    = $DBConnection
+	SessionCounts   = $SessionCounts
+	RebootSchedule  = $RebootSchedule
+	VDAUptime 		= $VDAUptime
+} | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule, VDAUptime
+$CustomCTXObject
 
 } #end Function
 

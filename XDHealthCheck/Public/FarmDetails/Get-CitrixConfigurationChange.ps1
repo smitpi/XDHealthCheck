@@ -82,8 +82,6 @@ Function Get-CitrixConfigurationChange {
 		[Parameter(Mandatory = $true)]
 		[PSCredential]$RemoteCredentials)
 
-	Invoke-Command -ComputerName $AdminServer -ScriptBlock {
-		param($AdminServer, $Indays)
 		Add-PSSnapin citrix* -ErrorAction SilentlyContinue
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
 
@@ -93,7 +91,7 @@ Function Get-CitrixConfigurationChange {
 		if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
 
-		Export-LogReportCsv -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
+		Export-LogReportCsv -AdminAddress $AdminServer -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
 
 		$LogExportAll = Import-Csv -Path $exportpath -Delimiter ','
@@ -110,8 +108,6 @@ Function Get-CitrixConfigurationChange {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
 
 		$CTXObject
-
-	} -ArgumentList @($AdminServer, $Indays) -Credential $RemoteCredentials
 
 } #end Function
 
