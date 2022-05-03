@@ -1,9 +1,9 @@
 
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.13
 
-.GUID a90021c2-9c0b-462b-a0c2-5bffaadab328
+.GUID 28827783-e97e-432f-bf46-c01e8c3c8299
 
 .AUTHOR Pierre Smit
 
@@ -26,7 +26,12 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-Created [09/06/2019_12:53]
+Created [05/05/2019_08:59]
+Updated [13/05/2019_04:40]
+Updated [22/05/2019_20:13]
+Updated [24/05/2019_19:25]
+Updated [06/06/2019_19:25]
+Updated [09/06/2019_09:18]
 Updated [15/06/2019_01:11]
 Updated [15/06/2019_13:59] Updated Reports
 Updated [01/07/2020_14:43] Script Fle Info was updated
@@ -40,71 +45,53 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <#
 
 .DESCRIPTION 
 Function for Citrix XenDesktop HTML Health Check Report
 
 #>
+# .ExternalHelp  XDHealthCheck-help.xml
 
-<#
-.SYNOPSIS
-Combine perfmon of multiple servers for reporting.
 
-.DESCRIPTION
-Combine perfmon of multiple servers for reporting.
-
-.PARAMETER Serverlist
-List of servers to get the permon details
-
-.PARAMETER RemoteCredentials
-Enable function to run remotely, if the CItrix cmdlets are not available
-
-.EXAMPLE
-Get-CitrixServerPerformance -Serverlist $CTXCore -RemoteCredentials $CTXAdmin
-#>	
 Function Get-CitrixServerPerformance {
 	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[array]$Serverlist,
-		[Parameter(Mandatory = $true, Position = 1)]
-		[ValidateNotNull()]
-		[ValidateNotNullOrEmpty()]
-		[PSCredential]$RemoteCredentials)
+		[string[]]$ComputerName
+        )
 
-	$CitrixServerPerformance = @()
-	foreach ($Server in $Serverlist) {
-		$SingleServer = Get-CitrixSingleServerPerformance -Server $Server -RemoteCredentials $RemoteCredentials
-		$CusObject = New-Object PSObject -Property @{
-			DateCollected      = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-			Servername         = $SingleServer.ServerName
-			'CPU %'            = $SingleServer.'CPU %'
-			'Memory %'         = $SingleServer.'Memory %'
-			'CDrive % Free'    = $SingleServer.'CDrive % Free'
-			'DDrive % Free'    = $SingleServer.'DDrive % Free'
-			Uptime             = $SingleServer.Uptime
-			'Stopped Services' = $SingleServer.StoppedServices
-		} | Select-Object ServerName, 'CPU %', 'Memory %', 'CDrive % Free', 'DDrive % Free', Uptime, 'Stopped Services'
-		$CitrixServerPerformance += $CusObject
-	}
+     [System.Collections.ArrayList]$ServerPerfMon = @()
+     foreach ($server in $ComputerName) {
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Performance Details for $($server.ToString())"
+		$CtrList = @(
+			"\Processor(_Total)\% Processor Time",
+			"\memory\% committed bytes in use",
+			"\LogicalDisk(C:)\% Free Space"
+		)
+	$perf = Get-Counter $CtrList -ComputerName $Server -ErrorAction SilentlyContinue | Select-Object -ExpandProperty CounterSamples
 
-	$CitrixServerPerformance
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Services Details for $($server.ToString())"
+	$services = [String]::Join(' ; ', ((Get-Service -ComputerName $Server | Where-Object {$_.starttype -eq "Automatic" -and $_.status -eq "Stopped"}).DisplayName))
+
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Uptime Details for $($server.ToString())"
+	$OS =  get-CimInstance Win32_OperatingSystem -ComputerName $Server | Select-Object *
+	$Uptime = (Get-Date) - ($OS.LastBootUpTime)
+	$updays = [math]::Round($uptime.Days, 0)
+
+	[void]$ServerPerfMon.Add([pscustomobject]@{
+		DateCollected      = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+		ServerName         = $Server
+		'CPU %'            = [Decimal]::Round(($perf[0].CookedValue), 2).tostring()
+		'Memory %'         = [Decimal]::Round(($perf[1].CookedValue), 2).tostring()
+		'C Drive % Free'    = [Decimal]::Round(($perf[2].CookedValue), 2).tostring()
+		Uptime             = $updays.tostring()
+		'Stopped Services' = $Services
+	})
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Performance Details for $($server.ToString())"
+}
+$ServerPerfMon
 } #end Function
 

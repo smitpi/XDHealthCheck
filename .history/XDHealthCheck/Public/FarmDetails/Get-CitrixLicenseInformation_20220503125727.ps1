@@ -81,7 +81,7 @@ Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -
 		[ValidateNotNullOrEmpty()]
 		[string]$AdminServer)
 
-       if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like "Citrix*"})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
+       Add-PSSnapin Citrix* -ErrorAction SilentlyContinue
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] License Details"
 
 		$LicenseServer = Get-BrokerSite -AdminAddress $AdminServer | Select-Object LicenseServerName

@@ -77,14 +77,12 @@ Function Get-RDSLicenseInformation {
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[string]$LicenseServer,
-		[Parameter(Mandatory = $true, Position = 1)]
-		[ValidateNotNull()]
-		[ValidateNotNullOrEmpty()]
-		[PSCredential]$RemoteCredentials)
+		[string]$LicenseServer)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] RDS Details"
-	$RDSLicense = Invoke-Command -ComputerName $LicenseServer -Credential $RemoteCredentials -ScriptBlock { Get-CimInstance Win32_TSLicenseKeyPack -ErrorAction SilentlyContinue | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses }
+    try {
+	    $RDSLicense =  Get-CimInstance Win32_TSLicenseKeyPack -ComputerName $LicenseServer  -ErrorAction stop | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
+    } catch {Write-Warning "Unable to connect to RDS License server: $($LicenseServer)"}
 	$CTXObject = New-Object PSObject -Property @{
 		"Per Device" = $RDSLicense | Where-Object { $_.TypeAndModel -eq "RDS Per Device CAL" }
 		"Per User"   = $RDSLicense | Where-Object { $_.TypeAndModel -eq "RDS Per User CAL" }

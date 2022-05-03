@@ -246,6 +246,13 @@ Function Get-CitrixObjects {
 			VDAWorkstations = $VDAWorkstations
 		}
 		$CusObject
+	}
+
+	$AppDetail = @()
+	if ($RunAsPSRemote -eq $true) { $AppDetail = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:GetAllConfig} -ArgumentList  @($AdminServer) -Credential $RemoteCredentials }
+	else { $AppDetail = GetAllConfig -AdminServer $AdminServer }
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] All Details"
+	$AppDetail | Select-Object DateCollected, MachineCatalog, DeliveryGroups, PublishedApps, VDAServers, VDAWorkstations
 } #end Function
 
 

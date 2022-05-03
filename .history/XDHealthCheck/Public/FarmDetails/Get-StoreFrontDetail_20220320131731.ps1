@@ -91,7 +91,7 @@ Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdm
 
         Write-Verbose "$((get-date -Format HH:mm:ss).ToString()) [Starting] Storefront Details"
         $SiteArray = @()
-        if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
+        Add-PSSnapin citrix*
 
         # Set Proxy
         $wc = New-Object System.Net.WebClient

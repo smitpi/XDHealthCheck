@@ -78,11 +78,14 @@ Function Get-CitrixConfigurationChange {
 		[Parameter(Mandatory = $true)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[int32]$Indays
-        )
+		[int32]$Indays,
+		[Parameter(Mandatory = $true)]
+		[PSCredential]$RemoteCredentials)
 
-		if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like "Citrix*"})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
+	Invoke-Command -ComputerName $AdminServer -ScriptBlock {
+		param($AdminServer, $Indays)
+		if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
+				Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
 
 		$startdate = (Get-Date).AddDays(-$Indays)
 		$exportpath = (Get-Item (Get-Item Env:\TEMP).value).FullName + '\ctxreportlog.csv'
@@ -90,7 +93,7 @@ Function Get-CitrixConfigurationChange {
 		if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
 
-		Export-LogReportCsv -AdminAddress $AdminServer -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
+		Export-LogReportCsv -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
 
 		$LogExportAll = Import-Csv -Path $exportpath -Delimiter ','
@@ -107,6 +110,8 @@ Function Get-CitrixConfigurationChange {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
 
 		$CTXObject
+
+	} -ArgumentList @($AdminServer, $Indays) -Credential $RemoteCredentials
 
 } #end Function
 

@@ -87,8 +87,11 @@ Function Get-CitrixObjects {
 
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Config"
+	Function GetAllConfig {
+		[CmdletBinding()]
+		param($AdminServer)
 
-		if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
+		Add-PSSnapin citrix*
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Machine Catalogs"
 		$CTXMachineCatalog = @()
 		$MachineCatalogs = Get-BrokerCatalog -AdminAddress $AdminServer
@@ -246,6 +249,13 @@ Function Get-CitrixObjects {
 			VDAWorkstations = $VDAWorkstations
 		}
 		$CusObject
+	}
+
+	$AppDetail = @()
+	if ($RunAsPSRemote -eq $true) { $AppDetail = Invoke-Command -ComputerName $AdminServer -ScriptBlock ${Function:GetAllConfig} -ArgumentList  @($AdminServer) -Credential $RemoteCredentials }
+	else { $AppDetail = GetAllConfig -AdminServer $AdminServer }
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] All Details"
+	$AppDetail | Select-Object DateCollected, MachineCatalog, DeliveryGroups, PublishedApps, VDAServers, VDAWorkstations
 } #end Function
 
 

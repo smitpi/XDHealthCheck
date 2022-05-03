@@ -179,32 +179,17 @@ Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] VDA Uptime
 	}
 #endregion
 
-#region connection / machine failures
-$Failures = Get-CitrixFailures -AdminServer $AdminServer  -hours 24
-#endregion
-
-#region workspace app ver
-$appver = Get-CitrixWorkspaceAppVersions -AdminServer $AdminServer -hours 24 | Sort-Object -Property ClientVersion -Unique
-#endregion
-
-#region icartt
- $CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
- #endregion
-
 #region counts
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"
-    $SessionCounts = New-Object PSObject -Property @{
-	    'Active Sessions'       = ($Sessions | Where-Object -Property Sessionstate -EQ "Active").count
-	    'Disconnected Sessions' = ($Sessions | Where-Object -Property Sessionstate -EQ "Disconnected").count
-        'Connection Failures'   = $Failures.ConnectionFails.Count
-        'Unique Client Versions' = $appver.Count
-	    'Unregistered Servers'  = ($Machines.UnRegisteredServers | Measure-Object).count
-	    'Unregistered Desktops' = ($Machines.UnRegisteredDesktops | Measure-Object).count
-        'Machine Failures'      = $Failures.mashineFails.Count
-} | Select-Object 'Active Sessions', 'Disconnected Sessions','Connection Failures', 'Unregistered Servers', 'Unregistered Desktops','Machine Failures' 
+$SessionCounts = New-Object PSObject -Property @{
+	'Active Sessions'       = ($Sessions | Where-Object -Property Sessionstate -EQ "Active").count
+	'Disconnected Sessions' = ($Sessions | Where-Object -Property Sessionstate -EQ "Disconnected").count
+	'Unregistered Servers'  = ($Machines.UnRegisteredServers | Measure-Object).count
+	'Unregistered Desktops' = ($Machines.UnRegisteredDesktops | Measure-Object).count
+} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Unregistered Servers', 'Unregistered Desktops'
 #endregion
 
-New-Object PSObject -Property @{
+$CustomCTXObject    = New-Object PSObject -Property @{
 	DateCollected   = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
 	SiteDetails     = $SiteDetails
 	Controllers     = $Controllers
@@ -215,10 +200,8 @@ New-Object PSObject -Property @{
 	SessionCounts   = $SessionCounts
 	RebootSchedule  = $RebootSchedule
 	VDAUptime 		= $VDAUptime
-    Failures        = $Failures
-    AppVer          = $appver
-    IcaRtt          = $CitrixSessionIcaRtt
-} | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule, VDAUptime, Failures, AppVer, IcaRtt
+} | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule, VDAUptime
+$CustomCTXObject
 
 } #end Function
 

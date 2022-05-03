@@ -246,6 +246,7 @@ Function Get-CitrixObjects {
 			VDAWorkstations = $VDAWorkstations
 		}
 		$CusObject
+	}
 } #end Function
 
 
