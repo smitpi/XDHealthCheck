@@ -12,21 +12,21 @@
         <meta name="author" content="Pierre Smit">
       
       
-        <link rel="canonical" href="https://smitpi.github.io/XDHealthCheck/Get-StoreFrontDetail/">
+        <link rel="canonical" href="https://smitpi.github.io/XDHealthCheck/Get-CitrixMonitoringData/">
       
       <link rel="icon" href="..">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.8">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
     
     
       
-        <title>Get-StoreFrontDetail - XDHealthCheck</title>
+        <title>Get-CitrixMonitoringData - XDHealthCheck</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.644de097.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.e411adfe.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.e6a45f82.min.css">
+        <link rel="stylesheet" href="../assets/stylesheets/palette.cc9b2e1e.min.css">
         
       
     
@@ -69,7 +69,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#get-storefrontdetail" class="md-skip">
+        <a href="#get-citrixmonitoringdata" class="md-skip">
           Skip to content
         </a>
       
@@ -86,11 +86,11 @@
     <a href=".." title="XDHealthCheck" class="md-header__button md-logo" aria-label="XDHealthCheck" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -102,7 +102,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Get-StoreFrontDetail
+              Get-CitrixMonitoringData
             
           </span>
         </div>
@@ -125,7 +125,7 @@
           <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
           
             <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
             </label>
           
         
@@ -134,7 +134,7 @@
     
     
       <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -142,13 +142,13 @@
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
       
@@ -206,7 +206,7 @@
     <a href=".." title="XDHealthCheck" class="md-nav__button md-logo" aria-label="XDHealthCheck" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     XDHealthCheck
@@ -264,6 +264,21 @@
   
   
     <li class="md-nav__item">
+      <a href="../Get-CitrixFailures/" class="md-nav__link">
+        Get-CitrixFailures
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../Get-CitrixFarmDetail/" class="md-nav__link">
         Get-CitrixFarmDetail
       </a>
@@ -292,96 +307,6 @@
 
   
   
-  
-    <li class="md-nav__item">
-      <a href="../Get-CitrixObjects/" class="md-nav__link">
-        Get-CitrixObjects
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../Get-CitrixServerEventLog/" class="md-nav__link">
-        Get-CitrixServerEventLog
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../Get-CitrixServerPerformance/" class="md-nav__link">
-        Get-CitrixServerPerformance
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../Get-CitrixSingleServerPerformance/" class="md-nav__link">
-        Get-CitrixSingleServerPerformance
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../Get-CitrixWebsiteStatus/" class="md-nav__link">
-        Get-CitrixWebsiteStatus
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../Get-RDSLicenseInformation/" class="md-nav__link">
-        Get-RDSLicenseInformation
-      </a>
-    </li>
-  
-
-    
-      
-      
-      
-
-  
-  
     
   
   
@@ -394,12 +319,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Get-StoreFrontDetail
+          Get-CitrixMonitoringData
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Get-StoreFrontDetail
+        Get-CitrixMonitoringData
       </a>
       
         
@@ -467,22 +392,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#-storefrontserver" class="md-nav__link">
-    -StoreFrontServer
+  <a href="#-adminserver" class="md-nav__link">
+    -AdminServer
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#-remotecredentials" class="md-nav__link">
-    -RemoteCredentials
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-runaspsremote" class="md-nav__link">
-    -RunAsPSRemote
+  <a href="#-hours" class="md-nav__link">
+    -hours
   </a>
   
 </li>
@@ -510,6 +428,19 @@
   <a href="#outputs" class="md-nav__link">
     OUTPUTS
   </a>
+  
+    <nav class="md-nav" aria-label="OUTPUTS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemobject" class="md-nav__link">
+    System.Object[]
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -543,8 +474,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../Import-ParametersFile/" class="md-nav__link">
-        Import-ParametersFile
+      <a href="../Get-CitrixObjects/" class="md-nav__link">
+        Get-CitrixObjects
       </a>
     </li>
   
@@ -558,8 +489,83 @@
   
   
     <li class="md-nav__item">
-      <a href="../Install-CTXPSModule/" class="md-nav__link">
-        Install-CTXPSModule
+      <a href="../Get-CitrixServerEventLog/" class="md-nav__link">
+        Get-CitrixServerEventLog
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Get-CitrixServerPerformance/" class="md-nav__link">
+        Get-CitrixServerPerformance
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Get-CitrixSessionIcaRtt/" class="md-nav__link">
+        Get-CitrixSessionIcaRtt
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Get-CitrixWorkspaceAppVersions/" class="md-nav__link">
+        Get-CitrixWorkspaceAppVersions
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Get-RDSLicenseInformation/" class="md-nav__link">
+        Get-RDSLicenseInformation
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Import-ParametersFile/" class="md-nav__link">
+        Import-ParametersFile
       </a>
     </li>
   
@@ -701,22 +707,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#-storefrontserver" class="md-nav__link">
-    -StoreFrontServer
+  <a href="#-adminserver" class="md-nav__link">
+    -AdminServer
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#-remotecredentials" class="md-nav__link">
-    -RemoteCredentials
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#-runaspsremote" class="md-nav__link">
-    -RunAsPSRemote
+  <a href="#-hours" class="md-nav__link">
+    -hours
   </a>
   
 </li>
@@ -744,6 +743,19 @@
   <a href="#outputs" class="md-nav__link">
     OUTPUTS
   </a>
+  
+    <nav class="md-nav" aria-label="OUTPUTS">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#systemobject" class="md-nav__link">
+    System.Object[]
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -773,28 +785,27 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/smitpi/XDHealthCheck/edit/master/docs/Get-StoreFrontDetail.md" title="Edit this page" class="md-content__button md-icon">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
-</a>
+  <a href="https://github.com/smitpi/XDHealthCheck/edit/master/docs/Get-CitrixMonitoringData.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
 
 
 
-<h1 id="get-storefrontdetail">Get-StoreFrontDetail</h1>
+<h1 id="get-citrixmonitoringdata">Get-CitrixMonitoringData</h1>
 <h2 id="synopsis">SYNOPSIS</h2>
-<p>Report on Storefront status.</p>
+<p>Connects and collects data from the monitoring OData feed.</p>
 <h2 id="syntax">SYNTAX</h2>
-<div class="highlight"><pre><span></span><code>Get-StoreFrontDetail [-StoreFrontServer] &lt;String&gt; [-RemoteCredentials] &lt;PSCredential&gt; [-RunAsPSRemote]
- [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Get-CitrixMonitoringData [-AdminServer] &lt;String&gt; [-hours] &lt;Int32&gt; [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h2 id="description">DESCRIPTION</h2>
-<p>Report on Storefront status.</p>
+<p>Connects and collects data from the monitoring OData feed.</p>
 <h2 id="examples">EXAMPLES</h2>
 <h3 id="example-1">EXAMPLE 1</h3>
-<div class="highlight"><pre><span></span><code>Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote
+<div class="highlight"><pre><span></span><code>Get-CitrixMonitoringData
 </code></pre></div>
 <h2 id="parameters">PARAMETERS</h2>
-<h3 id="-storefrontserver">-StoreFrontServer</h3>
-<p>Name of a storefront server</p>
+<h3 id="-adminserver">-AdminServer</h3>
+<p>{{ Fill AdminServer Description }}</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">String</span><span class="w"></span>
 <span class="nt">Parameter Sets</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span><span class="w"></span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"></span>
@@ -802,30 +813,18 @@
 <span class="nt">Required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"></span>
 <span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
 <span class="nt">Default value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">None</span><span class="w"></span>
-<span class="nt">Accept pipeline input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True (ByValue)</span><span class="w"></span>
+<span class="nt">Accept pipeline input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
 <span class="nt">Accept wildcard characters</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
 </code></pre></div>
-<h3 id="-remotecredentials">-RemoteCredentials</h3>
-<p>Enable function to run remotely, if the CItrix cmdlets are not available</p>
-<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PSCredential</span><span class="w"></span>
+<h3 id="-hours">-hours</h3>
+<p>{{ Fill hours Description }}</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Int32</span><span class="w"></span>
 <span class="nt">Parameter Sets</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span><span class="w"></span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"></span>
 
 <span class="nt">Required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"></span>
 <span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
-<span class="nt">Default value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">None</span><span class="w"></span>
-<span class="nt">Accept pipeline input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
-<span class="nt">Accept wildcard characters</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
-</code></pre></div>
-<h3 id="-runaspsremote">-RunAsPSRemote</h3>
-<p>Credentials if running psremote</p>
-<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SwitchParameter</span><span class="w"></span>
-<span class="nt">Parameter Sets</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span><span class="w"></span>
-<span class="nt">Aliases</span><span class="p">:</span><span class="w"></span>
-
-<span class="nt">Required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
-<span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
-<span class="nt">Default value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
+<span class="nt">Default value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"></span>
 <span class="nt">Accept pipeline input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
 <span class="nt">Accept wildcard characters</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
 </code></pre></div>
@@ -833,6 +832,7 @@
 <p>This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see <a href="http://go.microsoft.com/fwlink/?LinkID=113216">about_CommonParameters</a>.</p>
 <h2 id="inputs">INPUTS</h2>
 <h2 id="outputs">OUTPUTS</h2>
+<h3 id="systemobject">System.Object[]</h3>
 <h2 id="notes">NOTES</h2>
 <h2 id="related-links">RELATED LINKS</h2>
 
@@ -848,33 +848,33 @@
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href="../Get-RDSLicenseInformation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Get-RDSLicenseInformation" rel="prev">
+        <a href="../Get-CitrixLicenseInformation/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Get-CitrixLicenseInformation" rel="prev">
           <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Previous
               </span>
-              Get-RDSLicenseInformation
+              Get-CitrixLicenseInformation
             </div>
           </div>
         </a>
       
       
         
-        <a href="../Import-ParametersFile/" class="md-footer__link md-footer__link--next" aria-label="Next: Import-ParametersFile" rel="next">
+        <a href="../Get-CitrixObjects/" class="md-footer__link md-footer__link--next" aria-label="Next: Get-CitrixObjects" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Import-ParametersFile
+              Get-CitrixObjects
             </div>
           </div>
           <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
           </div>
         </a>
       
@@ -917,10 +917,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant"], "search": "../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant"], "search": "../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.c44cc438.min.js"></script>
+      <script src="../assets/javascripts/bundle.ed9748b7.min.js"></script>
       
     
   </body>
