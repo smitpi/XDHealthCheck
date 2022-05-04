@@ -80,7 +80,7 @@ Function Get-CitrixLicenseInformation {
 	$ctxlic = Get-LicInventory -AdminAddress $AdminServer -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 }
 	[System.Collections.ArrayList]$LicDetails = @()
 	foreach ($lic in $ctxlic) {
-		[void]$LicDetails.Add([pscustomobject]@{
+		$LicDetails.Add([pscustomobject]@{
 				LicenseProductName = $lic.LocalizedLicenseProductName
 				LicenseModel       = $lic.LocalizedLicenseModel
 				LicensesInstalled  = $lic.LicensesAvailable

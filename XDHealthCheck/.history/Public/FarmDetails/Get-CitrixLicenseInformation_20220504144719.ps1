@@ -53,6 +53,27 @@ Function for Citrix XenDesktop HTML Health Check Report
 #>
 
 
+
+<#
+.SYNOPSIS
+Show Citrix License details
+
+.DESCRIPTION
+Show Citrix License details
+
+.PARAMETER AdminServer
+Name of a data collector
+
+.PARAMETER RunAsPSRemote
+Credentials if running psremote 
+
+.PARAMETER RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
+
+.EXAMPLE
+Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
+
+#>
 <#
 .SYNOPSIS
 Show Citrix License details
@@ -80,7 +101,7 @@ Function Get-CitrixLicenseInformation {
 	$ctxlic = Get-LicInventory -AdminAddress $AdminServer -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 }
 	[System.Collections.ArrayList]$LicDetails = @()
 	foreach ($lic in $ctxlic) {
-		[void]$LicDetails.Add([pscustomobject]@{
+		$LicDetails.Add([pscustomobject]@{
 				LicenseProductName = $lic.LocalizedLicenseProductName
 				LicenseModel       = $lic.LocalizedLicenseModel
 				LicensesInstalled  = $lic.LicensesAvailable

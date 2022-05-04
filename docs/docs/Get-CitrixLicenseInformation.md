@@ -23,18 +23,13 @@ Show Citrix License details
 
 ### EXAMPLE 1
 ```
-Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
-```
-
-### EXAMPLE 2
-```
 Get-CitrixLicenseInformation -AdminServer $CTXDDC
 ```
 
 ## PARAMETERS
 
 ### -AdminServer
-Name of a data collector
+FQDN of the Citrix Data Collector
 
 ```yaml
 Type: String

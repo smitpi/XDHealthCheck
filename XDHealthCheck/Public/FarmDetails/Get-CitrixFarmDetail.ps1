@@ -146,8 +146,24 @@ Function Get-CitrixFarmDetail {
 	#endregion
 
 	#region reboots
+	[System.Collections.ArrayList]$RebootSchedule = @()
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Reboot Schedule Details"
-	$RebootSchedule = Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer | Select-Object Day, DesktopGroupName, Enabled, Frequency, Name, RebootDuration, StartTime
+    Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer -Day $((get-date).DayOfWeek.ToString()) | ForEach-Object {
+        $sched = $_
+        Get-BrokerMachine -DesktopGroupName $sched.DesktopGroupName | ForEach-Object {
+                [void]$RebootSchedule.Add([pscustomobject]@{
+                        ComputerName       = $_.DNSName
+                        IP               = $_.IPAddress
+                        DelGroup         = $_.DesktopGroupName
+                        Day              = $sched.Day
+                        Frequency         = $sched.Frequency
+                        Name              = $sched.Name
+                        RebootDuration    = $sched.RebootDuration
+                        StartTime         = $sched.StartTime
+        })
+    }
+    }
+
 	#endregion
 		
 	#region uptime
@@ -156,12 +172,16 @@ Function Get-CitrixFarmDetail {
 	Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000000 | Where-Object {$_.DesktopGroupName -notlike $null } | ForEach-Object {
 		try {	
 			$OS = Get-CimInstance Win32_OperatingSystem -ComputerName $_.DNSName -ErrorAction Stop | Select-Object *
-			$Uptime = (Get-Date) - ($OS.LastBootUpTime)
+			$Uptime = New-TimeSpan -Start $OS.LastBootUpTime -End (Get-Date)
 			$updays = [math]::Round($uptime.Days, 0)
 		} catch {
+            try {
 			Write-Warning "Unable to remote to $($_.DNSName), defaulting uptime to unknown"
-			$updays = 'Unknown'
-		}
+			$Uptime = New-TimeSpan -Start $_.LastRegistrationTime -End (Get-Date)
+			$updays = [math]::Round($uptime.Days, 0)
+		} catch {$updays = "Unkmown"}}
+
+
 		[void]$VDAUptime.Add([pscustomobject]@{
 				ComputerName         = $_.dnsname
 				DesktopGroupName     = $_.DesktopGroupName
@@ -183,8 +203,8 @@ Function Get-CitrixFarmDetail {
 	#endregion
 
 	#region icartt
- $CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
- #endregion
+     $CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
+     #endregion
 
 	#region counts
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"

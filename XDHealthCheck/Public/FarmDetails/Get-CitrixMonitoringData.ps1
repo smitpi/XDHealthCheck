@@ -80,22 +80,22 @@ Function Get-CitrixMonitoringData {
         #AllowUnencryptedAuthentication = $true
         UseDefaultCredentials = $true
     }
-    $ChechOdataVer = (Invoke-WebRequest -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data" -UseDefaultCredentials).headers['OData-Version']
+    $ChechOdataVer = (Invoke-WebRequest -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data" -UseDefaultCredentials).headers['OData-Version']
 
     if ($ChechOdataVer -like '4*') {
         [pscustomobject]@{
-            Sessions                   = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Sessions?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'" @urisettings ).value
-            Connections                = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Connections?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'" @urisettings ).value
-            ConnectionFailureLogs      = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/ConnectionFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
-            MachineFailureLogs         = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/MachineFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
-            Users                      = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Users" @urisettings ).value
-            Machines                   = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Machines" @urisettings ).value
-            Catalogs                   = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Catalogs" @urisettings ).value
-            Applications               = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Applications" @urisettings ).value
-            DesktopGroups              = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/DesktopGroups" @urisettings ).value
-            ResourceUtilization        = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/ResourceUtilization?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
-            ResourceUtilizationSummary = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/ResourceUtilizationSummary?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
-            SessionMetrics             = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/SessionMetrics?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
+            Sessions                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Sessions?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'" @urisettings ).value
+            Connections                = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Connections?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'" @urisettings ).value
+            ConnectionFailureLogs      = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/ConnectionFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
+            MachineFailureLogs         = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/MachineFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
+            Users                      = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Users" @urisettings ).value
+            Machines                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Machines" @urisettings ).value
+            Catalogs                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Catalogs" @urisettings ).value
+            Applications               = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Applications" @urisettings ).value
+            DesktopGroups              = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/DesktopGroups" @urisettings ).value
+            ResourceUtilization        = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/ResourceUtilization?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
+            ResourceUtilizationSummary = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/ResourceUtilizationSummary?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
+            SessionMetrics             = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/SessionMetrics?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
         }
     } else { Write-Error 'OData version to old, update the farm to a newer version.'}
 

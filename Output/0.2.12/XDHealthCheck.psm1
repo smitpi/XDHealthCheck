@@ -171,7 +171,7 @@ $global:TableSectionSettings = @{
 ############################################
 # source: Get-CitrixConfigurationChange.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -207,30 +207,33 @@ Function Get-CitrixConfigurationChange {
 		[int32]$Indays
 	)
 
-	if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
+		if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like "Citrix*"})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
 
-	if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
+		$startdate = (Get-Date).AddDays(-$Indays)
+		$exportpath = (Get-Item (Get-Item Env:\TEMP).value).FullName + '\ctxreportlog.csv'
 
-	Export-LogReportCsv -AdminAddress $AdminServer -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
+		if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
 
-	$LogExportAll = Import-Csv -Path $exportpath -Delimiter ','
-	$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike '' } | Select-Object -Property High*
-	$LogSum = $LogExportAll | Group-Object -Property 'High Level Operation Text' -NoElement
+		Export-LogReportCsv -AdminAddress $AdminServer -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
 
-	Remove-Item $exportpath -Force -ErrorAction SilentlyContinue
-	$CTXObject = New-Object PSObject -Property @{
-		DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-		AllDetails    = $LogExportAll
-		Filtered      = $LogExport
-		Summary       = $LogSum
-	}
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
+		$LogExportAll = Import-Csv -Path $exportpath -Delimiter ','
+		$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike '' } | Select-Object -Property High*
+		$LogSum = $LogExportAll | Group-Object -Property 'High Level Operation Text' -NoElement
 
-	$CTXObject
+		Remove-Item $exportpath -Force -ErrorAction SilentlyContinue
+		$CTXObject = New-Object PSObject -Property @{
+			DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+			AllDetails    = $LogExportAll
+			Filtered      = $LogExport
+			Summary       = $LogSum
+		}
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
 
-} #end Function
+		$CTXObject
+}
  
 Export-ModuleMember -Function Get-CitrixConfigurationChange
 #endregion
@@ -239,7 +242,7 @@ Export-ModuleMember -Function Get-CitrixConfigurationChange
 ############################################
 # source: Get-CitrixFarmDetail.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -338,8 +341,24 @@ Function Get-CitrixFarmDetail {
 	#endregion
 
 	#region reboots
+	[System.Collections.ArrayList]$RebootSchedule = @()
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Reboot Schedule Details"
-	$RebootSchedule = Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer | Select-Object Day, DesktopGroupName, Enabled, Frequency, Name, RebootDuration, StartTime
+    Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer -Day $((get-date).DayOfWeek.ToString()) | ForEach-Object {
+        $sched = $_
+        Get-BrokerMachine -DesktopGroupName $sched.DesktopGroupName | ForEach-Object {
+                [void]$RebootSchedule.Add([pscustomobject]@{
+                        ComputerName       = $_.DNSName
+                        IP               = $_.IPAddress
+                        DelGroup         = $_.DesktopGroupName
+                        Day              = $sched.Day
+                        Frequency         = $sched.Frequency
+                        Name              = $sched.Name
+                        RebootDuration    = $sched.RebootDuration
+                        StartTime         = $sched.StartTime
+        })
+    }
+    }
+
 	#endregion
 		
 	#region uptime
@@ -348,12 +367,16 @@ Function Get-CitrixFarmDetail {
 	Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000000 | Where-Object {$_.DesktopGroupName -notlike $null } | ForEach-Object {
 		try {	
 			$OS = Get-CimInstance Win32_OperatingSystem -ComputerName $_.DNSName -ErrorAction Stop | Select-Object *
-			$Uptime = (Get-Date) - ($OS.LastBootUpTime)
+			$Uptime = New-TimeSpan -Start $OS.LastBootUpTime -End (Get-Date)
 			$updays = [math]::Round($uptime.Days, 0)
 		} catch {
+            try {
 			Write-Warning "Unable to remote to $($_.DNSName), defaulting uptime to unknown"
-			$updays = 'Unknown'
-		}
+			$Uptime = New-TimeSpan -Start $_.LastRegistrationTime -End (Get-Date)
+			$updays = [math]::Round($uptime.Days, 0)
+		} catch {$updays = "Unkmown"}}
+
+
 		[void]$VDAUptime.Add([pscustomobject]@{
 				ComputerName         = $_.dnsname
 				DesktopGroupName     = $_.DesktopGroupName
@@ -375,8 +398,8 @@ Function Get-CitrixFarmDetail {
 	#endregion
 
 	#region icartt
- $CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
- #endregion
+     $CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
+     #endregion
 
 	#region counts
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"
@@ -417,31 +440,11 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 ############################################
 # source: Get-CitrixLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
  
-<#
-.SYNOPSIS
-Show Citrix License details
-
-.DESCRIPTION
-Show Citrix License details
-
-.PARAMETER AdminServer
-Name of a data collector
-
-.PARAMETER RunAsPSRemote
-Credentials if running psremote 
-
-.PARAMETER RemoteCredentials
-Enable function to run remotely, if the CItrix cmdlets are not available
-
-.EXAMPLE
-Get-CitrixLicenseInformation -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
-
-#>
 <#
 .SYNOPSIS
 Show Citrix License details
@@ -465,11 +468,11 @@ Function Get-CitrixLicenseInformation {
 		[string]$AdminServer)
 
 	if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
-	$cert = Get-LicCertificate -AdminAddress $licurl
-	$ctxlic = Get-LicInventory -AdminAddress $licurl -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 }
+	$cert = Get-LicCertificate -AdminAddress $AdminServer
+	$ctxlic = Get-LicInventory -AdminAddress $AdminServer -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 }
 	[System.Collections.ArrayList]$LicDetails = @()
 	foreach ($lic in $ctxlic) {
-		$LicDetails.Add([pscustomobject]@{
+		[void]$LicDetails.Add([pscustomobject]@{
 				LicenseProductName = $lic.LocalizedLicenseProductName
 				LicenseModel       = $lic.LocalizedLicenseModel
 				LicensesInstalled  = $lic.LicensesAvailable
@@ -487,7 +490,7 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 ############################################
 # source: Get-CitrixMonitoringData.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -533,22 +536,22 @@ Function Get-CitrixMonitoringData {
         #AllowUnencryptedAuthentication = $true
         UseDefaultCredentials = $true
     }
-    $ChechOdataVer = (Invoke-WebRequest -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data" -UseDefaultCredentials).headers['OData-Version']
+    $ChechOdataVer = (Invoke-WebRequest -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data" -UseDefaultCredentials).headers['OData-Version']
 
     if ($ChechOdataVer -like '4*') {
         [pscustomobject]@{
-            Sessions                   = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Sessions?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'" @urisettings ).value
-            Connections                = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Connections?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'" @urisettings ).value
-            ConnectionFailureLogs      = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/ConnectionFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
-            MachineFailureLogs         = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/MachineFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
-            Users                      = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Users" @urisettings ).value
-            Machines                   = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Machines" @urisettings ).value
-            Catalogs                   = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Catalogs" @urisettings ).value
-            Applications               = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/Applications" @urisettings ).value
-            DesktopGroups              = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/DesktopGroups" @urisettings ).value
-            ResourceUtilization        = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/ResourceUtilization?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
-            ResourceUtilizationSummary = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/ResourceUtilizationSummary?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
-            SessionMetrics             = (Invoke-RestMethod -Uri "http://$($AdminAdddessssss)/Citrix/Monitor/OData/v4/Data/SessionMetrics?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
+            Sessions                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Sessions?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'" @urisettings ).value
+            Connections                = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Connections?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'" @urisettings ).value
+            ConnectionFailureLogs      = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/ConnectionFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
+            MachineFailureLogs         = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/MachineFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
+            Users                      = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Users" @urisettings ).value
+            Machines                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Machines" @urisettings ).value
+            Catalogs                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Catalogs" @urisettings ).value
+            Applications               = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Applications" @urisettings ).value
+            DesktopGroups              = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/DesktopGroups" @urisettings ).value
+            ResourceUtilization        = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/ResourceUtilization?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
+            ResourceUtilizationSummary = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/ResourceUtilizationSummary?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
+            SessionMetrics             = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/SessionMetrics?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
         }
     } else { Write-Error 'OData version to old, update the farm to a newer version.'}
 
@@ -561,7 +564,7 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 ############################################
 # source: Get-CitrixServerEventLog.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -628,7 +631,7 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 ############################################
 # source: Get-CitrixServerPerformance.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -695,7 +698,7 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 ############################################
 # source: Get-RDSLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -745,7 +748,7 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 ############################################
 # source: Get-CitrixObjects.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -946,7 +949,7 @@ Export-ModuleMember -Function Get-CitrixObjects
 ############################################
 # source: Get-CitrixFailures.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1052,7 +1055,7 @@ Export-ModuleMember -Function Get-CitrixFailures
 ############################################
 # source: Get-CitrixSessionIcaRtt.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1131,7 +1134,7 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 ############################################
 # source: Get-CitrixWorkspaceAppVersions.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1228,7 +1231,7 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 ############################################
 # source: Start-CitrixAudit.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1408,7 +1411,7 @@ Export-ModuleMember -Function Start-CitrixAudit
 ############################################
 # source: Start-CitrixHealthCheck.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1642,7 +1645,7 @@ Export-ModuleMember -Function Start-CitrixHealthCheck
 ############################################
 # source: Import-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1715,7 +1718,7 @@ Export-ModuleMember -Function Import-ParametersFile
 ############################################
 # source: Install-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1857,7 +1860,7 @@ Export-ModuleMember -Function Install-ParametersFile
 ############################################
 # source: Set-XDHealthReportColors.ps1
 # Module: XDHealthCheck
-# version: 0.2.11
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
