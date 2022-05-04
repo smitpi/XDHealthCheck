@@ -13,7 +13,7 @@ Report on RDS License Useage
 ## SYNTAX
 
 ```
-Get-RDSLicenseInformation [-LicenseServer] <String> [-RemoteCredentials] <PSCredential> [<CommonParameters>]
+Get-RDSLicenseInformation [-LicenseServer] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,21 +40,6 @@ Required: True
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -RemoteCredentials
-Enable function to run remotely, if the CItrix cmdlets are not available
-
-```yaml
-Type: PSCredential
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 2
-Default value: None
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

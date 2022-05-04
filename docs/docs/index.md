@@ -26,17 +26,19 @@ Documentation can be found at: [Github_Pages](https://smitpi.github.io/XDHealthC
  
 ## Functions
 - [Get-CitrixConfigurationChange](https://smitpi.github.io/XDHealthCheck/#Get-CitrixConfigurationChange) -- Show the changes that was made to the farm
+- [Get-CitrixFailures](https://smitpi.github.io/XDHealthCheck/#Get-CitrixFailures) -- Creates a report from monitoring data about machine and connection failures
 - [Get-CitrixFarmDetail](https://smitpi.github.io/XDHealthCheck/#Get-CitrixFarmDetail) -- Get needed Farm details.
 - [Get-CitrixLicenseInformation](https://smitpi.github.io/XDHealthCheck/#Get-CitrixLicenseInformation) -- Show Citrix License details
+- [Get-CitrixMonitoringData](https://smitpi.github.io/XDHealthCheck/#Get-CitrixMonitoringData) -- Connects and collects data from the monitoring OData feed.
 - [Get-CitrixObjects](https://smitpi.github.io/XDHealthCheck/#Get-CitrixObjects) -- Get details of citrix objects
 - [Get-CitrixServerEventLog](https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerEventLog) -- Get windows event log details
-- [Get-CitrixServerPerformance](https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerPerformance) -- Combine perfmon of multiple servers for reporting.
-- [Get-CitrixSingleServerPerformance](https://smitpi.github.io/XDHealthCheck/#Get-CitrixSingleServerPerformance) -- Get perfmon statistics
-- [Get-CitrixWebsiteStatus](https://smitpi.github.io/XDHealthCheck/#Get-CitrixWebsiteStatus) -- Get the status of a website
+- [Get-CitrixServerPerformance](https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerPerformance) -- 
+Get-CitrixServerPerformance [-ComputerName] <string[]> [<CommonParameters>]
+
+- [Get-CitrixSessionIcaRtt](https://smitpi.github.io/XDHealthCheck/#Get-CitrixSessionIcaRtt) -- Creates a report of users sessions with a AVG IcaRttMS
+- [Get-CitrixWorkspaceAppVersions](https://smitpi.github.io/XDHealthCheck/#Get-CitrixWorkspaceAppVersions) -- Reports on the versions of workspace app your users are using to connect
 - [Get-RDSLicenseInformation](https://smitpi.github.io/XDHealthCheck/#Get-RDSLicenseInformation) -- Report on RDS License Useage
-- [Get-StoreFrontDetail](https://smitpi.github.io/XDHealthCheck/#Get-StoreFrontDetail) -- Report on Storefront status.
 - [Import-ParametersFile](https://smitpi.github.io/XDHealthCheck/#Import-ParametersFile) -- Import the config file and creates the needed variables
-- [Install-CTXPSModule](https://smitpi.github.io/XDHealthCheck/#Install-CTXPSModule) -- Checks and installs needed modules
 - [Install-ParametersFile](https://smitpi.github.io/XDHealthCheck/#Install-ParametersFile) -- Create a json config file with all needed farm details.
 - [Set-XDHealthReportColors](https://smitpi.github.io/XDHealthCheck/#Set-XDHealthReportColors) -- Set the color and logo for HTML Reports
 - [Start-CitrixAudit](https://smitpi.github.io/XDHealthCheck/#Start-CitrixAudit) -- Creates and distributes  a report on catalog, groups and published app config.

@@ -13,8 +13,7 @@ Show Citrix License details
 ## SYNTAX
 
 ```
-Get-CitrixLicenseInformation [-AdminServer] <String> [-RemoteCredentials] <PSCredential> [-RunAsPSRemote]
- [<CommonParameters>]
+Get-CitrixLicenseInformation [-AdminServer] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -41,36 +40,6 @@ Required: True
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
-Accept wildcard characters: False
-```
-
-### -RemoteCredentials
-Enable function to run remotely, if the CItrix cmdlets are not available
-
-```yaml
-Type: PSCredential
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -RunAsPSRemote
-Credentials if running psremote
-
-```yaml
-Type: SwitchParameter
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 3
-Default value: False
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

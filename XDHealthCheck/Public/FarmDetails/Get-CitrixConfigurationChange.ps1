@@ -79,32 +79,32 @@ Function Get-CitrixConfigurationChange {
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
 		[int32]$Indays
-	)
+        )
 
-	if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
+		if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like "Citrix*"})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
 
-	if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
+		$startdate = (Get-Date).AddDays(-$Indays)
+		$exportpath = (Get-Item (Get-Item Env:\TEMP).value).FullName + '\ctxreportlog.csv'
 
-	Export-LogReportCsv -AdminAddress $AdminServer -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
+		if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
 
-	$LogExportAll = Import-Csv -Path $exportpath -Delimiter ','
-	$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike '' } | Select-Object -Property High*
-	$LogSum = $LogExportAll | Group-Object -Property 'High Level Operation Text' -NoElement
+		Export-LogReportCsv -AdminAddress $AdminServer -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
 
-	Remove-Item $exportpath -Force -ErrorAction SilentlyContinue
-	$CTXObject = New-Object PSObject -Property @{
-		DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-		AllDetails    = $LogExportAll
-		Filtered      = $LogExport
-		Summary       = $LogSum
-	}
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
+		$LogExportAll = Import-Csv -Path $exportpath -Delimiter ','
+		$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike '' } | Select-Object -Property High*
+		$LogSum = $LogExportAll | Group-Object -Property 'High Level Operation Text' -NoElement
 
-	$CTXObject
-
-} #end Function
+		Remove-Item $exportpath -Force -ErrorAction SilentlyContinue
+		$CTXObject = New-Object PSObject -Property @{
+			DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+			AllDetails    = $LogExportAll
+			Filtered      = $LogExport
+			Summary       = $LogSum
+		}
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
 
 		$CTXObject
 

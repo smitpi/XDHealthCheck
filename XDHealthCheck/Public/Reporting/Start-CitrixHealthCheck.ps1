@@ -123,9 +123,8 @@ function Start-CitrixHealthCheck {
 
 	[array]$CTXControllers = (Get-BrokerController -AdminAddress $CTXDDC).dnsname
 	[array]$CTXLicenseServer = (Get-BrokerSite -AdminAddress $AdminServer).LicenseServerName
-	[array]$CTXStoreFrontFarm = Invoke-Command -ComputerName $CTXStoreFront -Credential $CTXAdmin -ScriptBlock { if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue} ; Get-STFServerGroup | Select-Object -ExpandProperty ClusterMembers | Select-Object hostname | ForEach-Object { ([System.Net.Dns]::GetHostByName(($_.hostname))).Hostname } }
 	$CTXCore = @()
-	$CTXCore = $CTXControllers + $CTXStoreFrontFarm + $CTXLicenseServer | Sort-Object -Unique
+	$CTXCore = $CTXControllers + $CTXStoreFront + $CTXLicenseServer | Sort-Object -Unique
 	#endregion
 
 	########################################
@@ -141,8 +140,6 @@ function Start-CitrixHealthCheck {
 	$RDSLicenseInformation = Get-RDSLicenseInformation -LicenseServer $RDSLicenseServer | ForEach-Object { $_.$RDSLicenseType } | Where-Object { $_.TotalLicenses -ne 4294967295 } | Select-Object TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Config changes Details"
 	$CitrixConfigurationChanges = Get-CitrixConfigurationChange -AdminServer $CTXDDC -Indays 7
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Storefront Details"
-	$StoreFrontDetails = Get-StoreFrontDetail -StoreFrontServer $CTXStoreFront -RemoteCredentials $CTXAdmin -RunAsPSRemote
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Server Performance Details"
 	$ServerPerformance = Get-CitrixServerPerformance -ComputerName $CTXCore
 	#endregion
@@ -165,7 +162,6 @@ function Start-CitrixHealthCheck {
 			$CitrixRemoteFarmDetails.Controllers.Summary | Where-Object State -notLike 'Active' | ForEach-Object { $RedFlags += $_.name + " is not active" }
 			if ($CitrixRemoteFarmDetails.SessionCounts.'Unregistered Servers' -gt 0) { $RedFlags += "There are " + $CitrixRemoteFarmDetails.SessionCounts.'Unregistered Servers' + " Hosted Shared Server(s) Unregistered" }
 			if ($CitrixRemoteFarmDetails.SessionCounts.'Unregistered Desktops' -gt 0) { $RedFlags += "There are " + $CitrixRemoteFarmDetails.SessionCounts.'Unregistered Desktops' + " VDI Desktop(s) Unregistered" }
-			if ($CitrixRemoteFarmDetails.SessionCounts.'Tainted Objects' -gt 0) { $RedFlags += "There are " + $CitrixRemoteFarmDetails.SessionCounts.'Tainted Objects' + " Tainted Objects in the Database" }
 			if (($CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }).count -gt 0) { $RedFlags += "There are " + (($CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }).count) + " VDA servers needed a reboot" }
 		}
 
@@ -190,49 +186,6 @@ function Start-CitrixHealthCheck {
 	$flags = Redflags
 	#endregion
 
-	########################################
-	#region saving data to xml
-	########################################
-	$AllXDData = New-Object PSObject -Property @{
-		DateCollected              = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-		Redflags                   = $flags
-		CitrixLicenseInformation   = $CitrixLicenseInformation
-		CitrixRemoteFarmDetails    = $CitrixRemoteFarmDetails
-		CitrixServerEventLogs      = $CitrixServerEventLogs
-		RDSLicenseInformation      = $RDSLicenseInformation | Select-Object TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
-		CitrixConfigurationChanges = $CitrixConfigurationChanges
-		StoreFrontDetails          = $StoreFrontDetails
-		ServerPerformance          = $ServerPerformance
-	}
-	if (Test-Path -Path $AllXMLExport) { Remove-Item $AllXMLExport -Force -Verbose }
-	$AllXDData | Export-Clixml -Path $AllXMLExport -Depth 25 -NoClobber -Force
-
-	$ReportXDData = New-Object PSObject -Property @{
-		DateCollected                  = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-		Redflags                       = $flags
-		SiteDetails                    = $CitrixRemoteFarmDetails.SiteDetails.Summary
-		SessionCounts                  = $CitrixRemoteFarmDetails.SessionCounts
-		RebootSchedule                 = $CitrixRemoteFarmDetails.RebootSchedule
-		Controllers                    = $CitrixRemoteFarmDetails.Controllers.Summary
-		DBConnection                   = $CitrixRemoteFarmDetails.DBConnection
-		CitrixLicenseInformation       = $CitrixLicenseInformation
-		RDSLicenseInformation          = $RDSLicenseInformation
-		CitrixServerEventLogs          = ($CitrixServerEventLogs.SingleServer | Select-Object ServerName, Errors, Warning)
-		TotalProvider                  = ($CitrixServerEventLogs.TotalProvider | Select-Object -First $CTXCore.count)
-		StoreFrontDetailsSiteDetails   = $StoreFrontDetails.SiteDetails
-		StoreFrontDetailsServerDetails = $StoreFrontDetails.ServerDetails
-		CitrixConfigurationChanges     = ($CitrixConfigurationChanges.Summary | Where-Object { $_.name -ne "" } | Sort-Object count -Descending | Select-Object -First 5 -Property count, name)
-		ServerPerformance              = $ServerPerformance
-		DeliveryGroups                 = $CitrixRemoteFarmDetails.DeliveryGroups
-		UnRegisteredDesktops           = $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops
-		UnRegisteredServers            = $CitrixRemoteFarmDetails.Machines.UnRegisteredServers
-		TaintedObjects                 = $CitrixRemoteFarmDetails.ADObjects.TaintedObjects
-		VDAUptime                      = $CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }
-	} | Select-Object DateCollected, Redflags, SiteDetails, SessionCounts, RebootSchedule, Controllers, DBConnection, SharedServers, VirtualDesktop, CitrixLicenseInformation, RDSLicenseInformation, CitrixServerEventLogs, TotalProvider, StoreFrontDetailsSiteDetails, StoreFrontDetailsServerDetails, CitrixConfigurationChanges, ServerPerformance, DeliveryGroups, UnRegisteredDesktops, UnRegisteredServers, TaintedObjects, VDAUptime
-
-	$ReportXDData | Export-Clixml -Path $ReportsXMLExport -NoClobber -Force
-
-	#endregion
 
 	########################################
 	#region Setting some table color and settings
@@ -264,8 +217,12 @@ function Start-CitrixHealthCheck {
 			New-HTMLSection -HeaderText 'Citrix Events Top Events' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixServerEventLogs.TopProfider | Select-Object -First $CTXCore.count) }
 		}
 		New-HTMLSection  @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'StoreFront Site' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable  $StoreFrontDetails.SiteDetails }
-			New-HTMLSection -HeaderText 'StoreFront Server' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $StoreFrontDetails.ServerDetails }
+			New-HTMLSection -HeaderText 'Connection Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable  $CitrixRemoteFarmDetails.Failures.ConnectionFails }
+			New-HTMLSection -HeaderText 'Machine Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Failures.mashineFails }
+		}
+		New-HTMLSection  @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Client Versions' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable  $CitrixRemoteFarmDetails.AppVer }
+			New-HTMLSection -HeaderText 'ICA Rtt' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.IcaRtt }
 		}
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix Config Changes in the last 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixConfigurationChanges.Summary | Where-Object { $_.name -ne "" } | Sort-Object count -Descending | Select-Object -First 5 -Property count, name) } }
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix Server Performace' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($ServerPerformance) $Conditions_performance } }
@@ -273,6 +230,8 @@ function Start-CitrixHealthCheck {
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.DeliveryGroups $Conditions_deliverygroup } }
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix UnRegistered Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops } }
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix UnRegistered Servers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredServers } }
+		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  "Today`'s Reboot Schedule" @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.RebootSchedule } }
+
 	}
 	#endregion
 

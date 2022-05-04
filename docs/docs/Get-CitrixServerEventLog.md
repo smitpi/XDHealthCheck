@@ -13,8 +13,7 @@ Get windows event log details
 ## SYNTAX
 
 ```
-Get-CitrixServerEventLog [-Serverlist] <Array> [-Days] <Int32> [-RemoteCredentials] <PSCredential>
- [<CommonParameters>]
+Get-CitrixServerEventLog [-Serverlist] <String[]> [-Days] <Int32> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -33,7 +32,7 @@ Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdm
 List of server names.
 
 ```yaml
-Type: Array
+Type: String[]
 Parameter Sets: (All)
 Aliases:
 
@@ -55,21 +54,6 @@ Aliases:
 Required: True
 Position: 2
 Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -RemoteCredentials
-Credentials used to connect to server remotely.
-
-```yaml
-Type: PSCredential
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 3
-Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
