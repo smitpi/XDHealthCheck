@@ -60,11 +60,33 @@ Get needed Farm details.
 Get needed Farm details.
 
 .PARAMETER AdminServer
-FQDN of the Citrix Data Collector
+Name of a data collector
+
+.PARAMETER RunAsPSRemote
+Credentials if running psremote 
+
+.PARAMETER RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
 
 .EXAMPLE
-Get-CitrixFarmDetail -AdminServer $CTXDDC 
+Get-CitrixFarmDetail -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemote
 
+#>
+<#
+.SYNOPSIS
+Get needed Farm details.
+
+.DESCRIPTION
+Get needed Farm details.
+
+.PARAMETER AdminServer
+Parameter description
+
+.EXAMPLE
+An example
+
+.NOTES
+General notes
 #>
 Function Get-CitrixFarmDetail {
 	[CmdletBinding()]
@@ -183,36 +205,36 @@ $CustomCTXObject
 #endregion
 
 #region icartt
-$CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
-#endregion
+ $CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
+ #endregion
 
 #region counts
 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"
-$SessionCounts = New-Object PSObject -Property @{
-	'Active Sessions'        = ($Sessions | Where-Object -Property Sessionstate -EQ 'Active').count
-	'Disconnected Sessions'  = ($Sessions | Where-Object -Property Sessionstate -EQ 'Disconnected').count
-	'Connection Failures'    = $Failures.ConnectionFails.Count
-	'Unique Client Versions' = $appver.Count
-	'Unregistered Servers'   = ($Machines.UnRegisteredServers | Measure-Object).count
-	'Unregistered Desktops'  = ($Machines.UnRegisteredDesktops | Measure-Object).count
-	'Machine Failures'       = $Failures.mashineFails.Count
-} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Connection Failures', 'Unregistered Servers', 'Unregistered Desktops', 'Machine Failures' 
+    $SessionCounts = New-Object PSObject -Property @{
+	    'Active Sessions'       = ($Sessions | Where-Object -Property Sessionstate -EQ "Active").count
+	    'Disconnected Sessions' = ($Sessions | Where-Object -Property Sessionstate -EQ "Disconnected").count
+        'Connection Failures'   = $Failures.ConnectionFails.Count
+        'Unique Client Versions' = $appver.Count
+	    'Unregistered Servers'  = ($Machines.UnRegisteredServers | Measure-Object).count
+	    'Unregistered Desktops' = ($Machines.UnRegisteredDesktops | Measure-Object).count
+        'Machine Failures'      = $Failures.mashineFails.Count
+} | Select-Object 'Active Sessions', 'Disconnected Sessions','Connection Failures', 'Unregistered Servers', 'Unregistered Desktops','Machine Failures' 
 #endregion
 
 New-Object PSObject -Property @{
-	DateCollected  = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-	SiteDetails    = $SiteDetails
-	Controllers    = $Controllers
-	Machines       = $Machines
-	Sessions       = $Sessions
-	DeliveryGroups = $DeliveryGroups
-	DBConnection   = $DBConnection
-	SessionCounts  = $SessionCounts
-	RebootSchedule = $RebootSchedule
-	VDAUptime      = $VDAUptime
-	Failures       = $Failures
-	AppVer         = $appver
-	IcaRtt         = $CitrixSessionIcaRtt
+	DateCollected   = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+	SiteDetails     = $SiteDetails
+	Controllers     = $Controllers
+	Machines        = $Machines
+	Sessions        = $Sessions
+	DeliveryGroups  = $DeliveryGroups
+	DBConnection    = $DBConnection
+	SessionCounts   = $SessionCounts
+	RebootSchedule  = $RebootSchedule
+	VDAUptime 		= $VDAUptime
+    Failures        = $Failures
+    AppVer          = $appver
+    IcaRtt          = $CitrixSessionIcaRtt
 } | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule, VDAUptime, Failures, AppVer, IcaRtt
 
 } #end Function

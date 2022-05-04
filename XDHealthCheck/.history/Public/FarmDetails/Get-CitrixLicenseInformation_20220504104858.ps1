@@ -111,3 +111,8 @@ Function Get-CitrixLicenseInformation {
 	}
 	$LicDetails
 } #end Function
+
+        }
+        $LicDetails
+} #end Function
+

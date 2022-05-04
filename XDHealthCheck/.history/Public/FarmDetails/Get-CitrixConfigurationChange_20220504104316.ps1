@@ -44,6 +44,31 @@ Updated [15/03/2021_23:28] Script File Info was updated
 #> 
 
 <#
+
+.DESCRIPTION 
+Function for Citrix XenDesktop HTML Health Check Report
+
+<#
+.SYNOPSIS
+Show the changes that was made to the farm
+
+.DESCRIPTION
+Show the changes that was made to the farm
+
+.PARAMETER AdminServer
+Name of data collector
+
+.PARAMETER Indays
+Limit the search, to only show changes from the last couple of days
+
+.PARAMETER RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
+
+.EXAMPLE
+Get-CitrixConfigurationChange -DDC $CTXDDC -Indays 7 -RemoteCredentials $CTXAdmin
+
+#>
+<#
 .SYNOPSIS
 Show the changes that was made to the farm
 
@@ -58,8 +83,10 @@ FQDN of the Citrix Data Collector
 Use this time frame for the report.
 
 .EXAMPLE
-Get-CitrixConfigurationChange -AdminServer $CTXDDC -Indays 7
+An example
 
+.NOTES
+General notes
 #>
 Function Get-CitrixConfigurationChange {
 	[CmdletBinding()]

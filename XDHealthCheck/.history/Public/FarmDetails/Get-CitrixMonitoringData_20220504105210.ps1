@@ -30,6 +30,9 @@ Created [03/05/2022_18:50] Initial Script Creating
 
 #>
 
+#Requires -Module ImportExcel
+#Requires -Module PSWriteHTML
+#Requires -Module PSWriteColor
 
 <# 
 
@@ -39,6 +42,17 @@ Created [03/05/2022_18:50] Initial Script Creating
 #> 
 
 
+<#
+.SYNOPSIS
+Connects and collects data from the monitoring OData feed.
+
+.DESCRIPTION
+Connects and collects data from the monitoring OData feed.
+
+.EXAMPLE
+Get-CitrixMonitoringData
+
+#>
 <#
 .SYNOPSIS
 Connects and collects data from the monitoring OData feed.

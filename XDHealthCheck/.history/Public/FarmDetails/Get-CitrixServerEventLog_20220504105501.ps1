@@ -47,6 +47,31 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 
 
 <#
+
+.DESCRIPTION 
+Function for Citrix XenDesktop HTML Health Check Report
+
+<#
+.SYNOPSIS
+Get windows event log details
+
+.DESCRIPTION
+Get windows event log details
+
+.PARAMETER Serverlist
+List of server names.
+
+.PARAMETER Days
+Limit the search for only do many days.
+
+.PARAMETER RemoteCredentials
+Credentials used to connect to server remotely.
+
+.EXAMPLE
+Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin
+
+#>
+<#
 .SYNOPSIS
 Get windows event log details
 

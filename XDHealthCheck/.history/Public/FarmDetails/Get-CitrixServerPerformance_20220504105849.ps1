@@ -43,19 +43,19 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 
 #> 
 
+
 <#
 .SYNOPSIS
-Collects perfom data for the core servers.
+Collects perfmon data for the core servers.
 
 .DESCRIPTION
-Collects perfom data for the core servers.
-
-.PARAMETER ComputerName
-List of Computers to query.
+Collects perfmon data for the core servers.
 
 .EXAMPLE
-Get-CitrixServerPerformance -ComputerName $CTXCore
+An example
 
+.NOTES
+General notes
 #>
 Function Get-CitrixServerPerformance {
 	[CmdletBinding()]

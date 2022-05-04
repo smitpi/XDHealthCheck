@@ -60,21 +60,24 @@ Reports on the versions of workspace app your users are using to connect
 .DESCRIPTION
 Reports on the versions of workspace app your users are using to connect
 
+
 .PARAMETER AdminServer
-FQDN of the Citrix Data Collector
+Parameter description
 
 .PARAMETER hours
-Limit the report to this time fame
+Parameter description
 
 .PARAMETER Export
-Export the result to a report file. (Excel or html)
+Parameter description
 
 .PARAMETER ReportPath
-Where to save the report.
+Parameter description
 
 .EXAMPLE
-Get-CitrixWorkspaceAppVersions -AdminServer $CTXDDC
+An example
 
+.NOTES
+General notes
 #>
 Function Get-CitrixWorkspaceAppVersions {
 		[Cmdletbinding(DefaultParameterSetName='Set1', HelpURI = "https://smitpi.github.io/XDHealthCheck/Get-CitrixWorkspaceAppVersions")]

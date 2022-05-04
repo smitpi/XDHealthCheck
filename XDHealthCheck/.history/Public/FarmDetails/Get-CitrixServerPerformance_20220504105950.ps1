@@ -54,8 +54,10 @@ Collects perfom data for the core servers.
 List of Computers to query.
 
 .EXAMPLE
-Get-CitrixServerPerformance -ComputerName $CTXCore
+An example
 
+.NOTES
+General notes
 #>
 Function Get-CitrixServerPerformance {
 	[CmdletBinding()]

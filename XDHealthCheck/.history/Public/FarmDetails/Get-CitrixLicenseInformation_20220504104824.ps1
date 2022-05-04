@@ -85,8 +85,10 @@ Show Citrix License details
 FQDN of the Citrix Data Collector
 
 .EXAMPLE
-Get-CitrixLicenseInformation -AdminServer $CTXDDC 
+An example
 
+.NOTES
+General notes
 #>
 Function Get-CitrixLicenseInformation {
 	[CmdletBinding()]
@@ -111,3 +113,8 @@ Function Get-CitrixLicenseInformation {
 	}
 	$LicDetails
 } #end Function
+
+        }
+        $LicDetails
+} #end Function
+

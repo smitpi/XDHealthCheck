@@ -47,6 +47,31 @@ Updated [15/03/2021_23:28] Script Fle Info was updated
 
 
 <#
+
+.DESCRIPTION 
+Function for Citrix XenDesktop HTML Health Check Report
+
+<#
+.SYNOPSIS
+Get windows event log details
+
+.DESCRIPTION
+Get windows event log details
+
+.PARAMETER Serverlist
+List of server names.
+
+.PARAMETER Days
+Limit the search for only do many days.
+
+.PARAMETER RemoteCredentials
+Credentials used to connect to server remotely.
+
+.EXAMPLE
+Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 -RemoteCredentials $CTXAdmin
+
+#>
+<#
 .SYNOPSIS
 Get windows event log details
 
@@ -75,28 +100,28 @@ Function Get-CitrixServerEventLog {
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
 		[int32]$Days
-	)
-	[System.Collections.ArrayList]$ServerEvents = @()
+)
+    [System.Collections.ArrayList]$ServerEvents = @()
 	foreach ($server in $Serverlist) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Eventlog Details"
 
 		$eventtime = (Get-Date).AddDays(-$days)
-		$ctxevent = Get-WinEvent -ComputerName $server -FilterHashtable @{LogName = 'Application', 'System'; Level = 2, 3; StartTime = $eventtime } -ErrorAction SilentlyContinue | Select-Object MachineName, TimeCreated, LogName, ProviderName, Id, LevelDisplayName, Message
-		$servererrors = $ctxevent | Where-Object -Property LevelDisplayName -EQ 'Error'
-		$serverWarning = $ctxevent | Where-Object -Property LevelDisplayName -EQ 'Warning'
-		$TopProfider = $ctxevent | Where-Object { $_.LevelDisplayName -EQ 'Warning' -or $_.LevelDisplayName -eq 'Error' } | Group-Object -Property ProviderName | Sort-Object -Property count -Descending | Select-Object Name, Count
+		$ctxevent = Get-WinEvent -ComputerName $server -FilterHashTable @{LogName = 'Application', 'System'; Level = 2, 3; StartTime = $eventtime } -ErrorAction SilentlyContinue | Select-Object MachineName, TimeCreated, LogName, ProviderName, Id, LevelDisplayName, Message
+		$servererrors = $ctxevent | Where-Object -Property LevelDisplayName -EQ "Error"
+		$serverWarning = $ctxevent | Where-Object -Property LevelDisplayName -EQ "Warning"
+		$TopProfider = $ctxevent | Where-Object { $_.LevelDisplayName -EQ "Warning" -or $_.LevelDisplayName -eq "Error" } | Group-Object -Property ProviderName | Sort-Object -Property count -Descending | Select-Object Name, Count
 
 		[void]$ServerEvents.Add([pscustomobject]@{
-				ServerName  = ([System.Net.Dns]::GetHostByName(($server))).hostname
-				Errors      = $servererrors.Count
-				Warning     = $serverWarning.Count
-				TopProfider = $TopProfider
-				All         = $ctxevent
-			})
+			ServerName  = ([System.Net.Dns]::GetHostByName(($server))).hostname
+			Errors      = $servererrors.Count
+			Warning     = $serverWarning.Count
+			TopProfider = $TopProfider
+			All         = $ctxevent
+		})
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Eventlog Details"
 	}
 
 
-	$ServerEvents
+$ServerEvents
 } #end Function
 

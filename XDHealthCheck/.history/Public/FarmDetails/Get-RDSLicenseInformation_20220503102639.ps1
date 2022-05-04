@@ -62,10 +62,13 @@ Report on RDS License Useage
 Report on RDS License Useage
 
 .PARAMETER LicenseServer
-RDS License server name.
+Name of a RDS License Server
+
+.PARAMETER RemoteCredentials
+Enable function to run remotely, if the CItrix cmdlets are not available
 
 .EXAMPLE
-Get-RDSLicenseInformation -LicenseServer $RDSLicenseServer
+Get-RDSLicenseInformation -LicenseServer $RDSLicenseServer  -RemoteCredentials $CTXAdmin
 
 #>
 Function Get-RDSLicenseInformation {
