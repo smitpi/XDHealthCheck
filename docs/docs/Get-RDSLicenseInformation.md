@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-RDSLicenseInformation
 
 ## SYNOPSIS
-Report on RDS License Useage
+Report on RDS License Usage
 
 ## SYNTAX
 
@@ -17,7 +17,7 @@ Get-RDSLicenseInformation [-LicenseServer] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Report on RDS License Useage
+Report on RDS License Usage
 
 ## EXAMPLES
 

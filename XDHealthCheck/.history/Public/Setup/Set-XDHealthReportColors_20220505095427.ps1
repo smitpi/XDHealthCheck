@@ -65,7 +65,8 @@ Set-XDHealthReportColors -Color1 '#d22c26' -Color2 '#2bb74e' -LogoURL 'https://g
 
 #>
 Function Set-XDHealthReportColors {
-	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Set-XDHealthReportColors')]
+	[Cmdletbinding(DefaultParameterSetName = 'Set1', HelpURI = 'https://smitpi.github.io/XDHealthCheck/Start-CitrixHealthCheck')]
+
 	[Cmdletbinding()]
 	PARAM(
 		[string]$Color1 = '#061820',

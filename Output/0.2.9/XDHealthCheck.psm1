@@ -174,7 +174,7 @@ $global:TableSectionSettings = @{
 ############################################
 # source: Get-CitrixConfigurationChange.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -198,7 +198,7 @@ Get-CitrixConfigurationChange -AdminServer $CTXDDC -Indays 7
 
 #>
 Function Get-CitrixConfigurationChange {
-	[CmdletBinding()]
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixConfigurationChange')]
 	PARAM(
 		[Parameter(Mandatory = $true)]
 		[ValidateNotNull()]
@@ -210,32 +210,32 @@ Function Get-CitrixConfigurationChange {
 		[int32]$Indays
 	)
 
-		if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like "Citrix*"})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
+	if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Config Changes Details"
 
-		$startdate = (Get-Date).AddDays(-$Indays)
-		$exportpath = (Get-Item (Get-Item Env:\TEMP).value).FullName + '\ctxreportlog.csv'
+	$startdate = (Get-Date).AddDays(-$Indays)
+	$exportpath = (Get-Item (Get-Item Env:\TEMP).value).FullName + '\ctxreportlog.csv'
 
-		if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
+	if (Test-Path $exportpath) { Remove-Item $exportpath -Force -ErrorAction SilentlyContinue }
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Exporting Changes"
 
-		Export-LogReportCsv -AdminAddress $AdminServer -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
+	Export-LogReportCsv -AdminAddress $AdminServer -OutputFile $exportpath -StartDateRange $startdate -EndDateRange (Get-Date)
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Progress] Importing Changes"
 
-		$LogExportAll = Import-Csv -Path $exportpath -Delimiter ','
-		$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike '' } | Select-Object -Property High*
-		$LogSum = $LogExportAll | Group-Object -Property 'High Level Operation Text' -NoElement
+	$LogExportAll = Import-Csv -Path $exportpath -Delimiter ','
+	$LogExport = $LogExportAll | Where-Object { $_.'High Level Operation Text' -notlike '' } | Select-Object -Property High*
+	$LogSum = $LogExportAll | Group-Object -Property 'High Level Operation Text' -NoElement
 
-		Remove-Item $exportpath -Force -ErrorAction SilentlyContinue
-		$CTXObject = New-Object PSObject -Property @{
-			DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-			AllDetails    = $LogExportAll
-			Filtered      = $LogExport
-			Summary       = $LogSum
-		}
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
+	Remove-Item $exportpath -Force -ErrorAction SilentlyContinue
+	$CTXObject = New-Object PSObject -Property @{
+		DateCollected = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+		AllDetails    = $LogExportAll
+		Filtered      = $LogExport
+		Summary       = $LogSum
+	}
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
 
-		$CTXObject
+	$CTXObject
 }
  
 Export-ModuleMember -Function Get-CitrixConfigurationChange
@@ -245,7 +245,7 @@ Export-ModuleMember -Function Get-CitrixConfigurationChange
 ############################################
 # source: Get-CitrixFarmDetail.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -265,7 +265,7 @@ Get-CitrixFarmDetail -AdminServer $CTXDDC
 
 #>
 Function Get-CitrixFarmDetail {
-	[CmdletBinding()]
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixFarmDetail')]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0)]
 		[ValidateNotNull()]
@@ -303,144 +303,145 @@ Function Get-CitrixFarmDetail {
 	#endregion
 
 	#region Machines
-try {
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Machines Details"
-	$NonRemotepc = Get-BrokerMachine -MaxRecordCount 1000000 -AdminAddress $AdminServer
-	$UnRegServer = $NonRemotepc | Where-Object { $_.RegistrationState -like 'unreg*' -and $_.DeliveryType -notlike 'DesktopsOnly' } | Select-Object DNSName, CatalogName, DesktopGroupName, FaultState
-	$UnRegDesktop = $NonRemotepc | Where-Object { $_.RegistrationState -like 'unreg*' -and $_.DeliveryType -like 'DesktopsOnly' } | Select-Object DNSName, CatalogName, DesktopGroupName, AssociatedUserNames, FaultState
-	$Machines = New-Object PSObject -Property @{
-		AllMachines          = $NonRemotepc
-		UnRegisteredServers  = $UnRegServer
-		UnRegisteredDesktops = $UnRegDesktop
-	} | Select-Object AllMachines, UnRegisteredServers, UnRegisteredDesktops
-} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+	try {
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Machines Details"
+		$NonRemotepc = Get-BrokerMachine -MaxRecordCount 1000000 -AdminAddress $AdminServer
+		$UnRegServer = $NonRemotepc | Where-Object { $_.RegistrationState -like 'unreg*' -and $_.DeliveryType -notlike 'DesktopsOnly' } | Select-Object DNSName, CatalogName, DesktopGroupName, FaultState
+		$UnRegDesktop = $NonRemotepc | Where-Object { $_.RegistrationState -like 'unreg*' -and $_.DeliveryType -like 'DesktopsOnly' } | Select-Object DNSName, CatalogName, DesktopGroupName, AssociatedUserNames, FaultState
+		$Machines = New-Object PSObject -Property @{
+			AllMachines          = $NonRemotepc
+			UnRegisteredServers  = $UnRegServer
+			UnRegisteredDesktops = $UnRegDesktop
+		} | Select-Object AllMachines, UnRegisteredServers, UnRegisteredDesktops
+	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 
 	#endregion
 
 	#region sessions
-try {
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Sessions Details"
-	$sessions = Get-BrokerSession -MaxRecordCount 1000000 -AdminAddress $AdminServer
-} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+	try {
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Sessions Details"
+		$sessions = Get-BrokerSession -MaxRecordCount 1000000 -AdminAddress $AdminServer
+	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	
-#endregion
+	#endregion
 
 	#region del groups
-try {
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] DeliveryGroups Details"
-	$DeliveryGroups = Get-BrokerDesktopGroup -AdminAddress $AdminServer | Select-Object Name, DeliveryType, DesktopKind, IsRemotePC, Enabled, TotalDesktops, DesktopsAvailable, DesktopsInUse, DesktopsUnregistered, InMaintenanceMode, Sessions, SessionSupport, TotalApplicationGroups, TotalApplications
-} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}	
-#endregion		
+	try {
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] DeliveryGroups Details"
+		$DeliveryGroups = Get-BrokerDesktopGroup -AdminAddress $AdminServer | Select-Object Name, DeliveryType, DesktopKind, IsRemotePC, Enabled, TotalDesktops, DesktopsAvailable, DesktopsInUse, DesktopsUnregistered, InMaintenanceMode, Sessions, SessionSupport, TotalApplicationGroups, TotalApplications
+	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}	
+	#endregion		
 
 	#region dbconnection	
-try {
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] DBConnection Details"
-	$dbArray = @()
+	try {
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] DBConnection Details"
+		$dbArray = @()
 
-	$dbconnection = (Test-BrokerDBConnection -DBConnection(Get-BrokerDBConnection -AdminAddress $AdminServer))
+		$dbconnection = (Test-BrokerDBConnection -DBConnection(Get-BrokerDBConnection -AdminAddress $AdminServer))
 
-	if ([bool]($dbconnection.ExtraInfo.'Database.Status') -eq $False) { [string]$dbstatus = 'Unavalable' }
-	else { [string]$dbstatus = $dbconnection.ExtraInfo.'Database.Status' }
+		if ([bool]($dbconnection.ExtraInfo.'Database.Status') -eq $False) { [string]$dbstatus = 'Unavalable' }
+		else { [string]$dbstatus = $dbconnection.ExtraInfo.'Database.Status' }
 
-	$CCTXObject = New-Object PSObject -Property @{
-		'Service Status'       = $dbconnection.ServiceStatus.ToString()
-		'DB Connection Status' = $dbstatus
-		'Is Mirroring Enabled' = $dbconnection.ExtraInfo.'Database.IsMirroringEnabled'.ToString()
-		'DB Last Backup Date'  = $dbconnection.ExtraInfo.'Database.LastBackupDate'.ToString()
-	} | Select-Object 'Service Status', 'DB Connection Status', 'Is Mirroring Enabled', 'DB Last Backup Date'
+		$CCTXObject = New-Object PSObject -Property @{
+			'Service Status'       = $dbconnection.ServiceStatus.ToString()
+			'DB Connection Status' = $dbstatus
+			'Is Mirroring Enabled' = $dbconnection.ExtraInfo.'Database.IsMirroringEnabled'.ToString()
+			'DB Last Backup Date'  = $dbconnection.ExtraInfo.'Database.LastBackupDate'.ToString()
+		} | Select-Object 'Service Status', 'DB Connection Status', 'Is Mirroring Enabled', 'DB Last Backup Date'
 
-	$DBConnection = $CCTXObject.psobject.Properties | Select-Object -Property Name, Value
-} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+		$DBConnection = $CCTXObject.psobject.Properties | Select-Object -Property Name, Value
+	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	
-#endregion
+	#endregion
 
 	#region reboots
-try {
-	[System.Collections.ArrayList]$RebootSchedule = @()
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Reboot Schedule Details"
-    Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer -Day $((get-date).DayOfWeek.ToString()) | ForEach-Object {
-        $sched = $_
-        Get-BrokerMachine -DesktopGroupName $sched.DesktopGroupName | ForEach-Object {
-                [void]$RebootSchedule.Add([pscustomobject]@{
-                        ComputerName       = $_.DNSName
-                        IP               = $_.IPAddress
-                        DelGroup         = $_.DesktopGroupName
-                        Day              = $sched.Day
-                        Frequency         = $sched.Frequency
-                        Name              = $sched.Name
-                        RebootDuration    = $sched.RebootDuration
-                        StartTime         = $sched.StartTime
-        })
-    }
-    }
-} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+	try {
+		[System.Collections.ArrayList]$RebootSchedule = @()
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Reboot Schedule Details"
+		Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer -Day $((Get-Date).DayOfWeek.ToString()) | ForEach-Object {
+			$sched = $_
+			Get-BrokerMachine -DesktopGroupName $sched.DesktopGroupName | ForEach-Object {
+				[void]$RebootSchedule.Add([pscustomobject]@{
+						ComputerName   = $_.DNSName
+						IP             = $_.IPAddress
+						DelGroup       = $_.DesktopGroupName
+						Day            = $sched.Day
+						Frequency      = $sched.Frequency
+						Name           = $sched.Name
+						RebootDuration = $sched.RebootDuration
+						StartTime      = $sched.StartTime
+					})
+			}
+		}
+	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	#endregion
 		
 	#region uptime
-try {
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] VDA Uptime"	
-	[System.Collections.ArrayList]$VDAUptime = @()
-	Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000000 | Where-Object {$_.DesktopGroupName -notlike $null } | ForEach-Object {
-		try {	
-			$OS = Get-CimInstance Win32_OperatingSystem -ComputerName $_.DNSName -ErrorAction Stop | Select-Object *
-			$Uptime = New-TimeSpan -Start $OS.LastBootUpTime -End (Get-Date)
-			$updays = [math]::Round($uptime.Days, 0)
-		} catch {
-            try {
-			Write-Warning "`t`tUnable to remote to $($_.DNSName), defaulting uptime to LastRegistrationTime"
-			$Uptime = New-TimeSpan -Start $_.LastRegistrationTime -End (Get-Date)
-			$updays = [math]::Round($uptime.Days, 0)
-		} catch {$updays = "Unknown"}}
+	try {
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] VDA Uptime"	
+		[System.Collections.ArrayList]$VDAUptime = @()
+		Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000000 | Where-Object {$_.DesktopGroupName -notlike $null } | ForEach-Object {
+			try {	
+				$OS = Get-CimInstance Win32_OperatingSystem -ComputerName $_.DNSName -ErrorAction Stop | Select-Object *
+				$Uptime = New-TimeSpan -Start $OS.LastBootUpTime -End (Get-Date)
+				$updays = [math]::Round($uptime.Days, 0)
+			} catch {
+				try {
+					Write-Warning "`t`tUnable to remote to $($_.DNSName), defaulting uptime to LastRegistrationTime"
+					$Uptime = New-TimeSpan -Start $_.LastRegistrationTime -End (Get-Date)
+					$updays = [math]::Round($uptime.Days, 0)
+				} catch {$updays = 'Unknown'}
+			}
 
 
-		[void]$VDAUptime.Add([pscustomobject]@{
-				ComputerName         = $_.dnsname
-				DesktopGroupName     = $_.DesktopGroupName
-				SessionCount         = $_.SessionCount
-				InMaintenanceMode    = $_.InMaintenanceMode
-				MachineInternalState = $_.MachineInternalState
-				Uptime               = $updays
-				LastRegistrationTime = $_.LastRegistrationTime
-			})
-	}
-} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+			[void]$VDAUptime.Add([pscustomobject]@{
+					ComputerName         = $_.dnsname
+					DesktopGroupName     = $_.DesktopGroupName
+					SessionCount         = $_.SessionCount
+					InMaintenanceMode    = $_.InMaintenanceMode
+					MachineInternalState = $_.MachineInternalState
+					Uptime               = $updays
+					LastRegistrationTime = $_.LastRegistrationTime
+				})
+		}
+	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	#endregion
 
 	#region connection / machine failures
-try {
-	$Failures = Get-CitrixFailures -AdminServer $AdminServer -hours 24
-} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+	try {
+		$Failures = Get-CitrixFailures -AdminServer $AdminServer -hours 24
+	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 
 	#endregion
 
 	#region workspace app ver
-try {
-	$appver = Get-CitrixWorkspaceAppVersions -AdminServer $AdminServer -hours 24 | Where-Object {$_.ClientVersion -notlike $null}
-} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+	try {
+		$appver = Get-CitrixWorkspaceAppVersions -AdminServer $AdminServer -hours 24 | Where-Object {$_.ClientVersion -notlike $null}
+	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	#endregion
 
 	#region icartt
-try {
-     $CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
-} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+	try {
+		$CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
+	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
      
-     #endregion
+	#endregion
 
 	#region counts
-try {
-	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"
-	$SessionCounts = New-Object PSObject -Property @{
-		'Active Sessions'        = ($Sessions | Where-Object -Property Sessionstate -EQ 'Active').count
-		'Disconnected Sessions'  = ($Sessions | Where-Object -Property Sessionstate -EQ 'Disconnected').count
-		'Connection Failures'    = $Failures.ConnectionFails.Count
-		'Unique Client Versions' = ($appver | Sort-Object -Property ClientVersion -Unique).Count
-		'Unregistered Servers'   = ($Machines.UnRegisteredServers | Measure-Object).count
-		'Unregistered Desktops'  = ($Machines.UnRegisteredDesktops | Measure-Object).count
-		'Machine Failures'       = $Failures.mashineFails.Count
-	} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Connection Failures', 'Unregistered Servers', 'Unregistered Desktops', 'Machine Failures' 
-} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+	try {
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"
+		$SessionCounts = New-Object PSObject -Property @{
+			'Active Sessions'        = ($Sessions | Where-Object -Property Sessionstate -EQ 'Active').count
+			'Disconnected Sessions'  = ($Sessions | Where-Object -Property Sessionstate -EQ 'Disconnected').count
+			'Connection Failures'    = $Failures.ConnectionFails.Count
+			'Unique Client Versions' = ($appver | Sort-Object -Property ClientVersion -Unique).Count
+			'Unregistered Servers'   = ($Machines.UnRegisteredServers | Measure-Object).count
+			'Unregistered Desktops'  = ($Machines.UnRegisteredDesktops | Measure-Object).count
+			'Machine Failures'       = $Failures.mashineFails.Count
+		} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Connection Failures', 'Unregistered Servers', 'Unregistered Desktops', 'Machine Failures' 
+	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	
-#endregion
+	#endregion
 
 	New-Object PSObject -Property @{
 		DateCollected  = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
@@ -468,7 +469,7 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 ############################################
 # source: Get-CitrixLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -488,7 +489,7 @@ Get-CitrixLicenseInformation -AdminServer $CTXDDC
 
 #>
 Function Get-CitrixLicenseInformation {
-	[CmdletBinding()]
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixLicenseInformation')]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]
@@ -518,7 +519,7 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 ############################################
 # source: Get-CitrixMonitoringData.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -541,7 +542,7 @@ Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours
 
 #>
 Function Get-CitrixMonitoringData {
-    [Cmdletbinding(DefaultParameterSetName = 'Set1', HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixMonitoringData')]
+    [Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixMonitoringData')]
     [OutputType([System.Object[]])]
     PARAM(
         [Parameter(Mandatory = $true)]
@@ -592,7 +593,7 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 ############################################
 # source: Get-CitrixServerEventLog.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -615,8 +616,7 @@ Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1
 
 #>
 Function Get-CitrixServerEventLog {
-
-	[CmdletBinding()]
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixServerEventLog')]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]
@@ -659,17 +659,17 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 ############################################
 # source: Get-CitrixServerPerformance.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
  
 <#
 .SYNOPSIS
-Collects perfom data for the core servers.
+Collects perform data for the core servers.
 
 .DESCRIPTION
-Collects perfom data for the core servers.
+Collects perform data for the core servers.
 
 .PARAMETER ComputerName
 List of Computers to query.
@@ -679,7 +679,7 @@ Get-CitrixServerPerformance -ComputerName $CTXCore
 
 #>
 Function Get-CitrixServerPerformance {
-	[CmdletBinding()]
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixServerPerformance')]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]
@@ -726,17 +726,17 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 ############################################
 # source: Get-RDSLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
  
 <#
 .SYNOPSIS
-Report on RDS License Useage
+Report on RDS License Usage
 
 .DESCRIPTION
-Report on RDS License Useage
+Report on RDS License Usage
 
 .PARAMETER LicenseServer
 RDS License server name.
@@ -746,7 +746,7 @@ Get-RDSLicenseInformation -LicenseServer $RDSLicenseServer
 
 #>
 Function Get-RDSLicenseInformation {
-	[CmdletBinding()]
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-RDSLicenseInformation')]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]
@@ -754,12 +754,12 @@ Function Get-RDSLicenseInformation {
 		[string]$LicenseServer)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] RDS Details"
-    try {
-	    $RDSLicense =  Get-CimInstance Win32_TSLicenseKeyPack -ComputerName $LicenseServer  -ErrorAction stop | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
-    } catch {Write-Warning "Unable to connect to RDS License server: $($LicenseServer)"}
+	try {
+		$RDSLicense = Get-CimInstance Win32_TSLicenseKeyPack -ComputerName $LicenseServer -ErrorAction stop | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
+	} catch {Write-Warning "Unable to connect to RDS License server: $($LicenseServer)"}
 	$CTXObject = New-Object PSObject -Property @{
-		"Per Device" = $RDSLicense | Where-Object { $_.TypeAndModel -eq "RDS Per Device CAL" }
-		"Per User"   = $RDSLicense | Where-Object { $_.TypeAndModel -eq "RDS Per User CAL" }
+		'Per Device' = $RDSLicense | Where-Object { $_.TypeAndModel -eq 'RDS Per Device CAL' }
+		'Per User'   = $RDSLicense | Where-Object { $_.TypeAndModel -eq 'RDS Per User CAL' }
 	}
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] RDS Details"
 	$CTXObject
@@ -776,7 +776,7 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 ############################################
 # source: Get-CitrixObjects.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -797,7 +797,7 @@ Get-CitrixObjects -AdminServer $CTXDDC -RemoteCredentials $CTXAdmin -RunAsPSRemo
 
 #>
 Function Get-CitrixObjects {
-	[CmdletBinding()]
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixObjects')]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0)]
 		[ValidateNotNull()]
@@ -977,7 +977,7 @@ Export-ModuleMember -Function Get-CitrixObjects
 ############################################
 # source: Get-CitrixFailures.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1006,7 +1006,7 @@ Get-CitrixFailures -AdminServer $CTXDDC
 
 #>
 Function Get-CitrixFailures {
-    [Cmdletbinding(DefaultParameterSetName = 'Set1', HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixFailures')]
+    [Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixFailures')]
     [OutputType([System.Object[]])]
     PARAM(
         [Parameter(Mandatory = $true)]
@@ -1083,7 +1083,7 @@ Export-ModuleMember -Function Get-CitrixFailures
 ############################################
 # source: Get-CitrixSessionIcaRtt.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1112,7 +1112,7 @@ Where to save the report.
 
 #>
 Function Get-CitrixSessionIcaRtt {
-        [Cmdletbinding(DefaultParameterSetName = 'Set1', HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixSessionIcaRtt')]
+        [Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixSessionIcaRtt')]
         [OutputType([System.Object[]])]
         PARAM(
                 [Parameter(Mandatory = $true)]
@@ -1134,19 +1134,19 @@ Function Get-CitrixSessionIcaRtt {
 
         [System.Collections.ArrayList]$IcaRttObject = @()
         foreach ($sessid in $mon.SessionMetrics.sessionid | Sort-Object -Unique) {
-            try {
-                $session = $mon.Sessions | Where-Object {$_.SessionKey -like $sessid}
-                $user = $mon.Users | Where-Object {$_.id -like $session.userid}
-                $Measure = $mon.SessionMetrics | Where-Object {$_.SessionId -like $sessid} | Measure-Object -Property IcaRttMS -Average   
-                [void]$IcaRttObject.Add([pscustomobject]@{
-                                StartDate    = [datetime]$session.StartDate
-                                EndDate      = [datetime]$session.EndDate
-                                'AVG IcaRtt' = [math]::Round($Measure.Average)
-                                UserName     = $user.UserName
-                                UPN          = $user.Upn
-                        })
+                try {
+                        $session = $mon.Sessions | Where-Object {$_.SessionKey -like $sessid}
+                        $user = $mon.Users | Where-Object {$_.id -like $session.userid}
+                        $Measure = $mon.SessionMetrics | Where-Object {$_.SessionId -like $sessid} | Measure-Object -Property IcaRttMS -Average   
+                        [void]$IcaRttObject.Add([pscustomobject]@{
+                                        StartDate    = [datetime]$session.StartDate
+                                        EndDate      = [datetime]$session.EndDate
+                                        'AVG IcaRtt' = [math]::Round($Measure.Average)
+                                        UserName     = $user.UserName
+                                        UPN          = $user.Upn
+                                })
 
-            } catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+                } catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
         }
 
         if ($Export -eq 'Excel') { $IcaRttObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Show }
@@ -1163,7 +1163,7 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 ############################################
 # source: Get-CitrixWorkspaceAppVersions.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1203,51 +1203,51 @@ Get-CitrixWorkspaceAppVersions -AdminServer $CTXDDC
 
 #>
 Function Get-CitrixWorkspaceAppVersions {
-		[Cmdletbinding(DefaultParameterSetName='Set1', HelpURI = "https://smitpi.github.io/XDHealthCheck/Get-CitrixWorkspaceAppVersions")]
-	    [OutputType([System.Object[]])]
-				 PARAM(
-                 [Parameter(Mandatory = $true)]
-                    [ValidateNotNull()]
-                    [ValidateNotNullOrEmpty()]
-                    [string]$AdminServer,
-                    [Parameter(Mandatory = $true)]
-                    [ValidateNotNull()]
-                    [ValidateNotNullOrEmpty()]
-                    [int32]$hours,
-					[ValidateSet('Excel', 'HTML')]
-					[string]$Export = 'Host',
-                	[ValidateScript( { if (Test-Path $_) { $true }
-                                else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
-                        })]
-                	[System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
-                )
-$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixWorkspaceAppVersions')]
+	[OutputType([System.Object[]])]
+	PARAM(
+		[Parameter(Mandatory = $true)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[string]$AdminServer,
+		[Parameter(Mandatory = $true)]
+		[ValidateNotNull()]
+		[ValidateNotNullOrEmpty()]
+		[int32]$hours,
+		[ValidateSet('Excel', 'HTML')]
+		[string]$Export = 'Host',
+		[ValidateScript( { if (Test-Path $_) { $true }
+				else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
+			})]
+		[System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
+	)
+	$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours
 
 
-$index = 1
+	$index = 1
 	[string]$AllCount = $Connections.Count
-    [System.Collections.ArrayList]$ClientObject = @()
+	[System.Collections.ArrayList]$ClientObject = @()
 
-    foreach ($connect in $mon.Connections) {
+	foreach ($connect in $mon.Connections) {
 		$Userid = ($mon.Sessions | Where-Object { $_.SessionKey -like $connect.SessionKey}).UserId
 		$userdetails = $mon.Users | Where-Object { $_.id -like $Userid }
 		Write-Output "Collecting data $index of $AllCount"
 		$index++
-        [void]$ClientObject.Add([pscustomobject]@{
-			Domain         = $userdetails.Domain
-			UserName       = $userdetails.UserName
-			Upn            = $userdetails.Upn
-			FullName       = $userdetails.FullName
-			ClientName     = $connect.ClientName
-			ClientAddress  = $connect.ClientAddress
-			ClientVersion  = $connect.ClientVersion
-			ClientPlatform = $connect.ClientPlatform
-			Protocol       = $connect.Protocol
-		})
-}
+		[void]$ClientObject.Add([pscustomobject]@{
+				Domain         = $userdetails.Domain
+				UserName       = $userdetails.UserName
+				Upn            = $userdetails.Upn
+				FullName       = $userdetails.FullName
+				ClientName     = $connect.ClientName
+				ClientAddress  = $connect.ClientAddress
+				ClientVersion  = $connect.ClientVersion
+				ClientPlatform = $connect.ClientPlatform
+				Protocol       = $connect.Protocol
+			})
+	}
 
 	if ($Export -eq 'Excel') { $ClientObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Show }
-	if ($Export -eq 'HTML') { $ClientObject | Out-HtmlView -DisablePaging -Title "CitrixWorkspaceAppVersions" -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
+	if ($Export -eq 'HTML') { $ClientObject | Out-HtmlView -DisablePaging -Title 'CitrixWorkspaceAppVersions' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
 	if ($Export -eq 'Host') { $ClientObject }
 
 
@@ -1260,7 +1260,7 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 ############################################
 # source: Start-CitrixAudit.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1280,11 +1280,11 @@ Start-CitrixAudit -JSONParameterFilePath 'C:\temp\Parameters.json'
 
 #>
 function Start-CitrixAudit {
-	[CmdletBinding()]
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Start-CitrixAudit')]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
-		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".json") })]
-		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json"
+		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq '.json') })]
+		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + '\Parameters.json'
 	)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
@@ -1300,7 +1300,7 @@ function Start-CitrixAudit {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 
 	if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-	[string]$Transcriptlog = "$ReportsFolder\logs\XDAudit_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
+	[string]$Transcriptlog = "$ReportsFolder\logs\XDAudit_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.log'
 	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 	$timer = [Diagnostics.Stopwatch]::StartNew();
 
@@ -1313,9 +1313,9 @@ function Start-CitrixAudit {
 		Get-ChildItem $ReportsFolder\logs\XDAudit_TransmissionLogs* | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
 	}
 
-	[string]$Reportname = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
-	[string]$XMLExport = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xml"
-	[string]$ExcelReportname = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
+	[string]$Reportname = $ReportsFolder + '\XDAudit\XD_Audit.' + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.html'
+	[string]$XMLExport = $ReportsFolder + '\XDAudit\XD_Audit.' + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.xml'
+	[string]$ExcelReportname = $ReportsFolder + '\XDAudit\XD_Audit.' + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.xlsx'
 
 	#endregion
 
@@ -1366,17 +1366,17 @@ function Start-CitrixAudit {
 	#######################
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Building HTML Page"
 
-	$HeadingText = $DashboardTitle + " | XenDesktop Audit | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
-	New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname {
+	$HeadingText = $DashboardTitle + ' | XenDesktop Audit | ' + (Get-Date -Format dd) + ' ' + (Get-Date -Format MMMM) + ',' + (Get-Date -Format yyyy) + ' ' + (Get-Date -Format HH:mm)
+	New-HTML -TitleText 'XenDesktop Audit' -FilePath $Reportname {
 		New-HTMLLogo -RightLogoString $XDHealth_LogoURL
 		New-HTMLHeading -Heading h1 -HeadingText $HeadingText -Color Black
-		New-HTMLSection @SectionSettings  -Content {
-			New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable @TableSettings  -DataTable $MachineCatalog }
+		New-HTMLSection @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $MachineCatalog }
 		}
-		New-HTMLSection @SectionSettings   -Content {
-			New-HTMLSection -HeaderText 'Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings  -DataTable $DeliveryGroups }
+		New-HTMLSection @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $DeliveryGroups }
 		}
-		New-HTMLSection  @SectionSettings  -Content {
+		New-HTMLSection @SectionSettings -Content {
 			New-HTMLSection -HeaderText 'Published Apps' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $PublishedApps }
 		}
 	}
@@ -1387,11 +1387,11 @@ function Start-CitrixAudit {
 	#######################
 	if ($SaveExcelReport) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
-		$AllXDData.MachineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MachineCatalog -AutoSize  -Title "Citrix Machine Catalog" -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize  -Title "Citrix Delivery Groups" -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize  -Title "Citrix PublishedApps" -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.VDAServers | Export-Excel -Path $ExcelReportname -WorksheetName VDAServers -AutoSize  -Title "Citrix VDA Servers" -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.VDAWorkstations | Export-Excel -Path $ExcelReportname -WorksheetName VDAWorkstations -AutoSize  -Title "Citrix VDA Workstations" -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.MachineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MachineCatalog -AutoSize -Title 'Citrix Machine Catalog' -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize -Title 'Citrix Delivery Groups' -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize -Title 'Citrix PublishedApps' -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.VDAServers | Export-Excel -Path $ExcelReportname -WorksheetName VDAServers -AutoSize -Title 'Citrix VDA Servers' -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.VDAWorkstations | Export-Excel -Path $ExcelReportname -WorksheetName VDAWorkstations -AutoSize -Title 'Citrix VDA Workstations' -TitleBold -TitleSize 20 -FreezePane 3
 
 	}
 	#endregion
@@ -1401,10 +1401,10 @@ function Start-CitrixAudit {
 	#######################
 	if ($SendEmail) {
 
-		$smtpClientCredentials = Find-Credential | Where-Object target -Like "*Healthcheck_smtp" | Get-Credential -Store
+		$smtpClientCredentials = Find-Credential | Where-Object target -Like '*Healthcheck_smtp' | Get-Credential -Store
 		if ($null -eq $smtpClientCredentials) {
-			$Account = BetterCredentials\Get-Credential -Message "smtp login for HealthChecks email"
-			Set-Credential -Credential $Account -Target "Healthcheck_smtp" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
+			$Account = BetterCredentials\Get-Credential -Message 'smtp login for HealthChecks email'
+			Set-Credential -Credential $Account -Target 'Healthcheck_smtp' -Persistence LocalComputer -Description 'Account used for ctx health checks' -Verbose
 		}
 
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing]Sending Report Email"
@@ -1412,7 +1412,7 @@ function Start-CitrixAudit {
 		$emailMessage.From = $emailFrom
 		$emailTo | ForEach-Object { $emailMessage.To.Add($_) }
 
-		$emailMessage.Subject = $DashboardTitle + " - Citrix Audit Results Report on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)
+		$emailMessage.Subject = $DashboardTitle + ' - Citrix Audit Results Report on ' + (Get-Date -Format dd) + ' ' + (Get-Date -Format MMMM) + ',' + (Get-Date -Format yyyy)
 		$emailMessage.IsBodyHtml = $true
 		$emailMessage.Body = 'Please see attached reports'
 		$emailMessage.Attachments.Add($Reportname)
@@ -1440,7 +1440,7 @@ Export-ModuleMember -Function Start-CitrixAudit
 ############################################
 # source: Start-CitrixHealthCheck.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1460,11 +1460,11 @@ Start-CitrixHealthCheck -JSONParameterFilePath 'C:\temp\Parameters.json'
 
 #>
 function Start-CitrixHealthCheck {
-	[CmdletBinding()]
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Start-CitrixHealthCheck')]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
-		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".json") })]
-		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json"
+		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq '.json') })]
+		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + '\Parameters.json'
 	)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
@@ -1480,7 +1480,7 @@ function Start-CitrixHealthCheck {
 	##########################################
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 	if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-	[string]$Transcriptlog = "$ReportsFolder\logs\XDHealth_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
+	[string]$Transcriptlog = "$ReportsFolder\logs\XDHealth_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.log'
 	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 	$timer = [Diagnostics.Stopwatch]::StartNew();
 
@@ -1494,10 +1494,10 @@ function Start-CitrixHealthCheck {
 		Get-ChildItem $ReportsFolder\XDHealth *.xml | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
 		Get-ChildItem $ReportsFolder\logs\XDHealth_TransmissionLogs* | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
 	}
-	[string]$Reportname = $ReportsFolder + "\XDHealth\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
-	[string]$AllXMLExport = $ReportsFolder + "\XDHealth\XD_All_Healthcheck.xml"
-	[string]$ReportsXMLExport = $ReportsFolder + "\XDHealth\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xml"
-	[string]$ExcelReportname = $ReportsFolder + "\XDHealth\XD_Healthcheck." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
+	[string]$Reportname = $ReportsFolder + '\XDHealth\XD_Healthcheck.' + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.html'
+	[string]$AllXMLExport = $ReportsFolder + '\XDHealth\XD_All_Healthcheck.xml'
+	[string]$ReportsXMLExport = $ReportsFolder + '\XDHealth\XD_Healthcheck.' + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.xml'
+	[string]$ExcelReportname = $ReportsFolder + '\XDHealth\XD_Healthcheck.' + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.xlsx'
 
 	#endregion
 
@@ -1505,7 +1505,7 @@ function Start-CitrixHealthCheck {
 	#region Build other variables
 	#########################################
 
-    if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like "Citrix*"})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
+	if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
 
 	[array]$CTXControllers = (Get-BrokerController -AdminAddress $CTXDDC).dnsname
 	[array]$CTXLicenseServer = (Get-BrokerSite -AdminAddress $AdminServer).LicenseServerName
@@ -1538,32 +1538,32 @@ function Start-CitrixHealthCheck {
 		$RedFlags = @()
 		$FlagReport = @()
 
-		$CitrixLicenseInformation | Where-Object LicensesAvailable -LT 500 | ForEach-Object { $RedFlags += "Citrix License Product: " + $_.LicenseProductName + ", has " + $_.LicensesAvailable + " available licenses" }
-		$RDSLicenseInformation | Where-Object AvailableLicenses -LT 500 | ForEach-Object { $RedFlags += $_.TypeAndModel + ", has " + $_.AvailableLicenses + " Licenses Available" }
+		$CitrixLicenseInformation | Where-Object LicensesAvailable -LT 500 | ForEach-Object { $RedFlags += 'Citrix License Product: ' + $_.LicenseProductName + ', has ' + $_.LicensesAvailable + ' available licenses' }
+		$RDSLicenseInformation | Where-Object AvailableLicenses -LT 500 | ForEach-Object { $RedFlags += $_.TypeAndModel + ', has ' + $_.AvailableLicenses + ' Licenses Available' }
 
 		if ($null -eq $CitrixRemoteFarmDetails.SiteDetails.Summary.Name) { $RedFlags += "Could not connect to the Farm with server $CTXDDC" }
 		else {
-			if ($CitrixRemoteFarmDetails.DBConnection[0].Value -NE "OK") { $RedFlags += "Farm " + $CitrixRemoteFarmDetails.SiteDetails.Summary.Name + " can't connect to Database" }
-			$CitrixRemoteFarmDetails.Controllers.Summary | Where-Object 'Desktops Registered' -LT 100 | ForEach-Object { $RedFlags += $_.Name + " ony have " + $_.'Desktops Registered' + " Desktops Registered" }
-			$CitrixRemoteFarmDetails.Controllers.Summary | Where-Object State -notLike 'Active' | ForEach-Object { $RedFlags += $_.name + " is not active" }
-			if ($CitrixRemoteFarmDetails.SessionCounts.'Unregistered Servers' -gt 0) { $RedFlags += "There are " + $CitrixRemoteFarmDetails.SessionCounts.'Unregistered Servers' + " Hosted Shared Server(s) Unregistered" }
-			if ($CitrixRemoteFarmDetails.SessionCounts.'Unregistered Desktops' -gt 0) { $RedFlags += "There are " + $CitrixRemoteFarmDetails.SessionCounts.'Unregistered Desktops' + " VDI Desktop(s) Unregistered" }
-			if (($CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }).count -gt 0) { $RedFlags += "There are " + (($CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }).count) + " VDA servers needed a reboot" }
+			if ($CitrixRemoteFarmDetails.DBConnection[0].Value -NE 'OK') { $RedFlags += 'Farm ' + $CitrixRemoteFarmDetails.SiteDetails.Summary.Name + " can't connect to Database" }
+			$CitrixRemoteFarmDetails.Controllers.Summary | Where-Object 'Desktops Registered' -LT 100 | ForEach-Object { $RedFlags += $_.Name + ' ony have ' + $_.'Desktops Registered' + ' Desktops Registered' }
+			$CitrixRemoteFarmDetails.Controllers.Summary | Where-Object State -NotLike 'Active' | ForEach-Object { $RedFlags += $_.name + ' is not active' }
+			if ($CitrixRemoteFarmDetails.SessionCounts.'Unregistered Servers' -gt 0) { $RedFlags += 'There are ' + $CitrixRemoteFarmDetails.SessionCounts.'Unregistered Servers' + ' Hosted Shared Server(s) Unregistered' }
+			if ($CitrixRemoteFarmDetails.SessionCounts.'Unregistered Desktops' -gt 0) { $RedFlags += 'There are ' + $CitrixRemoteFarmDetails.SessionCounts.'Unregistered Desktops' + ' VDI Desktop(s) Unregistered' }
+			if (($CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }).count -gt 0) { $RedFlags += 'There are ' + (($CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }).count) + ' VDA servers needed a reboot' }
 		}
 
-		$CitrixServerEventLogs | Where-Object Errors -gt 100 | ForEach-Object { $RedFlags += $_.'ServerName' + " have " + $_.Errors + " errors in the last 24 hours" }
-		$ServerPerformance | Where-Object 'Stopped Services' -ne $null | ForEach-Object { $RedFlags += $_.Servername + " has stopped Citrix Services" }
+		$CitrixServerEventLogs | Where-Object Errors -GT 100 | ForEach-Object { $RedFlags += $_.'ServerName' + ' have ' + $_.Errors + ' errors in the last 24 hours' }
+		$ServerPerformance | Where-Object 'Stopped Services' -NE $null | ForEach-Object { $RedFlags += $_.Servername + ' has stopped Citrix Services' }
 		foreach ($server in $ServerPerformance) {
-			if ([int]$server.'CDrive % Free' -lt 10) { $RedFlags += $server.Servername + " has only " + $server.'CDrive % Free' + " % free disk space on C Drive" }
-			if ([int]$server.Uptime -gt 20) { $RedFlags += $server.Servername + " was last rebooted " + $server.uptime + " Days ago" }
+			if ([int]$server.'CDrive % Free' -lt 10) { $RedFlags += $server.Servername + ' has only ' + $server.'CDrive % Free' + ' % free disk space on C Drive' }
+			if ([int]$server.Uptime -gt 20) { $RedFlags += $server.Servername + ' was last rebooted ' + $server.uptime + ' Days ago' }
 		}
 
 		$index = 0
 		foreach ($flag in $RedFlags) {
 			$index = $index + 1
 			$Object = New-Object PSCustomObject
-			$Object | Add-Member -MemberType NoteProperty -Name "#" -Value $index.ToString()
-			$Object | Add-Member -MemberType NoteProperty -Name "Description" -Value $flag
+			$Object | Add-Member -MemberType NoteProperty -Name '#' -Value $index.ToString()
+			$Object | Add-Member -MemberType NoteProperty -Name 'Description' -Value $flag
 			$FlagReport += $Object
 		}
 		$FlagReport
@@ -1581,42 +1581,42 @@ function Start-CitrixHealthCheck {
 	#region Building HTML the report
 	#######################
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Building HTML Page"
-	$emailbody = New-HTML -TitleText 'Red Flags' { New-HTMLTable  @TableSettings  -DataTable $flags }
+	$emailbody = New-HTML -TitleText 'Red Flags' { New-HTMLTable @TableSettings -DataTable $flags }
 
-	$HeadingText = $DashboardTitle + " | XenDesktop Report | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
-	New-HTML -TitleText "XenDesktop Report"  -FilePath $Reportname {
+	$HeadingText = $DashboardTitle + ' | XenDesktop Report | ' + (Get-Date -Format dd) + ' ' + (Get-Date -Format MMMM) + ',' + (Get-Date -Format yyyy) + ' ' + (Get-Date -Format HH:mm)
+	New-HTML -TitleText 'XenDesktop Report' -FilePath $Reportname {
 		New-HTMLLogo -RightLogoString $XDHealth_LogoURL
 		New-HTMLHeading -Heading h1 -HeadingText $HeadingText -Color Black
-		New-HTMLSection @SectionSettings  -Content {
-			New-HTMLSection -HeaderText 'Citrix Sessions' @TableSectionSettings { New-HTMLTable   @TableSettings  -DataTable $CitrixRemoteFarmDetails.SessionCounts $Conditions_sessions }
+		New-HTMLSection @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Citrix Sessions' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.SessionCounts $Conditions_sessions }
 		}
-		New-HTMLSection @SectionSettings   -Content {
-			New-HTMLSection -HeaderText 'Citrix Controllers'  @TableSectionSettings { New-HTMLTable @TableSettings -DataTable  $CitrixRemoteFarmDetails.Controllers.Summary $Conditions_controllers }
+		New-HTMLSection @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Citrix Controllers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Controllers.Summary $Conditions_controllers }
 			New-HTMLSection -HeaderText 'Citrix DB Connection' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.DBConnection $Conditions_db }
 		}
-		New-HTMLSection  @SectionSettings  -Content {
-			New-HTMLSection -HeaderText 'Citrix Licenses'  @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixLicenseInformation $Conditions_ctxlicenses }
+		New-HTMLSection @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Citrix Licenses' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixLicenseInformation $Conditions_ctxlicenses }
 			New-HTMLSection -HeaderText 'RDS Licenses' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($RDSLicenseInformation | Select-Object TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses) }
 		}
-		New-HTMLSection  @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'Citrix Error Counts' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable  ($CitrixServerEventLogs | Select-Object ServerName, Errors, Warning) $Conditions_events }
+		New-HTMLSection @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Citrix Error Counts' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixServerEventLogs | Select-Object ServerName, Errors, Warning) $Conditions_events }
 			New-HTMLSection -HeaderText 'Citrix Events Top Events' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixServerEventLogs.TopProfider | Select-Object -First $CTXCore.count) }
 		}
-		New-HTMLSection  @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'Connection Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable  $CitrixRemoteFarmDetails.Failures.ConnectionFails }
+		New-HTMLSection @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Connection Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Failures.ConnectionFails }
 			New-HTMLSection -HeaderText 'Machine Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Failures.mashineFails }
 		}
-		New-HTMLSection  @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'Client Versions' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable  $CitrixRemoteFarmDetails.AppVer }
+		New-HTMLSection @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Client Versions' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.AppVer }
 			New-HTMLSection -HeaderText 'ICA Rtt' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.IcaRtt }
 		}
-		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix Config Changes in the last 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixConfigurationChanges.Summary | Where-Object { $_.name -ne "" } | Sort-Object count -Descending | Select-Object -First 5 -Property count, name) } }
-		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix Server Performace' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($ServerPerformance) $Conditions_performance } }
-		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'VDA Uptime more than 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }) } }
-		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.DeliveryGroups $Conditions_deliverygroup } }
-		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix UnRegistered Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops } }
-		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix UnRegistered Servers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredServers } }
-		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  "Today`'s Reboot Schedule" @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.RebootSchedule } }
+		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix Config Changes in the last 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixConfigurationChanges.Summary | Where-Object { $_.name -ne '' } | Sort-Object count -Descending | Select-Object -First 5 -Property count, name) } }
+		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix Server Performace' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($ServerPerformance) $Conditions_performance } }
+		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'VDA Uptime more than 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }) } }
+		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.DeliveryGroups $Conditions_deliverygroup } }
+		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops } }
+		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Servers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredServers } }
+		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText "Today`'s Reboot Schedule" @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.RebootSchedule } }
 
 	}
 	#endregion
@@ -1626,8 +1626,8 @@ function Start-CitrixHealthCheck {
 	#######################
 	if ($SaveExcelReport) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
-		$excelfile = $CitrixServerEventLogs.All | Export-Excel -Path $ExcelReportname -WorksheetName EventsRawData -AutoSize -AutoFilter -Title "Citrix Events" -TitleBold -TitleSize 20 -FreezePane 3 -IncludePivotTable -TitleFillPattern DarkGrid -PivotTableName "Events Summery" -PivotRows MachineName, LevelDisplayName, ProviderName -PivotData @{"Message" = "count" } -NoTotalsInPivot
-		$excelfile += $CitrixConfigurationChanges.Filtered | Export-Excel -Path $ExcelReportname -WorksheetName ConfigChangeRawData -AutoSize -AutoFilter -Title "Citrix Config Changes" -TitleBold -TitleSize 20 -FreezePane 3
+		$excelfile = $CitrixServerEventLogs.All | Export-Excel -Path $ExcelReportname -WorksheetName EventsRawData -AutoSize -AutoFilter -Title 'Citrix Events' -TitleBold -TitleSize 20 -FreezePane 3 -IncludePivotTable -TitleFillPattern DarkGrid -PivotTableName 'Events Summery' -PivotRows MachineName, LevelDisplayName, ProviderName -PivotData @{'Message' = 'count' } -NoTotalsInPivot
+		$excelfile += $CitrixConfigurationChanges.Filtered | Export-Excel -Path $ExcelReportname -WorksheetName ConfigChangeRawData -AutoSize -AutoFilter -Title 'Citrix Config Changes' -TitleBold -TitleSize 20 -FreezePane 3
 
 	}
 	#endregion
@@ -1637,17 +1637,17 @@ function Start-CitrixHealthCheck {
 	#######################
 	if ($SendEmail) {
 
-		$smtpClientCredentials = Find-Credential | Where-Object target -Like "*Healthcheck_smtp" | Get-Credential -Store
+		$smtpClientCredentials = Find-Credential | Where-Object target -Like '*Healthcheck_smtp' | Get-Credential -Store
 		if ($null -eq $smtpClientCredentials) {
-			$Account = BetterCredentials\Get-Credential -Message "smtp login for HealthChecks email"
-			Set-Credential -Credential $Account -Target "Healthcheck_smtp" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
+			$Account = BetterCredentials\Get-Credential -Message 'smtp login for HealthChecks email'
+			Set-Credential -Credential $Account -Target 'Healthcheck_smtp' -Persistence LocalComputer -Description 'Account used for ctx health checks' -Verbose
 		}
 
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing]Sending Report Email"
 		$emailMessage = New-Object System.Net.Mail.MailMessage
 		$emailMessage.From = $emailFrom
 		$emailTo | ForEach-Object { $emailMessage.To.Add($_) }
-		$emailMessage.Subject = $DashboardTitle + " - Citrix Health Check Report on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)
+		$emailMessage.Subject = $DashboardTitle + ' - Citrix Health Check Report on ' + (Get-Date -Format dd) + ' ' + (Get-Date -Format MMMM) + ',' + (Get-Date -Format yyyy)
 		$emailMessage.IsBodyHtml = $true
 		$emailMessage.Body = $emailbody
 		$emailMessage.Attachments.Add($Reportname)
@@ -1674,7 +1674,7 @@ Export-ModuleMember -Function Start-CitrixHealthCheck
 ############################################
 # source: Import-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1697,7 +1697,7 @@ Import-ParametersFile -JSONParameterFilePath $JSONParameterFilePath
 
 #>
 Function Import-ParametersFile {
-	[CmdletBinding()]
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Import-ParametersFile')]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq '.json') })]
@@ -1747,7 +1747,7 @@ Export-ModuleMember -Function Import-ParametersFile
 ############################################
 # source: Install-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1764,7 +1764,7 @@ Install-ParametersFile
 
 #>
 function Install-ParametersFile {
-	[Cmdletbinding()]
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Install-ParametersFile')]
 	param ()
 
 	[string]$CTXDDC = Read-Host 'A Citrix Data Collector FQDN'
@@ -1889,7 +1889,7 @@ Export-ModuleMember -Function Install-ParametersFile
 ############################################
 # source: Set-XDHealthReportColors.ps1
 # Module: XDHealthCheck
-# version: 0.2.8
+# version: 0.2.9
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1915,6 +1915,7 @@ Set-XDHealthReportColors -Color1 '#d22c26' -Color2 '#2bb74e' -LogoURL 'https://g
 
 #>
 Function Set-XDHealthReportColors {
+	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Set-XDHealthReportColors')]
 	[Cmdletbinding()]
 	PARAM(
 		[string]$Color1 = '#061820',

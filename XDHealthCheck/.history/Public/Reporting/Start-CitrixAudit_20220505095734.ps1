@@ -68,8 +68,8 @@ function Start-CitrixAudit {
 	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Start-CitrixAudit')]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
-		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq '.json') })]
-		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + '\Parameters.json'
+		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq ".json") })]
+		[string]$JSONParameterFilePath = (Get-Item $profile).DirectoryName + "\Parameters.json"
 	)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Importing Variables"
@@ -85,7 +85,7 @@ function Start-CitrixAudit {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Data Collection"
 
 	if ((Test-Path -Path $ReportsFolder\logs) -eq $false) { New-Item -Path "$ReportsFolder\logs" -ItemType Directory -Force -ErrorAction SilentlyContinue }
-	[string]$Transcriptlog = "$ReportsFolder\logs\XDAudit_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.log'
+	[string]$Transcriptlog = "$ReportsFolder\logs\XDAudit_TransmissionLogs." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".log"
 	Start-Transcript -Path $Transcriptlog -IncludeInvocationHeader -Force -NoClobber
 	$timer = [Diagnostics.Stopwatch]::StartNew();
 
@@ -98,9 +98,9 @@ function Start-CitrixAudit {
 		Get-ChildItem $ReportsFolder\logs\XDAudit_TransmissionLogs* | Where-Object { $_.LastWriteTime -le $oldReports } | Remove-Item -Force -Verbose
 	}
 
-	[string]$Reportname = $ReportsFolder + '\XDAudit\XD_Audit.' + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.html'
-	[string]$XMLExport = $ReportsFolder + '\XDAudit\XD_Audit.' + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.xml'
-	[string]$ExcelReportname = $ReportsFolder + '\XDAudit\XD_Audit.' + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.xlsx'
+	[string]$Reportname = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".html"
+	[string]$XMLExport = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xml"
+	[string]$ExcelReportname = $ReportsFolder + "\XDAudit\XD_Audit." + (Get-Date -Format yyyy.MM.dd-HH.mm) + ".xlsx"
 
 	#endregion
 
@@ -151,17 +151,17 @@ function Start-CitrixAudit {
 	#######################
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Building HTML Page"
 
-	$HeadingText = $DashboardTitle + ' | XenDesktop Audit | ' + (Get-Date -Format dd) + ' ' + (Get-Date -Format MMMM) + ',' + (Get-Date -Format yyyy) + ' ' + (Get-Date -Format HH:mm)
-	New-HTML -TitleText 'XenDesktop Audit' -FilePath $Reportname {
+	$HeadingText = $DashboardTitle + " | XenDesktop Audit | " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy) + " " + (Get-Date -Format HH:mm)
+	New-HTML -TitleText "XenDesktop Audit"  -FilePath $Reportname {
 		New-HTMLLogo -RightLogoString $XDHealth_LogoURL
 		New-HTMLHeading -Heading h1 -HeadingText $HeadingText -Color Black
-		New-HTMLSection @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $MachineCatalog }
+		New-HTMLSection @SectionSettings  -Content {
+			New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable @TableSettings  -DataTable $MachineCatalog }
 		}
-		New-HTMLSection @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $DeliveryGroups }
+		New-HTMLSection @SectionSettings   -Content {
+			New-HTMLSection -HeaderText 'Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings  -DataTable $DeliveryGroups }
 		}
-		New-HTMLSection @SectionSettings -Content {
+		New-HTMLSection  @SectionSettings  -Content {
 			New-HTMLSection -HeaderText 'Published Apps' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $PublishedApps }
 		}
 	}
@@ -172,11 +172,11 @@ function Start-CitrixAudit {
 	#######################
 	if ($SaveExcelReport) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
-		$AllXDData.MachineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MachineCatalog -AutoSize -Title 'Citrix Machine Catalog' -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize -Title 'Citrix Delivery Groups' -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize -Title 'Citrix PublishedApps' -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.VDAServers | Export-Excel -Path $ExcelReportname -WorksheetName VDAServers -AutoSize -Title 'Citrix VDA Servers' -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.VDAWorkstations | Export-Excel -Path $ExcelReportname -WorksheetName VDAWorkstations -AutoSize -Title 'Citrix VDA Workstations' -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.MachineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MachineCatalog -AutoSize  -Title "Citrix Machine Catalog" -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize  -Title "Citrix Delivery Groups" -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize  -Title "Citrix PublishedApps" -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.VDAServers | Export-Excel -Path $ExcelReportname -WorksheetName VDAServers -AutoSize  -Title "Citrix VDA Servers" -TitleBold -TitleSize 20 -FreezePane 3
+		$AllXDData.VDAWorkstations | Export-Excel -Path $ExcelReportname -WorksheetName VDAWorkstations -AutoSize  -Title "Citrix VDA Workstations" -TitleBold -TitleSize 20 -FreezePane 3
 
 	}
 	#endregion
@@ -186,10 +186,10 @@ function Start-CitrixAudit {
 	#######################
 	if ($SendEmail) {
 
-		$smtpClientCredentials = Find-Credential | Where-Object target -Like '*Healthcheck_smtp' | Get-Credential -Store
+		$smtpClientCredentials = Find-Credential | Where-Object target -Like "*Healthcheck_smtp" | Get-Credential -Store
 		if ($null -eq $smtpClientCredentials) {
-			$Account = BetterCredentials\Get-Credential -Message 'smtp login for HealthChecks email'
-			Set-Credential -Credential $Account -Target 'Healthcheck_smtp' -Persistence LocalComputer -Description 'Account used for ctx health checks' -Verbose
+			$Account = BetterCredentials\Get-Credential -Message "smtp login for HealthChecks email"
+			Set-Credential -Credential $Account -Target "Healthcheck_smtp" -Persistence LocalComputer -Description "Account used for ctx health checks" -Verbose
 		}
 
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing]Sending Report Email"
@@ -197,7 +197,7 @@ function Start-CitrixAudit {
 		$emailMessage.From = $emailFrom
 		$emailTo | ForEach-Object { $emailMessage.To.Add($_) }
 
-		$emailMessage.Subject = $DashboardTitle + ' - Citrix Audit Results Report on ' + (Get-Date -Format dd) + ' ' + (Get-Date -Format MMMM) + ',' + (Get-Date -Format yyyy)
+		$emailMessage.Subject = $DashboardTitle + " - Citrix Audit Results Report on " + (Get-Date -Format dd) + " " + (Get-Date -Format MMMM) + "," + (Get-Date -Format yyyy)
 		$emailMessage.IsBodyHtml = $true
 		$emailMessage.Body = 'Please see attached reports'
 		$emailMessage.Attachments.Add($Reportname)

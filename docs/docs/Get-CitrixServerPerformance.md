@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-CitrixServerPerformance
 
 ## SYNOPSIS
-Collects perfom data for the core servers.
+Collects perform data for the core servers.
 
 ## SYNTAX
 
@@ -17,7 +17,7 @@ Get-CitrixServerPerformance [-ComputerName] <String[]> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Collects perfom data for the core servers.
+Collects perform data for the core servers.
 
 ## EXAMPLES
 

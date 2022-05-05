@@ -38,7 +38,7 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: (Get-Item $profile).DirectoryName + "\Parameters.json"
+Default value: (Get-Item $profile).DirectoryName + '\Parameters.json'
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

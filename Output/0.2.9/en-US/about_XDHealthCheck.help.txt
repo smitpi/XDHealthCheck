@@ -16,10 +16,10 @@ Functions in this module:
 	 Get-CitrixMonitoringData -- Connects and collects data from the monitoring OData feed.
 	 Get-CitrixObjects -- Get details of citrix objects
 	 Get-CitrixServerEventLog -- Get windows event log details
-	 Get-CitrixServerPerformance -- Collects perfom data for the core servers.
+	 Get-CitrixServerPerformance -- Collects perform data for the core servers.
 	 Get-CitrixSessionIcaRtt -- Creates a report of users sessions with a AVG IcaRttMS
 	 Get-CitrixWorkspaceAppVersions -- Reports on the versions of workspace app your users are using to connect
-	 Get-RDSLicenseInformation -- Report on RDS License Useage
+	 Get-RDSLicenseInformation -- Report on RDS License Usage
 	 Import-ParametersFile -- Import the config file and creates the needed variables
 	 Install-ParametersFile -- Create a json config file with all needed farm details.
 	 Set-XDHealthReportColors -- Set the color and logo for HTML Reports

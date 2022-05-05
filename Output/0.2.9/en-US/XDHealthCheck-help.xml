@@ -595,11 +595,11 @@
       <command:verb>Get</command:verb>
       <command:noun>CitrixServerPerformance</command:noun>
       <maml:description>
-        <maml:para>Collects perfom data for the core servers.</maml:para>
+        <maml:para>Collects perform data for the core servers.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Collects perfom data for the core servers.</maml:para>
+      <maml:para>Collects perform data for the core servers.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -947,11 +947,11 @@
       <command:verb>Get</command:verb>
       <command:noun>RDSLicenseInformation</command:noun>
       <maml:description>
-        <maml:para>Report on RDS License Useage</maml:para>
+        <maml:para>Report on RDS License Usage</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Report on RDS License Useage</maml:para>
+      <maml:para>Report on RDS License Usage</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>
@@ -1256,7 +1256,7 @@
             <maml:name>String</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>(Get-Item $profile).DirectoryName + "\Parameters.json"</dev:defaultValue>
+          <dev:defaultValue>(Get-Item $profile).DirectoryName + '\Parameters.json'</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -1271,7 +1271,7 @@
           <maml:name>String</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>(Get-Item $profile).DirectoryName + "\Parameters.json"</dev:defaultValue>
+        <dev:defaultValue>(Get-Item $profile).DirectoryName + '\Parameters.json'</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes />
@@ -1317,7 +1317,7 @@
             <maml:name>String</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>(Get-Item $profile).DirectoryName + "\Parameters.json"</dev:defaultValue>
+          <dev:defaultValue>(Get-Item $profile).DirectoryName + '\Parameters.json'</dev:defaultValue>
         </command:parameter>
       </command:syntaxItem>
     </command:syntax>
@@ -1332,7 +1332,7 @@
           <maml:name>String</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>(Get-Item $profile).DirectoryName + "\Parameters.json"</dev:defaultValue>
+        <dev:defaultValue>(Get-Item $profile).DirectoryName + '\Parameters.json'</dev:defaultValue>
       </command:parameter>
     </command:parameters>
     <command:inputTypes />

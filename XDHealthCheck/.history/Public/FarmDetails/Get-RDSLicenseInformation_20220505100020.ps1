@@ -77,12 +77,12 @@ Function Get-RDSLicenseInformation {
 		[string]$LicenseServer)
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] RDS Details"
-	try {
-		$RDSLicense = Get-CimInstance Win32_TSLicenseKeyPack -ComputerName $LicenseServer -ErrorAction stop | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
-	} catch {Write-Warning "Unable to connect to RDS License server: $($LicenseServer)"}
+    try {
+	    $RDSLicense =  Get-CimInstance Win32_TSLicenseKeyPack -ComputerName $LicenseServer  -ErrorAction stop | Select-Object -Property TypeAndModel, ProductVersion, TotalLicenses, IssuedLicenses, AvailableLicenses
+    } catch {Write-Warning "Unable to connect to RDS License server: $($LicenseServer)"}
 	$CTXObject = New-Object PSObject -Property @{
-		'Per Device' = $RDSLicense | Where-Object { $_.TypeAndModel -eq 'RDS Per Device CAL' }
-		'Per User'   = $RDSLicense | Where-Object { $_.TypeAndModel -eq 'RDS Per User CAL' }
+		"Per Device" = $RDSLicense | Where-Object { $_.TypeAndModel -eq "RDS Per Device CAL" }
+		"Per User"   = $RDSLicense | Where-Object { $_.TypeAndModel -eq "RDS Per User CAL" }
 	}
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] RDS Details"
 	$CTXObject

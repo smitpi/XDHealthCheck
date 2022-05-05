@@ -61,7 +61,7 @@ Import-ParametersFile -JSONParameterFilePath $JSONParameterFilePath
 
 #>
 Function Import-ParametersFile {
-	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Import-ParametersFile')]
+	[CmdletBinding()]
 	PARAM(
 		[Parameter(Mandatory = $false, Position = 0)]
 		[ValidateScript( { (Test-Path $_) -and ((Get-Item $_).Extension -eq '.json') })]
