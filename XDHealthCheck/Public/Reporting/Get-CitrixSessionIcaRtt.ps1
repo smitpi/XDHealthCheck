@@ -1,4 +1,4 @@
-
+﻿
 <#PSScriptInfo
 
 .VERSION 0.1.0
@@ -103,7 +103,7 @@ Function Get-CitrixSessionIcaRtt {
         }
 
         if ($Export -eq 'Excel') { $IcaRttObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Show }
-        if ($Export -eq 'HTML') { $IcaRttObject | Out-GridHtml -DisablePaging -Title 'CitrixSessionIcaRtt' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
+        if ($Export -eq 'HTML') { $IcaRttObject | Out-HtmlView -DisablePaging -Title 'CitrixSessionIcaRtt' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
         if ($Export -eq 'Host') { $IcaRttObject }
 
 

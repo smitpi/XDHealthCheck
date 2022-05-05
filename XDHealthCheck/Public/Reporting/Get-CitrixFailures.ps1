@@ -1,4 +1,4 @@
-
+﻿
 <#PSScriptInfo
 
 .VERSION 0.1.0
@@ -121,8 +121,8 @@ Function Get-CitrixFailures {
         $ConnectionFails | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName ConnectionFailures -AutoSize -AutoFilter -Title 'Connection Failures' -TitleBold -TitleSize 28 -Show
     }
     if ($Export -eq 'HTML') { 
-        $mashineFails | Out-GridHtml -DisablePaging -Title 'Mashine Failures' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\Citrix-Machine-Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
-        $ConnectionFails | Out-GridHtml -DisablePaging -Title 'Connection Failures' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\Citrix-Connection-Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+        $mashineFails | Out-HtmlView -DisablePaging -Title 'Mashine Failures' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\Citrix-Machine-Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+        $ConnectionFails | Out-HtmlView -DisablePaging -Title 'Connection Failures' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\Citrix-Connection-Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
         
     }
     if ($Export -eq 'Host') { 

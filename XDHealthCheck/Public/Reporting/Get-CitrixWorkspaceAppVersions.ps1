@@ -1,4 +1,4 @@
-
+﻿
 <#PSScriptInfo
 
 .VERSION 0.1.0
@@ -121,7 +121,7 @@ $index = 1
 }
 
 	if ($Export -eq 'Excel') { $ClientObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Show }
-	if ($Export -eq 'HTML') { $ClientObject | Out-GridHtml -DisablePaging -Title "CitrixWorkspaceAppVersions" -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
+	if ($Export -eq 'HTML') { $ClientObject | Out-HtmlView -DisablePaging -Title "CitrixWorkspaceAppVersions" -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
 	if ($Export -eq 'Host') { $ClientObject }
 
 

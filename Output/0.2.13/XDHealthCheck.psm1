@@ -151,8 +151,8 @@ $global:SectionSettings = @{
 	HeaderBackGroundColor = $XDHealth_Color1
 	HeaderTextAlignment   = 'center'
 	HeaderTextColor       = $XDHealth_Color2
-	HeaderTextSize        = '10'
-	BorderRadius          = '15px'
+	HeaderTextSize        = '20'
+	BorderRadius          = '25px'
 }
 $global:TableSectionSettings = @{
 	BackgroundColor       = 'white'
@@ -160,7 +160,7 @@ $global:TableSectionSettings = @{
 	HeaderBackGroundColor = $XDHealth_Color2
 	HeaderTextAlignment   = 'center'
 	HeaderTextColor       = $XDHealth_Color1
-	HeaderTextSize        = '10'
+	HeaderTextSize        = '20'
 }
 #endregion
 
@@ -171,7 +171,7 @@ $global:TableSectionSettings = @{
 ############################################
 # source: Get-CitrixConfigurationChange.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -242,7 +242,7 @@ Export-ModuleMember -Function Get-CitrixConfigurationChange
 ############################################
 # source: Get-CitrixFarmDetail.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -440,7 +440,7 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 ############################################
 # source: Get-CitrixLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -490,7 +490,7 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 ############################################
 # source: Get-CitrixMonitoringData.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -564,7 +564,7 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 ############################################
 # source: Get-CitrixServerEventLog.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -631,7 +631,7 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 ############################################
 # source: Get-CitrixServerPerformance.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -698,7 +698,7 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 ############################################
 # source: Get-RDSLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -748,7 +748,7 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 ############################################
 # source: Get-CitrixObjects.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -949,7 +949,7 @@ Export-ModuleMember -Function Get-CitrixObjects
 ############################################
 # source: Get-CitrixFailures.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1034,8 +1034,8 @@ Function Get-CitrixFailures {
         $ConnectionFails | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName ConnectionFailures -AutoSize -AutoFilter -Title 'Connection Failures' -TitleBold -TitleSize 28 -Show
     }
     if ($Export -eq 'HTML') { 
-        $mashineFails | Out-GridHtml -DisablePaging -Title 'Mashine Failures' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\Citrix-Machine-Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
-        $ConnectionFails | Out-GridHtml -DisablePaging -Title 'Connection Failures' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\Citrix-Connection-Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+        $mashineFails | Out-HtmlView -DisablePaging -Title 'Mashine Failures' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\Citrix-Machine-Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+        $ConnectionFails | Out-HtmlView -DisablePaging -Title 'Connection Failures' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\Citrix-Connection-Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
         
     }
     if ($Export -eq 'Host') { 
@@ -1055,7 +1055,7 @@ Export-ModuleMember -Function Get-CitrixFailures
 ############################################
 # source: Get-CitrixSessionIcaRtt.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1121,7 +1121,7 @@ Function Get-CitrixSessionIcaRtt {
         }
 
         if ($Export -eq 'Excel') { $IcaRttObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Show }
-        if ($Export -eq 'HTML') { $IcaRttObject | Out-GridHtml -DisablePaging -Title 'CitrixSessionIcaRtt' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
+        if ($Export -eq 'HTML') { $IcaRttObject | Out-HtmlView -DisablePaging -Title 'CitrixSessionIcaRtt' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
         if ($Export -eq 'Host') { $IcaRttObject }
 
 
@@ -1134,7 +1134,7 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 ############################################
 # source: Get-CitrixWorkspaceAppVersions.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1218,7 +1218,7 @@ $index = 1
 }
 
 	if ($Export -eq 'Excel') { $ClientObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Show }
-	if ($Export -eq 'HTML') { $ClientObject | Out-GridHtml -DisablePaging -Title "CitrixWorkspaceAppVersions" -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
+	if ($Export -eq 'HTML') { $ClientObject | Out-HtmlView -DisablePaging -Title "CitrixWorkspaceAppVersions" -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
 	if ($Export -eq 'Host') { $ClientObject }
 
 
@@ -1231,7 +1231,7 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 ############################################
 # source: Start-CitrixAudit.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1411,7 +1411,7 @@ Export-ModuleMember -Function Start-CitrixAudit
 ############################################
 # source: Start-CitrixHealthCheck.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1645,7 +1645,7 @@ Export-ModuleMember -Function Start-CitrixHealthCheck
 ############################################
 # source: Import-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1680,7 +1680,7 @@ Function Import-ParametersFile {
 	$JSONParameter = Get-Content ($JSONParameterFilePath) | ConvertFrom-Json
 	if ($null -eq $JSONParameter) { Write-Error 'Valid Parameters file not found'; break }
 
-	Write-Colour 'Using Variables from Parameters.json: ', $JSONParameterFilePath.ToString() -ShowTime -Color DarkCyan, DarkYellow -LinesAfter 1
+	Write-Color 'Using Variables from Parameters.json: ', $JSONParameterFilePath.ToString() -ShowTime -Color DarkCyan, DarkYellow -LinesAfter 1
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Variable Details"
 	$JSONParameter.PSObject.Properties | Where-Object { $_.name -notlike 'TrustedDomains' } | ForEach-Object { Write-Color $_.name, ':', $_.value -Color Yellow, DarkCyan, Green -ShowTime; New-Variable -Name $_.name -Value $_.value -Force -Scope global }
 	New-Variable -Name 'JSONParameterFilePath' -Value $JSONParameterFilePath -Scope global -Force
@@ -1690,7 +1690,7 @@ Function Import-ParametersFile {
 		$AdminAccount = BetterCredentials\Get-Credential -Message 'Admin Account: DOMAIN\Username for CTX Admin'
 		Set-Credential -Credential $AdminAccount -Target 'CTXAdmin' -Persistence LocalComputer -Description 'Account used for Citrix queries' -Verbose
 	}
-	Write-Colour 'Citrix Admin Credentials: ', $CTXAdmin.UserName -ShowTime -Color yellow, Green
+	Write-Color 'Citrix Admin Credentials: ', $CTXAdmin.UserName -ShowTime -Color yellow, Green
 
 	if ($SendEmail) {
 		$global:SMTPClientCredentials = Find-Credential | Where-Object target -Like '*Healthcheck_smtp' | Get-Credential -Store
@@ -1698,7 +1698,7 @@ Function Import-ParametersFile {
 			$Account = BetterCredentials\Get-Credential -Message 'smtp login for HealthChecks email'
 			Set-Credential -Credential $Account -Target 'Healthcheck_smtp' -Persistence LocalComputer -Description 'Account used for XD health checks' -Verbose
 		}
-		Write-Colour 'SMTP Credentials: ', $SMTPClientCredentials.UserName -ShowTime -Color yellow, Green -LinesBefore 2
+		Write-Color 'SMTP Credentials: ', $SMTPClientCredentials.UserName -ShowTime -Color yellow, Green -LinesBefore 2
 
 	}
 
@@ -1718,7 +1718,7 @@ Export-ModuleMember -Function Import-ParametersFile
 ############################################
 # source: Install-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1860,7 +1860,7 @@ Export-ModuleMember -Function Install-ParametersFile
 ############################################
 # source: Set-XDHealthReportColors.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1892,17 +1892,54 @@ Function Set-XDHealthReportColors {
 		[string]$Color2 = '#FFD400',
 		[string]$LogoURL = 'https://c.na65.content.force.com/servlet/servlet.ImageServer?id=0150h000003yYnkAAE&oid=00DE0000000c48tMAA'
 	)
-    
-	$mod = Import-Module XDHealthCheck -Force -PassThru
-	$file = Get-Item (Join-Path $mod.ModuleBase -ChildPath '\Private\Reports-Colors.ps1')
-	Import-Module $file.FullName
- 
-	Set-ItemProperty -Path HKCU:\Software\XDHealth -Name Color1 -Value $($Color1)
-	Set-ItemProperty -Path HKCU:\Software\XDHealth -Name Color2 -Value $($Color2)
-	Set-ItemProperty -Path HKCU:\Software\XDHealth -Name LogoURL -Value $($LogoURL)
+    if (Test-Path HKCU:\Software\XDHealth) {
+    	Set-ItemProperty -Path HKCU:\Software\XDHealth -Name Color1 -Value $($Color1)
+	    Set-ItemProperty -Path HKCU:\Software\XDHealth -Name Color2 -Value $($Color2)
+	    Set-ItemProperty -Path HKCU:\Software\XDHealth -Name LogoURL -Value $($LogoURL)
+    } else {
+        New-Item -Path HKCU:\Software\XDHealth
+        New-ItemProperty -Path HKCU:\Software\XDHealth -Name Color1 -Value $($Color1)
+        New-ItemProperty -Path HKCU:\Software\XDHealth -Name Color2 -Value $($Color2)
+        New-ItemProperty -Path HKCU:\Software\XDHealth -Name LogoURL -Value $($LogoURL)
+    }
 
-	Import-Module XDHealthCheck -Force
+    $global:XDHealth_Color1 = Get-ItemPropertyValue -Path HKCU:\Software\XDHealth -Name Color1
+    $global:XDHealth_Color2 = Get-ItemPropertyValue -Path HKCU:\Software\XDHealth -Name Color2
+    $global:XDHealth_LogoURL = Get-ItemPropertyValue -Path HKCU:\Software\XDHealth -Name LogoURL
 
+
+#region Html Settings
+$global:TableSettings = @{
+	Style           = 'cell-border'
+	TextWhenNoData  = 'No Data to display here'
+	Buttons         = 'searchBuilder', 'pdfHtml5', 'excelHtml5'
+	AutoSize        = $true
+	DisableSearch   = $true
+	FixedHeader     = $true
+	HideFooter      = $true
+	ScrollCollapse  = $true
+	ScrollX         = $true
+	ScrollY         = $true
+	SearchHighlight = $true
+}
+$global:SectionSettings = @{
+	BackgroundColor       = 'grey'
+	CanCollapse           = $true
+	HeaderBackGroundColor = $XDHealth_Color1
+	HeaderTextAlignment   = 'center'
+	HeaderTextColor       = $XDHealth_Color2
+	HeaderTextSize        = '20'
+	BorderRadius          = '25px'
+}
+$global:TableSectionSettings = @{
+	BackgroundColor       = 'white'
+	CanCollapse           = $true
+	HeaderBackGroundColor = $XDHealth_Color2
+	HeaderTextAlignment   = 'center'
+	HeaderTextColor       = $XDHealth_Color1
+	HeaderTextSize        = '20'
+}
+#endregion
 	[string]$HTMLReportname = $env:TEMP + '\Test-color' + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.html'
 
 	$HeadingText = 'Test | Report | ' + (Get-Date -Format dd) + ' ' + (Get-Date -Format MMMM) + ',' + (Get-Date -Format yyyy) + ' ' + (Get-Date -Format HH:mm)

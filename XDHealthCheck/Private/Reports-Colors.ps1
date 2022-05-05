@@ -38,8 +38,8 @@ $global:SectionSettings = @{
 	HeaderBackGroundColor = $XDHealth_Color1
 	HeaderTextAlignment   = 'center'
 	HeaderTextColor       = $XDHealth_Color2
-	HeaderTextSize        = '10'
-	BorderRadius          = '15px'
+	HeaderTextSize        = '20'
+	BorderRadius          = '25px'
 }
 $global:TableSectionSettings = @{
 	BackgroundColor       = 'white'
@@ -47,7 +47,7 @@ $global:TableSectionSettings = @{
 	HeaderBackGroundColor = $XDHealth_Color2
 	HeaderTextAlignment   = 'center'
 	HeaderTextColor       = $XDHealth_Color1
-	HeaderTextSize        = '10'
+	HeaderTextSize        = '20'
 }
 #endregion
 
