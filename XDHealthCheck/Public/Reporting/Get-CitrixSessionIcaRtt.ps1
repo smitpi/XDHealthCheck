@@ -88,6 +88,7 @@ Function Get-CitrixSessionIcaRtt {
 
         [System.Collections.ArrayList]$IcaRttObject = @()
         foreach ($sessid in $mon.SessionMetrics.sessionid | Sort-Object -Unique) {
+            try {
                 $session = $mon.Sessions | Where-Object {$_.SessionKey -like $sessid}
                 $user = $mon.Users | Where-Object {$_.id -like $session.userid}
                 $Measure = $mon.SessionMetrics | Where-Object {$_.SessionId -like $sessid} | Measure-Object -Property IcaRttMS -Average   
@@ -99,7 +100,7 @@ Function Get-CitrixSessionIcaRtt {
                                 UPN          = $user.Upn
                         })
 
-
+            } catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
         }
 
         if ($Export -eq 'Excel') { $IcaRttObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Show }

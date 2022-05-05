@@ -136,14 +136,17 @@ $global:TableSettings = @{
 	Style           = 'cell-border'
 	TextWhenNoData  = 'No Data to display here'
 	Buttons         = 'searchBuilder', 'pdfHtml5', 'excelHtml5'
-	AutoSize        = $true
-	DisableSearch   = $true
+	#AutoSize        = $true
+	#DisableSearch   = $true
 	FixedHeader     = $true
 	HideFooter      = $true
-	ScrollCollapse  = $true
-	ScrollX         = $true
-	ScrollY         = $true
+	#ScrollCollapse  = $true
+	#ScrollX         = $true
+	#ScrollY         = $true
 	SearchHighlight = $true
+    PagingStyle     = "full"
+    PagingLength    = 10
+    #EnableScroller  = $true
 }
 $global:SectionSettings = @{
 	BackgroundColor       = 'grey'
@@ -151,8 +154,8 @@ $global:SectionSettings = @{
 	HeaderBackGroundColor = $XDHealth_Color1
 	HeaderTextAlignment   = 'center'
 	HeaderTextColor       = $XDHealth_Color2
-	HeaderTextSize        = '20'
-	BorderRadius          = '25px'
+	HeaderTextSize        = '15'
+	BorderRadius          = '20px'
 }
 $global:TableSectionSettings = @{
 	BackgroundColor       = 'white'
@@ -160,7 +163,7 @@ $global:TableSectionSettings = @{
 	HeaderBackGroundColor = $XDHealth_Color2
 	HeaderTextAlignment   = 'center'
 	HeaderTextColor       = $XDHealth_Color1
-	HeaderTextSize        = '20'
+	HeaderTextSize        = '15'
 }
 #endregion
 
@@ -171,7 +174,7 @@ $global:TableSectionSettings = @{
 ############################################
 # source: Get-CitrixConfigurationChange.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -242,7 +245,7 @@ Export-ModuleMember -Function Get-CitrixConfigurationChange
 ############################################
 # source: Get-CitrixFarmDetail.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -300,6 +303,7 @@ Function Get-CitrixFarmDetail {
 	#endregion
 
 	#region Machines
+try {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Machines Details"
 	$NonRemotepc = Get-BrokerMachine -MaxRecordCount 1000000 -AdminAddress $AdminServer
 	$UnRegServer = $NonRemotepc | Where-Object { $_.RegistrationState -like 'unreg*' -and $_.DeliveryType -notlike 'DesktopsOnly' } | Select-Object DNSName, CatalogName, DesktopGroupName, FaultState
@@ -309,19 +313,27 @@ Function Get-CitrixFarmDetail {
 		UnRegisteredServers  = $UnRegServer
 		UnRegisteredDesktops = $UnRegDesktop
 	} | Select-Object AllMachines, UnRegisteredServers, UnRegisteredDesktops
+} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+
 	#endregion
 
 	#region sessions
+try {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Sessions Details"
 	$sessions = Get-BrokerSession -MaxRecordCount 1000000 -AdminAddress $AdminServer
-	#endregion
+} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+	
+#endregion
 
 	#region del groups
+try {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] DeliveryGroups Details"
 	$DeliveryGroups = Get-BrokerDesktopGroup -AdminAddress $AdminServer | Select-Object Name, DeliveryType, DesktopKind, IsRemotePC, Enabled, TotalDesktops, DesktopsAvailable, DesktopsInUse, DesktopsUnregistered, InMaintenanceMode, Sessions, SessionSupport, TotalApplicationGroups, TotalApplications
-	#endregion		
+} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}	
+#endregion		
 
 	#region dbconnection	
+try {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] DBConnection Details"
 	$dbArray = @()
 
@@ -338,9 +350,12 @@ Function Get-CitrixFarmDetail {
 	} | Select-Object 'Service Status', 'DB Connection Status', 'Is Mirroring Enabled', 'DB Last Backup Date'
 
 	$DBConnection = $CCTXObject.psobject.Properties | Select-Object -Property Name, Value
-	#endregion
+} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+	
+#endregion
 
 	#region reboots
+try {
 	[System.Collections.ArrayList]$RebootSchedule = @()
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Reboot Schedule Details"
     Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer -Day $((get-date).DayOfWeek.ToString()) | ForEach-Object {
@@ -358,10 +373,11 @@ Function Get-CitrixFarmDetail {
         })
     }
     }
-
+} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	#endregion
 		
 	#region uptime
+try {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] VDA Uptime"	
 	[System.Collections.ArrayList]$VDAUptime = @()
 	Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000000 | Where-Object {$_.DesktopGroupName -notlike $null } | ForEach-Object {
@@ -371,10 +387,10 @@ Function Get-CitrixFarmDetail {
 			$updays = [math]::Round($uptime.Days, 0)
 		} catch {
             try {
-			Write-Warning "Unable to remote to $($_.DNSName), defaulting uptime to unknown"
+			Write-Warning "`t`tUnable to remote to $($_.DNSName), defaulting uptime to LastRegistrationTime"
 			$Uptime = New-TimeSpan -Start $_.LastRegistrationTime -End (Get-Date)
 			$updays = [math]::Round($uptime.Days, 0)
-		} catch {$updays = "Unkmown"}}
+		} catch {$updays = "Unknown"}}
 
 
 		[void]$VDAUptime.Add([pscustomobject]@{
@@ -387,32 +403,44 @@ Function Get-CitrixFarmDetail {
 				LastRegistrationTime = $_.LastRegistrationTime
 			})
 	}
+} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	#endregion
 
 	#region connection / machine failures
+try {
 	$Failures = Get-CitrixFailures -AdminServer $AdminServer -hours 24
+} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+
 	#endregion
 
 	#region workspace app ver
-	$appver = Get-CitrixWorkspaceAppVersions -AdminServer $AdminServer -hours 24 | Sort-Object -Property ClientVersion -Unique
+try {
+	$appver = Get-CitrixWorkspaceAppVersions -AdminServer $AdminServer -hours 24 | Where-Object {$_.ClientVersion -notlike $null}
+} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	#endregion
 
 	#region icartt
+try {
      $CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
+} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+     
      #endregion
 
 	#region counts
+try {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Session Counts Details"
 	$SessionCounts = New-Object PSObject -Property @{
 		'Active Sessions'        = ($Sessions | Where-Object -Property Sessionstate -EQ 'Active').count
 		'Disconnected Sessions'  = ($Sessions | Where-Object -Property Sessionstate -EQ 'Disconnected').count
 		'Connection Failures'    = $Failures.ConnectionFails.Count
-		'Unique Client Versions' = $appver.Count
+		'Unique Client Versions' = ($appver | Sort-Object -Property ClientVersion -Unique).Count
 		'Unregistered Servers'   = ($Machines.UnRegisteredServers | Measure-Object).count
 		'Unregistered Desktops'  = ($Machines.UnRegisteredDesktops | Measure-Object).count
 		'Machine Failures'       = $Failures.mashineFails.Count
 	} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Connection Failures', 'Unregistered Servers', 'Unregistered Desktops', 'Machine Failures' 
-	#endregion
+} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
+	
+#endregion
 
 	New-Object PSObject -Property @{
 		DateCollected  = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
@@ -440,7 +468,7 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 ############################################
 # source: Get-CitrixLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -490,7 +518,7 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 ############################################
 # source: Get-CitrixMonitoringData.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -564,7 +592,7 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 ############################################
 # source: Get-CitrixServerEventLog.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -631,7 +659,7 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 ############################################
 # source: Get-CitrixServerPerformance.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -698,7 +726,7 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 ############################################
 # source: Get-RDSLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -748,7 +776,7 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 ############################################
 # source: Get-CitrixObjects.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -949,7 +977,7 @@ Export-ModuleMember -Function Get-CitrixObjects
 ############################################
 # source: Get-CitrixFailures.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1055,7 +1083,7 @@ Export-ModuleMember -Function Get-CitrixFailures
 ############################################
 # source: Get-CitrixSessionIcaRtt.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1106,6 +1134,7 @@ Function Get-CitrixSessionIcaRtt {
 
         [System.Collections.ArrayList]$IcaRttObject = @()
         foreach ($sessid in $mon.SessionMetrics.sessionid | Sort-Object -Unique) {
+            try {
                 $session = $mon.Sessions | Where-Object {$_.SessionKey -like $sessid}
                 $user = $mon.Users | Where-Object {$_.id -like $session.userid}
                 $Measure = $mon.SessionMetrics | Where-Object {$_.SessionId -like $sessid} | Measure-Object -Property IcaRttMS -Average   
@@ -1117,7 +1146,7 @@ Function Get-CitrixSessionIcaRtt {
                                 UPN          = $user.Upn
                         })
 
-
+            } catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
         }
 
         if ($Export -eq 'Excel') { $IcaRttObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Show }
@@ -1134,7 +1163,7 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 ############################################
 # source: Get-CitrixWorkspaceAppVersions.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1231,7 +1260,7 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 ############################################
 # source: Start-CitrixAudit.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1411,7 +1440,7 @@ Export-ModuleMember -Function Start-CitrixAudit
 ############################################
 # source: Start-CitrixHealthCheck.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1583,7 +1612,7 @@ function Start-CitrixHealthCheck {
 		}
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix Config Changes in the last 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixConfigurationChanges.Summary | Where-Object { $_.name -ne "" } | Sort-Object count -Descending | Select-Object -First 5 -Property count, name) } }
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix Server Performace' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($ServerPerformance) $Conditions_performance } }
-		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'VDA Server Uptime more than 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }) } }
+		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'VDA Uptime more than 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }) } }
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.DeliveryGroups $Conditions_deliverygroup } }
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix UnRegistered Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops } }
 		New-HTMLSection  @SectionSettings -Content { New-HTMLSection -HeaderText  'Citrix UnRegistered Servers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredServers } }
@@ -1645,7 +1674,7 @@ Export-ModuleMember -Function Start-CitrixHealthCheck
 ############################################
 # source: Import-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1718,7 +1747,7 @@ Export-ModuleMember -Function Import-ParametersFile
 ############################################
 # source: Install-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1860,7 +1889,7 @@ Export-ModuleMember -Function Install-ParametersFile
 ############################################
 # source: Set-XDHealthReportColors.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.14
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################

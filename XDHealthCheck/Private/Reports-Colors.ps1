@@ -23,14 +23,17 @@ $global:TableSettings = @{
 	Style           = 'cell-border'
 	TextWhenNoData  = 'No Data to display here'
 	Buttons         = 'searchBuilder', 'pdfHtml5', 'excelHtml5'
-	AutoSize        = $true
-	DisableSearch   = $true
+	#AutoSize        = $true
+	#DisableSearch   = $true
 	FixedHeader     = $true
 	HideFooter      = $true
-	ScrollCollapse  = $true
-	ScrollX         = $true
-	ScrollY         = $true
+	#ScrollCollapse  = $true
+	#ScrollX         = $true
+	#ScrollY         = $true
 	SearchHighlight = $true
+    PagingStyle     = "full"
+    PagingLength    = 10
+    #EnableScroller  = $true
 }
 $global:SectionSettings = @{
 	BackgroundColor       = 'grey'
@@ -38,8 +41,8 @@ $global:SectionSettings = @{
 	HeaderBackGroundColor = $XDHealth_Color1
 	HeaderTextAlignment   = 'center'
 	HeaderTextColor       = $XDHealth_Color2
-	HeaderTextSize        = '20'
-	BorderRadius          = '25px'
+	HeaderTextSize        = '15'
+	BorderRadius          = '20px'
 }
 $global:TableSectionSettings = @{
 	BackgroundColor       = 'white'
@@ -47,7 +50,7 @@ $global:TableSectionSettings = @{
 	HeaderBackGroundColor = $XDHealth_Color2
 	HeaderTextAlignment   = 'center'
 	HeaderTextColor       = $XDHealth_Color1
-	HeaderTextSize        = '20'
+	HeaderTextSize        = '15'
 }
 #endregion
 
