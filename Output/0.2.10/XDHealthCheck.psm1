@@ -174,7 +174,7 @@ $global:TableSectionSettings = @{
 ############################################
 # source: Get-CitrixConfigurationChange.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -245,7 +245,7 @@ Export-ModuleMember -Function Get-CitrixConfigurationChange
 ############################################
 # source: Get-CitrixFarmDetail.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -469,7 +469,7 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 ############################################
 # source: Get-CitrixLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -519,7 +519,7 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 ############################################
 # source: Get-CitrixMonitoringData.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -593,7 +593,7 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 ############################################
 # source: Get-CitrixServerEventLog.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -659,7 +659,7 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 ############################################
 # source: Get-CitrixServerPerformance.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -726,7 +726,7 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 ############################################
 # source: Get-RDSLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -776,7 +776,7 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 ############################################
 # source: Get-CitrixObjects.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -977,7 +977,7 @@ Export-ModuleMember -Function Get-CitrixObjects
 ############################################
 # source: Get-CitrixFailures.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1083,7 +1083,7 @@ Export-ModuleMember -Function Get-CitrixFailures
 ############################################
 # source: Get-CitrixSessionIcaRtt.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1163,7 +1163,7 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 ############################################
 # source: Get-CitrixWorkspaceAppVersions.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1260,7 +1260,7 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 ############################################
 # source: Start-CitrixAudit.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1386,16 +1386,15 @@ function Start-CitrixAudit {
 	#region Saving Excel report
 	#######################
 	if ($SaveExcelReport) {
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Saving Excel Report"
-		$AllXDData.MachineCatalog | Export-Excel -Path $ExcelReportname -WorksheetName MachineCatalog -AutoSize -Title 'Citrix Machine Catalog' -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -WorksheetName DeliveryGroups -AutoSize -Title 'Citrix Delivery Groups' -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -WorksheetName PublishedApps -AutoSize -Title 'Citrix PublishedApps' -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.VDAServers | Export-Excel -Path $ExcelReportname -WorksheetName VDAServers -AutoSize -Title 'Citrix VDA Servers' -TitleBold -TitleSize 20 -FreezePane 3
-		$AllXDData.VDAWorkstations | Export-Excel -Path $ExcelReportname -WorksheetName VDAWorkstations -AutoSize -Title 'Citrix VDA Workstations' -TitleBold -TitleSize 20 -FreezePane 3
-
+		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Saving Excel Report"
+		$AllXDData.MachineCatalog | Export-Excel -Path $ExcelReportname -AutoSize -AutoFilter -Title 'MachineCatalog' -WorksheetName MachineCatalog -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
+		$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -AutoSize -AutoFilter -Title 'DeliveryGroups' -WorksheetName DeliveryGroups -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
+		$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -AutoSize -AutoFilter -Title 'PublishedApps' -WorksheetName PublishedApps -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
+		$AllXDData.VDAServers | Export-Excel -Path $ExcelReportname -AutoSize -AutoFilter -Title 'VDAServers' -WorksheetName VDAServers -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
+		$AllXDData.VDAWorkstations | Export-Excel -Path $ExcelReportname -AutoSize -AutoFilter -Title 'VDAWorkstations' -WorksheetName VDAWorkstations -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
 	}
 	#endregion
-
+	
 	#######################
 	#region Sending email reports
 	#######################
@@ -1440,7 +1439,7 @@ Export-ModuleMember -Function Start-CitrixAudit
 ############################################
 # source: Start-CitrixHealthCheck.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1528,6 +1527,8 @@ function Start-CitrixHealthCheck {
 	$CitrixConfigurationChanges = Get-CitrixConfigurationChange -AdminServer $CTXDDC -Indays 7
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Server Performance Details"
 	$ServerPerformance = Get-CitrixServerPerformance -ComputerName $CTXCore
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Citrix Env Test Results"
+	$CitrixEnvTestResults = Get-CitrixEnvTestResults -AdminServer $CTXDDC -Infrastructure
 	#endregion
 
 	########################################
@@ -1610,13 +1611,17 @@ function Start-CitrixHealthCheck {
 			New-HTMLSection -HeaderText 'Client Versions' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.AppVer }
 			New-HTMLSection -HeaderText 'ICA Rtt' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.IcaRtt }
 		}
-		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix Config Changes in the last 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixConfigurationChanges.Summary | Where-Object { $_.name -ne '' } | Sort-Object count -Descending | Select-Object -First 5 -Property count, name) } }
-		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix Server Performace' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($ServerPerformance) $Conditions_performance } }
+		New-HTMLSection @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Citrix Config Changes in the last 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixConfigurationChanges.Summary | Where-Object { $_.name -ne '' } | Sort-Object count -Descending | Select-Object -First 5 -Property count, name) }
+			New-HTMLSection -HeaderText 'Citrix Server Performance' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($ServerPerformance) $Conditions_performance }
+		}
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'VDA Uptime more than 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixRemoteFarmDetails.VDAUptime | Where-Object { $_.uptime -gt 7 }) } }
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.DeliveryGroups $Conditions_deliverygroup } }
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops } }
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Servers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredServers } }
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText "Today`'s Reboot Schedule" @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.RebootSchedule } }
+		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Environment Test' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixEnvTestResults.InfrastructureResults } }
+
 
 	}
 	#endregion
@@ -1674,7 +1679,7 @@ Export-ModuleMember -Function Start-CitrixHealthCheck
 ############################################
 # source: Import-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1747,7 +1752,7 @@ Export-ModuleMember -Function Import-ParametersFile
 ############################################
 # source: Install-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1889,7 +1894,7 @@ Export-ModuleMember -Function Install-ParametersFile
 ############################################
 # source: Set-XDHealthReportColors.ps1
 # Module: XDHealthCheck
-# version: 0.2.9
+# version: 0.2.10
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1986,6 +1991,167 @@ $global:TableSectionSettings = @{
 } #end Function
  
 Export-ModuleMember -Function Set-XDHealthReportColors
+#endregion
+ 
+#region Get-CitrixEnvTestResults.ps1
+############################################
+# source: Get-CitrixEnvTestResults.ps1
+# Module: XDHealthCheck
+# version: 0.2.10
+# Author: Pierre Smit
+# Company: HTPCZA Tech
+#############################################
+ 
+<#
+.SYNOPSIS
+Perform and report on tests on catalogs, delivery groups, hypervisor and Infrastructure
+
+.DESCRIPTION
+Perform and report on tests on catalogs, delivery groups, hypervisor and Infrastructure
+
+.PARAMETER AdminServer
+FQDN of the Citrix Data Collector
+
+.PARAMETER Catalogs
+Report on Catalogs
+
+.PARAMETER DesktopGroups
+Report on Desktop Groups
+
+.PARAMETER Hypervisor
+Report on  hypervisor
+
+.PARAMETER Infrastructure
+Report Infrastructure
+
+.PARAMETER Export
+Export the result to a report file. (Excel or html)
+
+.PARAMETER ReportPath
+Where to save the report.
+
+.EXAMPLE
+Get-CitrixEnvTestResults -AdminServer vulcan.internal.lab -Catalogs -DesktopGroups -Hypervisor -Infrastructure -Export HTML -ReportPath C:\temp -Verbose
+
+#>
+Function Get-CitrixEnvTestResults {
+    [Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixEnvTestResults')]
+    [OutputType([System.Object[]])]
+    PARAM(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [ValidateNotNull()]
+        [ValidateNotNullOrEmpty()]
+        [string]$AdminServer,
+        [switch]$Catalogs = $false,
+        [switch]$DesktopGroups = $false,
+        [switch]$Hypervisor = $false,
+        [switch]$Infrastructure = $false,
+        [ValidateSet('Excel', 'HTML')]
+        [string]$Export = 'Host',
+        [ValidateScript( { if (Test-Path $_) { $true }
+                else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
+            })]
+        [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
+    )
+
+
+    if ($Catalogs) {
+        try {
+            [System.Collections.ArrayList]$catalogResults = @()
+            foreach ($catalog in Get-BrokerCatalog -AdminAddress $AdminAddress) {
+                Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Catalog: $($catalog.Name)"
+                $testResult = New-EnvTestDiscoveryTargetDefinition -AdminAddress $AdminAddress -TargetIdType 'Catalog' -TestSuiteId 'Catalog' -TargetId $catalog.UUID | Start-EnvTestTask -AdminAddress $AdminAddress -ExcludeNotRunTests 
+                $testResult.TestResults | ForEach-Object {
+                    [void]$catalogResults.Add([pscustomobject]@{
+                            Name                = $catalog.Name
+                            TestComponentStatus = $_.TestComponentStatus
+                            TestId              = $_.TestId
+                            TestServiceTarget   = $_.TestServiceTarget
+                            TestEndTime         = $_.TestEndTime
+                        })
+                }
+            }
+        } catch {Write-Warning "Error: `nException:$($_.Exception.Message)"}
+    } 
+
+    if ($DesktopGroups) {
+        try {
+            [System.Collections.ArrayList]$DesktopGroupResults = @()
+            foreach ($DesktopGroup in Get-BrokerDesktopGroup -AdminAddress $AdminAddress) {
+                Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Catalog: $($DesktopGroup.Name)"
+                $testResult = New-EnvTestDiscoveryTargetDefinition -AdminAddress $AdminAddress -TargetIdType 'DesktopGroup' -TestSuiteId 'DesktopGroup' -TargetId $DesktopGroup.UUID | Start-EnvTestTask -AdminAddress $AdminAddress -ExcludeNotRunTests 
+                $testResult.TestResults | ForEach-Object {
+                    [void]$DesktopGroupResults.Add([pscustomobject]@{
+                            Name                = $DesktopGroup.Name
+                            TestComponentStatus = $_.TestComponentStatus
+                            TestId              = $_.TestId
+                            TestServiceTarget   = $_.TestServiceTarget
+                            TestEndTime         = $_.TestEndTime
+                        })
+                }
+            }
+        } catch {Write-Warning "Error: `nException:$($_.Exception.Message)"}
+    }
+
+    if ($Hypervisor) {
+        try {
+            [System.Collections.ArrayList]$HypervisorConnectionResults = @()
+            foreach ($Hypervisor in Get-BrokerHypervisorConnection -AdminAddress $AdminAddress) {
+                Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Catalog: $($Hypervisor.Name)"
+                $testResult = New-EnvTestDiscoveryTargetDefinition -AdminAddress $AdminAddress -TargetIdType 'HypervisorConnection' -TestSuiteId 'HypervisorConnection' -TargetId $Hypervisor.Uid | Start-EnvTestTask -AdminAddress $AdminAddress -ExcludeNotRunTests 
+                $testResult.TestResults | ForEach-Object {
+                    [void]$HypervisorConnectionResults.Add([pscustomobject]@{
+                            Name                = $Hypervisor.Name
+                            TestComponentStatus = $_.TestComponentStatus
+                            TestId              = $_.TestId
+                            TestServiceTarget   = $_.TestServiceTarget
+                            TestEndTime         = $_.TestEndTime
+                        })
+                }
+            }
+        } catch {Write-Warning "Error: `nException:$($_.Exception.Message)"}
+    }
+
+    if ($Infrastructure) {
+        try {
+            [System.Collections.ArrayList]$InfrastructureResults = @()
+            Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Catalog: Infrastructure"
+            $Infra = New-EnvTestDiscoveryTargetDefinition -TestSuiteId Infrastructure | Start-EnvTestTask -AdminAddress $AdminAddress -ExcludeNotRunTests
+            $Infra.TestResults | ForEach-Object {
+                [void]$InfrastructureResults.Add([pscustomobject]@{
+                        TestComponentStatus = $_.TestComponentStatus
+                        TestId              = $_.TestId
+                        TestServiceTarget   = $_.TestServiceTarget
+                        TestEndTime         = $_.TestEndTime
+                    })
+            }
+        } catch {Write-Warning "Error: `nException:$($_.Exception.Message)"}
+    }
+
+    if ($Export -eq 'Excel') { 
+        $catalogResults | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'Catalog Results' -WorksheetName Catalog -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
+        $DesktopGroupResults | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'DesktopGroup Results' -WorksheetName DesktopGroup -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
+        $HypervisorConnectionResults | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'Hypervisor Connection Results' -WorksheetName Hypervisor -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
+        $InfrastructureResults | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'Infrastructure Results' -WorksheetName Infrastructure -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
+    }
+    if ($Export -eq 'HTML') { 
+        $catalogResults | Out-GridHtml -DisablePaging -Title 'Catalog Results' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-catalog-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+        $DesktopGroupResults | Out-GridHtml -DisablePaging -Title 'DesktopGroup Results' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-DesktopGroup-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+        $HypervisorConnectionResults | Out-GridHtml -DisablePaging -Title 'Hypervisor Connection Results' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-Hypervisor-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+        $InfrastructureResults | Out-GridHtml -DisablePaging -Title 'Infrastructure Results' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-Infrastructure-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+    }
+    if ($Export -eq 'Host') {
+        [pscustomobject]@{
+            catalogResults              = $catalogResults
+            DesktopGroupResults         = $DesktopGroupResults
+            HypervisorConnectionResults = $HypervisorConnectionResults
+            InfrastructureResults       = $InfrastructureResults
+        }
+    }
+
+} #end Function
+ 
+Export-ModuleMember -Function Get-CitrixEnvTestResults
 #endregion
  
 #endregion

@@ -10,6 +10,7 @@ This will capture and save needed farm details, to allow scripts to run automati
 NOTES
 Functions in this module:
 	 Get-CitrixConfigurationChange -- Show the changes that was made to the farm
+	 Get-CitrixEnvTestResults -- Perform and report on tests on catalogs, delivery groups, hypervisor and Infrastructure
 	 Get-CitrixFailures -- Creates a report from monitoring data about machine and connection failures
 	 Get-CitrixFarmDetail -- Get needed Farm details.
 	 Get-CitrixLicenseInformation -- Show Citrix License details
