@@ -35,6 +35,7 @@ Documentation can be found at: [Github_Pages](https://smitpi.github.io/XDHealthC
 - [Get-CitrixServerEventLog](https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerEventLog) -- Get windows event log details
 - [Get-CitrixServerPerformance](https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerPerformance) -- Collects perform data for the core servers.
 - [Get-CitrixSessionIcaRtt](https://smitpi.github.io/XDHealthCheck/#Get-CitrixSessionIcaRtt) -- Creates a report of users sessions with a AVG IcaRttMS
+- [Get-CitrixVDAUptime](https://smitpi.github.io/XDHealthCheck/#Get-CitrixVDAUptime) -- Calculate the uptime of VDA Servers.
 - [Get-CitrixWorkspaceAppVersions](https://smitpi.github.io/XDHealthCheck/#Get-CitrixWorkspaceAppVersions) -- Reports on the versions of workspace app your users are using to connect
 - [Get-RDSLicenseInformation](https://smitpi.github.io/XDHealthCheck/#Get-RDSLicenseInformation) -- Report on RDS License Usage
 - [Import-ParametersFile](https://smitpi.github.io/XDHealthCheck/#Import-ParametersFile) -- Import the config file and creates the needed variables

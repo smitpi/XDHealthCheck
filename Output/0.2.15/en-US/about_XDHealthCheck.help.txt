@@ -19,6 +19,7 @@ Functions in this module:
 	 Get-CitrixServerEventLog -- Get windows event log details
 	 Get-CitrixServerPerformance -- Collects perform data for the core servers.
 	 Get-CitrixSessionIcaRtt -- Creates a report of users sessions with a AVG IcaRttMS
+	 Get-CitrixVDAUptime -- Calculate the uptime of VDA Servers.
 	 Get-CitrixWorkspaceAppVersions -- Reports on the versions of workspace app your users are using to connect
 	 Get-RDSLicenseInformation -- Report on RDS License Usage
 	 Import-ParametersFile -- Import the config file and creates the needed variables

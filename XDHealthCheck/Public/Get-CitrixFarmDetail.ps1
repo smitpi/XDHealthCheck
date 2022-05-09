@@ -178,37 +178,6 @@ Function Get-CitrixFarmDetail {
 	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	#endregion
 		
-	#region uptime
-	try {
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] VDA Uptime"	
-		[System.Collections.ArrayList]$VDAUptime = @()
-		Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000000 | Where-Object {$_.DesktopGroupName -notlike $null } | ForEach-Object {
-			try {	
-				$OS = Get-CimInstance Win32_OperatingSystem -ComputerName $_.DNSName -ErrorAction Stop | Select-Object *
-				$Uptime = New-TimeSpan -Start $OS.LastBootUpTime -End (Get-Date)
-				$updays = [math]::Round($uptime.Days, 0)
-			} catch {
-				try {
-					Write-Warning "`t`tUnable to remote to $($_.DNSName), defaulting uptime to LastRegistrationTime"
-					$Uptime = New-TimeSpan -Start $_.LastRegistrationTime -End (Get-Date)
-					$updays = [math]::Round($uptime.Days, 0)
-				} catch {$updays = 'Unknown'}
-			}
-
-
-			[void]$VDAUptime.Add([pscustomobject]@{
-					ComputerName         = $_.dnsname
-					DesktopGroupName     = $_.DesktopGroupName
-					SessionCount         = $_.SessionCount
-					InMaintenanceMode    = $_.InMaintenanceMode
-					MachineInternalState = $_.MachineInternalState
-					Uptime               = $updays
-					LastRegistrationTime = $_.LastRegistrationTime
-				})
-		}
-	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
-	#endregion
-
 	#region connection / machine failures
 	try {
 		$Failures = Get-CitrixFailures -AdminServer $AdminServer -hours 24
@@ -226,7 +195,6 @@ Function Get-CitrixFarmDetail {
 	try {
 		$CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
 	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
-     
 	#endregion
 
 	#region counts
@@ -242,7 +210,6 @@ Function Get-CitrixFarmDetail {
 			'Machine Failures'       = $Failures.mashineFails.Count
 		} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Connection Failures', 'Unregistered Servers', 'Unregistered Desktops', 'Machine Failures' 
 	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
-	
 	#endregion
 
 	New-Object PSObject -Property @{
@@ -255,11 +222,10 @@ Function Get-CitrixFarmDetail {
 		DBConnection   = $DBConnection
 		SessionCounts  = $SessionCounts
 		RebootSchedule = $RebootSchedule
-		VDAUptime      = $VDAUptime
 		Failures       = $Failures
 		AppVer         = $appver
 		IcaRtt         = $CitrixSessionIcaRtt
-	} | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule, VDAUptime, Failures, AppVer, IcaRtt
+	} | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule, Failures, AppVer, IcaRtt
 
 } #end Function
 
