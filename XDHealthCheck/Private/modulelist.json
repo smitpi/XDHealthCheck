@@ -1,0 +1,17 @@
+[
+	{
+		"Name": "PSWriteColor"
+	},
+	{
+		"Name": "PSWriteHTML"
+	},
+	{
+		"Name": "ImportExcel"
+	},
+	{
+		"Name": "BetterCredentials"
+	},
+	{
+		"Name": "PSScriptTools"
+	}
+]
