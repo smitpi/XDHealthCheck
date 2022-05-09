@@ -97,20 +97,6 @@ Function Get-CitrixMonitoringData {
             ResourceUtilizationSummary = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/ResourceUtilizationSummary?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
             SessionMetrics             = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/SessionMetrics?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
         }
-    } else {         
-        [pscustomobject]@{
-            Sessions                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Sessions?`$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-            Connections                = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Connections?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-            ConnectionFailureLogs      = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ConnectionFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-            MachineFailureLogs         = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/MachineFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-            Users                      = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Users?`$format=json" @urisettings ).value
-            Machines                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Machines?`$format=json" @urisettings ).value
-            Catalogs                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Catalogs?`$format=json" @urisettings ).value
-            Applications               = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Applications?`$format=json" @urisettings ).value
-            DesktopGroups              = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/DesktopGroups?`$format=json" @urisettings ).value
-            ResourceUtilization        = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ResourceUtilization?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-            ResourceUtilizationSummary = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ResourceUtilizationSummary?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-            SessionMetrics             = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/SessionMetrics?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-        } }
+    } else { Write-Error 'OData version to old, update the farm to a newer version.'}
 
 } #end Function
