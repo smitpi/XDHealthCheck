@@ -56,6 +56,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixVDAUptime/</loc>
+         <lastmod>2022-05-09</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixWorkspaceAppVersions/</loc>
          <lastmod>2022-05-09</lastmod>
          <changefreq>daily</changefreq>
