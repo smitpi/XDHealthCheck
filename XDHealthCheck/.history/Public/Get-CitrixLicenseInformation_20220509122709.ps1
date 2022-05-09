@@ -76,9 +76,9 @@ Function Get-CitrixLicenseInformation {
 		[string]$AdminServer)
 
 	if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
-	$licenseServer = (Get-BrokerSite $AdminServer).LicenseServerName
-	$cert = Get-LicCertificate -AdminAddress "https://$($licenseServer):8083"
-	$ctxlic = Get-LicInventory -AdminAddress "https://$($licenseServer):8083" -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 }
+	$licenseServer = (Get-BrokerSite $AdminServer).
+	$cert = Get-LicCertificate -AdminAddress $AdminServer
+	$ctxlic = Get-LicInventory -AdminAddress $AdminServer -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 }
 	[System.Collections.ArrayList]$LicDetails = @()
 	foreach ($lic in $ctxlic) {
 		[void]$LicDetails.Add([pscustomobject]@{

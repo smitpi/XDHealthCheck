@@ -296,7 +296,7 @@ $global:SessionFailureCode = [PSCustomObject]@{
 ############################################
 # source: Get-CitrixConfigurationChange.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -367,7 +367,7 @@ Export-ModuleMember -Function Get-CitrixConfigurationChange
 ############################################
 # source: Get-CitrixEnvTestResults.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -528,7 +528,7 @@ Export-ModuleMember -Function Get-CitrixEnvTestResults
 ############################################
 # source: Get-CitrixFailures.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -634,7 +634,7 @@ Export-ModuleMember -Function Get-CitrixFailures
 ############################################
 # source: Get-CitrixFarmDetail.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -858,7 +858,7 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 ############################################
 # source: Get-CitrixLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -886,8 +886,9 @@ Function Get-CitrixLicenseInformation {
 		[string]$AdminServer)
 
 	if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
-	$cert = Get-LicCertificate -AdminAddress $AdminServer
-	$ctxlic = Get-LicInventory -AdminAddress $AdminServer -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 }
+	$licenseServer = (Get-BrokerSite $AdminServer).LicenseServerName
+	$cert = Get-LicCertificate -AdminAddress "https://$($licenseServer):8083"
+	$ctxlic = Get-LicInventory -AdminAddress "https://$($licenseServer):8083" -CertHash $cert.CertHash | Where-Object { $_.LicensesInUse -ne 0 }
 	[System.Collections.ArrayList]$LicDetails = @()
 	foreach ($lic in $ctxlic) {
 		[void]$LicDetails.Add([pscustomobject]@{
@@ -908,7 +909,7 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 ############################################
 # source: Get-CitrixMonitoringData.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -996,7 +997,7 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 ############################################
 # source: Get-CitrixObjects.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1197,7 +1198,7 @@ Export-ModuleMember -Function Get-CitrixObjects
 ############################################
 # source: Get-CitrixServerEventLog.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1263,7 +1264,7 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 ############################################
 # source: Get-CitrixServerPerformance.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1330,7 +1331,7 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 ############################################
 # source: Get-CitrixSessionIcaRtt.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1410,7 +1411,7 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 ############################################
 # source: Get-CitrixWorkspaceAppVersions.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1507,7 +1508,7 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 ############################################
 # source: Get-RDSLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1557,7 +1558,7 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 ############################################
 # source: Import-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1630,7 +1631,7 @@ Export-ModuleMember -Function Import-ParametersFile
 ############################################
 # source: Install-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1772,7 +1773,7 @@ Export-ModuleMember -Function Install-ParametersFile
 ############################################
 # source: Set-XDHealthReportColors.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1875,7 +1876,7 @@ Export-ModuleMember -Function Set-XDHealthReportColors
 ############################################
 # source: Start-CitrixAudit.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2054,7 +2055,7 @@ Export-ModuleMember -Function Start-CitrixAudit
 ############################################
 # source: Start-CitrixHealthCheck.ps1
 # Module: XDHealthCheck
-# version: 0.2.12
+# version: 0.2.13
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
