@@ -1,0 +1,35 @@
+
+XDHealthCheck
+	 about_XDHealthCheck
+ 
+SHORT DESCRIPTION
+	 Creates daily health check and config reports for your on-premise Citrix farm. To get started, you need to run Install-ParametersFile.
+This will capture and save needed farm details, to allow scripts to run automatically.
+
+ 
+NOTES
+Functions in this module:
+	 Get-CitrixConfigurationChange -- Show the changes that was made to the farm
+	 Get-CitrixEnvTestResults -- Perform and report on tests on catalogs, delivery groups, hypervisor and Infrastructure
+	 Get-CitrixFailures -- Creates a report from monitoring data about machine and connection failures
+	 Get-CitrixFarmDetail -- Get needed Farm details.
+	 Get-CitrixLicenseInformation -- Show Citrix License details
+	 Get-CitrixMonitoringData -- Connects and collects data from the monitoring OData feed.
+	 Get-CitrixObjects -- Get details of citrix objects
+	 Get-CitrixServerEventLog -- Get windows event log details
+	 Get-CitrixServerPerformance -- Collects perform data for the core servers.
+	 Get-CitrixSessionIcaRtt -- Creates a report of users sessions with a AVG IcaRttMS
+	 Get-CitrixVDAUptime -- Calculate the uptime of VDA Servers.
+	 Get-CitrixWorkspaceAppVersions -- Reports on the versions of workspace app your users are using to connect
+	 Get-RDSLicenseInformation -- Report on RDS License Usage
+	 Import-ParametersFile -- Import the config file and creates the needed variables
+	 Install-ParametersFile -- Create a json config file with all needed farm details.
+	 Set-XDHealthReportColors -- Set the color and logo for HTML Reports
+	 Start-CitrixAudit -- Creates and distributes  a report on catalog, groups and published app config.
+	 Start-CitrixHealthCheck -- Creates and distributes  a report on citrix farm health.
+ 
+SEE ALSO
+	 https://github.com/smitpi/XDHealthCheck
+
+	 https://smitpi.github.io/XDHealthCheck
+
