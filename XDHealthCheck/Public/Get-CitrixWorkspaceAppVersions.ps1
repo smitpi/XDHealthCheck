@@ -99,7 +99,7 @@ Function Get-CitrixWorkspaceAppVersions {
 
 
 	$index = 1
-	[string]$AllCount = $Connections.Count
+	[string]$AllCount = $mon.Connections.Count
 	[System.Collections.ArrayList]$ClientObject = @()
 
 	foreach ($connect in $mon.Connections) {
