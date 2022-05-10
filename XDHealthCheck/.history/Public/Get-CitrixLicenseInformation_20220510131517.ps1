@@ -105,13 +105,13 @@ Function Get-CitrixLicenseInformation {
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
 			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-			AutoSize         = True
-			AutoFilter       = True
-			TitleBold        = True
+			AutoSize         = $True
+			AutoFilter       = $True
+			TitleBold        = $True
 			TitleSize        = '28'
 			TitleFillPattern = 'LightTrellis'
 			TableStyle       = 'Light20'
-			FreezeTopRow     = True
+			FreezeTopRow     = $True
 			FreezePane       = '3'
 		}
 		$LicDetails | Export-Excel -Title CitrixLicenseInformation -WorksheetName CitrixLicenseInformation @ExcelOptions

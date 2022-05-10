@@ -167,7 +167,7 @@ $global:TableSectionSettings = @{
 ############################################
 # source: Get-CitrixConfigurationChange.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -243,13 +243,13 @@ Function Get-CitrixConfigurationChange {
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
 			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-			AutoSize         = True
-			AutoFilter       = True
-			TitleBold        = True
+			AutoSize         = $True
+			AutoFilter       = $True
+			TitleBold        = $True
 			TitleSize        = '28'
 			TitleFillPattern = 'LightTrellis'
 			TableStyle       = 'Light20'
-			FreezeTopRow     = True
+			FreezeTopRow     = $True
 			FreezePane       = '3'
 		}
 		$CTXObject.Filtered | Export-Excel -Title CitrixConfigurationChange -WorksheetName CitrixConfigurationChange @ExcelOptions
@@ -269,7 +269,7 @@ Export-ModuleMember -Function Get-CitrixConfigurationChange
 ############################################
 # source: Get-CitrixEnvTestResults.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -442,7 +442,7 @@ Export-ModuleMember -Function Get-CitrixEnvTestResults
 ############################################
 # source: Get-CitrixFailures.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -525,13 +525,13 @@ Function Get-CitrixFailures {
     if ($Export -eq 'Excel') { 
         $ExcelOptions = @{
             Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-            AutoSize         = True
-            AutoFilter       = True
-            TitleBold        = True
+            AutoSize         = $True
+            AutoFilter       = $True
+            TitleBold        = $True
             TitleSize        = '28'
             TitleFillPattern = 'LightTrellis'
             TableStyle       = 'Light20'
-            FreezeTopRow     = True
+            FreezeTopRow     = $True
             FreezePane       = '3'
         }
         $mashineFails   | Export-Excel -Title MachineFailures -WorksheetName MachineFailures @ExcelOptions
@@ -559,7 +559,7 @@ Export-ModuleMember -Function Get-CitrixFailures
 ############################################
 # source: Get-CitrixFarmDetail.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -715,7 +715,7 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 ############################################
 # source: Get-CitrixLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -772,13 +772,13 @@ Function Get-CitrixLicenseInformation {
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
 			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-			AutoSize         = True
-			AutoFilter       = True
-			TitleBold        = True
+			AutoSize         = $True
+			AutoFilter       = $True
+			TitleBold        = $True
 			TitleSize        = '28'
 			TitleFillPattern = 'LightTrellis'
 			TableStyle       = 'Light20'
-			FreezeTopRow     = True
+			FreezeTopRow     = $True
 			FreezePane       = '3'
 		}
 		$LicDetails | Export-Excel -Title CitrixLicenseInformation -WorksheetName CitrixLicenseInformation @ExcelOptions
@@ -798,7 +798,7 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 ############################################
 # source: Get-CitrixMonitoringData.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -892,7 +892,7 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 ############################################
 # source: Get-CitrixObjects.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1093,7 +1093,7 @@ Export-ModuleMember -Function Get-CitrixObjects
 ############################################
 # source: Get-CitrixServerEventLog.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1163,13 +1163,13 @@ Function Get-CitrixServerEventLog {
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
 			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-			AutoSize         = True
-			AutoFilter       = True
-			TitleBold        = True
+			AutoSize         = $True
+			AutoFilter       = $True
+			TitleBold        = $True
 			TitleSize        = '28'
 			TitleFillPattern = 'LightTrellis'
 			TableStyle       = 'Light20'
-			FreezeTopRow     = True
+			FreezeTopRow     = $True
 			FreezePane       = '3'
 		}
 		$ServerEvents.TopProfider | Export-Excel -Title 'EventLog Top Profider' -WorksheetName TopProfider @ExcelOptions
@@ -1199,7 +1199,7 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 ############################################
 # source: Get-CitrixServerPerformance.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1273,13 +1273,13 @@ Function Get-CitrixServerPerformance {
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
 			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerPerformance-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-			AutoSize         = True
-			AutoFilter       = True
-			TitleBold        = True
+			AutoSize         = $True
+			AutoFilter       = $True
+			TitleBold        = $True
 			TitleSize        = '28'
 			TitleFillPattern = 'LightTrellis'
 			TableStyle       = 'Light20'
-			FreezeTopRow     = True
+			FreezeTopRow     = $True
 			FreezePane       = '3'
 		}
 		$ServerPerfMon | Export-Excel -Title CitrixServerPerformance -WorksheetName CitrixServerPerformance @ExcelOptions
@@ -1299,7 +1299,7 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 ############################################
 # source: Get-CitrixSessionIcaRtt.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1368,13 +1368,13 @@ Function Get-CitrixSessionIcaRtt {
         if ($Export -eq 'Excel') { 
                 $ExcelOptions = @{
                         Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-                        AutoSize         = True
-                        AutoFilter       = True
-                        TitleBold        = True
+                        AutoSize         = $True
+                        AutoFilter       = $True
+                        TitleBold        = $True
                         TitleSize        = '28'
                         TitleFillPattern = 'LightTrellis'
                         TableStyle       = 'Light20'
-                        FreezeTopRow     = True
+                        FreezeTopRow     = $True
                         FreezePane       = '3'
                 }
                 $IcaRttObject | Export-Excel -Title CitrixSessionIcaRtt -WorksheetName CitrixSessionIcaRtt @ExcelOptions}
@@ -1391,7 +1391,7 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 ############################################
 # source: Get-CitrixVDAUptime.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1464,13 +1464,13 @@ Function Get-CitrixVDAUptime {
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
 			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixVDAUptime-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-			AutoSize         = True
-			AutoFilter       = True
-			TitleBold        = True
+			AutoSize         = $True
+			AutoFilter       = $True
+			TitleBold        = $True
 			TitleSize        = '28'
 			TitleFillPattern = 'LightTrellis'
 			TableStyle       = 'Light20'
-			FreezeTopRow     = True
+			FreezeTopRow     = $True
 			FreezePane       = '3'
 		}
 		$VDAUptime | Export-Excel -Title CitrixVDAUptime -WorksheetName CitrixVDAUptime @ExcelOptions}
@@ -1487,7 +1487,7 @@ Export-ModuleMember -Function Get-CitrixVDAUptime
 ############################################
 # source: Get-CitrixWorkspaceAppVersions.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1573,13 +1573,13 @@ Function Get-CitrixWorkspaceAppVersions {
 	if ($Export -eq 'Excel') {
 		$ExcelOptions = @{
 			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-			AutoSize         = True
-			AutoFilter       = True
-			TitleBold        = True
+			AutoSize         = $True
+			AutoFilter       = $True
+			TitleBold        = $True
 			TitleSize        = '28'
 			TitleFillPattern = 'LightTrellis'
 			TableStyle       = 'Light20'
-			FreezeTopRow     = True
+			FreezeTopRow     = $True
 			FreezePane       = '3'
 		}
 		$ClientObject | Export-Excel -Title CitrixWorkspaceAppVersions -WorksheetName CitrixWorkspaceAppVersions @ExcelOptions}
@@ -1596,7 +1596,7 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 ############################################
 # source: Get-RDSLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1649,13 +1649,13 @@ Function Get-RDSLicenseInformation {
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
 			Path             = $(Join-Path -Path $ReportPath -ChildPath "\RDSLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-			AutoSize         = True
-			AutoFilter       = True
-			TitleBold        = True
+			AutoSize         = $True
+			AutoFilter       = $True
+			TitleBold        = $True
 			TitleSize        = '28'
 			TitleFillPattern = 'LightTrellis'
 			TableStyle       = 'Light20'
-			FreezeTopRow     = True
+			FreezeTopRow     = $True
 			FreezePane       = '3'
 		}
 		$CTXObject.'Per Device' | Export-Excel -Title 'Per Device' -WorksheetName 'Per Device' @ExcelOptions
@@ -1682,7 +1682,7 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 ############################################
 # source: Import-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1755,7 +1755,7 @@ Export-ModuleMember -Function Import-ParametersFile
 ############################################
 # source: Install-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1897,7 +1897,7 @@ Export-ModuleMember -Function Install-ParametersFile
 ############################################
 # source: Set-XDHealthReportColors.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1968,7 +1968,7 @@ Export-ModuleMember -Function Set-XDHealthReportColors
 ############################################
 # source: Start-CitrixAudit.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2147,7 +2147,7 @@ Export-ModuleMember -Function Start-CitrixAudit
 ############################################
 # source: Start-CitrixHealthCheck.ps1
 # Module: XDHealthCheck
-# version: 0.2.20
+# version: 0.2.21
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################

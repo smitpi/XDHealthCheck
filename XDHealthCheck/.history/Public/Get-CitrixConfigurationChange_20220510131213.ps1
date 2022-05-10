@@ -114,13 +114,13 @@ Function Get-CitrixConfigurationChange {
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
 			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-			AutoSize         = True
-			AutoFilter       = True
-			TitleBold        = True
+			AutoSize         = $True
+			AutoFilter       = $True
+			TitleBold        = $True
 			TitleSize        = '28'
 			TitleFillPattern = 'LightTrellis'
 			TableStyle       = 'Light20'
-			FreezeTopRow     = True
+			FreezeTopRow     = $True
 			FreezePane       = '3'
 		}
 		$CTXObject.Filtered | Export-Excel -Title CitrixConfigurationChange -WorksheetName CitrixConfigurationChange @ExcelOptions
