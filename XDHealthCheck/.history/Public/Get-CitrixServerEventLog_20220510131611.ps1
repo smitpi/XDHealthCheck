@@ -109,19 +109,9 @@ Function Get-CitrixServerEventLog {
 	}
 
 	if ($Export -eq 'Excel') { 
-		$ExcelOptions = @{
-			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-			AutoSize         = True
-			AutoFilter       = True
-			TitleBold        = True
-			TitleSize        = '28'
-			TitleFillPattern = 'LightTrellis'
-			TableStyle       = 'Light20'
-			FreezeTopRow     = True
-			FreezePane       = '3'
-		}
-		$ServerEvents.TopProfider | Export-Excel -Title 'EventLog Top Profider' -WorksheetName TopProfider @ExcelOptions
-		$ServerEvents.All | Export-Excel -Title 'Citrix Server Event Log' -WorksheetName All @ExcelOptions
+		
+		$ServerEvents.TopProfider | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName TopProfider -AutoSize -AutoFilter -Title 'Machine Failures' -TitleBold -TitleSize 28
+		$ServerEvents.All | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName All -AutoSize -AutoFilter -Title 'Machine Failures' -TitleBold -TitleSize 28
 	}
 	if ($Export -eq 'HTML') { 
 		New-HTML -TitleText "CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $HTMLPath {

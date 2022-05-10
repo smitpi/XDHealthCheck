@@ -179,10 +179,11 @@ Function Get-CitrixEnvTestResults {
             FreezeTopRow     = $true
             FreezePane       = '3'
         }
+
         $catalogResults | Export-Excel -Title 'Catalog Results' -WorksheetName 'Catalog' @ExcelOptions
-        $DesktopGroupResults | Export-Excel  -Title 'DesktopGroup Results' -WorksheetName DesktopGroup @ExcelOptions
-        $HypervisorConnectionResults | Export-Excel  -Title 'Hypervisor Connection Results' -WorksheetName Hypervisor @ExcelOptions
-        $InfrastructureResults | Export-Excel  -Title 'Infrastructure Results' -WorksheetName Infrastructure @ExcelOptions
+        $DesktopGroupResults | Export-Excel  -Title 'DesktopGroup Results' -WorksheetName DesktopGroup -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
+        $HypervisorConnectionResults | Export-Excel  -Title 'Hypervisor Connection Results' -WorksheetName Hypervisor -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
+        $InfrastructureResults | Export-Excel  -Title 'Infrastructure Results' -WorksheetName Infrastructure -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
     }
     if ($Export -eq 'HTML') { 
         New-HTML -TitleText "CitrixFarmDetail-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {

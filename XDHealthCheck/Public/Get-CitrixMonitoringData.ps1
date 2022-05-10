@@ -77,7 +77,7 @@ Function Get-CitrixMonitoringData {
     $past = ((Get-Date).AddHours(-$hours)).ToString('yyyy-MM-ddTHH:mm:ss')
 
     $urisettings = @{
-        AllowUnencryptedAuthentication = $true
+        #AllowUnencryptedAuthentication = $true
         UseDefaultCredentials = $true
     }
     try {

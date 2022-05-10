@@ -167,7 +167,7 @@ $global:TableSectionSettings = @{
 ############################################
 # source: Get-CitrixConfigurationChange.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -241,7 +241,18 @@ Function Get-CitrixConfigurationChange {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
 	
 	if ($Export -eq 'Excel') { 
-		$CTXObject.Filtered | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName CitrixConfigurationChange -AutoSize -AutoFilter -Title 'Citrix Configuration Change' -TitleBold -TitleSize 28
+		$ExcelOptions = @{
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			AutoSize         = True
+			AutoFilter       = True
+			TitleBold        = True
+			TitleSize        = '28'
+			TitleFillPattern = 'LightTrellis'
+			TableStyle       = 'Light20'
+			FreezeTopRow     = True
+			FreezePane       = '3'
+		}
+		$CTXObject.Filtered | Export-Excel -Title CitrixConfigurationChange -WorksheetName CitrixConfigurationChange @ExcelOptions
 	}
 	if ($Export -eq 'HTML') { 
 		$CTXObject.Filtered | Out-HtmlView -DisablePaging -Title 'Citrix Configuration Change' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
@@ -258,7 +269,7 @@ Export-ModuleMember -Function Get-CitrixConfigurationChange
 ############################################
 # source: Get-CitrixEnvTestResults.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -390,10 +401,21 @@ Function Get-CitrixEnvTestResults {
     }
 
     if ($Export -eq 'Excel') { 
-        $catalogResults | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'Catalog Results' -WorksheetName Catalog -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
-        $DesktopGroupResults | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'DesktopGroup Results' -WorksheetName DesktopGroup -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
-        $HypervisorConnectionResults | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'Hypervisor Connection Results' -WorksheetName Hypervisor -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
-        $InfrastructureResults | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'Infrastructure Results' -WorksheetName Infrastructure -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
+        $ExcelOptions = @{
+            Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+            AutoSize         = $true
+            AutoFilter       = $true
+            TitleBold        = $true
+            TitleSize        = '28' 
+            TitleFillPattern = 'LightTrellis' 
+            TableStyle       = 'Light20' 
+            FreezeTopRow     = $true
+            FreezePane       = '3'
+        }
+        $catalogResults | Export-Excel -Title 'Catalog Results' -WorksheetName 'Catalog' @ExcelOptions
+        $DesktopGroupResults | Export-Excel  -Title 'DesktopGroup Results' -WorksheetName DesktopGroup @ExcelOptions
+        $HypervisorConnectionResults | Export-Excel  -Title 'Hypervisor Connection Results' -WorksheetName Hypervisor @ExcelOptions
+        $InfrastructureResults | Export-Excel  -Title 'Infrastructure Results' -WorksheetName Infrastructure @ExcelOptions
     }
     if ($Export -eq 'HTML') { 
         New-HTML -TitleText "CitrixFarmDetail-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
@@ -420,7 +442,7 @@ Export-ModuleMember -Function Get-CitrixEnvTestResults
 ############################################
 # source: Get-CitrixFailures.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -501,8 +523,19 @@ Function Get-CitrixFailures {
 
 
     if ($Export -eq 'Excel') { 
-        $mashineFails | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName MachineFailures -AutoSize -AutoFilter -Title 'Machine Failures' -TitleBold -TitleSize 28
-        $ConnectionFails | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName ConnectionFailures -AutoSize -AutoFilter -Title 'Connection Failures' -TitleBold -TitleSize 28 -Show
+        $ExcelOptions = @{
+            Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+            AutoSize         = True
+            AutoFilter       = True
+            TitleBold        = True
+            TitleSize        = '28'
+            TitleFillPattern = 'LightTrellis'
+            TableStyle       = 'Light20'
+            FreezeTopRow     = True
+            FreezePane       = '3'
+        }
+        $mashineFails   | Export-Excel -Title MachineFailures -WorksheetName MachineFailures @ExcelOptions
+        $ConnectionFails | Export-Excel -Title ConnectionFailures -WorksheetName ConnectionFailures @ExcelOptions
     }
     if ($Export -eq 'HTML') { 
         $mashineFails | Out-HtmlView -DisablePaging -Title 'Mashine Failures' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\Citrix-Machine-Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
@@ -526,7 +559,7 @@ Export-ModuleMember -Function Get-CitrixFailures
 ############################################
 # source: Get-CitrixFarmDetail.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -682,7 +715,7 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 ############################################
 # source: Get-CitrixLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -737,7 +770,18 @@ Function Get-CitrixLicenseInformation {
 			})
 	}
 	if ($Export -eq 'Excel') { 
-		$LicDetails | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName LicDetails -AutoSize -AutoFilter -Title 'Lic Details' -TitleBold -TitleSize 28
+		$ExcelOptions = @{
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			AutoSize         = True
+			AutoFilter       = True
+			TitleBold        = True
+			TitleSize        = '28'
+			TitleFillPattern = 'LightTrellis'
+			TableStyle       = 'Light20'
+			FreezeTopRow     = True
+			FreezePane       = '3'
+		}
+		$LicDetails | Export-Excel -Title CitrixLicenseInformation -WorksheetName CitrixLicenseInformation @ExcelOptions
 	}
 	if ($Export -eq 'HTML') { 
 		$LicDetails | Out-HtmlView -DisablePaging -Title 'Lic Details' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
@@ -754,7 +798,7 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 ############################################
 # source: Get-CitrixMonitoringData.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -797,7 +841,7 @@ Function Get-CitrixMonitoringData {
     $past = ((Get-Date).AddHours(-$hours)).ToString('yyyy-MM-ddTHH:mm:ss')
 
     $urisettings = @{
-        AllowUnencryptedAuthentication = $true
+        #AllowUnencryptedAuthentication = $true
         UseDefaultCredentials = $true
     }
     try {
@@ -848,7 +892,7 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 ############################################
 # source: Get-CitrixObjects.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1049,7 +1093,7 @@ Export-ModuleMember -Function Get-CitrixObjects
 ############################################
 # source: Get-CitrixServerEventLog.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1117,8 +1161,19 @@ Function Get-CitrixServerEventLog {
 	}
 
 	if ($Export -eq 'Excel') { 
-		$ServerEvents.TopProfider | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName TopProfider -AutoSize -AutoFilter -Title 'Machine Failures' -TitleBold -TitleSize 28
-		$ServerEvents.All | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName All -AutoSize -AutoFilter -Title 'Machine Failures' -TitleBold -TitleSize 28
+		$ExcelOptions = @{
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			AutoSize         = True
+			AutoFilter       = True
+			TitleBold        = True
+			TitleSize        = '28'
+			TitleFillPattern = 'LightTrellis'
+			TableStyle       = 'Light20'
+			FreezeTopRow     = True
+			FreezePane       = '3'
+		}
+		$ServerEvents.TopProfider | Export-Excel -Title 'EventLog Top Profider' -WorksheetName TopProfider @ExcelOptions
+		$ServerEvents.All | Export-Excel -Title 'Citrix Server Event Log' -WorksheetName All @ExcelOptions
 	}
 	if ($Export -eq 'HTML') { 
 		New-HTML -TitleText "CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $HTMLPath {
@@ -1144,7 +1199,7 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 ############################################
 # source: Get-CitrixServerPerformance.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1216,7 +1271,18 @@ Function Get-CitrixServerPerformance {
 	$ServerPerfMon
 
 	if ($Export -eq 'Excel') { 
-		$ServerPerfMon | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerPerformance-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName CitrixServerPerformance -AutoSize -AutoFilter -Title 'CitrixServerPerformance' -TitleBold -TitleSize 28
+		$ExcelOptions = @{
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerPerformance-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			AutoSize         = True
+			AutoFilter       = True
+			TitleBold        = True
+			TitleSize        = '28'
+			TitleFillPattern = 'LightTrellis'
+			TableStyle       = 'Light20'
+			FreezeTopRow     = True
+			FreezePane       = '3'
+		}
+		$ServerPerfMon | Export-Excel -Title CitrixServerPerformance -WorksheetName CitrixServerPerformance @ExcelOptions
 	}
 	if ($Export -eq 'HTML') { 
 		$ServerPerfMon | Out-HtmlView -DisablePaging -Title 'Server Performance' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerPerformance-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
@@ -1233,7 +1299,7 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 ############################################
 # source: Get-CitrixSessionIcaRtt.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1300,7 +1366,18 @@ Function Get-CitrixSessionIcaRtt {
         }
 
         if ($Export -eq 'Excel') { 
-                $IcaRttObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName CitrixSessionIcaRtt -AutoSize -AutoFilter -Title 'Citrix Session Ica Rtt' -TitleBold -TitleSize 28}
+                $ExcelOptions = @{
+                        Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+                        AutoSize         = True
+                        AutoFilter       = True
+                        TitleBold        = True
+                        TitleSize        = '28'
+                        TitleFillPattern = 'LightTrellis'
+                        TableStyle       = 'Light20'
+                        FreezeTopRow     = True
+                        FreezePane       = '3'
+                }
+                $IcaRttObject | Export-Excel -Title CitrixSessionIcaRtt -WorksheetName CitrixSessionIcaRtt @ExcelOptions}
         if ($Export -eq 'HTML') { $IcaRttObject | Out-HtmlView -DisablePaging -Title 'CitrixSessionIcaRtt' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
         if ($Export -eq 'Host') { $IcaRttObject }
 
@@ -1314,7 +1391,7 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 ############################################
 # source: Get-CitrixVDAUptime.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1384,7 +1461,19 @@ Function Get-CitrixVDAUptime {
 		}
 	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 
-	if ($Export -eq 'Excel') { $VDAUptime | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixVDAUptime-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'CitrixVDAUptime' -WorksheetName CitrixVDAUptime -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3 }
+	if ($Export -eq 'Excel') { 
+		$ExcelOptions = @{
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixVDAUptime-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			AutoSize         = True
+			AutoFilter       = True
+			TitleBold        = True
+			TitleSize        = '28'
+			TitleFillPattern = 'LightTrellis'
+			TableStyle       = 'Light20'
+			FreezeTopRow     = True
+			FreezePane       = '3'
+		}
+		$VDAUptime | Export-Excel -Title CitrixVDAUptime -WorksheetName CitrixVDAUptime @ExcelOptions}
 	if ($Export -eq 'HTML') { $VDAUptime | Out-GridHtml -DisablePaging -Title "CitrixVDAUptime" -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixVDAUptime-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
 	if ($Export -eq 'Host') { $VDAUptime }
 
@@ -1398,7 +1487,7 @@ Export-ModuleMember -Function Get-CitrixVDAUptime
 ############################################
 # source: Get-CitrixWorkspaceAppVersions.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1481,8 +1570,19 @@ Function Get-CitrixWorkspaceAppVersions {
 			})
 	}
 
-	if ($Export -eq 'Excel') { 
-		$ClientObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName CitrixWorkspaceAppVersions- -AutoSize -AutoFilter -Title 'Citrix Workspace App Versions' -TitleBold -TitleSize 28}
+	if ($Export -eq 'Excel') {
+		$ExcelOptions = @{
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			AutoSize         = True
+			AutoFilter       = True
+			TitleBold        = True
+			TitleSize        = '28'
+			TitleFillPattern = 'LightTrellis'
+			TableStyle       = 'Light20'
+			FreezeTopRow     = True
+			FreezePane       = '3'
+		}
+		$ClientObject | Export-Excel -Title CitrixWorkspaceAppVersions -WorksheetName CitrixWorkspaceAppVersions @ExcelOptions}
 	if ($Export -eq 'HTML') { $ClientObject | Out-HtmlView -DisablePaging -Title 'CitrixWorkspaceAppVersions' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
 	if ($Export -eq 'Host') { $ClientObject }
 
@@ -1496,7 +1596,7 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 ############################################
 # source: Get-RDSLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1547,8 +1647,19 @@ Function Get-RDSLicenseInformation {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] RDS Details"
 
 	if ($Export -eq 'Excel') { 
-		$CTXObject.'Per Device' | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\RDSLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName 'Per Device' -AutoSize -AutoFilter -Title 'Machine Failures' -TitleBold -TitleSize 28
-		$CTXObject.'Per User' | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\RDSLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName 'Per User' -AutoSize -AutoFilter -Title 'Machine Failures' -TitleBold -TitleSize 28
+		$ExcelOptions = @{
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\RDSLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			AutoSize         = True
+			AutoFilter       = True
+			TitleBold        = True
+			TitleSize        = '28'
+			TitleFillPattern = 'LightTrellis'
+			TableStyle       = 'Light20'
+			FreezeTopRow     = True
+			FreezePane       = '3'
+		}
+		$CTXObject.'Per Device' | Export-Excel -Title 'Per Device' -WorksheetName 'Per Device' @ExcelOptions
+		$CTXObject.'Per User' | Export-Excel -Title 'Per User' -WorksheetName 'Per User' @ExcelOptions
 	}
 	if ($Export -eq 'HTML') { 
 		New-HTML -TitleText "RDSLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\RDSLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
@@ -1571,7 +1682,7 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 ############################################
 # source: Import-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1644,7 +1755,7 @@ Export-ModuleMember -Function Import-ParametersFile
 ############################################
 # source: Install-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1786,7 +1897,7 @@ Export-ModuleMember -Function Install-ParametersFile
 ############################################
 # source: Set-XDHealthReportColors.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1857,7 +1968,7 @@ Export-ModuleMember -Function Set-XDHealthReportColors
 ############################################
 # source: Start-CitrixAudit.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2036,7 +2147,7 @@ Export-ModuleMember -Function Start-CitrixAudit
 ############################################
 # source: Start-CitrixHealthCheck.ps1
 # Module: XDHealthCheck
-# version: 0.2.19
+# version: 0.2.20
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################

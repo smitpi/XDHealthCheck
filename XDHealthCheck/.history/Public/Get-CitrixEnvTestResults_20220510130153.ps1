@@ -179,6 +179,7 @@ Function Get-CitrixEnvTestResults {
             FreezeTopRow     = $true
             FreezePane       = '3'
         }
+
         $catalogResults | Export-Excel -Title 'Catalog Results' -WorksheetName 'Catalog' @ExcelOptions
         $DesktopGroupResults | Export-Excel  -Title 'DesktopGroup Results' -WorksheetName DesktopGroup @ExcelOptions
         $HypervisorConnectionResults | Export-Excel  -Title 'Hypervisor Connection Results' -WorksheetName Hypervisor @ExcelOptions

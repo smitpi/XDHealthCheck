@@ -113,7 +113,7 @@ Function Get-CitrixConfigurationChange {
 	
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
-			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			Path             = $(Join-Path -Path $ReportPath -ChildPath '\CitrixConfigurationChange-2022.05.10-13.10.xlsx')
 			AutoSize         = True
 			AutoFilter       = True
 			TitleBold        = True
@@ -123,7 +123,8 @@ Function Get-CitrixConfigurationChange {
 			FreezeTopRow     = True
 			FreezePane       = '3'
 		}
-		$CTXObject.Filtered | Export-Excel -Title CitrixConfigurationChange -WorksheetName CitrixConfigurationChange @ExcelOptions
+		   $CTXObject.Filtered | Export-Excel -Title CitrixConfigurationChange -WorksheetName CitrixConfigurationChange @ExcelOptions
+
 	}
 	if ($Export -eq 'HTML') { 
 		$CTXObject.Filtered | Out-HtmlView -DisablePaging -Title 'Citrix Configuration Change' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 

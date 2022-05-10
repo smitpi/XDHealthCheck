@@ -119,7 +119,7 @@ Function Get-CitrixVDAUptime {
 			FreezeTopRow     = True
 			FreezePane       = '3'
 		}
-		$VDAUptime | Export-Excel -Title CitrixVDAUptime -WorksheetName CitrixVDAUptime @ExcelOptions}
+		$VDAUptime | Export-Excel -Title CitrixVDAUptime -WorksheetName CitrixVDAUptime @ExcelOptions
 	if ($Export -eq 'HTML') { $VDAUptime | Out-GridHtml -DisablePaging -Title "CitrixVDAUptime" -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixVDAUptime-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
 	if ($Export -eq 'Host') { $VDAUptime }
 

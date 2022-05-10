@@ -120,8 +120,8 @@ Function Get-CitrixServerEventLog {
 			FreezeTopRow     = True
 			FreezePane       = '3'
 		}
-		$ServerEvents.TopProfider | Export-Excel -Title 'EventLog Top Profider' -WorksheetName TopProfider @ExcelOptions
-		$ServerEvents.All | Export-Excel -Title 'Citrix Server Event Log' -WorksheetName All @ExcelOptions
+		$ServerEvents.TopProfider | Export-Excel -Title CitrixServerEventLog -WorksheetName CitrixServerEventLog @ExcelOptions
+		$ServerEvents.All | Export-Excel -Title CitrixServerEventLog -WorksheetName CitrixServerEventLog @ExcelOptions
 	}
 	if ($Export -eq 'HTML') { 
 		New-HTML -TitleText "CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $HTMLPath {

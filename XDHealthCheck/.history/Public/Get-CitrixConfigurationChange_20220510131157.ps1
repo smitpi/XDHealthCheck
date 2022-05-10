@@ -124,6 +124,8 @@ Function Get-CitrixConfigurationChange {
 			FreezePane       = '3'
 		}
 		$CTXObject.Filtered | Export-Excel -Title CitrixConfigurationChange -WorksheetName CitrixConfigurationChange @ExcelOptions
+
+
 	}
 	if ($Export -eq 'HTML') { 
 		$CTXObject.Filtered | Out-HtmlView -DisablePaging -Title 'Citrix Configuration Change' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 

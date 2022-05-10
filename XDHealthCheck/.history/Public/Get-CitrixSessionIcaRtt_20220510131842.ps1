@@ -115,7 +115,7 @@ Function Get-CitrixSessionIcaRtt {
                         FreezeTopRow     = True
                         FreezePane       = '3'
                 }
-                $IcaRttObject | Export-Excel -Title CitrixSessionIcaRtt -WorksheetName CitrixSessionIcaRtt @ExcelOptions}
+                $IcaRttObject | Export-Excel -Title CitrixSessionIcaRtt -WorksheetName CitrixSessionIcaRtt @ExcelOptions
         if ($Export -eq 'HTML') { $IcaRttObject | Out-HtmlView -DisablePaging -Title 'CitrixSessionIcaRtt' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
         if ($Export -eq 'Host') { $IcaRttObject }
 
