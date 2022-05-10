@@ -116,7 +116,6 @@ Function Get-CitrixFarmDetail {
 			UnRegisteredDesktops = $UnRegDesktop
 		} | Select-Object AllMachines, UnRegisteredServers, UnRegisteredDesktops
 	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
-
 	#endregion
 
 	#region sessions
@@ -124,7 +123,6 @@ Function Get-CitrixFarmDetail {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Sessions Details"
 		$sessions = Get-BrokerSession -MaxRecordCount 1000000 -AdminAddress $AdminServer
 	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
-	
 	#endregion
 
 	#region del groups
@@ -153,7 +151,6 @@ Function Get-CitrixFarmDetail {
 
 		$DBConnection = $CCTXObject.psobject.Properties | Select-Object -Property Name, Value
 	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
-	
 	#endregion
 
 	#region reboots
@@ -177,25 +174,6 @@ Function Get-CitrixFarmDetail {
 		}
 	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	#endregion
-		
-	#region connection / machine failures
-	try {
-		$Failures = Get-CitrixFailures -AdminServer $AdminServer -hours 24
-	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
-
-	#endregion
-
-	#region workspace app ver
-	try {
-		$appver = Get-CitrixWorkspaceAppVersions -AdminServer $AdminServer -hours 24 | Where-Object {$_.ClientVersion -notlike $null}
-	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
-	#endregion
-
-	#region icartt
-	try {
-		$CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
-	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
-	#endregion
 
 	#region counts
 	try {
@@ -203,16 +181,13 @@ Function Get-CitrixFarmDetail {
 		$SessionCounts = New-Object PSObject -Property @{
 			'Active Sessions'        = ($Sessions | Where-Object -Property Sessionstate -EQ 'Active').count
 			'Disconnected Sessions'  = ($Sessions | Where-Object -Property Sessionstate -EQ 'Disconnected').count
-			'Connection Failures'    = $Failures.ConnectionFails.Count
-			'Unique Client Versions' = ($appver | Sort-Object -Property ClientVersion -Unique).Count
 			'Unregistered Servers'   = ($Machines.UnRegisteredServers | Measure-Object).count
 			'Unregistered Desktops'  = ($Machines.UnRegisteredDesktops | Measure-Object).count
-			'Machine Failures'       = $Failures.mashineFails.Count
 		} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Connection Failures', 'Unregistered Servers', 'Unregistered Desktops', 'Machine Failures' 
 	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	#endregion
 
-	New-Object PSObject -Property @{
+	[PSCustomObject]@{
 		DateCollected  = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
 		SiteDetails    = $SiteDetails
 		Controllers    = $Controllers
@@ -222,10 +197,6 @@ Function Get-CitrixFarmDetail {
 		DBConnection   = $DBConnection
 		SessionCounts  = $SessionCounts
 		RebootSchedule = $RebootSchedule
-		Failures       = $Failures
-		AppVer         = $appver
-		IcaRtt         = $CitrixSessionIcaRtt
-	} | Select-Object DateCollected, SiteDetails, Controllers, Machines, Sessions, DeliveryGroups, DBConnection, SessionCounts, RebootSchedule, Failures, AppVer, IcaRtt
-
+	}
 } #end Function
 

@@ -13,7 +13,8 @@ Collects perform data for the core servers.
 ## SYNTAX
 
 ```
-Get-CitrixServerPerformance [-ComputerName] <String[]> [<CommonParameters>]
+Get-CitrixServerPerformance [-ComputerName] <String[]> [-Export <String>] [-ReportPath <DirectoryInfo>]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -40,6 +41,37 @@ Required: True
 Position: 1
 Default value: None
 Accept pipeline input: True (ByValue)
+Accept wildcard characters: False
+```
+
+### -Export
+Export the result to a report file.
+(Excel, html or Screen)
+
+```yaml
+Type: String
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: Host
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -ReportPath
+Where to save the report.
+
+```yaml
+Type: DirectoryInfo
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: C:\Temp
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

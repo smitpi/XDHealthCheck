@@ -59,6 +59,12 @@ List of servers to query.
 .PARAMETER Days
 Limit the report to this time frame. 
 
+.PARAMETER Export
+Export the result to a report file. (Excel, html or Screen)
+
+.PARAMETER ReportPath
+Where to save the report.
+
 .EXAMPLE
 Get-CitrixServerEventLog -Serverlist $CTXCore -Days 1 
 
@@ -73,8 +79,15 @@ Function Get-CitrixServerEventLog {
 		[Parameter(Mandatory = $true, Position = 1)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[int32]$Days
+		[int32]$Days,
+		[ValidateSet('Excel', 'HTML')]
+		[string]$Export = 'Host',
+		[ValidateScript( { if (Test-Path $_) { $true }
+				else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
+			})]
+		[System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
 	)
+
 	[System.Collections.ArrayList]$ServerEvents = @()
 	foreach ($server in $Serverlist) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Eventlog Details"
@@ -95,7 +108,23 @@ Function Get-CitrixServerEventLog {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Eventlog Details"
 	}
 
-
-	$ServerEvents
+	if ($Export -eq 'Excel') { 
+		$ServerEvents.TopProfider | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName TopProfider -AutoSize -AutoFilter -Title 'Machine Failures' -TitleBold -TitleSize 28
+		$ServerEvents.All | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName All -AutoSize -AutoFilter -Title 'Machine Failures' -TitleBold -TitleSize 28
+	}
+	if ($Export -eq 'HTML') { 
+		New-HTML -TitleText "CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $HTMLPath {
+                   $ServerEvents | ForEach-Object {
+                   New-HTMLTab -name "$($_.ServerName)" -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor '#00203F' -IconSize 16 -IconColor '#ADEFD1' -HtmlData {
+					   New-HTMLPanel -Content { New-HTMLTable -DataTable ($($_.TopProfider) | Sort-Object -Property TimeCreated -Descending) @TableSettings}
+					   New-HTMLPanel -Content { New-HTMLTable -DataTable ($($_.All) | Sort-Object -Property TimeCreated -Descending) @TableSettings {
+                            New-TableCondition -Name LevelDisplayName -ComparisonType string -Operator eq -Value 'Error' -Color GhostWhite -Row -BackgroundColor FaluRed
+                            New-TableCondition -Name LevelDisplayName -ComparisonType string -Operator eq -Value 'warning' -Color GhostWhite -Row -BackgroundColor InternationalOrange } }}
+                    }
+                } -Online -Encoding UTF8 -ShowHTML
+	}
+	if ($Export -eq 'Host') { 
+		$CTXObject
+	}
 } #end Function
 

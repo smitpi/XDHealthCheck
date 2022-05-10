@@ -69,7 +69,7 @@ Aliases:
 
 Required: False
 Position: 3
-Default value: Https://c.na65.content.force.com/servlet/servlet.ImageServer?id=0150h000003yYnkAAE&oid=00DE0000000c48tMAA
+Default value: Https://gist.githubusercontent.com/smitpi/ecdaae80dd79ad585e571b1ba16ce272/raw/6d0645968c7ba4553e7ab762c55270ebcc054f04/default-monochrome.png
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

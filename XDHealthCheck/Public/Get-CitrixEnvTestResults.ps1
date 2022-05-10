@@ -97,9 +97,9 @@ Function Get-CitrixEnvTestResults {
     if ($Catalogs) {
         try {
             [System.Collections.ArrayList]$catalogResults = @()
-            foreach ($catalog in Get-BrokerCatalog -AdminAddress $AdminAddress) {
+            foreach ($catalog in Get-BrokerCatalog -AdminAddress $AdminServer) {
                 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Catalog: $($catalog.Name)"
-                $testResult = New-EnvTestDiscoveryTargetDefinition -AdminAddress $AdminAddress -TargetIdType 'Catalog' -TestSuiteId 'Catalog' -TargetId $catalog.UUID | Start-EnvTestTask -AdminAddress $AdminAddress -ExcludeNotRunTests 
+                $testResult = New-EnvTestDiscoveryTargetDefinition -AdminAddress $AdminServer -TargetIdType 'Catalog' -TestSuiteId 'Catalog' -TargetId $catalog.UUID | Start-EnvTestTask -AdminAddress $AdminServer -ExcludeNotRunTests 
                 $testResult.TestResults | ForEach-Object {
                     [void]$catalogResults.Add([pscustomobject]@{
                             Name                = $catalog.Name
@@ -116,9 +116,9 @@ Function Get-CitrixEnvTestResults {
     if ($DesktopGroups) {
         try {
             [System.Collections.ArrayList]$DesktopGroupResults = @()
-            foreach ($DesktopGroup in Get-BrokerDesktopGroup -AdminAddress $AdminAddress) {
+            foreach ($DesktopGroup in Get-BrokerDesktopGroup -AdminAddress $AdminServer) {
                 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Catalog: $($DesktopGroup.Name)"
-                $testResult = New-EnvTestDiscoveryTargetDefinition -AdminAddress $AdminAddress -TargetIdType 'DesktopGroup' -TestSuiteId 'DesktopGroup' -TargetId $DesktopGroup.UUID | Start-EnvTestTask -AdminAddress $AdminAddress -ExcludeNotRunTests 
+                $testResult = New-EnvTestDiscoveryTargetDefinition -AdminAddress $AdminServer -TargetIdType 'DesktopGroup' -TestSuiteId 'DesktopGroup' -TargetId $DesktopGroup.UUID | Start-EnvTestTask -AdminAddress $AdminServer -ExcludeNotRunTests 
                 $testResult.TestResults | ForEach-Object {
                     [void]$DesktopGroupResults.Add([pscustomobject]@{
                             Name                = $DesktopGroup.Name
@@ -135,9 +135,9 @@ Function Get-CitrixEnvTestResults {
     if ($Hypervisor) {
         try {
             [System.Collections.ArrayList]$HypervisorConnectionResults = @()
-            foreach ($Hypervisor in Get-BrokerHypervisorConnection -AdminAddress $AdminAddress) {
+            foreach ($Hypervisor in Get-BrokerHypervisorConnection -AdminAddress $AdminServer) {
                 Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Catalog: $($Hypervisor.Name)"
-                $testResult = New-EnvTestDiscoveryTargetDefinition -AdminAddress $AdminAddress -TargetIdType 'HypervisorConnection' -TestSuiteId 'HypervisorConnection' -TargetId $Hypervisor.Uid | Start-EnvTestTask -AdminAddress $AdminAddress -ExcludeNotRunTests 
+                $testResult = New-EnvTestDiscoveryTargetDefinition -AdminAddress $AdminServer -TargetIdType 'HypervisorConnection' -TestSuiteId 'HypervisorConnection' -TargetId $Hypervisor.Uid | Start-EnvTestTask -AdminAddress $AdminServer -ExcludeNotRunTests 
                 $testResult.TestResults | ForEach-Object {
                     [void]$HypervisorConnectionResults.Add([pscustomobject]@{
                             Name                = $Hypervisor.Name
@@ -155,7 +155,7 @@ Function Get-CitrixEnvTestResults {
         try {
             [System.Collections.ArrayList]$InfrastructureResults = @()
             Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Catalog: Infrastructure"
-            $Infra = New-EnvTestDiscoveryTargetDefinition -TestSuiteId Infrastructure | Start-EnvTestTask -AdminAddress $AdminAddress -ExcludeNotRunTests
+            $Infra = New-EnvTestDiscoveryTargetDefinition -TestSuiteId Infrastructure | Start-EnvTestTask -AdminAddress $AdminServer -ExcludeNotRunTests
             $Infra.TestResults | ForEach-Object {
                 [void]$InfrastructureResults.Add([pscustomobject]@{
                         TestComponentStatus = $_.TestComponentStatus
@@ -174,10 +174,12 @@ Function Get-CitrixEnvTestResults {
         $InfrastructureResults | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'Infrastructure Results' -WorksheetName Infrastructure -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
     }
     if ($Export -eq 'HTML') { 
-        $catalogResults | Out-HtmlView -DisablePaging -Title 'Catalog Results' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-catalog-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
-        $DesktopGroupResults | Out-HtmlView -DisablePaging -Title 'DesktopGroup Results' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-DesktopGroup-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
-        $HypervisorConnectionResults | Out-HtmlView -DisablePaging -Title 'Hypervisor Connection Results' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-Hypervisor-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
-        $InfrastructureResults | Out-HtmlView -DisablePaging -Title 'Infrastructure Results' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-Infrastructure-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+    	New-HTML -TitleText "CitrixFarmDetail-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+			New-HTMLTab -Name 'Catalog Results' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor '#00203F' -IconSize 16 -IconColor '#ADEFD1' -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($catalogResults) @TableSettings}}
+			New-HTMLTab -Name 'DesktopGroup Results' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor '#00203F' -IconSize 16 -IconColor '#ADEFD1' -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($DesktopGroupResults) @TableSettings}}
+			New-HTMLTab -Name 'Hypervisor Connection Results' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor '#00203F' -IconSize 16 -IconColor '#ADEFD1' -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($HypervisorConnectionResults) @TableSettings}}
+			New-HTMLTab -Name 'Infrastructure Results' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor '#00203F' -IconSize 16 -IconColor '#ADEFD1' -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($InfrastructureResults) @TableSettings}}
+		} -Online -Encoding UTF8 -ShowHTML
     }
     if ($Export -eq 'Host') {
         [pscustomobject]@{
@@ -187,5 +189,4 @@ Function Get-CitrixEnvTestResults {
             InfrastructureResults       = $InfrastructureResults
         }
     }
-
 } #end Function

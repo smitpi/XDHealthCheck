@@ -107,9 +107,7 @@ Function Get-CitrixVDAUptime {
 		}
 	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 
-
-
-	if ($Export -eq 'Excel') { $VDAUptime | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixVDAUptime-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'CitrixVDAUptime' -WorksheetName CitrixVDAUptime -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3 -Show }
+	if ($Export -eq 'Excel') { $VDAUptime | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixVDAUptime-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Title 'CitrixVDAUptime' -WorksheetName CitrixVDAUptime -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3 }
 	if ($Export -eq 'HTML') { $VDAUptime | Out-GridHtml -DisablePaging -Title "CitrixVDAUptime" -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixVDAUptime-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
 	if ($Export -eq 'Host') { $VDAUptime }
 

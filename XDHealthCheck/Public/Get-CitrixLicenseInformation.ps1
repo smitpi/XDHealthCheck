@@ -63,6 +63,12 @@ Show Citrix License details
 .PARAMETER AdminServer
 FQDN of the Citrix Data Collector
 
+.PARAMETER Export
+Export the result to a report file. (Excel, html or Screen)
+
+.PARAMETER ReportPath
+Where to save the report.
+
 .EXAMPLE
 Get-CitrixLicenseInformation -AdminServer $CTXDDC 
 
@@ -73,7 +79,14 @@ Function Get-CitrixLicenseInformation {
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[string]$AdminServer)
+		[string]$AdminServer,
+		[ValidateSet('Excel', 'HTML')]
+		[string]$Export = 'Host',
+		[ValidateScript( { if (Test-Path $_) { $true }
+				else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
+			})]
+		[System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
+		)
 
 	if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
 	$licenseServer = (Get-BrokerSite -AdminAddress $AdminServer).LicenseServerName
@@ -89,5 +102,13 @@ Function Get-CitrixLicenseInformation {
 				LicensesAvailable  = ([int]$lic.LicensesAvailable - [int]$lic.LicensesInUse)
 			})
 	}
-	$LicDetails
+	if ($Export -eq 'Excel') { 
+		$LicDetails | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName LicDetails -AutoSize -AutoFilter -Title 'Lic Details' -TitleBold -TitleSize 28
+	}
+	if ($Export -eq 'HTML') { 
+		$LicDetails | Out-HtmlView -DisablePaging -Title 'Lic Details' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+	}
+	if ($Export -eq 'Host') { 
+		$LicDetails
+	}
 } #end Function

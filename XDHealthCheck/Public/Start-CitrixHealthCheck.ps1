@@ -146,6 +146,13 @@ function Start-CitrixHealthCheck {
 	$CitrixEnvTestResults = Get-CitrixEnvTestResults -AdminServer $CTXDDC -Infrastructure
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Citrix VDA Uptimes"
 	$CitrixVDAUptime = Get-CitrixVDAUptime -AdminServer $CTXDDC
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Failures"
+	$Failures = Get-CitrixFailures -AdminServer $AdminServer -hours 24
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] app ver"
+	$appver = Get-CitrixWorkspaceAppVersions -AdminServer $AdminServer -hours 24 | Where-Object {$_.ClientVersion -notlike $null}
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] CitrixSessionIcaRtt"
+	$CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $AdminServer -hours 24
+
 
 	#endregion
 
@@ -222,8 +229,8 @@ function Start-CitrixHealthCheck {
 			New-HTMLSection -HeaderText 'Citrix Events Top Events' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixServerEventLogs.TopProfider | Select-Object -First $CTXCore.count) }
 		}
 		New-HTMLSection @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'Connection Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Failures.ConnectionFails }
-			New-HTMLSection -HeaderText 'Machine Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Failures.mashineFails }
+			New-HTMLSection -HeaderText 'Connection Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $Failures.ConnectionFails }
+			New-HTMLSection -HeaderText 'Machine Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $Failures.mashineFails }
 		}
 		New-HTMLSection @SectionSettings -Content {
 			New-HTMLSection -HeaderText 'Client Versions' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.AppVer }
@@ -237,10 +244,8 @@ function Start-CitrixHealthCheck {
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.DeliveryGroups $Conditions_deliverygroup } }
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops } }
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Servers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredServers } }
-		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText "Today`'s Reboot Schedule" @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.RebootSchedule } }
+		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText "Today`'s Reboot Schedule" @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $RebootSchedule } }
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Environment Test' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixEnvTestResults.InfrastructureResults } }
-
-
 	}
 	#endregion
 

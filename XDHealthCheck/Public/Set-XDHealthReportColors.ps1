@@ -70,7 +70,7 @@ Function Set-XDHealthReportColors {
 	PARAM(
 		[string]$Color1 = '#061820',
 		[string]$Color2 = '#FFD400',
-		[string]$LogoURL = 'https://c.na65.content.force.com/servlet/servlet.ImageServer?id=0150h000003yYnkAAE&oid=00DE0000000c48tMAA'
+		[string]$LogoURL = 'https://gist.githubusercontent.com/smitpi/ecdaae80dd79ad585e571b1ba16ce272/raw/6d0645968c7ba4553e7ab762c55270ebcc054f04/default-monochrome.png'
 	)
     if (Test-Path HKCU:\Software\XDHealth) {
     	Set-ItemProperty -Path HKCU:\Software\XDHealth -Name Color1 -Value $($Color1)
@@ -82,7 +82,6 @@ Function Set-XDHealthReportColors {
         New-ItemProperty -Path HKCU:\Software\XDHealth -Name Color2 -Value $($Color2)
         New-ItemProperty -Path HKCU:\Software\XDHealth -Name LogoURL -Value $($LogoURL)
     }
-
     $global:XDHealth_Color1 = Get-ItemPropertyValue -Path HKCU:\Software\XDHealth -Name Color1
     $global:XDHealth_Color2 = Get-ItemPropertyValue -Path HKCU:\Software\XDHealth -Name Color2
     $global:XDHealth_LogoURL = Get-ItemPropertyValue -Path HKCU:\Software\XDHealth -Name LogoURL

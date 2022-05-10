@@ -57,6 +57,12 @@ FQDN of the Citrix Data Collector
 .PARAMETER Indays
 Use this time frame for the report.
 
+.PARAMETER Export
+Export the result to a report file. (Excel, html or Screen)
+
+.PARAMETER ReportPath
+Where to save the report.
+
 .EXAMPLE
 Get-CitrixConfigurationChange -AdminServer $CTXDDC -Indays 7
 
@@ -71,7 +77,13 @@ Function Get-CitrixConfigurationChange {
 		[Parameter(Mandatory = $true)]
 		[ValidateNotNull()]
 		[ValidateNotNullOrEmpty()]
-		[int32]$Indays
+		[int32]$Indays,
+		[ValidateSet('Excel', 'HTML')]
+		[string]$Export = 'Host',
+		[ValidateScript( { if (Test-Path $_) { $true }
+				else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
+			})]
+		[System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
 	)
 
 	if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
@@ -98,6 +110,14 @@ Function Get-CitrixConfigurationChange {
 		Summary       = $LogSum
 	}
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
-
-	$CTXObject
+	
+	if ($Export -eq 'Excel') { 
+		$CTXObject.AllDetails | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName CitrixConfigurationChange -AutoSize -AutoFilter -Title 'Citrix Configuration Change' -TitleBold -TitleSize 28
+	}
+	if ($Export -eq 'HTML') { 
+		$CTXObject.AllDetails | Out-HtmlView -DisablePaging -Title 'Citrix Configuration Change' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+	}
+	if ($Export -eq 'Host') { 
+		$CTXObject
+	}
 }
