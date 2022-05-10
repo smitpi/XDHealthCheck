@@ -277,7 +277,7 @@ function Start-CitrixHealthCheck {
 		$emailMessage.Attachments.Add($Reportname)
 		$emailMessage.Attachments.Add($ExcelReportname)
 		$smtpClient = New-Object System.Net.Mail.SmtpClient( $smtpServer , $smtpServerPort )
-		$smtpClient.Credentials = [Net.NetworkCredential]$smtpClientCredentials
+		#$smtpClient.Credentials = [Net.NetworkCredential]$smtpClientCredentials
 		$smtpClient.EnableSsl = $smtpEnableSSL
 		$smtpClient.Timeout = 30000000
 		$smtpClient.Send( $emailMessage )

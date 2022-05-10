@@ -121,7 +121,8 @@ Function Get-CitrixWorkspaceAppVersions {
 	}
 
 	if ($Export -eq 'Excel') { 
-		$ClientObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName CitrixWorkspaceAppVersions- -AutoSize -AutoFilter -Title 'Citrix Workspace App Versions' -TitleBold -TitleSize 28
+		CitrixSessionIcaRtt-
+		$ClientObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -AutoSize -AutoFilter -Show }
 	if ($Export -eq 'HTML') { $ClientObject | Out-HtmlView -DisablePaging -Title 'CitrixWorkspaceAppVersions' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
 	if ($Export -eq 'Host') { $ClientObject }
 

@@ -199,6 +199,10 @@ function Start-CitrixHealthCheck {
 	#endregion
 
 
+	########################################
+	#region Setting some table color and settings
+	########################################
+
 	#######################
 	#region Building HTML the report
 	#######################
@@ -229,8 +233,8 @@ function Start-CitrixHealthCheck {
 			New-HTMLSection -HeaderText 'Machine Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $Failures.mashineFails }
 		}
 		New-HTMLSection @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'Client Versions' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $AppVer }
-			New-HTMLSection -HeaderText 'ICA Rtt' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixSessionIcaRtt }
+			New-HTMLSection -HeaderText 'Client Versions' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.AppVer }
+			New-HTMLSection -HeaderText 'ICA Rtt' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.IcaRtt }
 		}
 		New-HTMLSection @SectionSettings -Content {
 			New-HTMLSection -HeaderText 'Citrix Config Changes in the last 7 days' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixConfigurationChanges.Summary | Where-Object { $_.name -ne '' } | Sort-Object count -Descending | Select-Object -First 5 -Property count, name) }
@@ -277,7 +281,7 @@ function Start-CitrixHealthCheck {
 		$emailMessage.Attachments.Add($Reportname)
 		$emailMessage.Attachments.Add($ExcelReportname)
 		$smtpClient = New-Object System.Net.Mail.SmtpClient( $smtpServer , $smtpServerPort )
-		$smtpClient.Credentials = [Net.NetworkCredential]$smtpClientCredentials
+		#$smtpClient.Credentials = [Net.NetworkCredential]$smtpClientCredentials
 		$smtpClient.EnableSsl = $smtpEnableSSL
 		$smtpClient.Timeout = 30000000
 		$smtpClient.Send( $emailMessage )

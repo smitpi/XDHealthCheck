@@ -78,12 +78,12 @@ Function Import-ParametersFile {
 	$JSONParameter.PSObject.Properties | Where-Object { $_.name -notlike 'TrustedDomains' } | ForEach-Object { Write-Color $_.name, ':', $_.value -Color Yellow, DarkCyan, Green -ShowTime; New-Variable -Name $_.name -Value $_.value -Force -Scope global }
 	New-Variable -Name 'JSONParameterFilePath' -Value $JSONParameterFilePath -Scope global -Force
 
-	# $global:CTXAdmin = Find-Credential | Where-Object target -Like '*CTXAdmin' | Get-Credential -Store
-	# if ($null -eq $CTXAdmin) {
-	# 	$AdminAccount = BetterCredentials\Get-Credential -Message 'Admin Account: DOMAIN\Username for CTX Admin'
-	# 	Set-Credential -Credential $AdminAccount -Target 'CTXAdmin' -Persistence LocalComputer -Description 'Account used for Citrix queries' -Verbose
-	# }
-	# Write-Color 'Citrix Admin Credentials: ', $CTXAdmin.UserName -ShowTime -Color yellow, Green
+	$global:CTXAdmin = Find-Credential | Where-Object target -Like '*CTXAdmin' | Get-Credential -Store
+	if ($null -eq $CTXAdmin) {
+		$AdminAccount = BetterCredentials\Get-Credential -Message 'Admin Account: DOMAIN\Username for CTX Admin'
+		Set-Credential -Credential $AdminAccount -Target 'CTXAdmin' -Persistence LocalComputer -Description 'Account used for Citrix queries' -Verbose
+	}
+	Write-Color 'Citrix Admin Credentials: ', $CTXAdmin.UserName -ShowTime -Color yellow, Green
 
 	if ($SendEmail) {
 		$global:SMTPClientCredentials = Find-Credential | Where-Object target -Like '*Healthcheck_smtp' | Get-Credential -Store

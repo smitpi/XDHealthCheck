@@ -105,8 +105,12 @@ Function Get-RDSLicenseInformation {
 	}
 	if ($Export -eq 'HTML') { 
 		New-HTML -TitleText "RDSLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\RDSLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
-			New-HTMLTab -Name 'Per Device' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($CTXObject.'Per Device') @TableSettings}}
-			New-HTMLTab -Name 'Per User' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {	New-HTMLPanel -Content { New-HTMLTable -DataTable $($CTXObject.'Per User') @TableSettings}}
+			New-HTMLTab -Name 'Per Device' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor '#ADEFD1' -HtmlData {
+				New-HTMLPanel -Content { New-HTMLTable -DataTable $($CTXObject.'Per Device') @TableSettings}
+			}
+			New-HTMLTab -Name 'Per User' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor '#ADEFD1' -HtmlData {
+				New-HTMLPanel -Content { New-HTMLTable -DataTable $($CTXObject.'Per User') @TableSettings}
+			}
 		} -Online -Encoding UTF8 -ShowHTML        
 	}
 	if ($Export -eq 'Host') { 

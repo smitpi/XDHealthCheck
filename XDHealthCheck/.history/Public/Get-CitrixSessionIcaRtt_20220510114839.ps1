@@ -104,7 +104,7 @@ Function Get-CitrixSessionIcaRtt {
         }
 
         if ($Export -eq 'Excel') { 
-                $IcaRttObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName CitrixSessionIcaRtt -AutoSize -AutoFilter -Title 'Citrix Session Ica Rtt' -TitleBold -TitleSize 28
+                $IcaRttObject | Export-Excel -Path $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx") -WorksheetName CitrixSessionIcaRtt -AutoSize -AutoFilter -Title 'Citrix Session Ica Rtt-' -TitleBold -TitleSize 28
         if ($Export -eq 'HTML') { $IcaRttObject | Out-HtmlView -DisablePaging -Title 'CitrixSessionIcaRtt' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
         if ($Export -eq 'Host') { $IcaRttObject }
 
