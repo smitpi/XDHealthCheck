@@ -1,4 +1,4 @@
-﻿
+
 <#PSScriptInfo
 
 .VERSION 0.1.0
@@ -101,6 +101,7 @@ Function Get-CitrixFailures {
     else {
     [System.Collections.ArrayList]$mashineFails = @()
     foreach ($MFail in $mon.MachineFailureLogs) {
+        Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] MachineFailureLogs $($mon.MachineFailureLogs.IndexOf($MFail)) of $($mon.MachineFailureLogs.count)"
         $device = $mon.Machines | Where-Object {$_.id -like $MFail.MachineId}
         [void]$mashineFails.Add([pscustomobject]@{
                 Name                     = $device.Name
@@ -119,6 +120,7 @@ Function Get-CitrixFailures {
     else {
     [System.Collections.ArrayList]$ConnectionFails = @()
     foreach ($CFail in $mon.ConnectionFailureLogs) {
+        Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] MachineFailureLogs $($mon.ConnectionFailureLogs.IndexOf($Cfail)) of $($mon.ConnectionFailureLogs.count)"
         $user = $mon.Users | Where-Object {$_.id -like $CFail.UserId}
         $device = $mon.Machines | Where-Object {$_.id -like $CFail.MachineId}
         [void]$ConnectionFails.Add([pscustomobject]@{
