@@ -49,6 +49,9 @@ Creates a report of users sessions with a AVG IcaRttMS
 .DESCRIPTION
 Creates a report of users sessions with a AVG IcaRttMS
 
+.PARAMETER MonitorData
+Use Get-CitrixMonitoringData to create OData, and use that variable in this parameter.
+
 .PARAMETER AdminServer
 FQDN of the Citrix Data Collector
 
@@ -68,23 +71,31 @@ Where to save the report.
 Function Get-CitrixSessionIcaRtt {
         [Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixSessionIcaRtt')]
         [OutputType([System.Object[]])]
-        PARAM(
-                [Parameter(Mandatory = $true)]
-                [ValidateNotNull()]
-                [ValidateNotNullOrEmpty()]
-                [string]$AdminServer,
-                [Parameter(Mandatory = $true)]
-                [ValidateNotNull()]
-                [ValidateNotNullOrEmpty()]
-                [int32]$hours,
-                [ValidateSet('Excel', 'HTML')]
-                [string]$Export = 'Host',
-                [ValidateScript( { if (Test-Path $_) { $true }
-                                else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
-                        })]
-                [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
-        )
-        $mon = Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours
+    PARAM(
+        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+        [PSTypeName('CTXMonitorData')]$MonitorData,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
+        [string]$AdminServer,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
+        [int32]$hours,
+
+        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
+        [ValidateSet('Excel', 'HTML')]
+        [string]$Export = 'Host',
+
+        [ValidateScript( { if (Test-Path $_) { $true }
+                else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
+            })]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
+        [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
+    )					
+
+    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours}
+    else {$Mon = $MonitorData}
 
         [System.Collections.ArrayList]$IcaRttObject = @()
         foreach ($sessid in $mon.SessionMetrics.sessionid | Sort-Object -Unique) {

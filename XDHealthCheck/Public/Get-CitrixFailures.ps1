@@ -48,6 +48,9 @@ Creates a report from monitoring data about machine and connection failures
 .DESCRIPTION
 Creates a report from monitoring data about machine and connection failures
 
+.PARAMETER MonitorData
+Use Get-CitrixMonitoringData to create OData, and use that variable in this parameter.
+
 .PARAMETER AdminServer
 FQDN of the Citrix Data Collector
 
@@ -65,27 +68,37 @@ Get-CitrixFailures -AdminServer $CTXDDC
 
 #>
 Function Get-CitrixFailures {
-    [Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixFailures')]
+    [Cmdletbinding(DefaultParameterSetName = 'Fetch odata',HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixFailures')]
     [OutputType([System.Object[]])]
     PARAM(
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNull()]
-        [ValidateNotNullOrEmpty()]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+        [PSTypeName('CTXMonitorData')]$MonitorData,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
         [string]$AdminServer,
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNull()]
-        [ValidateNotNullOrEmpty()]
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
         [int32]$hours,
+
+        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
         [ValidateSet('Excel', 'HTML')]
         [string]$Export = 'Host',
+
         [ValidateScript( { if (Test-Path $_) { $true }
                 else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
             })]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
         [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
     )					
 
-    $mon = Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours
+    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours}
+    else {$Mon = $MonitorData}
 
+
+    if ($mon.MachineFailureLogs.count -eq 0) {Write-Warning "No Machine Failures during this time frame"}
+    else {
     [System.Collections.ArrayList]$mashineFails = @()
     foreach ($MFail in $mon.MachineFailureLogs) {
         $device = $mon.Machines | Where-Object {$_.id -like $MFail.MachineId}
@@ -100,7 +113,10 @@ Function Get-CitrixFailures {
                 CurrentFaultState        = $device.FaultState
             })
     }
+    }
 
+    if ($mon.ConnectionFailureLogs.count -eq 0) {Write-Warning "No connection Failures during this time frame"}
+    else {
     [System.Collections.ArrayList]$ConnectionFails = @()
     foreach ($CFail in $mon.ConnectionFailureLogs) {
         $user = $mon.Users | Where-Object {$_.id -like $CFail.UserId}
@@ -113,6 +129,7 @@ Function Get-CitrixFailures {
                 FailureDate    = [datetime]$CFail.FailureDate
                 FailureDetails = $SessionFailureCode[$CFail.ConnectionFailureEnumValue]
             })
+    }
     }
 
 
@@ -128,13 +145,14 @@ Function Get-CitrixFailures {
             FreezeTopRow     = $True
             FreezePane       = '3'
         }
-        $mashineFails   | Export-Excel -Title MachineFailures -WorksheetName MachineFailures @ExcelOptions
-        $ConnectionFails | Export-Excel -Title ConnectionFailures -WorksheetName ConnectionFailures @ExcelOptions
+        if ($mashineFails) {$mashineFails   | Export-Excel -Title MachineFailures -WorksheetName MachineFailures @ExcelOptions}
+        if ($ConnectionFails) {$ConnectionFails | Export-Excel -Title ConnectionFailures -WorksheetName ConnectionFailures @ExcelOptions}
     }
     if ($Export -eq 'HTML') { 
-        $mashineFails | Out-HtmlView -DisablePaging -Title 'Mashine Failures' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\Citrix-Machine-Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
-        $ConnectionFails | Out-HtmlView -DisablePaging -Title 'Connection Failures' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\Citrix-Connection-Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
-        
+      New-HTML -TitleText "CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+           if ($mashineFails) { New-HTMLTab -Name 'Mashine Failures' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($mashineFails) @TableSettings}}}
+           if ($ConnectionFails) { New-HTMLTab -Name 'Connection Failures' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($ConnectionFails) @TableSettings}}}      
+    }
     }
     if ($Export -eq 'Host') { 
         [pscustomobject]@{

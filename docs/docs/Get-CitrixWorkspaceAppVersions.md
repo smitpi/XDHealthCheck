@@ -12,9 +12,16 @@ Reports on the versions of workspace app your users are using to connect
 
 ## SYNTAX
 
+### Got odata
 ```
-Get-CitrixWorkspaceAppVersions [-AdminServer] <String> [-hours] <Int32> [[-Export] <String>]
- [[-ReportPath] <DirectoryInfo>] [<CommonParameters>]
+Get-CitrixWorkspaceAppVersions [-MonitorData <Object>] [-Export <String>] [-ReportPath <DirectoryInfo>]
+ [<CommonParameters>]
+```
+
+### Fetch odata
+```
+Get-CitrixWorkspaceAppVersions -AdminServer <String> -hours <Int32> [-Export <String>]
+ [-ReportPath <DirectoryInfo>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -29,21 +36,38 @@ Get-CitrixWorkspaceAppVersions
 
 ### EXAMPLE 2
 ```
-Get-CitrixWorkspaceAppVersions -AdminServer $CTXDDC
+$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours
 ```
 
+Get-CitrixWorkspaceAppVersions -MonitorData $Mon
+
 ## PARAMETERS
+
+### -MonitorData
+Use Get-CitrixMonitoringData to create OData, and use that variable in this parameter.
+
+```yaml
+Type: Object
+Parameter Sets: Got odata
+Aliases:
+
+Required: False
+Position: Named
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
 
 ### -AdminServer
 FQDN of the Citrix Data Collector
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: Fetch odata
 Aliases:
 
 Required: True
-Position: 1
+Position: Named
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -54,11 +78,11 @@ Limit the report to this time fame
 
 ```yaml
 Type: Int32
-Parameter Sets: (All)
+Parameter Sets: Fetch odata
 Aliases:
 
 Required: True
-Position: 2
+Position: Named
 Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -74,7 +98,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: Named
 Default value: Host
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -89,7 +113,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: Named
 Default value: C:\Temp
 Accept pipeline input: False
 Accept wildcard characters: False

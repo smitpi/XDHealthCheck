@@ -146,12 +146,14 @@ function Start-CitrixHealthCheck {
 	$CitrixEnvTestResults = Get-CitrixEnvTestResults -AdminServer $CTXDDC -Infrastructure
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Citrix VDA Uptimes"
 	$CitrixVDAUptime = Get-CitrixVDAUptime -AdminServer $CTXDDC
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Monitor Data"
+    $monitor = Get-CitrixMonitoringData -AdminServer $CTXDDC -hours 24
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Failures"
-	$Failures = Get-CitrixFailures -AdminServer $CTXDDC -hours 24
+	$Failures = Get-CitrixFailures -MonitorData $monitor
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] app ver"
-	$appver = Get-CitrixWorkspaceAppVersions -AdminServer $CTXDDC -hours 24 | Where-Object {$_.ClientVersion -notlike $null}
+	$appver = Get-CitrixWorkspaceAppVersions -MonitorData $monitor | Where-Object {$_.ClientVersion -notlike $null}
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] CitrixSessionIcaRtt"
-	$CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -AdminServer $CTXDDC -hours 24
+	$CitrixSessionIcaRtt = Get-CitrixSessionIcaRtt -MonitorData $monitor
 
 
 	#endregion

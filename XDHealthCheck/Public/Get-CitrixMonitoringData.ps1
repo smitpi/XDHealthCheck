@@ -73,13 +73,14 @@ Function Get-CitrixMonitoringData {
     Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Monitoring data connect"
 
 
-    $now = Get-Date -Format yyyy-MM-ddTHH:mm:ss
-    $past = ((Get-Date).AddHours(-$hours)).ToString('yyyy-MM-ddTHH:mm:ss')
+    $now = Get-Date -Format yyyy-MM-ddTHH:mm:ss.ffZ
+    $past = ((Get-Date).AddHours(-$hours)).ToString('yyyy-MM-ddTHH:mm:ss.ffZ')
 
     $urisettings = @{
         #AllowUnencryptedAuthentication = $true
         UseDefaultCredentials = $true
     }
+<#
     try {
         $ChechOdataVer = (Invoke-WebRequest -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data" @urisettings).headers['OData-Version']
     } catch {$ChechOdataVer = '3'}
@@ -87,7 +88,10 @@ Function Get-CitrixMonitoringData {
     if ($ChechOdataVer -like '4*') {
         try {
         [pscustomobject]@{
-            Sessions                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Sessions?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'" @urisettings ).value
+            Sessions                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Sessions?`$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'" @urisettings ).value
+            
+            (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Sessions?$apply=filter(ModifiedDate ge `'$($past)`' and ModifiedDate le `'$($now)`' )"@urisettings ).value
+
             Connections                = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/Connections?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'" @urisettings ).value
             ConnectionFailureLogs      = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/ConnectionFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
             MachineFailureLogs         = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/MachineFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
@@ -101,22 +105,24 @@ Function Get-CitrixMonitoringData {
             SessionMetrics             = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v4/Data/SessionMetrics?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'" @urisettings ).value
         }
         } catch {Write-Warning "Error: `n`tMessage:$($_.Exception.Message)"}
-    } else {         
+    } else {       
+#>      
         try {
         [pscustomobject]@{
+            PSTypeName                   = 'CTXMonitorData'
             Sessions                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Sessions?`$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-            Connections                = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Connections?$filter = StartDate ge datetime`'$($past)`' and StartDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-            ConnectionFailureLogs      = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ConnectionFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-            MachineFailureLogs         = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/MachineFailureLogs?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
+            Connections                = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Connections?`$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
+            ConnectionFailureLogs      = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ConnectionFailureLogs?`$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
+            MachineFailureLogs         = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/MachineFailureLogs?`$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
             Users                      = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Users?`$format=json" @urisettings ).value
             Machines                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Machines?`$format=json" @urisettings ).value
             Catalogs                   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Catalogs?`$format=json" @urisettings ).value
             Applications               = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Applications?`$format=json" @urisettings ).value
             DesktopGroups              = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/DesktopGroups?`$format=json" @urisettings ).value
-            ResourceUtilization        = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ResourceUtilization?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-            ResourceUtilizationSummary = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ResourceUtilizationSummary?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
-            SessionMetrics             = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/SessionMetrics?$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
+            ResourceUtilization        = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ResourceUtilization?`$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
+            ResourceUtilizationSummary = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ResourceUtilizationSummary?`$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
+            SessionMetrics             = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/SessionMetrics?`$filter = CreatedDate ge datetime`'$($past)`' and CreatedDate le datetime`'$($now)`'&`$format=json" @urisettings ).value
         } 
         } catch {Write-Warning "Error: `n`tMessage:$($_.Exception.Message)"}
-    }
+    
 } #end Function
