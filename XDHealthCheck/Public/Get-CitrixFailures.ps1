@@ -1,4 +1,4 @@
-﻿
+
 <#PSScriptInfo
 
 .VERSION 0.1.0
@@ -100,7 +100,7 @@ Function Get-CitrixFailures {
     if ($mon.sessions.machine.MachineFailures.count -eq 0) {Write-Warning 'No Machine Failures during this time frame'}
     else {
         [System.Collections.ArrayList]$mashineFails = @()
-        $UniqueMachine =  ($mon.sessions.machine |Where-Object {$_.DnsName -notlike $null} | Sort-Object -Property Dnsname -Unique)
+        $UniqueMachine = ($mon.sessions.machine | Where-Object {$_.DnsName -notlike $null} | Sort-Object -Property Dnsname -Unique)
         foreach ($MFail in $UniqueMachine) {
             Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] MachineFailureLogs $($UniqueMachine.IndexOf($MFail)) of $($UniqueMachine.count)"
             $latest = $MFail.MachineFailures | Sort-Object -Property FailureStartDate -Descending | Select-Object -First 1
