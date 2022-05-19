@@ -20,8 +20,8 @@ Get-CitrixSessionIcaRtt [-MonitorData <Object>] [-Export <String>] [-ReportPath 
 
 ### Fetch odata
 ```
-Get-CitrixSessionIcaRtt -AdminServer <String> -hours <Int32> [-Export <String>] [-ReportPath <DirectoryInfo>]
- [<CommonParameters>]
+Get-CitrixSessionIcaRtt -AdminServer <String> -SessionCount <Int32> [-Export <String>]
+ [-ReportPath <DirectoryInfo>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -66,8 +66,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -hours
-Limit the report to this time fame
+### -SessionCount
+Will collect data for the last x amount of sessions.
 
 ```yaml
 Type: Int32

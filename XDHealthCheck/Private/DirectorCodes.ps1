@@ -54,7 +54,7 @@ $script:SessionFailureCode = @{
     100 = 'NoMachineAvailable'
     101 = 'MachineNotFunctional'
 }
-$script:MachineDeregistration = @{
+$global:MachineDeregistration = @{
     0   = 'AgentShutdown'
     1   = 'AgentSuspended'
     100	= 'IncompatibleVersion'

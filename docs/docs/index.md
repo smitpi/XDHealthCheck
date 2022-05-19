@@ -32,6 +32,7 @@ Documentation can be found at: [Github_Pages](https://smitpi.github.io/XDHealthC
 - [Get-CitrixLicenseInformation](https://smitpi.github.io/XDHealthCheck/#Get-CitrixLicenseInformation) -- Show Citrix License details
 - [Get-CitrixMonitoringData](https://smitpi.github.io/XDHealthCheck/#Get-CitrixMonitoringData) -- Connects and collects data from the monitoring OData feed.
 - [Get-CitrixObjects](https://smitpi.github.io/XDHealthCheck/#Get-CitrixObjects) -- Get details of citrix objects
+- [Get-CitrixResourceUtilizationSummary](https://smitpi.github.io/XDHealthCheck/#Get-CitrixResourceUtilizationSummary) -- Resource Utilization Summary for machines
 - [Get-CitrixServerEventLog](https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerEventLog) -- Get windows event log details
 - [Get-CitrixServerPerformance](https://smitpi.github.io/XDHealthCheck/#Get-CitrixServerPerformance) -- Collects perform data for the core servers.
 - [Get-CitrixSessionIcaRtt](https://smitpi.github.io/XDHealthCheck/#Get-CitrixSessionIcaRtt) -- Creates a report of users sessions with a AVG IcaRttMS

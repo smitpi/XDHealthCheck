@@ -5,58 +5,40 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-CitrixWorkspaceAppVersions
+# Get-CitrixResourceUtilizationSummary
 
 ## SYNOPSIS
-Reports on the versions of workspace app your users are using to connect
+Resource Utilization Summary for machines
 
 ## SYNTAX
 
-### Got odata
+### Set1 (Default)
 ```
-Get-CitrixWorkspaceAppVersions [-MonitorData <Object>] [-Export <String>] [-ReportPath <DirectoryInfo>]
- [<CommonParameters>]
+Get-CitrixResourceUtilizationSummary [<CommonParameters>]
 ```
 
 ### Fetch odata
 ```
-Get-CitrixWorkspaceAppVersions -AdminServer <String> -SessionCount <Int32> [-Export <String>]
+Get-CitrixResourceUtilizationSummary -AdminServer <String> -hours <Int32> [-Export <String>]
  [-ReportPath <DirectoryInfo>] [<CommonParameters>]
 ```
 
+### Got odata
+```
+Get-CitrixResourceUtilizationSummary [-Export <String>] [-ReportPath <DirectoryInfo>] [<CommonParameters>]
+```
+
 ## DESCRIPTION
-Reports on the versions of workspace app your users are using to connect
+Resource Utilization Summary for machines
 
 ## EXAMPLES
 
 ### EXAMPLE 1
 ```
-Get-CitrixWorkspaceAppVersions
+Get-CitrixResourceUtilizationSummary -AdminServer $CTXDDC -hours 24 -Export Excel -ReportPath C:\temp
 ```
-
-### EXAMPLE 2
-```
-$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours
-```
-
-Get-CitrixWorkspaceAppVersions -MonitorData $Mon
 
 ## PARAMETERS
-
-### -MonitorData
-Use Get-CitrixMonitoringData to create OData, and use that variable in this parameter.
-
-```yaml
-Type: Object
-Parameter Sets: Got odata
-Aliases:
-
-Required: False
-Position: Named
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
 
 ### -AdminServer
 FQDN of the Citrix Data Collector
@@ -73,8 +55,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -SessionCount
-Will collect data for the last x amount of sessions.
+### -hours
+Limit the report to this time frame
 
 ```yaml
 Type: Int32
@@ -94,7 +76,7 @@ Export the result to a report file.
 
 ```yaml
 Type: String
-Parameter Sets: (All)
+Parameter Sets: Fetch odata, Got odata
 Aliases:
 
 Required: False
@@ -109,7 +91,7 @@ Where to save the report.
 
 ```yaml
 Type: DirectoryInfo
-Parameter Sets: (All)
+Parameter Sets: Fetch odata, Got odata
 Aliases:
 
 Required: False

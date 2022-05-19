@@ -54,8 +54,8 @@ Use Get-CitrixMonitoringData to create OData, and use that variable in this para
 .PARAMETER AdminServer
 FQDN of the Citrix Data Collector
 
-.PARAMETER hours
-Limit the report to this time fame
+.PARAMETER SessionCount
+Will collect data for the last x amount of sessions.
 
 .PARAMETER Export
 Export the result to a report file. (Excel or html)
@@ -68,7 +68,7 @@ Get-CitrixFailures -AdminServer $CTXDDC
 
 #>
 Function Get-CitrixFailures {
-    [Cmdletbinding(DefaultParameterSetName = 'Fetch odata',HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixFailures')]
+    [Cmdletbinding(DefaultParameterSetName = 'Fetch odata', HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixFailures')]
     [OutputType([System.Object[]])]
     PARAM(
         [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
@@ -78,7 +78,7 @@ Function Get-CitrixFailures {
         [string]$AdminServer,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
-        [int32]$hours,
+        [int32]$SessionCount,
 
         [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
         [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
@@ -93,43 +93,46 @@ Function Get-CitrixFailures {
         [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
     )					
 
-    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours}
+    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount}
     else {$Mon = $MonitorData}
 
 
-    if ($mon.MachineFailureLogs.count -eq 0) {Write-Warning "No Machine Failures during this time frame"}
+    if ($mon.sessions.machine.MachineFailures.count -eq 0) {Write-Warning 'No Machine Failures during this time frame'}
     else {
-    [System.Collections.ArrayList]$mashineFails = @()
-    foreach ($MFail in $mon.MachineFailureLogs) {
-        $device = $mon.Machines | Where-Object {$_.id -like $MFail.MachineId}
-        [void]$mashineFails.Add([pscustomobject]@{
-                Name                     = $device.Name
-                IP                       = $device.IPAddress
-                OSType                   = $device.OSType
-                FailureDate              = [datetime]$MFail.FailureStartDate
-                FaultState               = $MFail.FaultState 
-                LastDeregisteredCode     = $MachineDeregistration[$MFail.LastDeregisteredCode]
-                CurrentRegistrationState = $RegistrationState[$device.CurrentRegistrationState]
-                CurrentFaultState        = $device.FaultState
-            })
-    }
+        [System.Collections.ArrayList]$mashineFails = @()
+        $UniqueMachine =  ($mon.sessions.machine |Where-Object {$_.DnsName -notlike $null} | Sort-Object -Property Dnsname -Unique)
+        foreach ($MFail in $UniqueMachine) {
+            Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] MachineFailureLogs $($UniqueMachine.IndexOf($MFail)) of $($UniqueMachine.count)"
+            $latest = $MFail.MachineFailures | Sort-Object -Property FailureStartDate -Descending | Select-Object -First 1
+            [void]$mashineFails.Add([pscustomobject]@{
+                    Name                     = $MFail.Name
+                    IP                       = $MFail.IPAddress
+                    OSType                   = $MFail.OSType
+                    FailureDate              = [datetime]$latest.FailureStartDate
+                    FaultState               = $MachineFailureType[$latest.FaultState]
+                    LastDeregisteredCode     = $MachineDeregistration[$latest.LastDeregisteredCode]
+                    CurrentRegistrationState = $RegistrationState[$MFail.CurrentRegistrationState]
+                    CurrentFaultState        = $MachineFailureType[$MFail.FaultState]
+                })
+        }
     }
 
-    if ($mon.ConnectionFailureLogs.count -eq 0) {Write-Warning "No connection Failures during this time frame"}
+    if ($mon.Sessions.ConnectionFailureLogs.count -eq 0) {Write-Warning 'No connection Failures during this time frame'}
     else {
-    [System.Collections.ArrayList]$ConnectionFails = @()
-    foreach ($CFail in $mon.ConnectionFailureLogs) {
-        $user = $mon.Users | Where-Object {$_.id -like $CFail.UserId}
-        $device = $mon.Machines | Where-Object {$_.id -like $CFail.MachineId}
-        [void]$ConnectionFails.Add([pscustomobject]@{
-                UserName       = $user.UserName
-                Upn            = $user.Upn
-                Name           = $device.Name
-                IP             = $device.IPAddress
-                FailureDate    = [datetime]$CFail.FailureDate
-                FailureDetails = $SessionFailureCode[$CFail.ConnectionFailureEnumValue]
-            })
-    }
+        [System.Collections.ArrayList]$ConnectionFails = @()
+        foreach ($CFail in $mon.Sessions.ConnectionFailureLogs) {
+            Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Connection Failures $($mon.Sessions.ConnectionFailureLogs.IndexOf($CFail)) of $($mon.Sessions.ConnectionFailureLogs.count)"
+            $user = ($mon.Sessions.User | Where-Object {$_.id -like $CFail.UserId})[0]
+            $device = ($mon.Sessions.Machine | Where-Object {$_.id -like $CFail.MachineId})[0]
+            [void]$ConnectionFails.Add([pscustomobject]@{
+                    UserName       = $user.UserName
+                    Upn            = $user.Upn
+                    Name           = $device.Name
+                    IP             = $device.IPAddress
+                    FailureDate    = [datetime]$CFail.FailureDate
+                    FailureDetails = $SessionFailureCode[$CFail.ConnectionFailureEnumValue]
+                })
+        }
     }
 
 
@@ -145,14 +148,14 @@ Function Get-CitrixFailures {
             FreezeTopRow     = $True
             FreezePane       = '3'
         }
-        if ($mashineFails) {$mashineFails   | Export-Excel -Title MachineFailures -WorksheetName MachineFailures @ExcelOptions}
+        if ($mashineFails) {$mashineFails | Export-Excel -Title MachineFailures -WorksheetName MachineFailures @ExcelOptions}
         if ($ConnectionFails) {$ConnectionFails | Export-Excel -Title ConnectionFailures -WorksheetName ConnectionFailures @ExcelOptions}
     }
     if ($Export -eq 'HTML') { 
-      New-HTML -TitleText "CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
-           if ($mashineFails) { New-HTMLTab -Name 'Mashine Failures' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($mashineFails) @TableSettings}}}
-           if ($ConnectionFails) { New-HTMLTab -Name 'Connection Failures' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($ConnectionFails) @TableSettings}}}      
-    }
+        New-HTML -TitleText "CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+            if ($mashineFails) { New-HTMLTab -Name 'Mashine Failures' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($mashineFails) @TableSettings}}}
+            if ($ConnectionFails) { New-HTMLTab -Name 'Connection Failures' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($ConnectionFails) @TableSettings}}}      
+        }
     }
     if ($Export -eq 'Host') { 
         [pscustomobject]@{

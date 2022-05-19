@@ -13,7 +13,7 @@ Connects and collects data from the monitoring OData feed.
 ## SYNTAX
 
 ```
-Get-CitrixMonitoringData [-AdminServer] <String> [-hours] <Int32> [<CommonParameters>]
+Get-CitrixMonitoringData [-AdminServer] <String> [-SessionCount] <Int32> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -43,8 +43,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -hours
-Limit the report to this time frame
+### -SessionCount
+Will collect data for the last x amount of sessions.
 
 ```yaml
 Type: Int32

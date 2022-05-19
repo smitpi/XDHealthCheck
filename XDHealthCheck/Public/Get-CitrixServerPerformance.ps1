@@ -65,6 +65,7 @@ Get-CitrixServerPerformance -ComputerName $CTXCore
 #>
 Function Get-CitrixServerPerformance {
 	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixServerPerformance')]
+	[OutputType([System.Object[]])]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]

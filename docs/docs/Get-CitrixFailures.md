@@ -14,7 +14,7 @@ Creates a report from monitoring data about machine and connection failures
 
 ### Fetch odata (Default)
 ```
-Get-CitrixFailures -AdminServer <String> -hours <Int32> [-Export <String>] [-ReportPath <DirectoryInfo>]
+Get-CitrixFailures -AdminServer <String> -SessionCount <Int32> [-Export <String>] [-ReportPath <DirectoryInfo>]
  [<CommonParameters>]
 ```
 
@@ -66,8 +66,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -hours
-Limit the report to this time fame
+### -SessionCount
+Will collect data for the last x amount of sessions.
 
 ```yaml
 Type: Int32

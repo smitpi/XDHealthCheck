@@ -66,8 +66,8 @@ Use Get-CitrixMonitoringData to create OData, and use that variable in this para
 .PARAMETER AdminServer
 FQDN of the Citrix Data Collector
 
-.PARAMETER hours
-Limit the report to this time fame
+.PARAMETER SessionCount
+Will collect data for the last x amount of sessions.
 
 .PARAMETER Export
 Export the result to a report file. (Excel or html)
@@ -91,7 +91,7 @@ Function Get-CitrixWorkspaceAppVersions {
         [string]$AdminServer,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
-        [int32]$hours,
+        [int32]$SessionCount,
 
         [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
         [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
@@ -106,28 +106,23 @@ Function Get-CitrixWorkspaceAppVersions {
         [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
     )					
 
-    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours}
+    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount}
     else {$Mon = $MonitorData}
 
-	$index = 1
-	[string]$AllCount = $mon.Connections.Count
-	[System.Collections.ArrayList]$ClientObject = @()
 
-	foreach ($connect in $mon.Connections) {
-		$Userid = ($mon.Sessions | Where-Object { $_.SessionKey -like $connect.SessionKey}).UserId
-		$userdetails = $mon.Users | Where-Object { $_.id -like $Userid }
-		Write-Output "Collecting data $index of $AllCount"
-		$index++
+	[System.Collections.ArrayList]$ClientObject = @()
+	foreach ($session in $mon.sessions) {
+    Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Sessions $($mon.Sessions.IndexOf($session)) of $($mon.Sessions.count)"
 		[void]$ClientObject.Add([pscustomobject]@{
-				Domain         = $userdetails.Domain
-				UserName       = $userdetails.UserName
-				Upn            = $userdetails.Upn
-				FullName       = $userdetails.FullName
-				ClientName     = $connect.ClientName
-				ClientAddress  = $connect.ClientAddress
-				ClientVersion  = $connect.ClientVersion
-				ClientPlatform = $connect.ClientPlatform
-				Protocol       = $connect.Protocol
+				Domain         = $session.User.domain
+				UserName       = $session.User.UserName
+				Upn            = $session.User.Upn
+				FullName       = $session.User.FullName
+				ClientName     = $session.CurrentConnection.ClientName
+				ClientAddress  = $session.CurrentConnection.ClientAddress
+				ClientVersion  = $session.CurrentConnection.ClientVersion
+				ClientPlatform = $session.CurrentConnection.ClientPlatform
+				Protocol       = $session.CurrentConnection.Protocol
 			})
 	}
 

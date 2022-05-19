@@ -55,8 +55,8 @@ Use Get-CitrixMonitoringData to create OData, and use that variable in this para
 .PARAMETER AdminServer
 FQDN of the Citrix Data Collector
 
-.PARAMETER hours
-Limit the report to this time fame
+.PARAMETER SessionCount
+Will collect data for the last x amount of sessions.
 
 .PARAMETER Export
 Export the result to a report file. (Excel or html)
@@ -79,7 +79,7 @@ Function Get-CitrixSessionIcaRtt {
         [string]$AdminServer,
 
         [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
-        [int32]$hours,
+        [int32]$SessionCount,
 
         [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
         [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
@@ -94,22 +94,25 @@ Function Get-CitrixSessionIcaRtt {
         [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
     )					
 
-    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours}
+    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount}
     else {$Mon = $MonitorData}
 
         [System.Collections.ArrayList]$IcaRttObject = @()
-        foreach ($sessid in $mon.SessionMetrics.sessionid | Sort-Object -Unique) {
+        $UniqueSession =  $mon.Sessions.SessionMetrics | Sort-Object -Property SessionId -Unique
+        foreach ($sessid in $UniqueSession) {
+        Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Sessions $($UniqueSession.IndexOf($sessid)) of $($UniqueSession.count)"
                 try {
-                        $session = $mon.Sessions | Where-Object {$_.SessionKey -like $sessid}
-                        $user = $mon.Users | Where-Object {$_.id -like $session.userid}
-                        $Measure = $mon.SessionMetrics | Where-Object {$_.SessionId -like $sessid} | Measure-Object -Property IcaRttMS -Average   
-                        [void]$IcaRttObject.Add([pscustomobject]@{
-                                        StartDate    = [datetime]$session.StartDate
-                                        EndDate      = [datetime]$session.EndDate
-                                        'AVG IcaRtt' = [math]::Round($Measure.Average)
-                                        UserName     = $user.UserName
-                                        UPN          = $user.Upn
-                                })
+                    $session = $mon.Sessions | Where-Object {$_.SessionKey -like $sessid.SessionId}
+                    $user = ($mon.Sessions.User | Where-Object {$_.id -like $session.userid})[0]
+                    $Measure = $mon.Sessions.SessionMetrics | Where-Object {$_.SessionId -like $sessid.SessionId} | Measure-Object -Property IcaRttMS -Average   
+                    [void]$IcaRttObject.Add([pscustomobject]@{
+                                    StartDate    = [datetime]$session.StartDate
+                                    EndDate      = [datetime]$session.EndDate
+                                    ObjectCount  = $Measure.Count
+                                    'AVG IcaRtt' = [math]::Round($Measure.Average)
+                                    UserName     = $user.UserName
+                                    UPN          = $user.Upn
+                            })
 
                 } catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
         }

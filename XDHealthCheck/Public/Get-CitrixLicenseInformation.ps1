@@ -75,6 +75,7 @@ Get-CitrixLicenseInformation -AdminServer $CTXDDC
 #>
 Function Get-CitrixLicenseInformation {
 	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixLicenseInformation')]
+	[OutputType([System.Object[]])]
 	PARAM(
 		[Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
 		[ValidateNotNull()]
