@@ -2078,7 +2078,7 @@
             <maml:name>String</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>#061820</dev:defaultValue>
+          <dev:defaultValue>#2b1200</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
           <maml:name>Color2</maml:name>
@@ -2090,7 +2090,7 @@
             <maml:name>String</maml:name>
             <maml:uri />
           </dev:type>
-          <dev:defaultValue>#FFD400</dev:defaultValue>
+          <dev:defaultValue>#f37000</dev:defaultValue>
         </command:parameter>
         <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
           <maml:name>LogoURL</maml:name>
@@ -2117,7 +2117,7 @@
           <maml:name>String</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>#061820</dev:defaultValue>
+        <dev:defaultValue>#2b1200</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="2" aliases="none">
         <maml:name>Color2</maml:name>
@@ -2129,7 +2129,7 @@
           <maml:name>String</maml:name>
           <maml:uri />
         </dev:type>
-        <dev:defaultValue>#FFD400</dev:defaultValue>
+        <dev:defaultValue>#f37000</dev:defaultValue>
       </command:parameter>
       <command:parameter required="false" variableLength="true" globbing="false" pipelineInput="False" position="3" aliases="none">
         <maml:name>LogoURL</maml:name>

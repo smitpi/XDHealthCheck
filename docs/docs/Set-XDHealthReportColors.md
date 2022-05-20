@@ -39,7 +39,7 @@ Aliases:
 
 Required: False
 Position: 1
-Default value: #061820
+Default value: #2b1200
 Accept pipeline input: False
 Accept wildcard characters: False
 ```
@@ -54,7 +54,7 @@ Aliases:
 
 Required: False
 Position: 2
-Default value: #FFD400
+Default value: #f37000
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

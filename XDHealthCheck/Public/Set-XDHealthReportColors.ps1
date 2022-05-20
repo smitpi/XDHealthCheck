@@ -68,8 +68,8 @@ Function Set-XDHealthReportColors {
 	[Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Set-XDHealthReportColors')]
 	[Cmdletbinding()]
 	PARAM(
-		[string]$Color1 = '#061820',
-		[string]$Color2 = '#FFD400',
+		[string]$Color1 = '#2b1200',
+		[string]$Color2 = '#f37000',
 		[string]$LogoURL = 'https://gist.githubusercontent.com/smitpi/ecdaae80dd79ad585e571b1ba16ce272/raw/6d0645968c7ba4553e7ab762c55270ebcc054f04/default-monochrome.png'
 	)
     if (Test-Path HKCU:\Software\XDHealth) {
@@ -86,7 +86,35 @@ Function Set-XDHealthReportColors {
     $global:XDHealth_Color2 = Get-ItemPropertyValue -Path HKCU:\Software\XDHealth -Name Color2
     $global:XDHealth_LogoURL = Get-ItemPropertyValue -Path HKCU:\Software\XDHealth -Name LogoURL
 
-
+	#region Html Settings
+	$global:TableSettings = @{
+		Style           = 'cell-border'
+		TextWhenNoData  = 'No Data to display here'
+		Buttons         = 'searchBuilder', 'pdfHtml5', 'excelHtml5'
+		FixedHeader     = $true
+		HideFooter      = $true
+		SearchHighlight = $true
+		PagingStyle     = 'full'
+		PagingLength    = 10
+	}
+	$global:SectionSettings = @{
+		BackgroundColor       = 'grey'
+		CanCollapse           = $true
+		HeaderBackGroundColor = $XDHealth_Color1
+		HeaderTextAlignment   = 'center'
+		HeaderTextColor       = $XDHealth_Color2
+		HeaderTextSize        = '15'
+		BorderRadius          = '20px'
+	}
+	$global:TableSectionSettings = @{
+		BackgroundColor       = 'white'
+		CanCollapse           = $true
+		HeaderBackGroundColor = $XDHealth_Color2
+		HeaderTextAlignment   = 'center'
+		HeaderTextColor       = $XDHealth_Color1
+		HeaderTextSize        = '15'
+	}
+	#endregion
 
 	[string]$HTMLReportname = $env:TEMP + '\Test-color' + (Get-Date -Format yyyy.MM.dd-HH.mm) + '.html'
 
