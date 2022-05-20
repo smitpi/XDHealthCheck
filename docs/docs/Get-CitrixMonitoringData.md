@@ -13,7 +13,8 @@ Connects and collects data from the monitoring OData feed.
 ## SYNTAX
 
 ```
-Get-CitrixMonitoringData [-AdminServer] <String> [-SessionCount] <Int32> [<CommonParameters>]
+Get-CitrixMonitoringData [-AdminServer] <String> [-SessionCount] <Int32> [-AllowUnencryptedAuthentication]
+ [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -23,7 +24,7 @@ Connects and collects data from the monitoring OData feed.
 
 ### EXAMPLE 1
 ```
-Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours
+Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount 50
 ```
 
 ## PARAMETERS
@@ -54,6 +55,21 @@ Aliases:
 Required: True
 Position: 2
 Default value: 0
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -AllowUnencryptedAuthentication
+{{ Fill AllowUnencryptedAuthentication Description }}
+
+```yaml
+Type: SwitchParameter
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: Named
+Default value: False
 Accept pipeline input: False
 Accept wildcard characters: False
 ```

@@ -26,8 +26,8 @@ Documentation can be found at: [Github_Pages](https://smitpi.github.io/XDHealthC
  
 ## Functions
 - [Get-CitrixConfigurationChange](https://smitpi.github.io/XDHealthCheck/#Get-CitrixConfigurationChange) -- Show the changes that was made to the farm
+- [Get-CitrixConnectionFailures](https://smitpi.github.io/XDHealthCheck/#Get-CitrixConnectionFailures) -- Creates a report from monitoring data about machine and connection failures
 - [Get-CitrixEnvTestResults](https://smitpi.github.io/XDHealthCheck/#Get-CitrixEnvTestResults) -- Perform and report on tests on catalogs, delivery groups, hypervisor and Infrastructure
-- [Get-CitrixFailures](https://smitpi.github.io/XDHealthCheck/#Get-CitrixFailures) -- Creates a report from monitoring data about machine and connection failures
 - [Get-CitrixFarmDetail](https://smitpi.github.io/XDHealthCheck/#Get-CitrixFarmDetail) -- Get needed Farm details.
 - [Get-CitrixLicenseInformation](https://smitpi.github.io/XDHealthCheck/#Get-CitrixLicenseInformation) -- Show Citrix License details
 - [Get-CitrixMonitoringData](https://smitpi.github.io/XDHealthCheck/#Get-CitrixMonitoringData) -- Connects and collects data from the monitoring OData feed.

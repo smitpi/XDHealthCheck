@@ -98,7 +98,7 @@ Function Get-CitrixResourceUtilizationSummary {
         Method                = 'Get'
     }
 
-    $ResourceUtilizationSummary = (Invoke-RestMethod -Uri http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ResourceUtilizationSummary?`$filter = CreatedDate ge datetime'$($past)' and CreatedDate le datetime'$($now)' @urisettings).d
+    $ResourceUtilizationSummary = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ResourceUtilizationSummary?`$filter = CreatedDate ge datetime'$($past)' and CreatedDate le datetime'$($now)'" @urisettings).d
     [System.Collections.ArrayList]$ResourceUtilization = @()
     $grouped = $ResourceUtilizationSummary | Group-Object MachineId
     foreach ($resource in $grouped) {

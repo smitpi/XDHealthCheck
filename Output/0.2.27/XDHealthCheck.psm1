@@ -167,7 +167,7 @@ $global:TableSectionSettings = @{
 ############################################
 # source: Get-CitrixConfigurationChange.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -265,11 +265,133 @@ Function Get-CitrixConfigurationChange {
 Export-ModuleMember -Function Get-CitrixConfigurationChange
 #endregion
  
+#region Get-CitrixConnectionFailures.ps1
+############################################
+# source: Get-CitrixConnectionFailures.ps1
+# Module: XDHealthCheck
+# version: 0.2.27
+# Author: Pierre Smit
+# Company: HTPCZA Tech
+#############################################
+ 
+<#
+.SYNOPSIS
+Creates a report from monitoring data about machine and connection failures
+
+.DESCRIPTION
+Creates a report from monitoring data about machine and connection failures
+
+.PARAMETER MonitorData
+Use Get-CitrixMonitoringData to create OData, and use that variable in this parameter.
+
+.PARAMETER AdminServer
+FQDN of the Citrix Data Collector
+
+.PARAMETER SessionCount
+Will collect data for the last x amount of sessions.
+
+.PARAMETER Export
+Export the result to a report file. (Excel or html)
+
+.PARAMETER ReportPath
+Where to save the report.
+
+.EXAMPLE
+$monitor = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount 50
+Get-CitrixConnectionFailures -MonitorData $monitor
+
+#>
+Function Get-CitrixConnectionFailures {
+    [Cmdletbinding(DefaultParameterSetName = 'Fetch odata', HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixConnectionFailures')]
+    [OutputType([System.Object[]])]
+    PARAM(
+        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+        [PSTypeName('CTXMonitorData')]$MonitorData,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
+        [string]$AdminServer,
+
+        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
+        [int32]$SessionCount,
+
+        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
+        [ValidateSet('Excel', 'HTML')]
+        [string]$Export = 'Host',
+
+        [ValidateScript( { if (Test-Path $_) { $true }
+                else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
+            })]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
+        [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
+    )					
+
+    if (-not($MonitorData)) {
+        try {
+            $mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount
+        } catch {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount -AllowUnencryptedAuthentication}
+    } else {$Mon = $MonitorData}
+
+    $ConnectionFailure = $mon.Connections.Where({$_.ConnectionFailureLog -notlike $null})
+    if ($ConnectionFailure.count -eq 0) {Write-Warning 'No connection Failures during this time frame'}
+    else {
+        [System.Collections.ArrayList]$ConnectionFails = @()
+        foreach ($CFail in $ConnectionFailure.ConnectionFailureLog) {
+            Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Connection Failures $($ConnectionFailure.ConnectionFailureLog.IndexOf($CFail)) of $($ConnectionFailure.ConnectionFailureLog.count)"
+            try {
+                $user = Invoke-RestMethod -Method Get -Uri "$($CFail.User.__deferred.uri)?`$format=json" -UseDefaultCredentials
+                $device = Invoke-RestMethod -Method Get -Uri "$($CFail.Machine.__deferred.uri)?`$format=json" -UseDefaultCredentials
+            } catch {
+                $user = Invoke-RestMethod -Method Get -Uri "$($CFail.User.__deferred.uri)?`$format=json" -UseDefaultCredentials -AllowUnencryptedAuthentication
+                $device = Invoke-RestMethod -Method Get -Uri "$($CFail.Machine.__deferred.uri)?`$format=json" -UseDefaultCredentials -AllowUnencryptedAuthentication
+            }
+            [void]$ConnectionFails.Add([pscustomobject]@{
+                    UserName       = $user.UserName
+                    Upn            = $user.Upn
+                    Name           = $device.Name
+                    IP             = $device.IPAddress
+                    FailureDate    = [datetime]$CFail.FailureDate
+                    FailureDetails = $SessionFailureCode[$CFail.ConnectionFailureEnumValue]
+                })
+        }
+    }
+
+
+    if ($Export -eq 'Excel') { 
+        $ExcelOptions = @{
+            Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixConnectionFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+            AutoSize         = $True
+            AutoFilter       = $True
+            TitleBold        = $True
+            TitleSize        = '28'
+            TitleFillPattern = 'LightTrellis'
+            TableStyle       = 'Light20'
+            FreezeTopRow     = $True
+            FreezePane       = '3'
+        }
+        if ($ConnectionFails) {$ConnectionFails | Export-Excel -Title ConnectionFailures -WorksheetName ConnectionFailures @ExcelOptions}
+    }
+    if ($Export -eq 'HTML') { 
+        New-HTML -TitleText "CitrixConnectionFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixConnectionFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+            if ($ConnectionFails) { New-HTMLTab -Name 'Connection Failures' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($ConnectionFails) @TableSettings}}}      
+        }
+    }
+    if ($Export -eq 'Host') { 
+        [pscustomobject]@{
+            ConnectionFails = $ConnectionFails
+        }
+    }
+} #end Function
+ 
+Export-ModuleMember -Function Get-CitrixConnectionFailures
+#endregion
+ 
 #region Get-CitrixEnvTestResults.ps1
 ############################################
 # source: Get-CitrixEnvTestResults.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -438,149 +560,11 @@ Function Get-CitrixEnvTestResults {
 Export-ModuleMember -Function Get-CitrixEnvTestResults
 #endregion
  
-#region Get-CitrixFailures.ps1
-############################################
-# source: Get-CitrixFailures.ps1
-# Module: XDHealthCheck
-# version: 0.2.26
-# Author: Pierre Smit
-# Company: HTPCZA Tech
-#############################################
- 
-<#
-.SYNOPSIS
-Creates a report from monitoring data about machine and connection failures
-
-.DESCRIPTION
-Creates a report from monitoring data about machine and connection failures
-
-.PARAMETER MonitorData
-Use Get-CitrixMonitoringData to create OData, and use that variable in this parameter.
-
-.PARAMETER AdminServer
-FQDN of the Citrix Data Collector
-
-.PARAMETER SessionCount
-Will collect data for the last x amount of sessions.
-
-.PARAMETER Export
-Export the result to a report file. (Excel or html)
-
-.PARAMETER ReportPath
-Where to save the report.
-
-.EXAMPLE
-Get-CitrixFailures -AdminServer $CTXDDC
-
-#>
-Function Get-CitrixFailures {
-    [Cmdletbinding(DefaultParameterSetName = 'Fetch odata', HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixFailures')]
-    [OutputType([System.Object[]])]
-    PARAM(
-        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
-        [PSTypeName('CTXMonitorData')]$MonitorData,
-
-        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
-        [string]$AdminServer,
-
-        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
-        [int32]$SessionCount,
-
-        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
-        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
-        [ValidateSet('Excel', 'HTML')]
-        [string]$Export = 'Host',
-
-        [ValidateScript( { if (Test-Path $_) { $true }
-                else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
-            })]
-        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
-        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
-        [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
-    )					
-
-    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount}
-    else {$Mon = $MonitorData}
-
-
-    if ($mon.sessions.machine.MachineFailures.count -eq 0) {Write-Warning 'No Machine Failures during this time frame'}
-    else {
-        [System.Collections.ArrayList]$mashineFails = @()
-        $UniqueMachine =  ($mon.sessions.machine |Where-Object {$_.DnsName -notlike $null} | Sort-Object -Property Dnsname -Unique)
-        foreach ($MFail in $UniqueMachine) {
-            Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] MachineFailureLogs $($UniqueMachine.IndexOf($MFail)) of $($UniqueMachine.count)"
-            $latest = $MFail.MachineFailures | Sort-Object -Property FailureStartDate -Descending | Select-Object -First 1
-            [void]$mashineFails.Add([pscustomobject]@{
-                    Name                     = $MFail.Name
-                    IP                       = $MFail.IPAddress
-                    OSType                   = $MFail.OSType
-                    FailureDate              = [datetime]$latest.FailureStartDate
-                    FaultState               = $MachineFailureType[$latest.FaultState]
-                    LastDeregisteredCode     = $MachineDeregistration[$latest.LastDeregisteredCode]
-                    CurrentRegistrationState = $RegistrationState[$MFail.CurrentRegistrationState]
-                    CurrentFaultState        = $MachineFailureType[$MFail.FaultState]
-                })
-        }
-    }
-
-    if ($mon.Sessions.ConnectionFailureLogs.count -eq 0) {Write-Warning 'No connection Failures during this time frame'}
-    else {
-        [System.Collections.ArrayList]$ConnectionFails = @()
-        foreach ($CFail in $mon.Sessions.ConnectionFailureLogs) {
-            Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Connection Failures $($mon.Sessions.ConnectionFailureLogs.IndexOf($CFail)) of $($mon.Sessions.ConnectionFailureLogs.count)"
-            $user = ($mon.Sessions.User | Where-Object {$_.id -like $CFail.UserId})[0]
-            $device = ($mon.Sessions.Machine | Where-Object {$_.id -like $CFail.MachineId})[0]
-            [void]$ConnectionFails.Add([pscustomobject]@{
-                    UserName       = $user.UserName
-                    Upn            = $user.Upn
-                    Name           = $device.Name
-                    IP             = $device.IPAddress
-                    FailureDate    = [datetime]$CFail.FailureDate
-                    FailureDetails = $SessionFailureCode[$CFail.ConnectionFailureEnumValue]
-                })
-        }
-    }
-
-
-    if ($Export -eq 'Excel') { 
-        $ExcelOptions = @{
-            Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
-            AutoSize         = $True
-            AutoFilter       = $True
-            TitleBold        = $True
-            TitleSize        = '28'
-            TitleFillPattern = 'LightTrellis'
-            TableStyle       = 'Light20'
-            FreezeTopRow     = $True
-            FreezePane       = '3'
-        }
-        if ($mashineFails) {$mashineFails | Export-Excel -Title MachineFailures -WorksheetName MachineFailures @ExcelOptions}
-        if ($ConnectionFails) {$ConnectionFails | Export-Excel -Title ConnectionFailures -WorksheetName ConnectionFailures @ExcelOptions}
-    }
-    if ($Export -eq 'HTML') { 
-        New-HTML -TitleText "CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
-            if ($mashineFails) { New-HTMLTab -Name 'Mashine Failures' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($mashineFails) @TableSettings}}}
-            if ($ConnectionFails) { New-HTMLTab -Name 'Connection Failures' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($ConnectionFails) @TableSettings}}}      
-        }
-    }
-    if ($Export -eq 'Host') { 
-        [pscustomobject]@{
-            mashineFails    = $mashineFails
-            ConnectionFails = $ConnectionFails
-        }
-    }
-
-
-} #end Function
- 
-Export-ModuleMember -Function Get-CitrixFailures
-#endregion
- 
 #region Get-CitrixFarmDetail.ps1
 ############################################
 # source: Get-CitrixFarmDetail.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -736,7 +720,7 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 ############################################
 # source: Get-CitrixLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -820,7 +804,7 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 ############################################
 # source: Get-CitrixMonitoringData.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -839,7 +823,7 @@ FQDN of the Citrix Data Collector
 Will collect data for the last x amount of sessions.
 
 .EXAMPLE
-Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours
+Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount 50
 
 #>
 Function Get-CitrixMonitoringData {
@@ -853,7 +837,8 @@ Function Get-CitrixMonitoringData {
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
-        [int32]$SessionCount
+        [int32]$SessionCount,
+        [switch]$AllowUnencryptedAuthentication
 				)
 
     Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Monitoring data connect"
@@ -861,17 +846,21 @@ Function Get-CitrixMonitoringData {
     $headers = @{'Accept' = 'application/json;odata=verbose'}
 
     $urisettings = @{
-        UseDefaultCredentials          = $true
-        Headers                        = $headers
-        Method                         = 'Get'
+        UseDefaultCredentials = $true
+        Headers               = $headers
+        Method                = 'Get'
     }
+
+    if ($AllowUnencryptedAuthentication) {$urisettings.Add('AllowUnencryptedAuthentication', $true)}
     
     try {
         [pscustomobject]@{
-            PSTypeName = 'CTXMonitorData'
-            Sessions   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Sessions?`$top=$($SessionCount)&`$expand=Connections,User,SessionMetrics,Machine,Machine/MachineFailures,Machine/ProcessUtilizationHourSummary,Machine/MachineFailures,Machine/Hypervisor,Machine/DesktopGroup,Machine/ConnectionFailureLogs,Machine/Catalog,Failure,CurrentConnection,ConnectionFailureLogs&`$orderby=CreatedDate desc" @urisettings ).d
-            Machines   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Machines?`$expand=Sessions,ProcessUtilizationHourSummary,MachineFailures,Hypervisor,DesktopGroup,ConnectionFailureLogs,Catalog" @urisettings ).d
-        } 
+            PSTypeName  = 'CTXMonitorData'
+            Sessions    = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Sessions?`$top=$($SessionCount)&`$expand=User,SessionMetrics,Machine,Failure,CurrentConnection&`$orderby=CreatedDate desc" @urisettings ).d
+            Connections = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Connections?`$top=$($SessionCount)&`$orderby=CreatedDate desc&`$expand=ConnectionFailureLog,Session" @urisettings ).d
+        }
+            (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/MachineFailureLogs" @urisettings ).d
+        
     } catch {Write-Warning "Error: `n`tMessage:$($_.Exception.Message)"}
     
 } #end Function
@@ -883,7 +872,7 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 ############################################
 # source: Get-CitrixObjects.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1084,7 +1073,7 @@ Export-ModuleMember -Function Get-CitrixObjects
 ############################################
 # source: Get-CitrixResourceUtilizationSummary.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1145,7 +1134,7 @@ Function Get-CitrixResourceUtilizationSummary {
         Method                = 'Get'
     }
 
-    $ResourceUtilizationSummary = (Invoke-RestMethod -Uri http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ResourceUtilizationSummary?`$filter = CreatedDate ge datetime'$($past)' and CreatedDate le datetime'$($now)' @urisettings).d
+    $ResourceUtilizationSummary = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/ResourceUtilizationSummary?`$filter = CreatedDate ge datetime'$($past)' and CreatedDate le datetime'$($now)'" @urisettings).d
     [System.Collections.ArrayList]$ResourceUtilization = @()
     $grouped = $ResourceUtilizationSummary | Group-Object MachineId
     foreach ($resource in $grouped) {
@@ -1189,7 +1178,7 @@ Export-ModuleMember -Function Get-CitrixResourceUtilizationSummary
 ############################################
 # source: Get-CitrixServerEventLog.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1295,7 +1284,7 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 ############################################
 # source: Get-CitrixServerPerformance.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1396,7 +1385,7 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 ############################################
 # source: Get-CitrixSessionIcaRtt.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1430,48 +1419,51 @@ Where to save the report.
 Function Get-CitrixSessionIcaRtt {
         [Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixSessionIcaRtt')]
         [OutputType([System.Object[]])]
-    PARAM(
-        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
-        [PSTypeName('CTXMonitorData')]$MonitorData,
+        PARAM(
+                [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+                [PSTypeName('CTXMonitorData')]$MonitorData,
 
-        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
-        [string]$AdminServer,
+                [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
+                [string]$AdminServer,
 
-        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
-        [int32]$SessionCount,
+                [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
+                [int32]$SessionCount,
 
-        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
-        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
-        [ValidateSet('Excel', 'HTML')]
-        [string]$Export = 'Host',
+                [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+                [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
+                [ValidateSet('Excel', 'HTML')]
+                [string]$Export = 'Host',
 
-        [ValidateScript( { if (Test-Path $_) { $true }
-                else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
-            })]
-        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
-        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
-        [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
-    )					
+                [ValidateScript( { if (Test-Path $_) { $true }
+                                else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
+                        })]
+                [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+                [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
+                [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
+        )					
 
-    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount}
-    else {$Mon = $MonitorData}
+        if (-not($MonitorData)) {
+                try {
+                        $mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount
+                } catch {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount -AllowUnencryptedAuthentication}
+        } else {$Mon = $MonitorData}
 
         [System.Collections.ArrayList]$IcaRttObject = @()
-        $UniqueSession =  $mon.Sessions.SessionMetrics | Sort-Object -Property SessionId -Unique
+        $UniqueSession = $mon.Sessions.SessionMetrics | Sort-Object -Property SessionId -Unique
         foreach ($sessid in $UniqueSession) {
-        Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Sessions $($UniqueSession.IndexOf($sessid)) of $($UniqueSession.count)"
+                Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Sessions $($UniqueSession.IndexOf($sessid)) of $($UniqueSession.count)"
                 try {
-                    $session = $mon.Sessions | Where-Object {$_.SessionKey -like $sessid.SessionId}
-                    $user = ($mon.Sessions.User | Where-Object {$_.id -like $session.userid})[0]
-                    $Measure = $mon.Sessions.SessionMetrics | Where-Object {$_.SessionId -like $sessid.SessionId} | Measure-Object -Property IcaRttMS -Average   
-                    [void]$IcaRttObject.Add([pscustomobject]@{
-                                    StartDate    = [datetime]$session.StartDate
-                                    EndDate      = [datetime]$session.EndDate
-                                    ObjectCount  = $Measure.Count
-                                    'AVG IcaRtt' = [math]::Round($Measure.Average)
-                                    UserName     = $user.UserName
-                                    UPN          = $user.Upn
-                            })
+                        $session = $mon.Sessions | Where-Object {$_.SessionKey -like $sessid.SessionId}
+                        $user = ($mon.Sessions.User | Where-Object {$_.id -like $session.userid})[0]
+                        $Measure = $mon.Sessions.SessionMetrics | Where-Object {$_.SessionId -like $sessid.SessionId} | Measure-Object -Property IcaRttMS -Average   
+                        [void]$IcaRttObject.Add([pscustomobject]@{
+                                        StartDate    = [datetime]$session.StartDate
+                                        EndDate      = [datetime]$session.EndDate
+                                        ObjectCount  = $Measure.Count
+                                        'AVG IcaRtt' = [math]::Round($Measure.Average)
+                                        UserName     = $user.UserName
+                                        UPN          = $user.Upn
+                                })
 
                 } catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
         }
@@ -1488,7 +1480,8 @@ Function Get-CitrixSessionIcaRtt {
                         FreezeTopRow     = $True
                         FreezePane       = '3'
                 }
-                $IcaRttObject | Export-Excel -Title CitrixSessionIcaRtt -WorksheetName CitrixSessionIcaRtt @ExcelOptions}
+                $IcaRttObject | Export-Excel -Title CitrixSessionIcaRtt -WorksheetName CitrixSessionIcaRtt @ExcelOptions
+        }
         if ($Export -eq 'HTML') { $IcaRttObject | Out-HtmlView -DisablePaging -Title 'CitrixSessionIcaRtt' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
         if ($Export -eq 'Host') { $IcaRttObject }
 
@@ -1502,7 +1495,7 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 ############################################
 # source: Get-CitrixVDAUptime.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1598,7 +1591,7 @@ Export-ModuleMember -Function Get-CitrixVDAUptime
 ############################################
 # source: Get-CitrixWorkspaceAppVersions.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1667,8 +1660,11 @@ Function Get-CitrixWorkspaceAppVersions {
         [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
     )					
 
-    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount}
-    else {$Mon = $MonitorData}
+        if (-not($MonitorData)) {
+                try {
+                        $mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount
+                } catch {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount -AllowUnencryptedAuthentication}
+        } else {$Mon = $MonitorData}
 
 
 	[System.Collections.ArrayList]$ClientObject = @()
@@ -1713,7 +1709,7 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 ############################################
 # source: Get-RDSLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1799,7 +1795,7 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 ############################################
 # source: Import-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1872,7 +1868,7 @@ Export-ModuleMember -Function Import-ParametersFile
 ############################################
 # source: Install-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2014,7 +2010,7 @@ Export-ModuleMember -Function Install-ParametersFile
 ############################################
 # source: Set-XDHealthReportColors.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2085,7 +2081,7 @@ Export-ModuleMember -Function Set-XDHealthReportColors
 ############################################
 # source: Start-CitrixAudit.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2264,7 +2260,7 @@ Export-ModuleMember -Function Start-CitrixAudit
 ############################################
 # source: Start-CitrixHealthCheck.ps1
 # Module: XDHealthCheck
-# version: 0.2.26
+# version: 0.2.27
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2357,9 +2353,9 @@ function Start-CitrixHealthCheck {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Citrix VDA Uptimes"
 	$CitrixVDAUptime = Get-CitrixVDAUptime -AdminServer $CTXDDC
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Monitor Data"
-    $monitor = Get-CitrixMonitoringData -AdminServer $CTXDDC -hours 24
+    $monitor = Get-CitrixMonitoringData -AdminServer $CTXDDC -SessionCount 50
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Failures"
-	$Failures = Get-CitrixFailures -MonitorData $monitor
+	$Failures = Get-Get-CitrixConnectionFailures -MonitorData $monitor
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] app ver"
 	$appver = Get-CitrixWorkspaceAppVersions -MonitorData $monitor | Where-Object {$_.ClientVersion -notlike $null}
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] CitrixSessionIcaRtt"
@@ -2438,9 +2434,6 @@ function Start-CitrixHealthCheck {
 		}
 		New-HTMLSection @SectionSettings -Content {
 			New-HTMLSection -HeaderText 'Connection Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $Failures.ConnectionFails }
-			New-HTMLSection -HeaderText 'Machine Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $Failures.mashineFails }
-		}
-		New-HTMLSection @SectionSettings -Content {
 			New-HTMLSection -HeaderText 'Client Versions' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $AppVer }
 			New-HTMLSection -HeaderText 'ICA Rtt' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixSessionIcaRtt }
 		}

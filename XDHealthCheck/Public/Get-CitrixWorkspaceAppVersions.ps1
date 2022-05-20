@@ -106,8 +106,11 @@ Function Get-CitrixWorkspaceAppVersions {
         [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
     )					
 
-    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount}
-    else {$Mon = $MonitorData}
+        if (-not($MonitorData)) {
+                try {
+                        $mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount
+                } catch {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount -AllowUnencryptedAuthentication}
+        } else {$Mon = $MonitorData}
 
 
 	[System.Collections.ArrayList]$ClientObject = @()

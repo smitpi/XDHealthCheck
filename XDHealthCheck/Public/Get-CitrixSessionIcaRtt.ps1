@@ -71,48 +71,51 @@ Where to save the report.
 Function Get-CitrixSessionIcaRtt {
         [Cmdletbinding(HelpURI = 'https://smitpi.github.io/XDHealthCheck/Get-CitrixSessionIcaRtt')]
         [OutputType([System.Object[]])]
-    PARAM(
-        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
-        [PSTypeName('CTXMonitorData')]$MonitorData,
+        PARAM(
+                [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+                [PSTypeName('CTXMonitorData')]$MonitorData,
 
-        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
-        [string]$AdminServer,
+                [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
+                [string]$AdminServer,
 
-        [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
-        [int32]$SessionCount,
+                [Parameter(Mandatory = $true, ParameterSetName = 'Fetch odata')]
+                [int32]$SessionCount,
 
-        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
-        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
-        [ValidateSet('Excel', 'HTML')]
-        [string]$Export = 'Host',
+                [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+                [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
+                [ValidateSet('Excel', 'HTML')]
+                [string]$Export = 'Host',
 
-        [ValidateScript( { if (Test-Path $_) { $true }
-                else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
-            })]
-        [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
-        [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
-        [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
-    )					
+                [ValidateScript( { if (Test-Path $_) { $true }
+                                else { New-Item -Path $_ -ItemType Directory -Force | Out-Null; $true }
+                        })]
+                [Parameter(Mandatory = $false, ParameterSetName = 'Got odata')]
+                [Parameter(Mandatory = $false, ParameterSetName = 'Fetch odata')]
+                [System.IO.DirectoryInfo]$ReportPath = 'C:\Temp'
+        )					
 
-    if (-not($MonitorData)) {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount}
-    else {$Mon = $MonitorData}
+        if (-not($MonitorData)) {
+                try {
+                        $mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount
+                } catch {$mon = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount $SessionCount -AllowUnencryptedAuthentication}
+        } else {$Mon = $MonitorData}
 
         [System.Collections.ArrayList]$IcaRttObject = @()
-        $UniqueSession =  $mon.Sessions.SessionMetrics | Sort-Object -Property SessionId -Unique
+        $UniqueSession = $mon.Sessions.SessionMetrics | Sort-Object -Property SessionId -Unique
         foreach ($sessid in $UniqueSession) {
-        Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Sessions $($UniqueSession.IndexOf($sessid)) of $($UniqueSession.count)"
+                Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Sessions $($UniqueSession.IndexOf($sessid)) of $($UniqueSession.count)"
                 try {
-                    $session = $mon.Sessions | Where-Object {$_.SessionKey -like $sessid.SessionId}
-                    $user = ($mon.Sessions.User | Where-Object {$_.id -like $session.userid})[0]
-                    $Measure = $mon.Sessions.SessionMetrics | Where-Object {$_.SessionId -like $sessid.SessionId} | Measure-Object -Property IcaRttMS -Average   
-                    [void]$IcaRttObject.Add([pscustomobject]@{
-                                    StartDate    = [datetime]$session.StartDate
-                                    EndDate      = [datetime]$session.EndDate
-                                    ObjectCount  = $Measure.Count
-                                    'AVG IcaRtt' = [math]::Round($Measure.Average)
-                                    UserName     = $user.UserName
-                                    UPN          = $user.Upn
-                            })
+                        $session = $mon.Sessions | Where-Object {$_.SessionKey -like $sessid.SessionId}
+                        $user = ($mon.Sessions.User | Where-Object {$_.id -like $session.userid})[0]
+                        $Measure = $mon.Sessions.SessionMetrics | Where-Object {$_.SessionId -like $sessid.SessionId} | Measure-Object -Property IcaRttMS -Average   
+                        [void]$IcaRttObject.Add([pscustomobject]@{
+                                        StartDate    = [datetime]$session.StartDate
+                                        EndDate      = [datetime]$session.EndDate
+                                        ObjectCount  = $Measure.Count
+                                        'AVG IcaRtt' = [math]::Round($Measure.Average)
+                                        UserName     = $user.UserName
+                                        UPN          = $user.Upn
+                                })
 
                 } catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
         }
@@ -129,7 +132,8 @@ Function Get-CitrixSessionIcaRtt {
                         FreezeTopRow     = $True
                         FreezePane       = '3'
                 }
-                $IcaRttObject | Export-Excel -Title CitrixSessionIcaRtt -WorksheetName CitrixSessionIcaRtt @ExcelOptions}
+                $IcaRttObject | Export-Excel -Title CitrixSessionIcaRtt -WorksheetName CitrixSessionIcaRtt @ExcelOptions
+        }
         if ($Export -eq 'HTML') { $IcaRttObject | Out-HtmlView -DisablePaging -Title 'CitrixSessionIcaRtt' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
         if ($Export -eq 'Host') { $IcaRttObject }
 

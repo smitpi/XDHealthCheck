@@ -53,7 +53,7 @@ FQDN of the Citrix Data Collector
 Will collect data for the last x amount of sessions.
 
 .EXAMPLE
-Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours
+Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount 50
 
 #>
 Function Get-CitrixMonitoringData {
@@ -67,7 +67,8 @@ Function Get-CitrixMonitoringData {
         [Parameter(Mandatory = $true)]
         [ValidateNotNull()]
         [ValidateNotNullOrEmpty()]
-        [int32]$SessionCount
+        [int32]$SessionCount,
+        [switch]$AllowUnencryptedAuthentication
 				)
 
     Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Starting] Monitoring data connect"
@@ -75,17 +76,21 @@ Function Get-CitrixMonitoringData {
     $headers = @{'Accept' = 'application/json;odata=verbose'}
 
     $urisettings = @{
-        UseDefaultCredentials          = $true
-        Headers                        = $headers
-        Method                         = 'Get'
+        UseDefaultCredentials = $true
+        Headers               = $headers
+        Method                = 'Get'
     }
+
+    if ($AllowUnencryptedAuthentication) {$urisettings.Add('AllowUnencryptedAuthentication', $true)}
     
     try {
         [pscustomobject]@{
-            PSTypeName = 'CTXMonitorData'
-            Sessions   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Sessions?`$top=$($SessionCount)&`$expand=Connections,User,SessionMetrics,Machine,Machine/MachineFailures,Machine/ProcessUtilizationHourSummary,Machine/MachineFailures,Machine/Hypervisor,Machine/DesktopGroup,Machine/ConnectionFailureLogs,Machine/Catalog,Failure,CurrentConnection,ConnectionFailureLogs&`$orderby=CreatedDate desc" @urisettings ).d
-            Machines   = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Machines?`$expand=Sessions,ProcessUtilizationHourSummary,MachineFailures,Hypervisor,DesktopGroup,ConnectionFailureLogs,Catalog" @urisettings ).d
-        } 
+            PSTypeName  = 'CTXMonitorData'
+            Sessions    = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Sessions?`$top=$($SessionCount)&`$expand=User,SessionMetrics,Machine,Failure,CurrentConnection&`$orderby=CreatedDate desc" @urisettings ).d
+            Connections = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Connections?`$top=$($SessionCount)&`$orderby=CreatedDate desc&`$expand=ConnectionFailureLog,Session" @urisettings ).d
+        }
+            (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/MachineFailureLogs" @urisettings ).d
+        
     } catch {Write-Warning "Error: `n`tMessage:$($_.Exception.Message)"}
     
 } #end Function

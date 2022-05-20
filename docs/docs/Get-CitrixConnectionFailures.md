@@ -5,7 +5,7 @@ online version:
 schema: 2.0.0
 ---
 
-# Get-CitrixFailures
+# Get-CitrixConnectionFailures
 
 ## SYNOPSIS
 Creates a report from monitoring data about machine and connection failures
@@ -14,13 +14,13 @@ Creates a report from monitoring data about machine and connection failures
 
 ### Fetch odata (Default)
 ```
-Get-CitrixFailures -AdminServer <String> -SessionCount <Int32> [-Export <String>] [-ReportPath <DirectoryInfo>]
- [<CommonParameters>]
+Get-CitrixConnectionFailures -AdminServer <String> -SessionCount <Int32> [-Export <String>]
+ [-ReportPath <DirectoryInfo>] [<CommonParameters>]
 ```
 
 ### Got odata
 ```
-Get-CitrixFailures [-MonitorData <Object>] [-Export <String>] [-ReportPath <DirectoryInfo>]
+Get-CitrixConnectionFailures [-MonitorData <Object>] [-Export <String>] [-ReportPath <DirectoryInfo>]
  [<CommonParameters>]
 ```
 
@@ -31,8 +31,10 @@ Creates a report from monitoring data about machine and connection failures
 
 ### EXAMPLE 1
 ```
-Get-CitrixFailures -AdminServer $CTXDDC
+$monitor = Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount 50
 ```
+
+Get-CitrixConnectionFailures -MonitorData $monitor
 
 ## PARAMETERS
 
