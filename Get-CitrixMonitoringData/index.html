@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://smitpi.github.io/XDHealthCheck/Get-CitrixMonitoringData/">
       
       <link rel="icon" href="..">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.13">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.15">
     
     
       
@@ -23,7 +23,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.e411adfe.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.c382b1dc.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.cc9b2e1e.min.css">
@@ -264,8 +264,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../Get-CitrixEnvTestResults/" class="md-nav__link">
-        Get-CitrixEnvTestResults
+      <a href="../Get-CitrixConnectionFailures/" class="md-nav__link">
+        Get-CitrixConnectionFailures
       </a>
     </li>
   
@@ -279,8 +279,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../Get-CitrixFailures/" class="md-nav__link">
-        Get-CitrixFailures
+      <a href="../Get-CitrixEnvTestResults/" class="md-nav__link">
+        Get-CitrixEnvTestResults
       </a>
     </li>
   
@@ -414,8 +414,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#-hours" class="md-nav__link">
-    -hours
+  <a href="#-sessioncount" class="md-nav__link">
+    -SessionCount
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-allowunencryptedauthentication" class="md-nav__link">
+    -AllowUnencryptedAuthentication
   </a>
   
 </li>
@@ -491,6 +498,21 @@
     <li class="md-nav__item">
       <a href="../Get-CitrixObjects/" class="md-nav__link">
         Get-CitrixObjects
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../Get-CitrixResourceUtilizationSummary/" class="md-nav__link">
+        Get-CitrixResourceUtilizationSummary
       </a>
     </li>
   
@@ -744,8 +766,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#-hours" class="md-nav__link">
-    -hours
+  <a href="#-sessioncount" class="md-nav__link">
+    -SessionCount
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-allowunencryptedauthentication" class="md-nav__link">
+    -AllowUnencryptedAuthentication
   </a>
   
 </li>
@@ -825,13 +854,14 @@
 <h2 id="synopsis">SYNOPSIS</h2>
 <p>Connects and collects data from the monitoring OData feed.</p>
 <h2 id="syntax">SYNTAX</h2>
-<div class="highlight"><pre><span></span><code>Get-CitrixMonitoringData [-AdminServer] &lt;String&gt; [-hours] &lt;Int32&gt; [&lt;CommonParameters&gt;]
+<div class="highlight"><pre><span></span><code>Get-CitrixMonitoringData [-AdminServer] &lt;String&gt; [-SessionCount] &lt;Int32&gt; [-AllowUnencryptedAuthentication]
+ [&lt;CommonParameters&gt;]
 </code></pre></div>
 <h2 id="description">DESCRIPTION</h2>
 <p>Connects and collects data from the monitoring OData feed.</p>
 <h2 id="examples">EXAMPLES</h2>
 <h3 id="example-1">EXAMPLE 1</h3>
-<div class="highlight"><pre><span></span><code>Get-CitrixMonitoringData -AdminServer $AdminServer -hours $hours
+<div class="highlight"><pre><span></span><code>Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount 50
 </code></pre></div>
 <h2 id="parameters">PARAMETERS</h2>
 <h3 id="-adminserver">-AdminServer</h3>
@@ -846,8 +876,8 @@
 <span class="nt">Accept pipeline input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
 <span class="nt">Accept wildcard characters</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
 </code></pre></div>
-<h3 id="-hours">-hours</h3>
-<p>Limit the report to this time frame</p>
+<h3 id="-sessioncount">-SessionCount</h3>
+<p>Will collect data for the last x amount of sessions.</p>
 <div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Int32</span><span class="w"></span>
 <span class="nt">Parameter Sets</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span><span class="w"></span>
 <span class="nt">Aliases</span><span class="p">:</span><span class="w"></span>
@@ -855,6 +885,18 @@
 <span class="nt">Required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"></span>
 <span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
 <span class="nt">Default value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span><span class="w"></span>
+<span class="nt">Accept pipeline input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
+<span class="nt">Accept wildcard characters</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
+</code></pre></div>
+<h3 id="-allowunencryptedauthentication">-AllowUnencryptedAuthentication</h3>
+<p>{{ Fill AllowUnencryptedAuthentication Description }}</p>
+<div class="highlight"><pre><span></span><code><span class="nt">Type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">SwitchParameter</span><span class="w"></span>
+<span class="nt">Parameter Sets</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">(All)</span><span class="w"></span>
+<span class="nt">Aliases</span><span class="p">:</span><span class="w"></span>
+
+<span class="nt">Required</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
+<span class="nt">Position</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named</span><span class="w"></span>
+<span class="nt">Default value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
 <span class="nt">Accept pipeline input</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
 <span class="nt">Accept wildcard characters</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">False</span><span class="w"></span>
 </code></pre></div>
@@ -950,7 +992,7 @@
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant"], "search": "../assets/javascripts/workers/search.2a1c317c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.ed9748b7.min.js"></script>
+      <script src="../assets/javascripts/bundle.a6c66575.min.js"></script>
       
     
   </body>

@@ -2,97 +2,102 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixConfigurationChange/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixConnectionFailures/</loc>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixEnvTestResults/</loc>
-         <lastmod>2022-05-12</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixFailures/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixFarmDetail/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixLicenseInformation/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixMonitoringData/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixObjects/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixResourceUtilizationSummary/</loc>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixServerEventLog/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixServerPerformance/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixSessionIcaRtt/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixVDAUptime/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-CitrixWorkspaceAppVersions/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Get-RDSLicenseInformation/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Import-ParametersFile/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Install-ParametersFile/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Set-XDHealthReportColors/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Start-CitrixAudit/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://smitpi.github.io/XDHealthCheck/Start-CitrixHealthCheck/</loc>
-         <lastmod>2022-05-12</lastmod>
+         <lastmod>2022-05-20</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
