@@ -60,7 +60,7 @@ Accept wildcard characters: False
 ```
 
 ### -AllowUnencryptedAuthentication
-{{ Fill AllowUnencryptedAuthentication Description }}
+To use a Unencrypted Authentication
 
 ```yaml
 Type: SwitchParameter

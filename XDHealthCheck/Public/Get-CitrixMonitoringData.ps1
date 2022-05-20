@@ -52,6 +52,9 @@ FQDN of the Citrix Data Collector
 .PARAMETER SessionCount
 Will collect data for the last x amount of sessions.
 
+.PARAMETER  AllowUnencryptedAuthentication
+To use a Unencrypted Authentication
+
 .EXAMPLE
 Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount 50
 
@@ -89,8 +92,6 @@ Function Get-CitrixMonitoringData {
             Sessions    = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Sessions?`$top=$($SessionCount)&`$expand=User,SessionMetrics,Machine,Failure,CurrentConnection&`$orderby=CreatedDate desc" @urisettings ).d
             Connections = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Connections?`$top=$($SessionCount)&`$orderby=CreatedDate desc&`$expand=ConnectionFailureLog,Session" @urisettings ).d
         }
-            (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/MachineFailureLogs" @urisettings ).d
-        
     } catch {Write-Warning "Error: `n`tMessage:$($_.Exception.Message)"}
     
 } #end Function

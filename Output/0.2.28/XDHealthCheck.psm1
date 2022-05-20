@@ -167,7 +167,7 @@ $global:TableSectionSettings = @{
 ############################################
 # source: Get-CitrixConfigurationChange.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -269,7 +269,7 @@ Export-ModuleMember -Function Get-CitrixConfigurationChange
 ############################################
 # source: Get-CitrixConnectionFailures.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -391,7 +391,7 @@ Export-ModuleMember -Function Get-CitrixConnectionFailures
 ############################################
 # source: Get-CitrixEnvTestResults.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -564,7 +564,7 @@ Export-ModuleMember -Function Get-CitrixEnvTestResults
 ############################################
 # source: Get-CitrixFarmDetail.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -720,7 +720,7 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 ############################################
 # source: Get-CitrixLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -804,7 +804,7 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 ############################################
 # source: Get-CitrixMonitoringData.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -821,6 +821,9 @@ FQDN of the Citrix Data Collector
 
 .PARAMETER SessionCount
 Will collect data for the last x amount of sessions.
+
+.PARAMETER  AllowUnencryptedAuthentication
+To use a Unencrypted Authentication
 
 .EXAMPLE
 Get-CitrixMonitoringData -AdminServer $AdminServer -SessionCount 50
@@ -859,8 +862,6 @@ Function Get-CitrixMonitoringData {
             Sessions    = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Sessions?`$top=$($SessionCount)&`$expand=User,SessionMetrics,Machine,Failure,CurrentConnection&`$orderby=CreatedDate desc" @urisettings ).d
             Connections = (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/Connections?`$top=$($SessionCount)&`$orderby=CreatedDate desc&`$expand=ConnectionFailureLog,Session" @urisettings ).d
         }
-            (Invoke-RestMethod -Uri "http://$($AdminServer)/Citrix/Monitor/OData/v3/Data/MachineFailureLogs" @urisettings ).d
-        
     } catch {Write-Warning "Error: `n`tMessage:$($_.Exception.Message)"}
     
 } #end Function
@@ -872,7 +873,7 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 ############################################
 # source: Get-CitrixObjects.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1073,7 +1074,7 @@ Export-ModuleMember -Function Get-CitrixObjects
 ############################################
 # source: Get-CitrixResourceUtilizationSummary.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1178,7 +1179,7 @@ Export-ModuleMember -Function Get-CitrixResourceUtilizationSummary
 ############################################
 # source: Get-CitrixServerEventLog.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1284,7 +1285,7 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 ############################################
 # source: Get-CitrixServerPerformance.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1385,7 +1386,7 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 ############################################
 # source: Get-CitrixSessionIcaRtt.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1495,7 +1496,7 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 ############################################
 # source: Get-CitrixVDAUptime.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1591,7 +1592,7 @@ Export-ModuleMember -Function Get-CitrixVDAUptime
 ############################################
 # source: Get-CitrixWorkspaceAppVersions.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1709,7 +1710,7 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 ############################################
 # source: Get-RDSLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1795,7 +1796,7 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 ############################################
 # source: Import-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1868,7 +1869,7 @@ Export-ModuleMember -Function Import-ParametersFile
 ############################################
 # source: Install-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2010,7 +2011,7 @@ Export-ModuleMember -Function Install-ParametersFile
 ############################################
 # source: Set-XDHealthReportColors.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2081,7 +2082,7 @@ Export-ModuleMember -Function Set-XDHealthReportColors
 ############################################
 # source: Start-CitrixAudit.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2260,7 +2261,7 @@ Export-ModuleMember -Function Start-CitrixAudit
 ############################################
 # source: Start-CitrixHealthCheck.ps1
 # Module: XDHealthCheck
-# version: 0.2.27
+# version: 0.2.28
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
