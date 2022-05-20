@@ -227,7 +227,7 @@ function Start-CitrixHealthCheck {
 			New-HTMLSection -HeaderText 'Citrix Events Top Events' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixServerEventLogs.TopProfider | Select-Object -First $CTXCore.count) }
 		}
 		New-HTMLSection @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'Connection Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $Failures.ConnectionFails }
+			New-HTMLSection -HeaderText 'Connection Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $Failures }
 			New-HTMLSection -HeaderText 'Client Versions' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $AppVer }
 			New-HTMLSection -HeaderText 'ICA Rtt' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixSessionIcaRtt }
 		}
