@@ -240,10 +240,10 @@ function Start-CitrixHealthCheck {
 			if ($Failures.ConnectionFails) {New-HTMLSection -HeaderText 'Connection Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $Failures.ConnectionFails }}
 			if ($CitrixSessionIcaRtt) {New-HTMLSection -HeaderText 'ICA Rtt' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixSessionIcaRtt }}
 		}}
-		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'VDA Uptime' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixVDAUptime | Where-Object {$_.uptime -gt "7"})} }
+		if (($CitrixVDAUptime | Where-Object {$_.uptime -gt "7"})) {New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'VDA Uptime' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixVDAUptime | Where-Object {$_.uptime -gt "7"})} }}
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.DeliveryGroups } }
-		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops } }
-		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Servers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredServers } }
+		if ($CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops){New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops } }}
+		if ($CitrixRemoteFarmDetails.Machines.UnRegisteredServers){New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Servers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredServers } }}
 		if ($TodayReboots) {New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText "Today`'s Reboot Schedule" @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $TodayReboots } }}
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Environment Test' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixEnvTestResults.InfrastructureResults } }
 	}

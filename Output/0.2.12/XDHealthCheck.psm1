@@ -173,7 +173,7 @@ $global:TableSectionSettings = @{
 ############################################
 # source: Get-CitrixConfigurationChange.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -275,7 +275,7 @@ Export-ModuleMember -Function Get-CitrixConfigurationChange
 ############################################
 # source: Get-CitrixConnectionFailures.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -397,7 +397,7 @@ Export-ModuleMember -Function Get-CitrixConnectionFailures
 ############################################
 # source: Get-CitrixEnvTestResults.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -570,7 +570,7 @@ Export-ModuleMember -Function Get-CitrixEnvTestResults
 ############################################
 # source: Get-CitrixFarmDetail.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -726,7 +726,7 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 ############################################
 # source: Get-CitrixLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -810,7 +810,7 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 ############################################
 # source: Get-CitrixMonitoringData.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -879,7 +879,7 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 ############################################
 # source: Get-CitrixObjects.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1080,7 +1080,7 @@ Export-ModuleMember -Function Get-CitrixObjects
 ############################################
 # source: Get-CitrixResourceUtilizationSummary.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1186,7 +1186,7 @@ Export-ModuleMember -Function Get-CitrixResourceUtilizationSummary
 ############################################
 # source: Get-CitrixServerEventLog.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1290,7 +1290,7 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 ############################################
 # source: Get-CitrixServerPerformance.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1391,7 +1391,7 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 ############################################
 # source: Get-CitrixSessionIcaRtt.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1501,7 +1501,7 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 ############################################
 # source: Get-CitrixVDAUptime.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1603,7 +1603,7 @@ Export-ModuleMember -Function Get-CitrixVDAUptime
 ############################################
 # source: Get-CitrixWorkspaceAppVersions.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1721,7 +1721,7 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 ############################################
 # source: Get-RDSLicenseInformation.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1807,7 +1807,7 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 ############################################
 # source: Import-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -1880,7 +1880,7 @@ Export-ModuleMember -Function Import-ParametersFile
 ############################################
 # source: Install-ParametersFile.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2022,7 +2022,7 @@ Export-ModuleMember -Function Install-ParametersFile
 ############################################
 # source: Set-XDHealthReportColors.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2121,7 +2121,7 @@ Export-ModuleMember -Function Set-XDHealthReportColors
 ############################################
 # source: Start-CitrixAudit.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2300,7 +2300,7 @@ Export-ModuleMember -Function Start-CitrixAudit
 ############################################
 # source: Start-CitrixHealthCheck.ps1
 # Module: XDHealthCheck
-# version: 0.2.13
+# version: 0.2.12
 # Author: Pierre Smit
 # Company: HTPCZA Tech
 #############################################
@@ -2486,10 +2486,10 @@ function Start-CitrixHealthCheck {
 			if ($Failures.ConnectionFails) {New-HTMLSection -HeaderText 'Connection Failure' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $Failures.ConnectionFails }}
 			if ($CitrixSessionIcaRtt) {New-HTMLSection -HeaderText 'ICA Rtt' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixSessionIcaRtt }}
 		}}
-		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'VDA Uptime' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixVDAUptime | Where-Object {$_.uptime -gt "7"})} }
+		if (($CitrixVDAUptime | Where-Object {$_.uptime -gt "7"})) {New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'VDA Uptime' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable ($CitrixVDAUptime | Where-Object {$_.uptime -gt "7"})} }}
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.DeliveryGroups } }
-		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops } }
-		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Servers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredServers } }
+		if ($CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops){New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Desktops' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredDesktops } }}
+		if ($CitrixRemoteFarmDetails.Machines.UnRegisteredServers){New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Citrix UnRegistered Servers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixRemoteFarmDetails.Machines.UnRegisteredServers } }}
 		if ($TodayReboots) {New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText "Today`'s Reboot Schedule" @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $TodayReboots } }}
 		New-HTMLSection @SectionSettings -Content { New-HTMLSection -HeaderText 'Environment Test' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixEnvTestResults.InfrastructureResults } }
 	}
