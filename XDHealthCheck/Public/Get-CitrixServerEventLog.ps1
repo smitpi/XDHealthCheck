@@ -134,8 +134,6 @@ Function Get-CitrixServerEventLog {
 			}
 		} -Online -Encoding UTF8 -ShowHTML
 	}
-	if ($Export -eq 'Host') { 
-		$CTXObject
-	}
+	if ($Export -eq 'Host') { $ServerEvents	}
 } #end Function
 

@@ -152,7 +152,7 @@ Function Get-CitrixFarmDetail {
 	try {
 		[System.Collections.ArrayList]$RebootSchedule = @()
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Reboot Schedule Details"
-		Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer -Day $((Get-Date).DayOfWeek.ToString()) | ForEach-Object {
+		Get-BrokerRebootScheduleV2 -AdminAddress $AdminServer | ForEach-Object {
 			$sched = $_
 			Get-BrokerMachine -DesktopGroupName $sched.DesktopGroupName | ForEach-Object {
 				[void]$RebootSchedule.Add([pscustomobject]@{
@@ -178,7 +178,7 @@ Function Get-CitrixFarmDetail {
 			'Disconnected Sessions'  = ($Sessions | Where-Object -Property Sessionstate -EQ 'Disconnected').count
 			'Unregistered Servers'   = ($Machines.UnRegisteredServers | Measure-Object).count
 			'Unregistered Desktops'  = ($Machines.UnRegisteredDesktops | Measure-Object).count
-		} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Connection Failures', 'Unregistered Servers', 'Unregistered Desktops', 'Machine Failures' 
+		} | Select-Object 'Active Sessions', 'Disconnected Sessions', 'Connection Failures', 'Unregistered Servers', 'Unregistered Desktops'
 	} catch {Write-Warning "`n`tMessage:$($_.Exception.Message)`n`tItem:$($_.Exception.ItemName)"}
 	#endregion
 

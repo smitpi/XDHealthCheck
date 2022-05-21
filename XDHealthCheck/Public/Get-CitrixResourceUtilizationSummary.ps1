@@ -106,6 +106,7 @@ Function Get-CitrixResourceUtilizationSummary {
         $machine = (Invoke-RestMethod -Uri $resource.Group[0].Machine.__deferred.uri @urisettings).d
         [void]$ResourceUtilization.add([PSCustomObject]@{
                 Name              = $machine.DnsName
+                ObjectCount       = ($resource.group | Measure-Object -Property AvgPercentCpu -Average).count
                 AvgPercentCpu     = [Decimal]::Round((($resource.group | Measure-Object -Property AvgPercentCpu -Average).Average))
                 AvgUsedMemory     = [Decimal]::Round((($resource.group | Measure-Object -Property AvgUsedMemory -Average).Average) / 1gb, 2)
                 AvgTotalMemory    = [Decimal]::Round((($resource.group | Measure-Object -Property AvgTotalMemory -Average).Average) / 1gb, 2)

@@ -82,16 +82,22 @@ Function Get-CitrixVDAUptime {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] VDA Uptime"	
 		[System.Collections.ArrayList]$VDAUptime = @() 
 		Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 1000000 | Where-Object {$_.DesktopGroupName -notlike $null -and $_.OSType -notlike "*10" -and $_.OSType -notlike "*11" } | ForEach-Object {
-			try {	
+			try {
+                $ctxobject = $_	
 				$OS = Get-CimInstance Win32_OperatingSystem -ComputerName $_.DNSName -ErrorAction Stop | Select-Object *
 				$Uptime = New-TimeSpan -Start $OS.LastBootUpTime -End (Get-Date)
 				$updays = [math]::Round($uptime.Days, 0)
 			} catch {
 				try {
-					Write-Warning "`t`tUnable to remote to $($_.DNSName), defaulting uptime to LastRegistrationTime"
-					$Uptime = New-TimeSpan -Start $_.LastRegistrationTime -End (Get-Date)
-					$updays = [math]::Round($uptime.Days, 0)
-				} catch {$updays = 'Unknown'}
+                    Write-Warning "Error: `n`tMessage:$($_.Exception.Message)"
+					Write-Warning "Unable to remote to $($ctxobject.DNSName), defaulting uptime to LastRegistrationTime"
+                    if ($ctxobject.RegistrationState -like "Registered") {
+					    $Uptime = New-TimeSpan -Start $ctxobject.LastRegistrationTime -End (Get-Date)
+					    $updays = [math]::Round($uptime.Days, 0)
+                    } else {$updays = 'Unknown'}
+				} catch {
+                    Write-Warning "Error: `n`tMessage:$($_.Exception.Message)"
+                    $updays = 'Unknown'}
 			}
 
 

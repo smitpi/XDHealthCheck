@@ -94,7 +94,7 @@ Function Get-CitrixServerPerformance {
 
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Uptime Details for $($server.ToString())"
 		$OS = Get-CimInstance Win32_OperatingSystem -ComputerName $Server | Select-Object *
-		$Uptime = (Get-Date) - ($OS.LastBootUpTime)
+		$Uptime = New-TimeSpan -Start $OS.LastBootUpTime -End (Get-Date)
 		$updays = [math]::Round($uptime.Days, 0)
 
 		[void]$ServerPerfMon.Add([pscustomobject]@{
