@@ -8,7 +8,7 @@ schema: 2.0.0
 # Start-CitrixAudit
 
 ## SYNOPSIS
-Creates and distributes  a report on catalog, groups and published app config.
+Creates and distributes  a report on Catalog, groups and published app config.
 
 ## SYNTAX
 
@@ -17,7 +17,7 @@ Start-CitrixAudit [[-JSONParameterFilePath] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-Creates and distributes  a report on catalog, groups and published app config.
+Creates and distributes  a report on Catalog, groups and published app config.
 
 ## EXAMPLES
 

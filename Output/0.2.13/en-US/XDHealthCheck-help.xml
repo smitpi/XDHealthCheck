@@ -2168,11 +2168,11 @@
       <command:verb>Start</command:verb>
       <command:noun>CitrixAudit</command:noun>
       <maml:description>
-        <maml:para>Creates and distributes  a report on catalog, groups and published app config.</maml:para>
+        <maml:para>Creates and distributes  a report on Catalog, groups and published app config.</maml:para>
       </maml:description>
     </command:details>
     <maml:description>
-      <maml:para>Creates and distributes  a report on catalog, groups and published app config.</maml:para>
+      <maml:para>Creates and distributes  a report on Catalog, groups and published app config.</maml:para>
     </maml:description>
     <command:syntax>
       <command:syntaxItem>

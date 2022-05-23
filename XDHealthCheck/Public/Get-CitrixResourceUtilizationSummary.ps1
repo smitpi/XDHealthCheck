@@ -140,6 +140,7 @@ Function Get-CitrixResourceUtilizationSummary {
             }
             if ($ResourceUtilization) { New-HTMLTab -Name 'Resource Utilization' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($ResourceUtilization) @TableSettings}}}
         }
+        }
     if ($Export -eq 'Host') { $ResourceUtilization }
 
 

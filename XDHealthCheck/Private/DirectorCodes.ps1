@@ -54,7 +54,7 @@ $script:SessionFailureCode = @{
     100 = 'NoMachineAvailable'
     101 = 'MachineNotFunctional'
 }
-$global:MachineDeregistration = @{
+$script:MachineDeregistration = @{
     0   = 'AgentShutdown'
     1   = 'AgentSuspended'
     100	= 'IncompatibleVersion'
@@ -102,22 +102,3 @@ $script:ConnectionState = @{
     8	=	'Other'
     9	=	'Pending'
 }
-
-AllocationType
-AssignedCount
-AvailableAssignedCount
-AvailableCount
-AvailableUnassignedCount
-CatalogName
-Description
-MinimumFunctionalLevel
-PersistUserChanges
-ProvisioningType
-PvsAddress
-PvsDomain
-Scopes
-SessionSupport
-UnassignedCount
-UsedCount
-
- Get-BrokerCatalog -AdminAddress $ctxddc | Select-Object CatalogName,AllocationType,MinimumFunctionalLevel,PersistUserChanges,ProvisioningType,Scopes,SessionSupport,AssignedCount,AvailableAssignedCount,AvailableCount,AvailableUnassignedCount,UnassignedCount,UsedCount,Description,PvsAddress,PvsDomain

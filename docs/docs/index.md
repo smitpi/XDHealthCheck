@@ -42,5 +42,5 @@ Documentation can be found at: [Github_Pages](https://smitpi.github.io/XDHealthC
 - [Import-ParametersFile](https://smitpi.github.io/XDHealthCheck/#Import-ParametersFile) -- Import the config file and creates the needed variables
 - [Install-ParametersFile](https://smitpi.github.io/XDHealthCheck/#Install-ParametersFile) -- Create a json config file with all needed farm details.
 - [Set-XDHealthReportColors](https://smitpi.github.io/XDHealthCheck/#Set-XDHealthReportColors) -- Set the color and logo for HTML Reports
-- [Start-CitrixAudit](https://smitpi.github.io/XDHealthCheck/#Start-CitrixAudit) -- Creates and distributes  a report on catalog, groups and published app config.
+- [Start-CitrixAudit](https://smitpi.github.io/XDHealthCheck/#Start-CitrixAudit) -- Creates and distributes  a report on Catalog, groups and published app config.
 - [Start-CitrixHealthCheck](https://smitpi.github.io/XDHealthCheck/#Start-CitrixHealthCheck) -- Creates and distributes  a report on citrix farm health.
