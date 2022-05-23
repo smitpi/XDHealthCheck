@@ -110,7 +110,7 @@ Function Get-CitrixServerEventLog {
 
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
-			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\Citrix Server Event Log-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
 			AutoSize         = $True
 			AutoFilter       = $True
 			TitleBold        = $True
@@ -124,15 +124,21 @@ Function Get-CitrixServerEventLog {
 		$ServerEvents.All | Export-Excel -Title 'Citrix Server Event Log' -WorksheetName All @ExcelOptions
 	}
 	if ($Export -eq 'HTML') { 
-		New-HTML -TitleText "CitrixServerEventLog-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $HTMLPath {
+		$ReportTitle = 'Citrix Server Event Log'
+        $HeadingText = "$($ReportTitle) [$(Get-Date -Format dd) $(Get-Date -Format MMMM) $(Get-Date -Format yyyy) $(Get-Date -Format HH:mm)]"
+        New-HTML -TitleText $($ReportTitle) -FilePath $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+            New-HTMLHeader {
+                New-HTMLText -FontSize 20 -FontStyle normal -Color '#00203F' -Alignment left -Text $HeadingText
+                New-HTMLLogo -RightLogoString $XDHealth_LogoURL
+            }
 			$ServerEvents | ForEach-Object {
-				New-HTMLTab -Name "$($_.ServerName)" -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {
+				New-HTMLTab -Name "$($_.ServerName)" @TableSettings -HtmlData {
 					New-HTMLPanel -Content { New-HTMLTable -DataTable ($($_.TopProfider) | Sort-Object -Property TimeCreated -Descending) @TableSettings}
 					New-HTMLPanel -Content { New-HTMLTable -DataTable ($($_.All) | Sort-Object -Property TimeCreated -Descending) @TableSettings {
 							New-TableCondition -Name LevelDisplayName -ComparisonType string -Operator eq -Value 'Error' -Color GhostWhite -Row -BackgroundColor FaluRed
 							New-TableCondition -Name LevelDisplayName -ComparisonType string -Operator eq -Value 'warning' -Color GhostWhite -Row -BackgroundColor InternationalOrange } }}
 			}
-		} -Online -Encoding UTF8 -ShowHTML
+		}
 	}
 	if ($Export -eq 'Host') { $ServerEvents	}
 } #end Function

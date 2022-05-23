@@ -131,7 +131,7 @@ Function Get-CitrixWorkspaceAppVersions {
 
 	if ($Export -eq 'Excel') {
 		$ExcelOptions = @{
-			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\Citrix_Workspace_App_Versions-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
 			AutoSize         = $True
 			AutoFilter       = $True
 			TitleBold        = $True
@@ -142,7 +142,17 @@ Function Get-CitrixWorkspaceAppVersions {
 			FreezePane       = '3'
 		}
 		$ClientObject | Export-Excel -Title CitrixWorkspaceAppVersions -WorksheetName CitrixWorkspaceAppVersions @ExcelOptions}
-	if ($Export -eq 'HTML') { $ClientObject | Out-HtmlView -DisablePaging -Title 'CitrixWorkspaceAppVersions' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixWorkspaceAppVersions-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
+	if ($Export -eq 'HTML') { 
+		$ReportTitle = 'Citrix Workspace App Versions'
+		$HeadingText = "$($ReportTitle) [$(Get-Date -Format dd) $(Get-Date -Format MMMM) $(Get-Date -Format yyyy) $(Get-Date -Format HH:mm)]"
+		New-HTML -TitleText $($ReportTitle) -FilePath $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+			New-HTMLHeader {
+				New-HTMLText -FontSize 20 -FontStyle normal -Color '#00203F' -Alignment left -Text $HeadingText
+				New-HTMLLogo -RightLogoString $XDHealth_LogoURL
+			}
+			if ($ClientObject) { New-HTMLTab -Name 'App Versions' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($ClientObject) @TableSettings}}}
+		}
+	}
 	if ($Export -eq 'Host') { $ClientObject }
 
 

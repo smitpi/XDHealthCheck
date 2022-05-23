@@ -112,8 +112,9 @@ Function Get-CitrixConfigurationChange {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Config Changes Details"
 	
 	if ($Export -eq 'Excel') { 
+		$ReportTitle = 'Citrix Configuration Change'
 		$ExcelOptions = @{
-			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
 			AutoSize         = $True
 			AutoFilter       = $True
 			TitleBold        = $True
@@ -126,7 +127,15 @@ Function Get-CitrixConfigurationChange {
 		$CTXObject.Filtered | Export-Excel -Title CitrixConfigurationChange -WorksheetName CitrixConfigurationChange @ExcelOptions
 	}
 	if ($Export -eq 'HTML') { 
-		$CTXObject.Filtered | Out-HtmlView -DisablePaging -Title 'Citrix Configuration Change' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixConfigurationChange-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+		$ReportTitle = 'Citrix Configuration Change'
+		$HeadingText = "$($ReportTitle) [$(Get-Date -Format dd) $(Get-Date -Format MMMM) $(Get-Date -Format yyyy) $(Get-Date -Format HH:mm)]"
+		New-HTML -TitleText $($ReportTitle) -FilePath $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+			New-HTMLHeader {
+				New-HTMLText -FontSize 20 -FontStyle normal -Color '#00203F' -Alignment left -Text $HeadingText
+				New-HTMLLogo -RightLogoString $XDHealth_LogoURL
+			}
+			if ($CTXObject.Filtered) { New-HTMLTab -Name 'Ctx Changes' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($CTXObject.Filtered) @TableSettings}}}
+		}
 	}
 	if ($Export -eq 'Host') { 
 		$CTXObject

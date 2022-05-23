@@ -112,7 +112,7 @@ Function Get-CitrixServerPerformance {
 
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
-			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerPerformance-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\Citrix_Server_Performance-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
 			AutoSize         = $True
 			AutoFilter       = $True
 			TitleBold        = $True
@@ -125,7 +125,15 @@ Function Get-CitrixServerPerformance {
 		$ServerPerfMon | Export-Excel -Title CitrixServerPerformance -WorksheetName CitrixServerPerformance @ExcelOptions
 	}
 	if ($Export -eq 'HTML') { 
-		$ServerPerfMon | Out-HtmlView -DisablePaging -Title 'Server Performance' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixServerPerformance-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+		$ReportTitle = 'Citrix Server Performance'
+        $HeadingText = "$($ReportTitle) [$(Get-Date -Format dd) $(Get-Date -Format MMMM) $(Get-Date -Format yyyy) $(Get-Date -Format HH:mm)]"
+        New-HTML -TitleText $($ReportTitle) -FilePath $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+            New-HTMLHeader {
+                New-HTMLText -FontSize 20 -FontStyle normal -Color '#00203F' -Alignment left -Text $HeadingText
+                New-HTMLLogo -RightLogoString $XDHealth_LogoURL
+            }
+            if ($ServerPerfMon) { New-HTMLTab -Name 'Performance' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($ServerPerfMon) @TableSettings}}}
+        }
 	}
 	if ($Export -eq 'Host') { 
 		$ServerPerfMon

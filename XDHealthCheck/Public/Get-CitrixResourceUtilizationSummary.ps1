@@ -117,7 +117,7 @@ Function Get-CitrixResourceUtilizationSummary {
 
     if ($Export -eq 'Excel') { 
         $ExcelOptions = @{
-            Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixResourceUtilizationSummary-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+            Path             = $(Join-Path -Path $ReportPath -ChildPath "\Citrix_Resource_Utilization_Summary-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
             AutoSize         = $True
             AutoFilter       = $True
             TitleBold        = $True
@@ -127,10 +127,19 @@ Function Get-CitrixResourceUtilizationSummary {
             FreezeTopRow     = $True
             FreezePane       = '3'
         }
-        if ($ResourceUtilization) { $ResourceUtilization | Export-Excel -Title MachineFailures -WorksheetName MachineFailures @ExcelOptions }
+        if ($ResourceUtilization) { $ResourceUtilization | Export-Excel -Title ResourceUtilization -WorksheetName ResourceUtilization @ExcelOptions }
     }
-                              
-    if ($Export -eq 'HTML') { $ResourceUtilization | Out-HtmlView -DisablePaging -Title 'CitrixResourceUtilizationSummary' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixResourceUtilizationSummary-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
+
+    if ($Export -eq 'HTML') { 
+        $ReportTitle = 'Citrix Resource Utilization Summary'
+        $HeadingText = "$($ReportTitle) [$(Get-Date -Format dd) $(Get-Date -Format MMMM) $(Get-Date -Format yyyy) $(Get-Date -Format HH:mm)]"
+        New-HTML -TitleText $($ReportTitle) -FilePath $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+            New-HTMLHeader {
+                New-HTMLText -FontSize 20 -FontStyle normal -Color '#00203F' -Alignment left -Text $HeadingText
+                New-HTMLLogo -RightLogoString $XDHealth_LogoURL
+            }
+            if ($ResourceUtilization) { New-HTMLTab -Name 'Resource Utilization' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($ResourceUtilization) @TableSettings}}}
+        }
     if ($Export -eq 'Host') { $ResourceUtilization }
 
 

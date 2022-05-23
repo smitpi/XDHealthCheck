@@ -45,6 +45,15 @@ $global:TableSectionSettings = @{
 	HeaderTextColor       = $XDHealth_Color1
 	HeaderTextSize        = '15'
 }
+$global:TabSettings = @{
+    TextTransform             = 'uppercase'
+    #IconSolid                 = 'file-export'
+    IconBrands                = 'mix'
+    TextSize                  = '16' 
+    TextColor                 =  '#00203F'
+    IconSize                  = '16'
+    IconColor                 =  '#00203F'
+}
 #endregion
 
 

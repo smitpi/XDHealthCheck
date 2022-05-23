@@ -169,7 +169,7 @@ Function Get-CitrixEnvTestResults {
 
     if ($Export -eq 'Excel') { 
         $ExcelOptions = @{
-            Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+            Path             = $(Join-Path -Path $ReportPath -ChildPath "\Citrix_Env_Test_Results-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
             AutoSize         = $true
             AutoFilter       = $true
             TitleBold        = $true
@@ -179,18 +179,24 @@ Function Get-CitrixEnvTestResults {
             FreezeTopRow     = $true
             FreezePane       = '3'
         }
-       if ($catalogResults) { $catalogResults | Export-Excel -Title 'Catalog Results' -WorksheetName 'Catalog' @ExcelOptions}
-       if ($DesktopGroupResults) { $DesktopGroupResults | Export-Excel  -Title 'DesktopGroup Results' -WorksheetName DesktopGroup @ExcelOptions }
-       if ($HypervisorConnectionResults) { $HypervisorConnectionResults | Export-Excel  -Title 'Hypervisor Connection Results' -WorksheetName Hypervisor @ExcelOptions }
-       if ($InfrastructureResults) { $InfrastructureResults | Export-Excel  -Title 'Infrastructure Results' -WorksheetName Infrastructure @ExcelOptions }
+        if ($catalogResults) { $catalogResults | Export-Excel -Title 'Catalog Results' -WorksheetName 'Catalog' @ExcelOptions}
+        if ($DesktopGroupResults) { $DesktopGroupResults | Export-Excel -Title 'DesktopGroup Results' -WorksheetName DesktopGroup @ExcelOptions }
+        if ($HypervisorConnectionResults) { $HypervisorConnectionResults | Export-Excel -Title 'Hypervisor Connection Results' -WorksheetName Hypervisor @ExcelOptions }
+        if ($InfrastructureResults) { $InfrastructureResults | Export-Excel -Title 'Infrastructure Results' -WorksheetName Infrastructure @ExcelOptions }
     }
     if ($Export -eq 'HTML') { 
-        New-HTML -TitleText "CitrixFarmDetail-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixEnvTestResults-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
-           if ($catalogResults) { New-HTMLTab -Name 'Catalog Results' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($catalogResults) @TableSettings}}}
-           if ($DesktopGroupResults) { New-HTMLTab -Name 'DesktopGroup Results' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($DesktopGroupResults) @TableSettings}}}
-           if ($HypervisorConnectionResults) { New-HTMLTab -Name 'Hypervisor Connection Results' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($HypervisorConnectionResults) @TableSettings}}}
-           if ($InfrastructureResults) { New-HTMLTab -Name 'Infrastructure Results' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($InfrastructureResults) @TableSettings}}}
-        } -Online -Encoding UTF8 -ShowHTML
+        $ReportTitle = 'Citrix Env Test Results'
+        $HeadingText = "$($ReportTitle) [$(Get-Date -Format dd) $(Get-Date -Format MMMM) $(Get-Date -Format yyyy) $(Get-Date -Format HH:mm)]"
+        New-HTML -TitleText $($ReportTitle) -FilePath $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+            New-HTMLHeader {
+                New-HTMLText -FontSize 20 -FontStyle oblique -Color '#00203F' -Alignment left -Text $HeadingText
+                New-HTMLLogo -RightLogoString $XDHealth_LogoURL
+            }
+            if ($catalogResults) { New-HTMLTab -Name 'Catalog Results' @TableSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($catalogResults) @TableSettings}}}
+            if ($DesktopGroupResults) { New-HTMLTab -Name 'DesktopGroup Results' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($DesktopGroupResults) @TableSettings}}}
+            if ($HypervisorConnectionResults) { New-HTMLTab -Name 'Hypervisor Connection Results' $TableSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($HypervisorConnectionResults) @TableSettings}}}
+            if ($InfrastructureResults) { New-HTMLTab -Name 'Infrastructure Results' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($InfrastructureResults) @TableSettings}}}
+        }
     }
     if ($Export -eq 'Host') {
         [pscustomobject]@{

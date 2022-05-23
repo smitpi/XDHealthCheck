@@ -105,7 +105,7 @@ Function Get-CitrixLicenseInformation {
 	}
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
-			Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\Citrix_License_Information-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
 			AutoSize         = $True
 			AutoFilter       = $True
 			TitleBold        = $True
@@ -118,7 +118,15 @@ Function Get-CitrixLicenseInformation {
 		$LicDetails | Export-Excel -Title CitrixLicenseInformation -WorksheetName CitrixLicenseInformation @ExcelOptions
 	}
 	if ($Export -eq 'HTML') { 
-		$LicDetails | Out-HtmlView -DisablePaging -Title 'Lic Details' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") 
+		$ReportTitle = 'Citrix License Information'
+		$HeadingText = "$($ReportTitle) [$(Get-Date -Format dd) $(Get-Date -Format MMMM) $(Get-Date -Format yyyy) $(Get-Date -Format HH:mm)]"
+		New-HTML -TitleText $($ReportTitle) -FilePath $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+			New-HTMLHeader {
+				New-HTMLText -FontSize 20 -FontStyle normal -Color '#00203F' -Alignment left -Text $HeadingText
+				New-HTMLLogo -RightLogoString $XDHealth_LogoURL
+			}
+			if ($LicDetails) { New-HTMLTab -Name 'Ctx Changes' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($LicDetails) @TableSettings}}}
+		}
 	}
 	if ($Export -eq 'Host') { 
 		$LicDetails

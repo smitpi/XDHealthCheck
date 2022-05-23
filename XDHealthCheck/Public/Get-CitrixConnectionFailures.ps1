@@ -127,7 +127,7 @@ Function Get-CitrixConnectionFailures {
 
     if ($Export -eq 'Excel') { 
         $ExcelOptions = @{
-            Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixConnectionFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+            Path             = $(Join-Path -Path $ReportPath -ChildPath "\Citrix_Connection_Failures-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
             AutoSize         = $True
             AutoFilter       = $True
             TitleBold        = $True
@@ -140,8 +140,14 @@ Function Get-CitrixConnectionFailures {
         if ($ConnectionFails) {$ConnectionFails | Export-Excel -Title ConnectionFailures -WorksheetName ConnectionFailures @ExcelOptions}
     }
     if ($Export -eq 'HTML') { 
-        New-HTML -TitleText "CitrixConnectionFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixConnectionFailures-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
-            if ($ConnectionFails) { New-HTMLTab -Name 'Connection Failures' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($ConnectionFails) @TableSettings}}}      
+        $ReportTitle = 'Citrix Connection Failures'
+        $HeadingText = "$($ReportTitle) [$(Get-Date -Format dd) $(Get-Date -Format MMMM) $(Get-Date -Format yyyy) $(Get-Date -Format HH:mm)]"
+        New-HTML -TitleText $($ReportTitle) -FilePath $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+            New-HTMLHeader {
+                New-HTMLText -FontSize 20 -FontStyle normal -Color '#00203F' -Alignment left -Text $HeadingText
+                New-HTMLLogo -RightLogoString $XDHealth_LogoURL
+            }
+            if ($ConnectionFails) { New-HTMLTab -Name 'Connection Failures' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($ConnectionFails) @TableSettings}}}
         }
     }
     if ($Export -eq 'Host') { 

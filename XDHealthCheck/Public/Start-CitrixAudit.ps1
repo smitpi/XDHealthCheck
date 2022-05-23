@@ -31,13 +31,6 @@ Updated [06/06/2019_19:26]
 Updated [09/06/2019_09:18]
 Updated [15/06/2019_01:11]
 Updated [15/06/2019_13:59] Updated Reports
-Updated [01/07/2020_14:43] Script Fle Info was updated
-Updated [01/07/2020_15:42] Script Fle Info was updated
-Updated [01/07/2020_16:07] Script Fle Info was updated
-Updated [01/07/2020_16:13] Script Fle Info was updated
-Updated [06/03/2021_20:58] Script Fle Info was updated
-Updated [15/03/2021_23:28] Script Fle Info was updated
-
 #> 
 
 
@@ -52,10 +45,10 @@ Function for Citrix XenDesktop HTML Health Check Report
 #>
 <#
 .SYNOPSIS
-Creates and distributes  a report on catalog, groups and published app config.
+Creates and distributes  a report on Catalog, groups and published app config.
 
 .DESCRIPTION
-Creates and distributes  a report on catalog, groups and published app config.
+Creates and distributes  a report on Catalog, groups and published app config.
 
 .PARAMETER JSONParameterFilePath
 Path to the json config file, created by Install-ParametersFile
@@ -105,46 +98,11 @@ function Start-CitrixAudit {
 	#endregion
 
 	########################################
-	#region Getting Credentials
-	#########################################
-
-
-	#endregion
-
-	########################################
 	#region Connect and get info
 	########################################
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Proccessing] Collecting Farm Details"
 	$CitrixObjects = Get-CitrixObjects -AdminServer $CTXDDC
 
-	$MachineCatalog = $CitrixObjects.MachineCatalog | Select-Object MachineCatalogName, AllocationType, SessionSupport, UnassignedCount, UsedCount, MasterImageVM, MasterImageSnapshotName, MasterImageSnapshotCount, MasterImageVMDate
-	$DeliveryGroups = $CitrixObjects.DeliveryGroups | Select-Object DesktopGroupName, Enabled, InMaintenanceMode, TotalApplications, TotalDesktops, DesktopsUnregistered, UserAccess, GroupAccess
-	$PublishedApps = $CitrixObjects.PublishedApps | Select-Object DesktopGroupName, DesktopGroupUsersAccess, DesktopGroupGroupAccess, Enabled, ApplicationName, PublishedAppGroupAccess, PublishedAppUserAccess
-	#endregion
-
-	########################################
-	#region saving data to xml
-	########################################
-	$AllXDData = New-Object PSObject -Property @{
-		DateCollected     = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
-		MachineCatalog    = $CitrixObjects.MachineCatalog
-		DeliveryGroups    = $CitrixObjects.DeliveryGroups
-		PublishedApps     = $CitrixObjects.PublishedApps
-		VDAServers        = $CitrixObjects.VDAServers
-		VDAWorkstations   = $CitrixObjects.VDAWorkstations
-		MachineCatalogSum = $MachineCatalog
-		DeliveryGroupsSum = $DeliveryGroups
-		PublishedAppsSum  = $PublishedApps
-	}
-	if (Test-Path -Path $XMLExport) { Remove-Item $XMLExport -Force -Verbose }
-	$AllXDData | Export-Clixml -Path $XMLExport -Depth 25 -NoClobber -Force
-	#endregion
-
-	########################################
-	#region Setting some table color and settings
-	########################################
-
-	
 
 	#######################
 	#region Building HTML the report
@@ -156,13 +114,21 @@ function Start-CitrixAudit {
 		New-HTMLLogo -RightLogoString $XDHealth_LogoURL
 		New-HTMLHeading -Heading h1 -HeadingText $HeadingText -Color Black
 		New-HTMLSection @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $MachineCatalog }
+			New-HTMLSection -HeaderText 'Site Details' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixObjects.ObjectCount }
+			New-HTMLSection -HeaderText 'Site Databases' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixObjects.Databases }
+        }
+		New-HTMLSection @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Site Controllers' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixObjects.Controllers }
+			New-HTMLSection -HeaderText 'Site Licenses' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixObjects.Licenses }
 		}
 		New-HTMLSection @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $DeliveryGroups }
+			New-HTMLSection -HeaderText 'Machine Catalogs' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixObjects.MachineCatalog }
 		}
 		New-HTMLSection @SectionSettings -Content {
-			New-HTMLSection -HeaderText 'Published Apps' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $PublishedApps }
+			New-HTMLSection -HeaderText 'Delivery Groups' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixObjects.DeliveryGroups }
+		}
+		New-HTMLSection @SectionSettings -Content {
+			New-HTMLSection -HeaderText 'Published Apps' @TableSectionSettings { New-HTMLTable @TableSettings -DataTable $CitrixObjects.PublishedApps }
 		}
 	}
 	#endregion
@@ -172,12 +138,27 @@ function Start-CitrixAudit {
 	#######################
 	if ($SaveExcelReport) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Saving Excel Report"
-		$AllXDData.MachineCatalog | Export-Excel -Path $ExcelReportname -AutoSize -AutoFilter -Title 'MachineCatalog' -WorksheetName MachineCatalog -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
-		$AllXDData.DeliveryGroups | Export-Excel -Path $ExcelReportname -AutoSize -AutoFilter -Title 'DeliveryGroups' -WorksheetName DeliveryGroups -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
-		$AllXDData.PublishedApps | Export-Excel -Path $ExcelReportname -AutoSize -AutoFilter -Title 'PublishedApps' -WorksheetName PublishedApps -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
-		$AllXDData.VDAServers | Export-Excel -Path $ExcelReportname -AutoSize -AutoFilter -Title 'VDAServers' -WorksheetName VDAServers -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
-		$AllXDData.VDAWorkstations | Export-Excel -Path $ExcelReportname -AutoSize -AutoFilter -Title 'VDAWorkstations' -WorksheetName VDAWorkstations -TitleBold -TitleSize 28 -TitleFillPattern LightTrellis -TableStyle Light20 -FreezeTopRow -FreezePane 3
-	}
+         $ExcelOptions = @{
+            Path             = $ExcelReportname
+            AutoSize         = $True
+            AutoFilter       = $True
+            TitleBold        = $True
+            TitleSize        = '28'
+            TitleFillPattern = 'LightTrellis'
+            TableStyle       = 'Light20'
+            FreezeTopRow     = $True
+            FreezePane       = '3'
+        }
+        if ($CitrixObjects.ObjectCount) {$CitrixObjects.ObjectCount | Export-Excel -Title ObjectCount -WorksheetName ObjectCount @ExcelOptions}
+        if ($CitrixObjects.Controllers) {$CitrixObjects.Controllers | Export-Excel -Title Controllers -WorksheetName Controllers @ExcelOptions}
+        if ($CitrixObjects.Databases) {$CitrixObjects.Databases | Export-Excel -Title Databases -WorksheetName Databases @ExcelOptions}
+        if ($CitrixObjects.Licenses) {$CitrixObjects.Licenses | Export-Excel -Title Licenses -WorksheetName Licenses @ExcelOptions}
+        if ($CitrixObjects.MachineCatalog) {$CitrixObjects.MachineCatalog | Export-Excel -Title MachineCatalog -WorksheetName MachineCatalog @ExcelOptions}
+        if ($CitrixObjects.DeliveryGroups) {$CitrixObjects.DeliveryGroups | Export-Excel -Title DeliveryGroups -WorksheetName DeliveryGroups @ExcelOptions}
+        if ($CitrixObjects.PublishedApps) {$CitrixObjects.PublishedApps | Export-Excel -Title PublishedApps -WorksheetName PublishedApps @ExcelOptions}
+        if ($CitrixObjects.VDAServers) {$CitrixObjects.VDAServers | Export-Excel -Title VDAServers -WorksheetName VDAServers @ExcelOptions}
+        if ($CitrixObjects.VDAWorkstations) {$CitrixObjects.VDAWorkstations | Export-Excel -Title VDAWorkstations -WorksheetName VDAWorkstations @ExcelOptions}
+   }
 	#endregion
 	
 	#######################

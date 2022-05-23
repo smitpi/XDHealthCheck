@@ -101,7 +101,7 @@ Function Get-RDSLicenseInformation {
 
 	if ($Export -eq 'Excel') { 
 		$ExcelOptions = @{
-			Path             = $(Join-Path -Path $ReportPath -ChildPath "\RDSLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+			Path             = $(Join-Path -Path $ReportPath -ChildPath "\RDS_License_Information-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
 			AutoSize         = $True
 			AutoFilter       = $True
 			TitleBold        = $True
@@ -115,10 +115,16 @@ Function Get-RDSLicenseInformation {
 		$CTXObject.'Per User' | Export-Excel -Title 'Per User' -WorksheetName 'Per User' @ExcelOptions
 	}
 	if ($Export -eq 'HTML') { 
-		New-HTML -TitleText "RDSLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm)" -FilePath $(Join-Path -Path $ReportPath -ChildPath "\RDSLicenseInformation-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
-			New-HTMLTab -Name 'Per Device' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {New-HTMLPanel -Content { New-HTMLTable -DataTable $($CTXObject.'Per Device') @TableSettings}}
-			New-HTMLTab -Name 'Per User' -TextTransform uppercase -IconSolid cloud-sun-rain -TextSize 16 -TextColor $color1 -IconSize 16 -IconColor $color2 -HtmlData {	New-HTMLPanel -Content { New-HTMLTable -DataTable $($CTXObject.'Per User') @TableSettings}}
-		} -Online -Encoding UTF8 -ShowHTML        
+		$ReportTitle = 'RDS_License_Information'
+		$HeadingText = "$($ReportTitle) [$(Get-Date -Format dd) $(Get-Date -Format MMMM) $(Get-Date -Format yyyy) $(Get-Date -Format HH:mm)]"
+		New-HTML -TitleText $($ReportTitle) -FilePath $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+			New-HTMLHeader {
+				New-HTMLText -FontSize 20 -FontStyle normal -Color '#00203F' -Alignment left -Text $HeadingText
+				New-HTMLLogo -RightLogoString $XDHealth_LogoURL
+			}
+			if ($CTXObject.'Per Device') { New-HTMLTab -Name 'Per Device' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($CTXObject.'Per Device') @TableSettings}}}
+			if ($CTXObject.'Per User') { New-HTMLTab -Name 'Per User' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($CTXObject.'Per User') @TableSettings}}}
+		}     
 	}
 	if ($Export -eq 'Host') { 
 		$CTXObject

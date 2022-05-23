@@ -122,7 +122,7 @@ Function Get-CitrixSessionIcaRtt {
 
         if ($Export -eq 'Excel') { 
                 $ExcelOptions = @{
-                        Path             = $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
+                        Path             = $(Join-Path -Path $ReportPath -ChildPath "\Citrix_Session_IcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
                         AutoSize         = $True
                         AutoFilter       = $True
                         TitleBold        = $True
@@ -134,7 +134,17 @@ Function Get-CitrixSessionIcaRtt {
                 }
                 $IcaRttObject | Export-Excel -Title CitrixSessionIcaRtt -WorksheetName CitrixSessionIcaRtt @ExcelOptions
         }
-        if ($Export -eq 'HTML') { $IcaRttObject | Out-HtmlView -DisablePaging -Title 'CitrixSessionIcaRtt' -HideFooter -SearchHighlight -FixedHeader -FilePath $(Join-Path -Path $ReportPath -ChildPath "\CitrixSessionIcaRtt-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") }
+        if ($Export -eq 'HTML') { 
+                $ReportTitle = 'Citrix Session IcaRtt'
+                $HeadingText = "$($ReportTitle) [$(Get-Date -Format dd) $(Get-Date -Format MMMM) $(Get-Date -Format yyyy) $(Get-Date -Format HH:mm)]"
+                New-HTML -TitleText $($ReportTitle) -FilePath $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
+                        New-HTMLHeader {
+                                New-HTMLText -FontSize 20 -FontStyle normal -Color '#00203F' -Alignment left -Text $HeadingText
+                                New-HTMLLogo -RightLogoString $XDHealth_LogoURL
+                        }
+                        if ($IcaRttObject) { New-HTMLTab -Name 'ICA RTT' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($IcaRttObject) @TableSettings}}}
+                }
+        }
         if ($Export -eq 'Host') { $IcaRttObject }
 
 

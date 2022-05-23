@@ -32,13 +32,6 @@ Updated [06/06/2019_19:26]
 Updated [09/06/2019_09:18]
 Updated [15/06/2019_01:11]
 Updated [15/06/2019_13:59] Updated Reports
-Updated [01/07/2020_14:43] Script Fle Info was updated
-Updated [01/07/2020_15:42] Script Fle Info was updated
-Updated [01/07/2020_16:07] Script Fle Info was updated
-Updated [01/07/2020_16:13] Script Fle Info was updated
-Updated [06/03/2021_20:58] Script Fle Info was updated
-Updated [15/03/2021_23:28] Script Fle Info was updated
-
 #> 
 
 
@@ -78,8 +71,19 @@ Function Get-CitrixObjects {
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Config"
 
 	if (-not(Get-PSSnapin -Registered | Where-Object {$_.name -like 'Citrix*'})) {Add-PSSnapin citrix* -ErrorAction SilentlyContinue}
+
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] XDSite"
+	$XDSite = Get-XDSite -AdminAddress $adminserver
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] Controllers"
+	$Controllers = $XDSite.Controllers | Select-Object DnsName,ControllerState,ControllerVersion,DesktopsRegistered,LastActivityTime,LastStartTime,OSType,OSVersion
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] Databases"
+	$DataBases = $XDSite.Databases
+	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] Licenses"
+	$Licenses = Get-XDLicensing -AdminAddress $adminserver | Select-Object LicenseServer,LicensingBurnInDate,LicensingModel,ProductCode,ProductEdition,ProductVersion
+
+	#region Catalogs
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Machine Catalogs"
-	$CTXMachineCatalog = @()
+	[System.Collections.ArrayList]$CTXMachineCatalog = @()
 	$MachineCatalogs = Get-BrokerCatalog -AdminAddress $AdminServer
 	foreach ($MachineCatalog in $MachineCatalogs) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Machine Catalog: $($MachineCatalog.name.ToString())"
@@ -95,19 +99,20 @@ Function Get-CitrixObjects {
 			$masterSnapshot = ''
 			$masterSnapshotcount = 0
 		}
-		$CatObject = New-Object PSObject -Property @{
+		[void]$CTXMachineCatalog.Add([PSCustomObject]@{
 			MachineCatalogName           = $MachineCatalog.name
 			AllocationType               = $MachineCatalog.AllocationType
 			Description                  = $MachineCatalog.Description
-			IsRemotePC                   = $MachineCatalog.IsRemotePC
-			MachinesArePhysical          = $MachineCatalog.MachinesArePhysical
 			MinimumFunctionalLevel       = $MachineCatalog.MinimumFunctionalLevel
 			PersistUserChanges           = $MachineCatalog.PersistUserChanges
 			ProvisioningType             = $MachineCatalog.ProvisioningType
 			SessionSupport               = $MachineCatalog.SessionSupport
-			Uid                          = $MachineCatalog.Uid
 			UnassignedCount              = $MachineCatalog.UnassignedCount
 			UsedCount                    = $MachineCatalog.UsedCount
+			AssignedCount                = $MachineCatalog.AssignedCount
+			AvailableCount               = $MachineCatalog.AvailableCount
+			PvsAddress                   = $MachineCatalog.PvsAddress
+			PvsDomain                    = $MachineCatalog.PvsDomain
 			CleanOnBoot                  = $MasterImage.CleanOnBoot
 			MasterImageVM                = $mastervm
 			MasterImageSnapshotName      = $masterSnapshot
@@ -115,20 +120,21 @@ Function Get-CitrixObjects {
 			MasterImageVMDate            = $MasterImage.MasterImageVMDate
 			UseFullDiskCloneProvisioning = $MasterImage.UseFullDiskCloneProvisioning
 			UseWriteBackCache            = $MasterImage.UseWriteBackCache
-		} | Select-Object MachineCatalogName, AllocationType, Description, IsRemotePC, MachinesArePhysical, MinimumFunctionalLevel, PersistUserChanges, ProvisioningType, SessionSupport, Uid, UnassignedCount, UsedCount, CleanOnBoot, MasterImageVM, MasterImageSnapshotName, MasterImageSnapshotCount, MasterImageVMDate, UseFullDiskCloneProvisioning, UseWriteBackCache
-		$CTXMachineCatalog += $CatObject
+		})
 	}
+	#endregion
 
+	#region desktop groups
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Delivery Groups"
 	$BrokerDesktopGroup = Get-BrokerDesktopGroup -AdminAddress $AdminServer
-	$CTXDeliveryGroup = @()
+	[System.Collections.ArrayList]$CTXDeliveryGroup = @()
 	foreach ($DesktopGroup in $BrokerDesktopGroup) {
 		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Delivery Group: $($DesktopGroup.name.ToString())"
 		$BrokerAccess = @()
 		$BrokerGroups = @()
 		$BrokerAccess = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -notlike '' } } | Select-Object UPN
 		$BrokerGroups = Get-BrokerAccessPolicyRule -DesktopGroupUid $DesktopGroup.Uid -AdminAddress $AdminServer -AllowedConnections ViaAG | ForEach-Object { $_.IncludedUsers | Where-Object { $_.upn -Like '' } } | Select-Object Name
-		$CusObject = New-Object PSObject -Property @{
+		[void]$CTXDeliveryGroup.Add([PSCustomObject]@{
 			DesktopGroupName       = $DesktopGroup.name
 			Uid                    = $DesktopGroup.uid
 			DeliveryType           = $DesktopGroup.DeliveryType
@@ -148,18 +154,18 @@ Function Get-CitrixObjects {
 			Tags                   = @(($DesktopGroup.Tags) | Out-String).Trim()
 			UserAccess             = @(($BrokerAccess.UPN) | Out-String).Trim()
 			GroupAccess            = @(($BrokerGroups.Name) | Out-String).Trim()
-		} | Select-Object DesktopGroupName, Uid, DeliveryType, DesktopKind, Description, DesktopsDisconnected, DesktopsFaulted, DesktopsInUse, DesktopsUnregistered, Enabled, IconUid, InMaintenanceMode, SessionSupport, TotalApplicationGroups, TotalApplications, TotalDesktops, Tags, UserAccess, GroupAccess
-		$CTXDeliveryGroup += $CusObject
+		})
 	}
+	#endregion
 
+	#region pub apps
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Application config"
-	$HostedApps = @()
-	foreach ($DeskG in ($CTXDeliveryGroup | Where-Object { $_.DeliveryType -like 'DesktopsAndApps' })) {
-		Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Delivery Group: $($DeskG.DesktopGroupName.ToString())"
-		$PublishedApps = Get-BrokerApplication -AssociatedDesktopGroupUid $DeskG.Uid -AdminAddress $AdminServer
-		#			$PublishedApp = (Get-BrokerApplication -AdminAddress $AdminServer)[27]
+		[System.Collections.ArrayList]$HostedApps = @()
+		$PublishedApps = Get-BrokerApplication -AdminAddress $AdminServer
 		foreach ($PublishedApp in $PublishedApps) {
-			Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Published Application: $($DeskG.DesktopGroupName.ToString()) - $($PublishedApp.PublishedName.ToString())"
+			Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Processing] Published Application:$($PublishedApp.PublishedName.ToString())"
+			[system.Collections.ArrayList]$DesktopGroups = @()
+			[void]$DesktopGroups.Add(($PublishedApp.AssociatedDesktopGroupUids | ForEach-Object {(Get-BrokerDesktopGroup -Uid $($_)).name}))
 			[System.Collections.ArrayList]$PublishedAppGroup = @()
 			[System.Collections.ArrayList]$PublishedAppUser = @($PublishedApp.AssociatedUserNames | Where-Object { $_ -notlike $null })
 			$index = 0
@@ -167,13 +173,10 @@ Function Get-CitrixObjects {
 				if ($null -like $upn) { $PublishedAppGroup += @($PublishedApp.AssociatedUserNames)[$index] }
 				$index ++
 			}
-			$CusObject = New-Object PSObject -Property @{
-				DesktopGroupName        = $DeskG.DesktopGroupName
-				DesktopGroupUid         = $DeskG.Uid
-				DesktopGroupUsersAccess = $DeskG.UserAccess
-				DesktopGroupGroupAccess = $DeskG.GroupAccess
+			[void]$HostedApps.Add([PSCustomObject]@{
 				ApplicationName         = $PublishedApp.ApplicationName
 				ApplicationType         = $PublishedApp.ApplicationType
+				DesktopGroups           = @(($DesktopGroups) | Out-String).Trim()
 				AdminFolderName         = $PublishedApp.AdminFolderName
 				ClientFolder            = $PublishedApp.ClientFolder
 				Description             = $PublishedApp.Description
@@ -186,15 +189,15 @@ Function Get-CitrixObjects {
 				PublishedAppName        = $PublishedApp.Name
 				PublishedAppGroupAccess = @(($PublishedAppGroup) | Out-String).Trim()
 				PublishedAppUserAccess  = @(($PublishedAppUser) | Out-String).Trim()
-			} | Select-Object DesktopGroupName, DesktopGroupUid, DesktopGroupUsersAccess, DesktopGroupGroupAccess, ApplicationName, ApplicationType, AdminFolderName, ClientFolder, Description, Enabled, CommandLineExecutable, CommandLineArgument, WorkingDirectory, Tags, PublishedName, PublishedAppName, PublishedAppGroupAccess, PublishedAppUserAccess
-			$HostedApps += $CusObject
+			})
 		}
-	}
+	#endregion
 
+	#region servers
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Server Details"
-	$VDAServers = @()
-	Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 100000 | Where-Object { $_.OSType -like 'Windows 20*' } | ForEach-Object {
-		$VDASCusObject = New-Object PSObject -Property @{
+	[System.Collections.ArrayList]$VDAServers = @()
+	Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 100000 | Where-Object { $_.OSType -like '*20*' } | ForEach-Object {
+		[void]$VDAServers.Add([PSCustomObject]@{
 			DNSName           = $_.DNSName
 			CatalogName       = $_.CatalogName
 			DesktopGroupName  = $_.DesktopGroupName
@@ -203,14 +206,15 @@ Function Get-CitrixObjects {
 			OSType            = $_.OSType
 			RegistrationState = $_.RegistrationState
 			InMaintenanceMode = $_.InMaintenanceMode
-		} | Select-Object DNSName, CatalogName, DesktopGroupName, IPAddress, AgentVersion, OSType, RegistrationState, InMaintenanceMode
-		$VDAServers += $VDASCusObject
+		})
 	}
+#endregion
 
+	#region desktops
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Begining] All Workstation Details"
-	$VDAWorkstations = @()
+	[System.Collections.ArrayList]$VDAWorkstations = @()
 	Get-BrokerMachine -AdminAddress $AdminServer -MaxRecordCount 100000 | Where-Object { $_.OSType -notlike 'Windows 20*' } | ForEach-Object {
-		$VDAWCusObject = New-Object PSObject -Property @{
+		[void]$VDAWorkstations.Add([PSCustomObject]@{
 			DNSName             = $_.DNSName
 			CatalogName         = $_.CatalogName
 			DesktopGroupName    = $_.DesktopGroupName
@@ -220,14 +224,27 @@ Function Get-CitrixObjects {
 			OSType              = $_.OSType
 			RegistrationState   = $_.RegistrationState
 			InMaintenanceMode   = $_.InMaintenanceMode
-		} | Select-Object DNSName, CatalogName, DesktopGroupName, IPAddress, AgentVersion, AssociatedUserNames, OSType, RegistrationState, InMaintenanceMode
-		$VDAWorkstations += $VDAWCusObject
+		})
+	}
+	#endregion
+
+	$ObjectCount = [PSCustomObject]@{
+		Sitename        = $XDSite.name
+		Controllers     = $Controllers.count
+		Catalogs        = $CTXMachineCatalog.count
+		DesktopGroup    = $CTXDeliveryGroup.count
+		PublishedApps   = $HostedApps.count
+		VDAServers      = $VDAServers.count
+		VDAWorkstations = $VDAWorkstations.count
 	}
 
 	Write-Verbose "$((Get-Date -Format HH:mm:ss).ToString()) [Ending] Published Applications"
-
 	$CusObject = New-Object PSObject -Property @{
 		DateCollected   = (Get-Date -Format dd-MM-yyyy_HH:mm).ToString()
+		ObjectCount     = $ObjectCount 
+		Controllers		= $Controllers
+		Databases       = $DataBases
+		Licenses        = $Licenses
 		MachineCatalog  = $CTXMachineCatalog
 		DeliveryGroups  = $CTXDeliveryGroup
 		PublishedApps   = $HostedApps
