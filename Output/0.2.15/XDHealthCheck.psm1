@@ -1,8 +1,12 @@
 ﻿#region Private Functions
 #region DirectorCodes.ps1
 ########### Private Function ###############
-# source: DirectorCodes.ps1
-# Module: XDHealthCheck
+# Source:           DirectorCodes.ps1
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 22:30:01
+# ModifiedOn:       2022/05/24 00:34:09
 ############################################
 
 $script:RegistrationState = @{
@@ -111,8 +115,12 @@ $script:ConnectionState = @{
 #endregion
 #region Reports-Colors.ps1
 ########### Private Function ###############
-# source: Reports-Colors.ps1
-# Module: XDHealthCheck
+# Source:           Reports-Colors.ps1
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/03/20 13:17:32
+# ModifiedOn:       2022/05/24 00:34:05
 ############################################
 
 if (Test-Path HKCU:\Software\XDHealth) {
@@ -176,15 +184,17 @@ $script:TabSettings = @{
 #endregion
 #endregion
  
- 
 #region Public Functions
 #region Get-CitrixConfigurationChange.ps1
-############################################
-# source: Get-CitrixConfigurationChange.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 1 of 19 ##################
+# Function:         Get-CitrixConfigurationChange
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 13:13:56
+# ModifiedOn:       2022/05/24 00:00:20
+# Synopsis:         Show the changes that was made to the farm
 #############################################
  
 <#
@@ -290,12 +300,15 @@ Export-ModuleMember -Function Get-CitrixConfigurationChange
 #endregion
  
 #region Get-CitrixConnectionFailures.ps1
-############################################
-# source: Get-CitrixConnectionFailures.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 2 of 19 ##################
+# Function:         Get-CitrixConnectionFailures
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 22:57:00
+# ModifiedOn:       2022/05/24 00:01:58
+# Synopsis:         Creates a report from monitoring data about machine and connection failures
 #############################################
  
 <#
@@ -418,12 +431,15 @@ Export-ModuleMember -Function Get-CitrixConnectionFailures
 #endregion
  
 #region Get-CitrixEnvTestResults.ps1
-############################################
-# source: Get-CitrixEnvTestResults.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 3 of 19 ##################
+# Function:         Get-CitrixEnvTestResults
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/06 08:38:57
+# ModifiedOn:       2022/05/24 00:02:10
+# Synopsis:         Perform and report on tests on catalogs, delivery groups, hypervisor and Infrastructure
 #############################################
  
 <#
@@ -597,12 +613,15 @@ Export-ModuleMember -Function Get-CitrixEnvTestResults
 #endregion
  
 #region Get-CitrixFarmDetail.ps1
-############################################
-# source: Get-CitrixFarmDetail.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 4 of 19 ##################
+# Function:         Get-CitrixFarmDetail
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 23:57:06
+# ModifiedOn:       2022/05/23 21:20:21
+# Synopsis:         Get needed Farm details.
 #############################################
  
 <#
@@ -754,12 +773,15 @@ Export-ModuleMember -Function Get-CitrixFarmDetail
 #endregion
  
 #region Get-CitrixLicenseInformation.ps1
-############################################
-# source: Get-CitrixLicenseInformation.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 5 of 19 ##################
+# Function:         Get-CitrixLicenseInformation
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 13:14:16
+# ModifiedOn:       2022/05/24 00:03:33
+# Synopsis:         Show Citrix License details
 #############################################
  
 <#
@@ -846,12 +868,15 @@ Export-ModuleMember -Function Get-CitrixLicenseInformation
 #endregion
  
 #region Get-CitrixMonitoringData.ps1
-############################################
-# source: Get-CitrixMonitoringData.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 6 of 19 ##################
+# Function:         Get-CitrixMonitoringData
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 23:03:42
+# ModifiedOn:       2022/05/20 20:58:22
+# Synopsis:         Connects and collects data from the monitoring OData feed.
 #############################################
  
 <#
@@ -915,12 +940,15 @@ Export-ModuleMember -Function Get-CitrixMonitoringData
 #endregion
  
 #region Get-CitrixObjects.ps1
-############################################
-# source: Get-CitrixObjects.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 7 of 19 ##################
+# Function:         Get-CitrixObjects
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/03/20 13:17:32
+# ModifiedOn:       2022/05/23 22:27:00
+# Synopsis:         Get details of citrix objects
 #############################################
  
 <#
@@ -1140,12 +1168,15 @@ Export-ModuleMember -Function Get-CitrixObjects
 #endregion
  
 #region Get-CitrixResourceUtilizationSummary.ps1
-############################################
-# source: Get-CitrixResourceUtilizationSummary.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 8 of 19 ##################
+# Function:         Get-CitrixResourceUtilizationSummary
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/19 01:48:11
+# ModifiedOn:       2022/05/24 00:29:41
+# Synopsis:         Resource Utilization Summary for machines
 #############################################
  
 <#
@@ -1256,12 +1287,15 @@ Export-ModuleMember -Function Get-CitrixResourceUtilizationSummary
 #endregion
  
 #region Get-CitrixServerEventLog.ps1
-############################################
-# source: Get-CitrixServerEventLog.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 9 of 19 ##################
+# Function:         Get-CitrixServerEventLog
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 06:52:16
+# ModifiedOn:       2022/05/24 00:07:40
+# Synopsis:         Get windows event log details
 #############################################
  
 <#
@@ -1366,12 +1400,15 @@ Export-ModuleMember -Function Get-CitrixServerEventLog
 #endregion
  
 #region Get-CitrixServerPerformance.ps1
-############################################
-# source: Get-CitrixServerPerformance.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 10 of 19 ##################
+# Function:         Get-CitrixServerPerformance
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 10:26:18
+# ModifiedOn:       2022/05/25 04:35:55
+# Synopsis:         Collects perform data for the core servers.
 #############################################
  
 <#
@@ -1441,7 +1478,7 @@ Function Get-CitrixServerPerformance {
 	}
 	$ServerPerfMon
 
-	if ($Export -eq 'Excel') { 
+	if ($Export -eq 'Excel') {
 		$ExcelOptions = @{
 			Path             = $(Join-Path -Path $ReportPath -ChildPath "\Citrix_Server_Performance-$(Get-Date -Format yyyy.MM.dd-HH.mm).xlsx")
 			AutoSize         = $True
@@ -1455,7 +1492,7 @@ Function Get-CitrixServerPerformance {
 		}
 		$ServerPerfMon | Export-Excel -Title CitrixServerPerformance -WorksheetName CitrixServerPerformance @ExcelOptions
 	}
-	if ($Export -eq 'HTML') { 
+	if ($Export -eq 'HTML') {
 		$ReportTitle = 'Citrix Server Performance'
         $HeadingText = "$($ReportTitle) [$(Get-Date -Format dd) $(Get-Date -Format MMMM) $(Get-Date -Format yyyy) $(Get-Date -Format HH:mm)]"
         New-HTML -TitleText $($ReportTitle) -FilePath $(Join-Path -Path $ReportPath -ChildPath "\$($ReportTitle.Replace(' ','_'))-$(Get-Date -Format yyyy.MM.dd-HH.mm).html") {
@@ -1466,7 +1503,7 @@ Function Get-CitrixServerPerformance {
             if ($ServerPerfMon) { New-HTMLTab -Name 'Performance' @TabSettings -HtmlData {New-HTMLSection @TableSectionSettings { New-HTMLTable -DataTable $($ServerPerfMon) @TableSettings}}}
         }
 	}
-	if ($Export -eq 'Host') { 
+	if ($Export -eq 'Host') {
 		$ServerPerfMon
 	}
 } #end Function
@@ -1475,12 +1512,15 @@ Export-ModuleMember -Function Get-CitrixServerPerformance
 #endregion
  
 #region Get-CitrixSessionIcaRtt.ps1
-############################################
-# source: Get-CitrixSessionIcaRtt.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 11 of 19 ##################
+# Function:         Get-CitrixSessionIcaRtt
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 23:53:46
+# ModifiedOn:       2022/05/24 00:10:08
+# Synopsis:         Creates a report of users sessions with a AVG IcaRttMS
 #############################################
  
 <#
@@ -1595,12 +1635,15 @@ Export-ModuleMember -Function Get-CitrixSessionIcaRtt
 #endregion
  
 #region Get-CitrixVDAUptime.ps1
-############################################
-# source: Get-CitrixVDAUptime.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 12 of 19 ##################
+# Function:         Get-CitrixVDAUptime
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/09 12:55:37
+# ModifiedOn:       2022/05/24 00:11:25
+# Synopsis:         Calculate the uptime of VDA Servers.
 #############################################
  
 <#
@@ -1709,12 +1752,15 @@ Export-ModuleMember -Function Get-CitrixVDAUptime
 #endregion
  
 #region Get-CitrixWorkspaceAppVersions.ps1
-############################################
-# source: Get-CitrixWorkspaceAppVersions.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 13 of 19 ##################
+# Function:         Get-CitrixWorkspaceAppVersions
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 23:22:10
+# ModifiedOn:       2022/05/24 00:12:25
+# Synopsis:         Reports on the versions of workspace app your users are using to connect
 #############################################
  
 <#
@@ -1837,12 +1883,15 @@ Export-ModuleMember -Function Get-CitrixWorkspaceAppVersions
 #endregion
  
 #region Get-RDSLicenseInformation.ps1
-############################################
-# source: Get-RDSLicenseInformation.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 14 of 19 ##################
+# Function:         Get-RDSLicenseInformation
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 10:26:40
+# ModifiedOn:       2022/05/24 00:14:28
+# Synopsis:         Report on RDS License Usage
 #############################################
  
 <#
@@ -1929,12 +1978,15 @@ Export-ModuleMember -Function Get-RDSLicenseInformation
 #endregion
  
 #region Import-ParametersFile.ps1
-############################################
-# source: Import-ParametersFile.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 15 of 19 ##################
+# Function:         Import-ParametersFile
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/03/20 13:17:32
+# ModifiedOn:       2022/05/10 11:52:17
+# Synopsis:         Import the config file and creates the needed variables
 #############################################
  
 <#
@@ -2002,12 +2054,15 @@ Export-ModuleMember -Function Import-ParametersFile
 #endregion
  
 #region Install-ParametersFile.ps1
-############################################
-# source: Install-ParametersFile.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 16 of 19 ##################
+# Function:         Install-ParametersFile
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/03/20 13:17:33
+# ModifiedOn:       2022/05/05 09:55:54
+# Synopsis:         Create a json config file with all needed farm details.
 #############################################
  
 <#
@@ -2144,12 +2199,15 @@ Export-ModuleMember -Function Install-ParametersFile
 #endregion
  
 #region Set-XDHealthReportColors.ps1
-############################################
-# source: Set-XDHealthReportColors.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 17 of 19 ##################
+# Function:         Set-XDHealthReportColors
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/03/20 13:17:33
+# ModifiedOn:       2022/05/20 21:23:50
+# Synopsis:         Set the color and logo for HTML Reports
 #############################################
  
 <#
@@ -2243,12 +2301,15 @@ Export-ModuleMember -Function Set-XDHealthReportColors
 #endregion
  
 #region Start-CitrixAudit.ps1
-############################################
-# source: Start-CitrixAudit.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 18 of 19 ##################
+# Function:         Start-CitrixAudit
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 13:34:46
+# ModifiedOn:       2022/05/23 22:49:08
+# Synopsis:         Creates and distributes  a report on Catalog, groups and published app config.
 #############################################
  
 <#
@@ -2410,12 +2471,15 @@ Export-ModuleMember -Function Start-CitrixAudit
 #endregion
  
 #region Start-CitrixHealthCheck.ps1
-############################################
-# source: Start-CitrixHealthCheck.ps1
-# Module: XDHealthCheck
-# version: 0.2.14
-# Author: Pierre Smit
-# Company: HTPCZA Tech
+######## Function 19 of 19 ##################
+# Function:         Start-CitrixHealthCheck
+# Module:           XDHealthCheck
+# ModuleVersion:    0.2.15
+# Author:           Pierre Smit
+# Company:          HTPCZA Tech
+# CreatedOn:        2022/05/03 13:14:56
+# ModifiedOn:       2022/05/24 00:26:50
+# Synopsis:         Creates and distributes  a report on citrix farm health.
 #############################################
  
 <#
