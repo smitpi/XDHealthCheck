@@ -3,57 +3,44 @@
 
 .VERSION 1.0.11
 
-.GUID bc7d3016-a1c9-41b7-a1f9-fa20da99f891
+.GUID d741efeb-5ced-4d69-83b5-7ee8dee71dc9
 
 .AUTHOR Pierre Smit
 
 .COMPANYNAME HTPCZA Tech
 
-.COPYRIGHT 
+.COPYRIGHT
 
-.TAGS Citrix
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Created [22/05/2019_19:17]
-Updated [24/05/2019_19:25]
-Updated [06/06/2019_19:26]
-Updated [09/06/2019_09:18]
-Updated [15/06/2019_01:11]
-Updated [15/06/2019_13:59] Updated Reports
 
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ Creates and distributes  a report on citrix farm health. 
 
 #> 
 
 
 
-
-
-
-
-
-
-
-
-
-
-<#
-
-.DESCRIPTION 
-Function for Citrix XenDesktop HTML Health Check Report
-
-#>
 <#
 .SYNOPSIS
 Creates and distributes  a report on citrix farm health.
