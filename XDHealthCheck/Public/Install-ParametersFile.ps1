@@ -3,7 +3,7 @@
 
 .VERSION 1.0.5
 
-.GUID 7703f542-0274-4653-b61f-b5ee32980012
+.GUID 75b00dfe-c59d-4c79-9547-5428be0fa002
 
 .AUTHOR Pierre Smit
 
@@ -11,7 +11,7 @@
 
 .COPYRIGHT
 
-.TAGS Citrix
+.TAGS
 
 .LICENSEURI
 
@@ -19,29 +19,28 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Created [01/07/2020_14:43] Initital Script Creating
-Updated [01/07/2020_15:42] Script Fle Info was updated
-Updated [01/07/2020_16:07] Script Fle Info was updated
-Updated [01/07/2020_16:13] Script Fle Info was updated
-Updated [06/03/2021_20:58] Script Fle Info was updated
-Updated [15/03/2021_23:28] Script Fle Info was updated
+
+
+.PRIVATEDATA
 
 #>
 
+<# 
 
-<#
+.DESCRIPTION 
+ Create a json config file with all needed farm details. 
 
-.DESCRIPTION
-Function for Citrix XenDesktop HTML Health Check Report
+#> 
 
-#>
+
+
 <#
 .SYNOPSIS
 Create a json config file with all needed farm details.

@@ -1,9 +1,9 @@
-﻿
+
 <#PSScriptInfo
 
 .VERSION 1.0.6
 
-.GUID bcf1a3eb-5df0-40d1-9e90-1c67e328d550
+.GUID 66a0e008-b123-4c96-bbbd-d5d6d046465a
 
 .AUTHOR Pierre Smit
 
@@ -11,7 +11,7 @@
 
 .COPYRIGHT
 
-.TAGS Citrix
+.TAGS
 
 .LICENSEURI
 
@@ -19,30 +19,28 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Created [25/06/2019_14:04] Initial Script Creating
-Updated [01/07/2020_14:43] Script Fle Info was updated
-Updated [01/07/2020_15:42] Script Fle Info was updated
-Updated [01/07/2020_16:07] Script Fle Info was updated
-Updated [01/07/2020_16:13] Script Fle Info was updated
-Updated [06/03/2021_20:58] Script Fle Info was updated
-Updated [15/03/2021_23:28] Script Fle Info was updated
+
+
+.PRIVATEDATA
 
 #>
 
+<# 
 
-<#
+.DESCRIPTION 
+ Import the config file and creates the needed variables 
 
-.DESCRIPTION
-Function for Citrix XenDesktop HTML Health Check Report
+#> 
 
-#>
+
+
 <#
 .SYNOPSIS
 Import the config file and creates the needed variables

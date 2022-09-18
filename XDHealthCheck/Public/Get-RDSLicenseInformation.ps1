@@ -3,57 +3,44 @@
 
 .VERSION 1.0.15
 
-.GUID 284fb68d-acc2-4b5f-aa04-3d0fb6fbcdc0
+.GUID 103eea54-f3e2-4cb2-abe1-78ac793afdbc
 
 .AUTHOR Pierre Smit
 
 .COMPANYNAME HTPCZA Tech
 
-.COPYRIGHT 
+.COPYRIGHT
 
-.TAGS Citrix
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Created [05/05/2019_09:01]
-Updated [13/05/2019_04:37]
-Updated [13/05/2019_04:38]
-Updated [13/05/2019_04:40]
-Updated [22/05/2019_20:13]
-Updated [24/05/2019_19:25]
-Updated [06/06/2019_19:26]
-Updated [09/06/2019_09:18]
-Updated [15/06/2019_01:11]
-Updated [15/06/2019_13:59] Updated Reports
-Updated [01/07/2020_14:43] Script Fle Info was updated
-Updated [01/07/2020_15:42] Script Fle Info was updated
-Updated [01/07/2020_16:07] Script Fle Info was updated
-Updated [01/07/2020_16:13] Script Fle Info was updated
-Updated [06/03/2021_20:58] Script Fle Info was updated
-Updated [15/03/2021_23:28] Script Fle Info was updated
+
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ Report on RDS License Usage 
 
 #> 
 
 
 
-
-<#
-
-.DESCRIPTION 
-Function for Citrix XenDesktop HTML Health Check Report
-
-#>
 <#
 .SYNOPSIS
 Report on RDS License Usage

@@ -3,6 +3,50 @@
 
 .VERSION 1.0.13
 
+.GUID e523e559-b24d-471e-ab53-2cfb6ebf5080
+
+.AUTHOR Pierre Smit
+
+.COMPANYNAME HTPCZA Tech
+
+.COPYRIGHT
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ Show the changes that was made to the farm 
+
+#> 
+
+
+
+}
+
+<#PSScriptInfo
+
+.VERSION 1.0.13
+
 .GUID 71b2bc51-85ce-407b-ace5-96df009782d3
 
 .AUTHOR Pierre Smit

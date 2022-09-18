@@ -3,6 +3,50 @@
 
 .VERSION 1.0.13
 
+.GUID be2256e1-4b2c-460a-aa7f-10eac8f6d0c4
+
+.AUTHOR Pierre Smit
+
+.COMPANYNAME HTPCZA Tech
+
+.COPYRIGHT
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ Collects perform data for the core servers. 
+
+#> 
+
+
+
+} #end Function
+
+<#PSScriptInfo
+
+.VERSION 1.0.13
+
 .GUID 28827783-e97e-432f-bf46-c01e8c3c8299
 
 .AUTHOR Pierre Smit

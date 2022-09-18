@@ -3,46 +3,44 @@
 
 .VERSION 1.0.10
 
-.GUID 11d2e083-fcea-48c4-bb9f-093840ea5d0e
+.GUID bfdc02c2-9c62-4e67-a192-b55e3a7f2c8f
 
 .AUTHOR Pierre Smit
 
 .COMPANYNAME HTPCZA Tech
 
-.COPYRIGHT 
+.COPYRIGHT
 
-.TAGS Citrix
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-Created [06/06/2019_06:00] Initial Script Creating
-Updated [06/06/2019_19:26]
-Updated [09/06/2019_09:18]
-Updated [15/06/2019_01:11]
-Updated [15/06/2019_13:59] Updated Reports
+
+
+.PRIVATEDATA
+
+#>
+
+<# 
+
+.DESCRIPTION 
+ Creates and distributes  a report on Catalog, groups and published app config. 
+
 #> 
 
 
 
-
-
-<#
-
-.DESCRIPTION 
-Function for Citrix XenDesktop HTML Health Check Report
-
-#>
 <#
 .SYNOPSIS
 Creates and distributes  a report on Catalog, groups and published app config.
